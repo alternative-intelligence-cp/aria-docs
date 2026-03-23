@@ -1,0 +1,43 @@
+// ============================================================================
+// JSON Tokenizer Test
+// ============================================================================
+// Tests the tokenizer with a simple JSON input
+// ============================================================================
+
+use std.io;
+
+// Include tokenizer (in same compilation for now)
+// In real project: use json_parser.tokenizer;
+
+func:test_tokenizer_basic = NIL() {
+    // Simple test input: {}
+    int8[3]:input = "{}";
+    
+    Tokenizer:tok = tokenizer_init(@input[0]) ? Tokenizer{ input: NULL, pos: 0, line: 0, column: 0 };
+    
+    // Get first token - should be {
+    Token:t1 = next_token(@tok) ? Token{ type: 0, line: 0, column: 0 };
+    print_int32(t1.type) ? NIL;  // Should print 1 (TOK_LBRACE)
+    print_newline() ? NIL;
+    
+    // Get second token - should be }
+    Token:t2 = next_token(@tok) ? Token{ type: 0, line: 0, column: 0 };
+    print_int32(t2.type) ? NIL;  // Should print 2 (TOK_RBRACE)
+    print_newline() ? NIL;
+    
+    // Get third token - should be EOF
+    Token:t3 = next_token(@tok) ? Token{ type: 0, line: 0, column: 0 };
+    print_int32(t3.type) ? NIL;  // Should print 0 (TOK_EOF)
+    print_newline() ? NIL;
+    
+    pass(NIL);
+};
+
+func:main = int32() {
+    test_tokenizer_basic() ? NIL;
+    pass(0i32);
+};
+
+func:failsafe = NIL(int32:err_code) {
+    pass(NIL);
+};

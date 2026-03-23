@@ -1,0 +1,42 @@
+// ============================================================================
+// JSON Parser - Simple Test v1
+// ============================================================================
+// Minimal test to verify basic structures compile and work
+// ============================================================================
+
+// Simple token type
+enum:TokenType = {
+    TOK_EOF = 0,
+    TOK_STRING = 1,
+    TOK_NUMBER = 2
+};
+
+struct:Token = {
+    int32:type;
+    int32:line;
+};
+
+pub func:make_token = Token(int32:t, int32:line_num) {
+    Token:tok = Token {
+        type: t,
+        line: line_num
+    };
+    pass(tok);
+};
+
+pub func:get_token_type = int32(Token:tok) {
+    pass(tok.type);
+};
+
+func:main = int32() {
+    // Test creating tokens
+    Token:t1 = make_token(1, 10) ? Token{ type: 0, line: 0 };
+    Token:t2 = make_token(2, 20) ? Token{ type: 0, line: 0 };
+    
+    // Return sum of types (should be 3)
+    pass(t1.type + t2.type);
+};
+
+func:failsafe = NIL(int32:err_code) {
+    pass(NIL);
+};

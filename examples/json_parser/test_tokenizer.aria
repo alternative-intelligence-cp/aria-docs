@@ -1,0 +1,37 @@
+// ============================================================================
+// JSON Tokenizer Test
+// ============================================================================
+// Simple test program to verify the tokenizer is working correctly.
+// Tests basic token types without full parsing.
+// ============================================================================
+
+// ============================================================================
+// Include types and tokenizer (simplified for single-file compilation)
+// ============================================================================
+
+pub func:test_tokenizer = NIL() {
+    // Simple JSON test input
+    int8[64]:input = '{"name": "test", "value": 123}';
+    
+    print("Testing JSON tokenizer...");
+    print_newline() ? NIL;
+    print("Input: ");
+    print_newline() ? NIL;
+    
+    // TODO: Tokenize and print tokens
+    // This is a placeholder for now
+    
+    print("Tokenizer test complete");
+    print_newline() ? NIL;
+    
+    pass(NIL);
+};
+
+func:main = int32() {
+    test_tokenizer() ? NIL;
+    pass(0i32);
+};
+
+func:failsafe = void(int32:err_code) {
+    // Error handling
+};
