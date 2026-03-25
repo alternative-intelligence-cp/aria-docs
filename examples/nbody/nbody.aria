@@ -24,8 +24,7 @@
 // Output: total energy after 1000 steps (6 decimal places via subtraction).
 // A difference of less than 1e-6 from the Python reference passes.
 
-use "../../stdlib/string_convert.aria".*;
-use "../../stdlib/print_utils.aria".*;
+use "print_utils.aria".*;
 
 extern "libm" {
     func:sqrt = flt64(flt64:x);
@@ -177,14 +176,14 @@ func:main = int32() {
     int64:Eint  = Eabs => int64;
     // Fractional part × 1e6 → 6 decimal digits
     flt64:Efrac = (Eabs - (Eint => flt64)) * 1000000.0;
-    int64:Efrac6 = Efrac => int64;
+    int64:Efrac6 = (Efrac + 0.5) => int64;
 
     // Print: "E = -NNN.NNNNNN"
     drop(print("E = "));
     if (neg == 1i64) {
         drop(print("-"));
     }
-    drop(print(int32_toString(Eint => int32)));
+    drop(printInt64(Eint));
     drop(print("."));
     // Zero-pad to 6 digits
     if (Efrac6 < 100000i64) { drop(print("0")); }
@@ -192,7 +191,7 @@ func:main = int32() {
     if (Efrac6 <   1000i64) { drop(print("0")); }
     if (Efrac6 <    100i64) { drop(print("0")); }
     if (Efrac6 <     10i64) { drop(print("0")); }
-    drop(println(int32_toString(Efrac6 => int32)));
+    drop(printlnInt64(Efrac6));
 
     pass(0i32);
 };

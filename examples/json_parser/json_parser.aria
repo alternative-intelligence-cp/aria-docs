@@ -1,0 +1,609 @@
+// json_parser.aria — EXP-1: Complete JSON Parser (recursive-descent + serialiser)
+//
+// Exercises:
+//   - Self-recursive function: json_parse calls itself for nested arrays/objects
+//   - Self-recursive function: serialize_val for tree traversal
+//   - wild int64* heap arrays (malloc/free)
+//   - Result<T> propagation through multi-level call chains
+//   - String-as-byte-stream via aria_string_byte_at
+//   - while loops, compound boolean conditions (&&, ||, !)
+//   - 4-slot tagged value arena (no separate ch[]/pr[] arrays)
+//
+// ASCII quick-ref: '"':34  '[':91  ']':93  '{':123  '}':125
+//   ':':58  ',':44  '-':45  '.':46  '0':48  '9':57
+//   'n':110  't':116  'f':102  'e':101  'E':69
+
+use "print_utils.aria".*;
+
+extern func:malloc = wild int64*(int64:size);
+extern func:free   = void(wild int64*:ptr);
+extern func:aria_string_byte_at = int64(string:s, int64:i);
+
+func:failsafe = NIL(int32:code) { pass(NIL); };
+
+const int64:JSON_NULL  = 0i64;
+const int64:JSON_BOOL  = 1i64;
+const int64:JSON_NUM   = 2i64;
+const int64:JSON_STR   = 3i64;
+const int64:JSON_ARRAY = 4i64;
+const int64:JSON_OBJ   = 5i64;
+const int64:MAX_VALS   = 1024i64;
+const int64:MAX_OUT    = 8192i64;
+
+func:is_ws = bool(int64:c) {
+    pass(c == 32i64 || c == 9i64 || c == 10i64 || c == 13i64);
+};
+
+func:is_digit = bool(int64:c) {
+    pass(c >= 48i64 && c <= 57i64);
+};
+
+func:alloc_val = int64(int64->:ps, int64->:vals, int64:kind, int64:d1, int64:d2) {
+    int64:vi = ps[2i64];
+    if (vi >= MAX_VALS) { ps[5i64] = 1i64; pass(0i64 - 1i64); }
+    ps[2i64] = vi + 1i64;
+    vals[vi * 4i64 + 0i64] = kind;
+    vals[vi * 4i64 + 1i64] = d1;
+    vals[vi * 4i64 + 2i64] = d2;
+    vals[vi * 4i64 + 3i64] = 0i64 - 1i64;
+    pass(vi);
+};
+
+func:skip_ws = NIL(int64->:ps, string:inp) {
+    bool:go = true;
+    while (go) {
+        if (ps[0i64] >= ps[1i64]) {
+            go = false;
+        } else {
+            int64:c = aria_string_byte_at(inp, ps[0i64]);
+            bool:w = raw(is_ws(c));
+            if (w) {
+                ps[0i64] = ps[0i64] + 1i64;
+            } else {
+                go = false;
+            }
+        }
+    }
+    pass(NIL);
+};
+
+func:out_byte = NIL(int64->:out, int64->:obs, int64:b) {
+    int64:wp = obs[0i64];
+    if (wp < MAX_OUT) {
+        out[wp] = b;
+        obs[0i64] = wp + 1i64;
+    }
+    pass(NIL);
+};
+
+func:buf_eq = bool(int64->:out, int64:out_len, string:expected) {
+    int64:exp_len = string_length(expected);
+    if (out_len != exp_len) { pass(false); }
+    bool:eq = true;
+    int64:i = 0i64;
+    while (i < out_len) {
+        int64:ob = out[i];
+        int64:eb = aria_string_byte_at(expected, i);
+        if (ob != eb) {
+            eq = false;
+            i = out_len;
+        } else {
+            i = i + 1i64;
+        }
+    }
+    pass(eq);
+};
+
+func:serialize_val = NIL(int64:vi, int64->:vals, string:inp,
+                         int64->:out, int64->:obs) {
+    if (vi < 0i64) { pass(NIL); }
+    int64:kind = vals[vi * 4i64 + 0i64];
+    int64:d1   = vals[vi * 4i64 + 1i64];
+    int64:d2   = vals[vi * 4i64 + 2i64];
+    if (kind == JSON_NULL) {
+        drop(out_byte(out, obs, 110i64));
+        drop(out_byte(out, obs, 117i64));
+        drop(out_byte(out, obs, 108i64));
+        drop(out_byte(out, obs, 108i64));
+        pass(NIL);
+    }
+    if (kind == JSON_BOOL) {
+        if (d1 == 1i64) {
+            drop(out_byte(out, obs, 116i64));
+            drop(out_byte(out, obs, 114i64));
+            drop(out_byte(out, obs, 117i64));
+            drop(out_byte(out, obs, 101i64));
+        } else {
+            drop(out_byte(out, obs, 102i64));
+            drop(out_byte(out, obs, 97i64));
+            drop(out_byte(out, obs, 108i64));
+            drop(out_byte(out, obs, 115i64));
+            drop(out_byte(out, obs, 101i64));
+        }
+        pass(NIL);
+    }
+    if (kind == JSON_NUM) {
+        int64:i = 0i64;
+        while (i < d2) {
+            int64:nb = aria_string_byte_at(inp, d1 + i);
+            drop(out_byte(out, obs, nb));
+            i = i + 1i64;
+        }
+        pass(NIL);
+    }
+    if (kind == JSON_STR) {
+        drop(out_byte(out, obs, 34i64));
+        int64:i = 0i64;
+        while (i < d2) {
+            int64:sb = aria_string_byte_at(inp, d1 + i);
+            drop(out_byte(out, obs, sb));
+            i = i + 1i64;
+        }
+        drop(out_byte(out, obs, 34i64));
+        pass(NIL);
+    }
+    if (kind == JSON_ARRAY) {
+        drop(out_byte(out, obs, 91i64));
+        int64:cvi = d1;
+        int64:i = 0i64;
+        while (i < d2) {
+            if (i > 0i64) { drop(out_byte(out, obs, 44i64)); }
+            drop(serialize_val(cvi, vals, inp, out, obs));
+            cvi = vals[cvi * 4i64 + 3i64];
+            i = i + 1i64;
+        }
+        drop(out_byte(out, obs, 93i64));
+        pass(NIL);
+    }
+    if (kind == JSON_OBJ) {
+        drop(out_byte(out, obs, 123i64));
+        int64:kvi = d1;
+        int64:i = 0i64;
+        while (i < d2) {
+            if (i > 0i64) { drop(out_byte(out, obs, 44i64)); }
+            int64:vvi = vals[kvi * 4i64 + 3i64];
+            drop(serialize_val(kvi, vals, inp, out, obs));
+            drop(out_byte(out, obs, 58i64));
+            drop(serialize_val(vvi, vals, inp, out, obs));
+            kvi = vals[vvi * 4i64 + 3i64];
+            i = i + 1i64;
+        }
+        drop(out_byte(out, obs, 125i64));
+        pass(NIL);
+    }
+    pass(NIL);
+};
+
+func:json_parse = int64(int64->:ps, string:inp, int64->:vals) {
+    if (ps[5i64] != 0i64) { pass(0i64 - 1i64); }
+    drop(skip_ws(ps, inp));
+    if (ps[0i64] >= ps[1i64]) { ps[5i64] = 1i64; pass(0i64 - 1i64); }
+    int64:c = aria_string_byte_at(inp, ps[0i64]);
+    if (c == 34i64) {
+        ps[0i64] = ps[0i64] + 1i64;
+        int64:ss = ps[0i64];
+        bool:sg = true;
+        while (sg) {
+            if (ps[0i64] >= ps[1i64]) { ps[5i64] = 1i64; pass(0i64 - 1i64); }
+            int64:sc = aria_string_byte_at(inp, ps[0i64]);
+            if (sc == 34i64) {
+                sg = false;
+            } else {
+                ps[0i64] = ps[0i64] + 1i64;
+            }
+        }
+        int64:sl = ps[0i64] - ss;
+        ps[0i64] = ps[0i64] + 1i64;
+        pass(raw(alloc_val(ps, vals, JSON_STR, ss, sl)));
+    }
+    bool:ng = c == 45i64;
+    bool:dg = raw(is_digit(c));
+    if (ng || dg) {
+        int64:ns = ps[0i64];
+        if (ng) { ps[0i64] = ps[0i64] + 1i64; }
+        bool:ni = true;
+        while (ni) {
+            if (ps[0i64] >= ps[1i64]) {
+                ni = false;
+            } else {
+                int64:nc = aria_string_byte_at(inp, ps[0i64]);
+                bool:nd = raw(is_digit(nc));
+                if (nd) {
+                    ps[0i64] = ps[0i64] + 1i64;
+                } else {
+                    ni = false;
+                }
+            }
+        }
+        if (ps[0i64] < ps[1i64]) {
+            int64:dc = aria_string_byte_at(inp, ps[0i64]);
+            if (dc == 46i64) {
+                ps[0i64] = ps[0i64] + 1i64;
+                bool:fi = true;
+                while (fi) {
+                    if (ps[0i64] >= ps[1i64]) {
+                        fi = false;
+                    } else {
+                        int64:fc2 = aria_string_byte_at(inp, ps[0i64]);
+                        bool:fd = raw(is_digit(fc2));
+                        if (fd) {
+                            ps[0i64] = ps[0i64] + 1i64;
+                        } else {
+                            fi = false;
+                        }
+                    }
+                }
+            }
+        }
+        if (ps[0i64] < ps[1i64]) {
+            int64:ec = aria_string_byte_at(inp, ps[0i64]);
+            if (ec == 101i64 || ec == 69i64) {
+                ps[0i64] = ps[0i64] + 1i64;
+                if (ps[0i64] < ps[1i64]) {
+                    int64:pm = aria_string_byte_at(inp, ps[0i64]);
+                    if (pm == 43i64 || pm == 45i64) { ps[0i64] = ps[0i64] + 1i64; }
+                }
+                bool:ei = true;
+                while (ei) {
+                    if (ps[0i64] >= ps[1i64]) {
+                        ei = false;
+                    } else {
+                        int64:xc = aria_string_byte_at(inp, ps[0i64]);
+                        bool:xd = raw(is_digit(xc));
+                        if (xd) {
+                            ps[0i64] = ps[0i64] + 1i64;
+                        } else {
+                            ei = false;
+                        }
+                    }
+                }
+            }
+        }
+        int64:nl = ps[0i64] - ns;
+        pass(raw(alloc_val(ps, vals, JSON_NUM, ns, nl)));
+    }
+    if (c == 91i64) {
+        ps[0i64] = ps[0i64] + 1i64;
+        drop(skip_ws(ps, inp));
+        if (ps[0i64] >= ps[1i64]) { ps[5i64] = 1i64; pass(0i64 - 1i64); }
+        int64:afc = aria_string_byte_at(inp, ps[0i64]);
+        if (afc == 93i64) {
+            ps[0i64] = ps[0i64] + 1i64;
+            pass(raw(alloc_val(ps, vals, JSON_ARRAY, 0i64 - 1i64, 0i64)));
+        }
+        int64:afirst = 0i64 - 1i64;
+        int64:aprev  = 0i64 - 1i64;
+        int64:acount = 0i64;
+        bool:ag = true;
+        while (ag) {
+            if (ps[5i64] != 0i64) { pass(0i64 - 1i64); }
+            int64:ev = raw(json_parse(ps, inp, vals));
+            if (ev < 0i64) { pass(0i64 - 1i64); }
+            if (afirst < 0i64) { afirst = ev; }
+            if (aprev >= 0i64) { vals[aprev * 4i64 + 3i64] = ev; }
+            aprev = ev;
+            acount = acount + 1i64;
+            drop(skip_ws(ps, inp));
+            if (ps[0i64] >= ps[1i64]) { ps[5i64] = 1i64; pass(0i64 - 1i64); }
+            int64:asep = aria_string_byte_at(inp, ps[0i64]);
+            if (asep == 44i64) {
+                ps[0i64] = ps[0i64] + 1i64;
+                drop(skip_ws(ps, inp));
+                if (ps[0i64] >= ps[1i64]) { ps[5i64] = 1i64; pass(0i64 - 1i64); }
+                int64:atc = aria_string_byte_at(inp, ps[0i64]);
+                if (atc == 93i64) { ps[5i64] = 1i64; pass(0i64 - 1i64); }
+            } else {
+                if (asep == 93i64) {
+                    ag = false;
+                } else {
+                    ps[5i64] = 1i64; pass(0i64 - 1i64);
+                }
+            }
+        }
+        ps[0i64] = ps[0i64] + 1i64;
+        pass(raw(alloc_val(ps, vals, JSON_ARRAY, afirst, acount)));
+    }
+    if (c == 123i64) {
+        ps[0i64] = ps[0i64] + 1i64;
+        drop(skip_ws(ps, inp));
+        if (ps[0i64] >= ps[1i64]) { ps[5i64] = 1i64; pass(0i64 - 1i64); }
+        int64:ofc = aria_string_byte_at(inp, ps[0i64]);
+        if (ofc == 125i64) {
+            ps[0i64] = ps[0i64] + 1i64;
+            pass(raw(alloc_val(ps, vals, JSON_OBJ, 0i64 - 1i64, 0i64)));
+        }
+        int64:ofirst = 0i64 - 1i64;
+        int64:oprev_val = 0i64 - 1i64;
+        int64:ocount = 0i64;
+        bool:og = true;
+        while (og) {
+            if (ps[5i64] != 0i64) { pass(0i64 - 1i64); }
+            drop(skip_ws(ps, inp));
+            if (ps[0i64] >= ps[1i64]) { ps[5i64] = 1i64; pass(0i64 - 1i64); }
+            int64:kc = aria_string_byte_at(inp, ps[0i64]);
+            if (kc != 34i64) { ps[5i64] = 1i64; pass(0i64 - 1i64); }
+            ps[0i64] = ps[0i64] + 1i64;
+            int64:ks = ps[0i64];
+            bool:ksg = true;
+            while (ksg) {
+                if (ps[0i64] >= ps[1i64]) { ps[5i64] = 1i64; pass(0i64 - 1i64); }
+                int64:kb = aria_string_byte_at(inp, ps[0i64]);
+                if (kb == 34i64) {
+                    ksg = false;
+                } else {
+                    ps[0i64] = ps[0i64] + 1i64;
+                }
+            }
+            int64:kl = ps[0i64] - ks;
+            ps[0i64] = ps[0i64] + 1i64;
+            int64:kvi = raw(alloc_val(ps, vals, JSON_STR, ks, kl));
+            if (kvi < 0i64) { pass(0i64 - 1i64); }
+            if (oprev_val >= 0i64) { vals[oprev_val * 4i64 + 3i64] = kvi; }
+            if (ofirst < 0i64) { ofirst = kvi; }
+            drop(skip_ws(ps, inp));
+            if (ps[0i64] >= ps[1i64]) { ps[5i64] = 1i64; pass(0i64 - 1i64); }
+            int64:col = aria_string_byte_at(inp, ps[0i64]);
+            if (col != 58i64) { ps[5i64] = 1i64; pass(0i64 - 1i64); }
+            ps[0i64] = ps[0i64] + 1i64;
+            int64:vvi = raw(json_parse(ps, inp, vals));
+            if (vvi < 0i64) { pass(0i64 - 1i64); }
+            vals[kvi * 4i64 + 3i64] = vvi;
+            oprev_val = vvi;
+            ocount = ocount + 1i64;
+            drop(skip_ws(ps, inp));
+            if (ps[0i64] >= ps[1i64]) { ps[5i64] = 1i64; pass(0i64 - 1i64); }
+            int64:osep = aria_string_byte_at(inp, ps[0i64]);
+            if (osep == 44i64) {
+                ps[0i64] = ps[0i64] + 1i64;
+                drop(skip_ws(ps, inp));
+                if (ps[0i64] >= ps[1i64]) { ps[5i64] = 1i64; pass(0i64 - 1i64); }
+                int64:otc = aria_string_byte_at(inp, ps[0i64]);
+                if (otc == 125i64) { ps[5i64] = 1i64; pass(0i64 - 1i64); }
+            } else {
+                if (osep == 125i64) {
+                    og = false;
+                } else {
+                    ps[5i64] = 1i64; pass(0i64 - 1i64);
+                }
+            }
+        }
+        ps[0i64] = ps[0i64] + 1i64;
+        pass(raw(alloc_val(ps, vals, JSON_OBJ, ofirst, ocount)));
+    }
+    if (c == 110i64) {
+        int64:nc1 = aria_string_byte_at(inp, ps[0i64] + 1i64);
+        int64:nc2 = aria_string_byte_at(inp, ps[0i64] + 2i64);
+        int64:nc3 = aria_string_byte_at(inp, ps[0i64] + 3i64);
+        bool:on = nc1 == 117i64 && nc2 == 108i64 && nc3 == 108i64;
+        if (on) {
+            ps[0i64] = ps[0i64] + 4i64;
+            pass(raw(alloc_val(ps, vals, JSON_NULL, 0i64, 0i64)));
+        }
+        ps[5i64] = 1i64; pass(0i64 - 1i64);
+    }
+    if (c == 116i64) {
+        int64:tc1 = aria_string_byte_at(inp, ps[0i64] + 1i64);
+        int64:tc2 = aria_string_byte_at(inp, ps[0i64] + 2i64);
+        int64:tc3 = aria_string_byte_at(inp, ps[0i64] + 3i64);
+        bool:ot = tc1 == 114i64 && tc2 == 117i64 && tc3 == 101i64;
+        if (ot) {
+            ps[0i64] = ps[0i64] + 4i64;
+            pass(raw(alloc_val(ps, vals, JSON_BOOL, 1i64, 0i64)));
+        }
+        ps[5i64] = 1i64; pass(0i64 - 1i64);
+    }
+    if (c == 102i64) {
+        int64:fc1 = aria_string_byte_at(inp, ps[0i64] + 1i64);
+        int64:fc2 = aria_string_byte_at(inp, ps[0i64] + 2i64);
+        int64:fc3 = aria_string_byte_at(inp, ps[0i64] + 3i64);
+        int64:fc4 = aria_string_byte_at(inp, ps[0i64] + 4i64);
+        bool:of = fc1 == 97i64 && fc2 == 108i64 && fc3 == 115i64 && fc4 == 101i64;
+        if (of) {
+            ps[0i64] = ps[0i64] + 5i64;
+            pass(raw(alloc_val(ps, vals, JSON_BOOL, 0i64, 0i64)));
+        }
+        ps[5i64] = 1i64; pass(0i64 - 1i64);
+    }
+    ps[5i64] = 1i64;
+    pass(0i64 - 1i64);
+};
+
+func:do_parse = int64(string:input, int64->:ps, int64->:vals) {
+    ps[0i64] = 0i64;
+    ps[1i64] = string_length(input);
+    ps[2i64] = 0i64;
+    ps[3i64] = 0i64;
+    ps[4i64] = 0i64;
+    ps[5i64] = 0i64;
+    ps[6i64] = 0i64;
+    ps[7i64] = 0i64;
+    pass(raw(json_parse(ps, input, vals)));
+};
+
+func:main = int32() {
+    int64:pass_count = 0i64;
+    int64:fail_count = 0i64;
+    drop(printlnString("JSON Parser -- EXP-1"));
+    drop(printlnString("===================="));
+    wild int64->:ps   = malloc(8i64 * 8i64);
+    wild int64->:vals = malloc(MAX_VALS * 4i64 * 8i64);
+    wild int64->:out  = malloc(MAX_OUT * 8i64);
+    wild int64->:obs  = malloc(2i64 * 8i64);
+
+    string:T01 = "{}";
+    int64:r01 = raw(do_parse(T01, ps, vals));
+    if (ps[5i64] == 0i64 && vals[r01 * 4i64 + 0i64] == JSON_OBJ) {
+        obs[0i64] = 0i64;
+        drop(serialize_val(r01, vals, T01, out, obs));
+        bool:rt01 = raw(buf_eq(out, obs[0i64], "{}"));
+        if (rt01) {
+            drop(printlnString("[PASS] T01: {} -- parse + round-trip"));
+            pass_count = pass_count + 1i64;
+        } else {
+            drop(printlnString("[FAIL] T01: {} -- round-trip mismatch"));
+            fail_count = fail_count + 1i64;
+        }
+    } else {
+        drop(printlnString("[FAIL] T01: {} -- parse error"));
+        fail_count = fail_count + 1i64;
+    }
+
+    string:T02 = "[]";
+    int64:r02 = raw(do_parse(T02, ps, vals));
+    if (ps[5i64] == 0i64 && vals[r02 * 4i64 + 0i64] == JSON_ARRAY) {
+        obs[0i64] = 0i64;
+        drop(serialize_val(r02, vals, T02, out, obs));
+        bool:rt02 = raw(buf_eq(out, obs[0i64], "[]"));
+        if (rt02) {
+            drop(printlnString("[PASS] T02: [] -- parse + round-trip"));
+            pass_count = pass_count + 1i64;
+        } else {
+            drop(printlnString("[FAIL] T02: [] -- round-trip mismatch"));
+            fail_count = fail_count + 1i64;
+        }
+    } else {
+        drop(printlnString("[FAIL] T02: [] -- parse error"));
+        fail_count = fail_count + 1i64;
+    }
+
+    string:T03 = "{\"name\":\"aria\"}";
+    int64:r03 = raw(do_parse(T03, ps, vals));
+    if (ps[5i64] == 0i64 && vals[r03 * 4i64 + 0i64] == JSON_OBJ) {
+        obs[0i64] = 0i64;
+        drop(serialize_val(r03, vals, T03, out, obs));
+        bool:rt03 = raw(buf_eq(out, obs[0i64], "{\"name\":\"aria\"}"));
+        if (rt03) {
+            drop(printlnString("[PASS] T03: {name:aria} -- parse + round-trip"));
+            pass_count = pass_count + 1i64;
+        } else {
+            drop(printlnString("[FAIL] T03: {name:aria} -- round-trip mismatch"));
+            fail_count = fail_count + 1i64;
+        }
+    } else {
+        drop(printlnString("[FAIL] T03: {name:aria} -- parse error"));
+        fail_count = fail_count + 1i64;
+    }
+
+    string:T04 = "{\"n\":42,\"b\":true,\"z\":null}";
+    int64:r04 = raw(do_parse(T04, ps, vals));
+    if (ps[5i64] == 0i64 && vals[r04 * 4i64 + 0i64] == JSON_OBJ && vals[r04 * 4i64 + 2i64] == 3i64) {
+        drop(printlnString("[PASS] T04: {n:42,b:true,z:null} -- 3 pairs"));
+        pass_count = pass_count + 1i64;
+    } else {
+        drop(printlnString("[FAIL] T04: {n:42,b:true,z:null} -- parse/count error"));
+        fail_count = fail_count + 1i64;
+    }
+
+    string:T05 = "[1,2,3]";
+    int64:r05 = raw(do_parse(T05, ps, vals));
+    if (ps[5i64] == 0i64 && vals[r05 * 4i64 + 0i64] == JSON_ARRAY && vals[r05 * 4i64 + 2i64] == 3i64) {
+        obs[0i64] = 0i64;
+        drop(serialize_val(r05, vals, T05, out, obs));
+        bool:rt05 = raw(buf_eq(out, obs[0i64], "[1,2,3]"));
+        if (rt05) {
+            drop(printlnString("[PASS] T05: [1,2,3] -- parse + round-trip"));
+            pass_count = pass_count + 1i64;
+        } else {
+            drop(printlnString("[FAIL] T05: [1,2,3] -- round-trip mismatch"));
+            fail_count = fail_count + 1i64;
+        }
+    } else {
+        drop(printlnString("[FAIL] T05: [1,2,3] -- parse/count error"));
+        fail_count = fail_count + 1i64;
+    }
+
+    string:T06 = "-3.14";
+    int64:r06 = raw(do_parse(T06, ps, vals));
+    if (ps[5i64] == 0i64 && vals[r06 * 4i64 + 0i64] == JSON_NUM) {
+        obs[0i64] = 0i64;
+        drop(serialize_val(r06, vals, T06, out, obs));
+        bool:rt06 = raw(buf_eq(out, obs[0i64], "-3.14"));
+        if (rt06) {
+            drop(printlnString("[PASS] T06: -3.14 -- parse + round-trip"));
+            pass_count = pass_count + 1i64;
+        } else {
+            drop(printlnString("[FAIL] T06: -3.14 -- round-trip mismatch"));
+            fail_count = fail_count + 1i64;
+        }
+    } else {
+        drop(printlnString("[FAIL] T06: -3.14 -- parse error"));
+        fail_count = fail_count + 1i64;
+    }
+
+    string:T07 = "  { \"key\" : \"val\" }  ";
+    int64:r07 = raw(do_parse(T07, ps, vals));
+    if (ps[5i64] == 0i64 && vals[r07 * 4i64 + 0i64] == JSON_OBJ && vals[r07 * 4i64 + 2i64] == 1i64) {
+        drop(printlnString("[PASS] T07: whitespace-padded object"));
+        pass_count = pass_count + 1i64;
+    } else {
+        drop(printlnString("[FAIL] T07: whitespace-padded object"));
+        fail_count = fail_count + 1i64;
+    }
+
+    string:T08 = "{\"key\":\"unterminated}";
+    int64:r08 = raw(do_parse(T08, ps, vals));
+    if (ps[5i64] != 0i64) {
+        drop(printlnString("[PASS] T08: unterminated string rejected"));
+        pass_count = pass_count + 1i64;
+    } else {
+        drop(printlnString("[FAIL] T08: unterminated string not caught"));
+        fail_count = fail_count + 1i64;
+    }
+
+    string:T09 = "[1,2,3,]";
+    int64:r09 = raw(do_parse(T09, ps, vals));
+    if (ps[5i64] != 0i64) {
+        drop(printlnString("[PASS] T09: trailing comma in array rejected"));
+        pass_count = pass_count + 1i64;
+    } else {
+        drop(printlnString("[FAIL] T09: trailing comma in array not caught"));
+        fail_count = fail_count + 1i64;
+    }
+
+    string:T10 = "{\"a\":1,}";
+    int64:r10 = raw(do_parse(T10, ps, vals));
+    if (ps[5i64] != 0i64) {
+        drop(printlnString("[PASS] T10: trailing comma in object rejected"));
+        pass_count = pass_count + 1i64;
+    } else {
+        drop(printlnString("[FAIL] T10: trailing comma in object not caught"));
+        fail_count = fail_count + 1i64;
+    }
+
+    string:T11 = "[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]";
+    int64:r11 = raw(do_parse(T11, ps, vals));
+    if (ps[5i64] == 0i64 && vals[r11 * 4i64 + 0i64] == JSON_ARRAY) {
+        drop(printlnString("[PASS] T11: 20-level nested array parsed"));
+        pass_count = pass_count + 1i64;
+    } else {
+        drop(printlnString("[FAIL] T11: 20-level nested array failed"));
+        fail_count = fail_count + 1i64;
+    }
+
+    string:T12 = "{\"a\":1";
+    int64:r12 = raw(do_parse(T12, ps, vals));
+    if (ps[5i64] != 0i64) {
+        drop(printlnString("[PASS] T12: missing } rejected"));
+        pass_count = pass_count + 1i64;
+    } else {
+        drop(printlnString("[FAIL] T12: missing } not caught"));
+        fail_count = fail_count + 1i64;
+    }
+
+    drop(printlnString("---"));
+    drop(printString("Passed: "));
+    drop(printlnInt64(pass_count));
+    drop(printString("Failed: "));
+    drop(printlnInt64(fail_count));
+    if (fail_count == 0i64) {
+        drop(printlnString("PASS: all JSON parser tests passed"));
+    } else {
+        drop(printlnString("FAIL: some JSON parser tests failed"));
+    }
+
+    free(obs);
+    free(out);
+    free(vals);
+    free(ps);
+    pass(0i32);
+};
