@@ -37,12 +37,12 @@ false  false  | false
 ```aria
 // Both true
 when true and true then
-    stdout << "Both true";  // Prints
+    print("Both true");  // Prints
 end
 
 // One false
 when true and false then
-    stdout << "Won't print";
+    print("Won't print");
 end
 
 // Variables
@@ -77,12 +77,12 @@ end
 ```aria
 // Chain multiple conditions
 when age >= 18 and age <= 65 and is_citizen then
-    stdout << "Can vote";
+    print("Can vote");
 end
 
 // Parentheses for clarity
 when (age >= 18 and age <= 65) and is_citizen then
-    stdout << "Can vote";
+    print("Can vote");
 end
 ```
 
@@ -139,7 +139,7 @@ end
 
 ```aria
 when x >= min and x <= max then
-    stdout << "In range";
+    print("In range");
 end
 ```
 

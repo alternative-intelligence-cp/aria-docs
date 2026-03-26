@@ -17,7 +17,7 @@
 By default, items are **private**:
 
 ```aria
-fn private_function() { }     // Private
+func:private_function = NIL() { }     // Private
 struct PrivateStruct { }      // Private
 const PRIVATE: i32 = 42;      // Private
 ```
@@ -27,7 +27,7 @@ const PRIVATE: i32 = 42;      // Private
 ## Public Items
 
 ```aria
-pub fn public_function() { }     // Public
+pub func:public_function = NIL() { }     // Public
 pub struct PublicStruct { }      // Public
 pub const PUBLIC: i32 = 42;      // Public
 ```
@@ -37,7 +37,7 @@ pub const PUBLIC: i32 = 42;      // Public
 ## What Can Be Public?
 
 ```aria
-pub fn function() { }           // Functions
+pub func:function = NIL() { }           // Functions
 pub struct Data { }             // Structs
 pub enum Status { }             // Enums
 pub const MAX: i32 = 100;       // Constants
@@ -65,13 +65,13 @@ pub struct User {
 ```aria
 // Module is private
 mod internal {
-    pub fn helper() { }  // Function is public within module
+    pub func:helper = NIL() { }  // Function is public within module
 }
 
 // Module is public
 pub mod api {
-    pub fn endpoint() { }  // Public everywhere
-    fn internal() { }      // Private to api module
+    pub func:endpoint = NIL() { }  // Public everywhere
+    func:internal = NIL() { }      // Private to api module
 }
 ```
 
@@ -82,13 +82,13 @@ pub mod api {
 ```aria
 // lib.aria
 mod internal {  // Private module
-    pub fn helper() -> i32 {
-        return 42;
+    pub func:helper = int32() {
+        pass(42);
     }
 }
 
-pub fn public_api() -> i32 {  // Public function
-    return internal.helper();  // Can use internal items
+pub func:public_api = int32() {  // Public function
+    pass(internal.helper());  // Can use internal items
 }
 ```
 
@@ -98,12 +98,12 @@ pub fn public_api() -> i32 {  // Public function
 
 ```aria
 pub mod outer {
-    pub fn outer_fn() { }
-    fn outer_private() { }
+    pub func:outer_fn = NIL() { }
+    func:outer_private = NIL() { }
     
     pub mod inner {
-        pub fn inner_fn() { }
-        fn inner_private() { }
+        pub func:inner_fn = NIL() { }
+        func:inner_private = NIL() { }
     }
 }
 
@@ -122,7 +122,7 @@ outer.inner.inner_private(); // ❌ Private
 
 ```aria
 mod internal {
-    pub fn important() { }
+    pub func:important = NIL() { }
 }
 
 // Re-export to make available at crate root
@@ -141,7 +141,7 @@ pub use internal.important;
 
 ```aria
 // Public API
-pub fn create_user(name: string) -> User {
+pub func:create_user = User(string:name) {
     return User {
         name: name,
         id: generate_id(),  // Private helper
@@ -149,7 +149,7 @@ pub fn create_user(name: string) -> User {
 }
 
 // Private implementation
-fn generate_id() -> i32 {
+func:generate_id = int32() {
     // Implementation details
 }
 ```
@@ -177,11 +177,11 @@ pub struct Connection {
 }
 
 impl Connection {
-    pub fn new() -> Connection {  // Public constructor
+    pub func:new = Connection() {  // Public constructor
         // Implementation
     }
     
-    pub fn query() -> Result<Data> {  // Public method
+    pub func:query = Result<Data>() {  // Public method
         // Implementation
     }
 }
@@ -194,9 +194,9 @@ impl Connection {
 ### ✅ DO: Expose Minimal API
 
 ```aria
-pub fn create_user() -> User { }  // Public API
-fn validate_email() -> bool { }   // Private helper
-fn hash_password() -> string { }  // Private helper
+pub func:create_user = User() { }  // Public API
+func:validate_email = bool() { }   // Private helper
+func:hash_password = string() { }  // Private helper
 ```
 
 ### ✅ DO: Keep Implementation Private
@@ -207,8 +207,8 @@ pub struct Database {
 }
 
 impl Database {
-    pub fn query() { }      // Public interface
-    fn reconnect() { }      // Private helper
+    pub func:query = NIL() { }      // Public interface
+    func:reconnect = NIL() { }      // Private helper
 }
 ```
 
@@ -221,18 +221,18 @@ pub struct User {
 }
 
 impl User {
-    pub fn new(name: string, age: i32) -> User { }
-    pub fn get_name() -> string { }
-    pub fn get_age() -> i32 { }
+    pub func:new = User(string:name, int32:age) { }
+    pub func:get_name = string() { }
+    pub func:get_age = int32() { }
 }
 ```
 
 ### ❌ DON'T: Make Everything Public
 
 ```aria
-pub fn helper1() { }  // ❌ If only used internally
-pub fn helper2() { }  // ❌ Keep private
-pub fn helper3() { }  // ❌ Exposes implementation
+pub func:helper1 = NIL() { }  // ❌ If only used internally
+pub func:helper2 = NIL() { }  // ❌ Keep private
+pub func:helper3 = NIL() { }  // ❌ Exposes implementation
 ```
 
 ---
@@ -241,10 +241,10 @@ pub fn helper3() { }  // ❌ Exposes implementation
 
 ```aria
 // Private (default) - only in same module
-fn private() { }
+func:private = NIL() { }
 
 // Public - accessible from anywhere
-pub fn public() { }
+pub func:public = NIL() { }
 
 // Public in crate - accessible within crate only (not exported)
 pub(crate) fn crate_public() { }

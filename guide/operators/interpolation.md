@@ -1,38 +1,42 @@
-# String Interpolation ($)
+# String Interpolation (&{})
 
 **Category**: Operators → String  
-**Operator**: `$` in strings  
-**Purpose**: Embed expressions in strings
+**Operator**: `&{expr}` in template literals  
+**Purpose**: Embed expressions in backtick-delimited template strings
 
 ---
 
 ## Syntax
 
 ```aria
-"text $variable text"
-"text ${expression} text"
+`text &{expression} more text`
 ```
+
+Interpolation uses `&{` ... `}` inside **backtick** template literals only.
+Double-quoted strings (`"..."`) do **not** support interpolation.
 
 ---
 
 ## Description
 
-String interpolation allows embedding variables and expressions directly in strings using `$`.
+Template literals (backtick strings) support string interpolation via `&{expression}`.
+Any expression can be placed inside `&{}` — the result is converted to a string
+and spliced into the surrounding text.
 
 ---
 
 ## Basic Usage
 
 ```aria
-name: string = "Alice";
-age: i32 = 25;
+string:name = "Alice";
+int32:age = 25;
 
 // Simple interpolation
-msg: string = "Hello, $name!";
+string:msg = `Hello, &{name}!`;
 // "Hello, Alice!"
 
 // With expressions
-info: string = "Age: ${age + 1}";
+string:info = `Age: &{age + 1}`;
 // "Age: 26"
 ```
 
@@ -41,10 +45,10 @@ info: string = "Age: ${age + 1}";
 ## Expression Interpolation
 
 ```aria
-x: i32 = 10;
-y: i32 = 20;
+int32:x = 10;
+int32:y = 20;
 
-Result: string = "${x} + ${y} = ${x + y}";
+string:result = `&{x} + &{y} = &{x + y}`;
 // "10 + 20 = 30"
 ```
 
@@ -53,21 +57,9 @@ Result: string = "${x} + ${y} = ${x + y}";
 ## Method Calls
 
 ```aria
-user: User = get_user();
+User:user = get_user();
 
-msg: string = "User: ${user.name()}, Status: ${user.status()}";
-```
-
----
-
-## Formatting
-
-```aria
-price: f64 = 19.99;
-
-// With format specifiers (if supported)
-text: string = "Price: $${price:.2f}";
-// "Price: $19.99"
+string:msg = `User: &{user.name()}, Status: &{user.status()}`;
 ```
 
 ---
@@ -77,39 +69,27 @@ text: string = "Price: $${price:.2f}";
 ### ✅ DO: Use for Readability
 
 ```aria
-// Clear
-msg: string = "User $name has $count items";
+// Clear — backtick template literal
+string:msg = `User &{name} has &{count} items`;
 
-// Less clear
-msg: string = "User " + name + " has " + to_string(count) + " items";
+// Also valid — concatenation with double-quoted strings
+string:msg = "User " + name + " has " + to_string(count) + " items";
 ```
 
-### ✅ DO: Use Braces for Complex Expressions
+### ✅ DO: Use for Complex Expressions
 
 ```aria
-text: string = "Result: ${calculate(x, y)}";
+string:text = `Result: &{calculate(x, y)}`;
 ```
 
-### ❌ DON'T: Nest Too Deeply
+### ❌ DON'T: Use Double Quotes for Interpolation
 
 ```aria
-// Confusing
-msg: string = "${outer(${inner(${deep()})})}";
+// ❌ WRONG — double quotes have no interpolation
+string:msg = "Hello &{name}";  // Literal text, not interpolated
 
-// Better
-temp := inner(deep());
-result := outer(temp);
-msg: string = "$result";
-```
-
----
-
-## Escape Dollar Sign
-
-```aria
-// Literal $
-price: string = "Cost: \$${amount}";
-// "Cost: $50"
+// ✅ CORRECT — backtick template literal
+string:msg = `Hello &{name}`;
 ```
 
 ---
@@ -117,7 +97,8 @@ price: string = "Cost: \$${amount}";
 ## Related
 
 - [Strings](../types/string.md)
-- [Backtick (`)](backtick.md) - Raw strings
+- [Template Syntax](template_syntax.md)
+- [Backtick (`)](backtick.md)
 - [String Concatenation](add.md)
 
 ---

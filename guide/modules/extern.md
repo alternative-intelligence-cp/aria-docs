@@ -16,7 +16,7 @@
 
 ```aria
 extern "C" {
-    fn printf(format: *u8, ...) -> i32;
+    func:printf = i32;(*u8:format, ...)
 }
 
 // Use it
@@ -29,9 +29,9 @@ extern.printf("Hello from C!\n");
 
 ```aria
 extern "C" {
-    fn malloc(size: usize) -> *void;
-    fn free(ptr: *void);
-    fn strlen(s: *u8) -> usize;
+    func:malloc = *void;(uint64:size)
+    func:free = NIL(*void:ptr);
+    func:strlen = usize;(*u8:s)
 }
 ```
 
@@ -53,8 +53,8 @@ Most common: `"C"`
 
 ```aria
 extern "C" {
-    fn sqrt(x: f64) -> f64;
-    fn abs(x: i32) -> i32;
+    func:sqrt = f64;(flt64:x)
+    func:abs = i32;(int32:x)
 }
 
 Result: f64 = extern.sqrt(16.0);  // 4.0
@@ -68,8 +68,8 @@ value: i32 = extern.abs(-5);      // 5
 ```aria
 #[link(name = "m")]  // Link against libm (math library)
 extern "C" {
-    fn sin(x: f64) -> f64;
-    fn cos(x: f64) -> f64;
+    func:sin = f64;(flt64:x)
+    func:cos = f64;(flt64:x)
 }
 ```
 
@@ -81,11 +81,11 @@ extern "C" {
 
 ```aria
 extern "C" {
-    fn malloc(size: usize) -> *void;
-    fn free(ptr: *void);
-    fn memcpy(dest: *void, src: *void, n: usize) -> *void;
-    fn strlen(s: *u8) -> usize;
-    fn strcmp(s1: *u8, s2: *u8) -> i32;
+    func:malloc = *void;(uint64:size)
+    func:free = NIL(*void:ptr);
+    func:memcpy = *void;(*void:dest, *void:src, uint64:n)
+    func:strlen = usize;(*u8:s)
+    func:strcmp = i32;(*u8:s1, *u8:s2)
 }
 ```
 
@@ -98,7 +98,7 @@ Make Aria functions callable from C:
 ```aria
 #[no_mangle]  // Prevent name mangling
 pub extern "C" fn aria_add(a: i32, b: i32) -> i32 {
-    return a + b;
+    pass(a + b);
 }
 ```
 
@@ -110,21 +110,21 @@ pub extern "C" fn aria_add(a: i32, b: i32) -> i32 {
 
 ```aria
 extern "C" {
-    fn unsafe_c_function(ptr: *void) -> i32;
+    func:unsafe_c_function = i32;(*void:ptr)
 }
 
 // Safe wrapper
-pub fn safe_function(data: *Data) -> Result<i32> {
+pub func:safe_function = Result<int32>(*Data:data) {
     if data == NULL {
-        return Err("Null pointer");
+        pass(Err("Null pointer"));
     }
     
     Result: i32 = extern.unsafe_c_function(data);
     if result < 0 {
-        return Err("C function failed");
+        pass(Err("C function failed"));
     }
     
-    return Ok(result);
+    pass(Ok(result));
 }
 ```
 
@@ -133,7 +133,7 @@ pub fn safe_function(data: *Data) -> Result<i32> {
 ```aria
 // Calls C standard library malloc
 extern "C" {
-    fn malloc(size: usize) -> *void;
+    func:malloc = *void;(uint64:size)
 }
 ```
 
@@ -142,7 +142,7 @@ extern "C" {
 ```aria
 // No safety checks - you must validate!
 extern "C" {
-    fn dangerous_c_function(ptr: *void);
+    func:dangerous_c_function = NIL(*void:ptr);
 }
 
 // Can crash, corrupt memory, etc.

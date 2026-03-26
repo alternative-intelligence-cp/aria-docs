@@ -25,18 +25,18 @@ The equality operator `==` tests if two values are equal, returning `true` or `f
 ```aria
 // Numbers
 when 5 == 5 then
-    stdout << "Equal";
+    print("Equal");
 end
 
 // Strings
 when "hello" == "hello" then
-    stdout << "Match";
+    print("Match");
 end
 
 // Variables
 x: i32 = 42;
 when x == 42 then
-    stdout << "Found";
+    print("Found");
 end
 ```
 
@@ -49,7 +49,7 @@ end
 a: i32 = 100;
 b: i32 = 100;
 when a == b then  // true
-    stdout << "Equal values";
+    print("Equal values");
 end
 ```
 
@@ -87,7 +87,7 @@ p1: Point = Point { x: 10, y: 20 };
 p2: Point = Point { x: 10, y: 20 };
 
 when p1 == p2 then  // true (field-wise comparison)
-    stdout << "Same point";
+    print("Same point");
 end
 ```
 
@@ -101,12 +101,12 @@ s1: string = "hello";
 s2: string = "hello";
 
 when s1 == s2 then  // true
-    stdout << "Same content";
+    print("Same content");
 end
 
 // Case sensitive
 when "Hello" == "hello" then  // false
-    stdout << "Won't print";
+    print("Won't print");
 end
 ```
 
@@ -118,13 +118,13 @@ end
 // Beware of precision
 x: f64 = 0.1 + 0.2;
 when x == 0.3 then  // May be false!
-    stdout << "Might not print";
+    print("Might not print");
 end
 
 // Use epsilon comparison
 epsilon: f64 = 0.000001;
 when abs(x - 0.3) < epsilon then
-    stdout << "Approximately equal";
+    print("Approximately equal");
 end
 ```
 
@@ -138,11 +138,11 @@ y: i32? = 42;
 z: i32? = nil;
 
 when x == y then  // true
-    stdout << "Both 42";
+    print("Both 42");
 end
 
 when z == nil then  // true
-    stdout << "z is nil";
+    print("z is nil");
 end
 ```
 
@@ -154,7 +154,7 @@ end
 
 ```aria
 when count == 0 then
-    stdout << "Empty";
+    print("Empty");
 end
 ```
 
@@ -219,7 +219,7 @@ end
 
 // Use logical AND
 when x == y and y == z then
-    stdout << "All equal";
+    print("All equal");
 end
 ```
 

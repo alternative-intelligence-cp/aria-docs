@@ -15,10 +15,10 @@
 ## Syntax
 
 ```aria
-import std.functional;
+use std.functional;
 
 filtered: []i32 = filter(numbers, fn(x: i32) -> bool {
-    return x > 10;
+    pass(x > 10);
 });
 ```
 
@@ -46,7 +46,7 @@ numbers: []i32 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 // Keep only even numbers
 evens: []i32 = filter(numbers, fn(x: i32) -> bool {
-    return x % 2 == 0;
+    pass(x % 2 == 0);
 });
 // [2, 4, 6, 8, 10]
 ```
@@ -58,7 +58,7 @@ words: []string = ["apple", "banana", "apricot", "cherry", "avocado"];
 
 // Keep words starting with 'a'
 a_words: []string = filter(words, fn(w: string) -> bool {
-    return w.starts_with("a");
+    pass(w.starts_with("a"));
 });
 // ["apple", "apricot", "avocado"]
 ```
@@ -70,7 +70,7 @@ names: []string = ["Alice", "Bob", "Charlie", "Dave", "Eve"];
 
 // Keep names longer than 4 characters
 long_names: []string = filter(names, fn(name: string) -> bool {
-    return name.length() > 4;
+    pass(name.length() > 4);
 });
 // ["Alice", "Charlie"]
 ```
@@ -88,12 +88,12 @@ users: []User = [...];
 
 // Keep only active users
 active_users: []User = filter(users, fn(u: User) -> bool {
-    return u.active;
+    pass(u.active);
 });
 
 // Keep users over 18
 adults: []User = filter(users, fn(u: User) -> bool {
-    return u.age >= 18;
+    pass(u.age >= 18);
 });
 ```
 
@@ -106,7 +106,7 @@ numbers: []i32 = [1, 2, 3, 4, 5, 6];
 
 // Using array method
 evens: []i32 = numbers.filter(fn(x: i32) -> bool {
-    return x % 2 == 0;
+    pass(x % 2 == 0);
 });
 ```
 
@@ -132,7 +132,7 @@ Result: []i32 = numbers
 ```aria
 // Perfect use case
 active_items: []Item = filter(all_items, fn(item) -> bool {
-    return item.active;
+    pass(item.active);
 });
 ```
 
@@ -151,12 +151,12 @@ Result: []i32 = numbers
 // Dangerous!
 filtered: []i32 = filter(numbers, fn(x: i32) -> bool {
     numbers.append(x);  // ❌ Modifying source array!
-    return x > 5;
+    pass(x > 5);
 });
 
 // Safe
 filtered: []i32 = filter(numbers, fn(x: i32) -> bool {
-    return x > 5;  // ✅ Pure function
+    pass(x > 5);  // ✅ Pure function
 });
 ```
 

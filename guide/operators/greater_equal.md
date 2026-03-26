@@ -25,17 +25,17 @@ The greater than or equal operator `>=` tests if the left value is greater than 
 ```aria
 // Greater than
 when 10 >= 5 then
-    stdout << "True";
+    print("True");
 end
 
 // Equal
 when 5 >= 5 then
-    stdout << "Also true";
+    print("Also true");
 end
 
 // Less than
 when 3 >= 5 then
-    stdout << "Won't print";
+    print("Won't print");
 end
 ```
 
@@ -48,12 +48,12 @@ min_age: i32 = 18;
 age: i32 = 18;
 
 when age >= min_age then
-    stdout << "Allowed";  // Prints (18 >= 18)
+    print("Allowed");  // Prints (18 >= 18)
 end
 
 // Contrast with >
 when age > min_age then
-    stdout << "Won't print";  // false (18 not > 18)
+    print("Won't print");  // false (18 not > 18)
 end
 ```
 
@@ -65,9 +65,9 @@ end
 
 ```aria
 when score >= 60 then
-    stdout << "Pass";
+    print("Pass");
 else
-    stdout << "Fail";
+    print("Fail");
 end
 ```
 
@@ -75,7 +75,7 @@ end
 
 ```aria
 when age >= 18 and age <= 65 then
-    stdout << "Working age";
+    print("Working age");
 end
 ```
 
@@ -84,7 +84,7 @@ end
 ```aria
 i: i32 = 10;
 while i >= 0 {
-    stdout << i;
+    print(i);
     i -= 1;
 }
 // Prints: 10 9 8 7 6 5 4 3 2 1 0
@@ -99,7 +99,7 @@ while i >= 0 {
 ```aria
 // Inclusive range [min, max]
 when value >= min and value <= max then
-    stdout << "In range";
+    print("In range");
 end
 ```
 

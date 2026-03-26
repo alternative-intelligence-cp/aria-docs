@@ -693,11 +693,11 @@ For input:
 <strong>WRONG</strong>:
 <pre><code>fn process(data: Data) -> Result {
 <p>
-stdout << "DEBUG: Processing data\n";  // Pollutes output!
+print("DEBUG: Processing data\n");  // Pollutes output!
 </p>
 <p>
 Result: Result = transform(data);
-stdout << result;  // Mixed with debug info
+print(result);  // Mixed with debug info
 </p>
 <p>
 return result;
@@ -706,11 +706,11 @@ return result;
 <strong>RIGHT</strong>:
 <pre><code>fn process(data: Data) -> Result {
 <p>
-stddbg << "Processing data";  // Separate stream
+stddbg_write("Processing data");  // Separate stream
 </p>
 <p>
 Result: Result = transform(data);
-stdout << result;  // Clean output
+print(result);  // Clean output
 </p>
 <p>
 return result;
@@ -738,9 +738,9 @@ Result: Result = compute();
 <p>
 // Which format? Can't have both!
 when json_mode then
-stdout << json_dumps(result);  // Machines
+print(json_dumps(result));  // Machines
 else
-stdout << "Result: " << result;  // Humans
+print("Result: " + result);  // Humans
 end
 }</code></pre>
 </p>
@@ -751,7 +751,7 @@ Result: Result = compute();
 </p>
 <p>
 // Both formats, always!
-stdout << "Result: " << result;      // Humans
+print("Result: " + result);      // Humans
 stddato.write_json(result);          // Machines
 }</code></pre>
 </p>
@@ -764,14 +764,14 @@ stddato.write_json(result);          // Machines
 <strong>WRONG</strong>:
 <pre><code>when file.open() == ERR then
 <p>
-stdout << "ERROR: Cannot open file\n";  // Wrong stream!
+print("ERROR: Cannot open file\n");  // Wrong stream!
 return ERR;
 end</code></pre>
 </p>
 <strong>RIGHT</strong>:
 <pre><code>when file.open() == ERR then
 <p>
-stderr << "ERROR: Cannot open file\n";  // Correct stream
+stderr_write("ERROR: Cannot open file\n");  // Correct stream
 return ERR;
 end</code></pre>
 </p>
@@ -807,7 +807,7 @@ Here's a well-designed Aria program using all six streams correctly:
 <pre><code>use std::json;
 <p>
 fn main() -> i32 {
-stddbg << "Program starting";
+stddbg_write("Program starting");
 </p>
 <p>
 // Read configuration (structured data)
@@ -815,42 +815,42 @@ config: Config? = stddati.read_json()?;
 </p>
 <p>
 when config == ERR then
-stderr << "ERROR: Failed to read config\n";
-stderr << "  Provide config on fd 4\n";
+stderr_write("ERROR: Failed to read config\n");
+stderr_write("  Provide config on fd 4\n");
 return 1;
 end
 </p>
 <p>
-stddbg << "Config loaded: " << config.mode;
+stddbg_write("Config loaded: " + config.mode);
 </p>
 <p>
 // Interactive prompt for user (if needed)
 when config.mode == "interactive" then
-stdout << "Enter filename: ";
+print("Enter filename: ");
 filename: string = stdin.read_line();
 </p>
 <p>
-stddbg << "User entered: " << filename;
+stddbg_write("User entered: " + filename);
 end
 </p>
 <p>
 // Process data
-stdout << "Processing...\n";
+print("Processing...\n");
 </p>
 <p>
 Result: Result? = process(config);
 </p>
 <p>
 when result == ERR then
-stderr << "ERROR: Processing failed\n";
-stddbg << "Failure details: " << get_error_details();
+stderr_write("ERROR: Processing failed\n");
+stddbg_write("Failure details: " + get_error_details());
 return 1;
 end
 </p>
 <p>
 // Output results
-stdout << "Processing complete!\n";
-stdout << "  Records processed: " << result.count << "\n";
+print("Processing complete!\n");
+print("  Records processed: " << result.count + "\n");
 </p>
 <p>
 // Structured output for downstream tools
@@ -861,7 +861,7 @@ stddato.write_json({
 });
 </p>
 <p>
-stddbg << "Program exiting cleanly";
+stddbg_write("Program exiting cleanly");
 </p>
 <p>
 return 0;
@@ -899,7 +899,7 @@ echo '{"mode": "batch"}' | ./program 4>&0 >out.txt 2>err.txt 5>data.json 6>debug
 process(data)</code></pre>
 </p>
 <strong>Aria approach</strong>:
-<pre><code>stddbg << "Processing foo";  // Always present, redirected in production
+<pre><code>stddbg_write("Processing foo");  // Always present, redirected in production
 <p>
 process(data);</code></pre>
 </p>
@@ -910,18 +910,18 @@ Always provide <strong>both</strong> human and machine output:
 </p>
 <pre><code>// Don't make users choose
 <p>
-stdout << "Balance: $" << balance;     // Humans
+print("Balance: $" + balance);     // Humans
 stddato.write_json({"balance": balance});  // Machines</code></pre>
 </p>
 <h3>4. <strong>Stream Redirection Over Conditionals</strong></h3>
 <strong>Bad</strong> (traditional):
 <pre><code>when verbose_mode then
 <p>
-stdout << "Detailed info...";
+print("Detailed info...");
 end</code></pre>
 </p>
 <strong>Good</strong> (Aria):
-<pre><code>stddbg << "Detailed info...";  // Always written, redirect controls visibility</code></pre>
+<pre><code>stddbg_write("Detailed info...");  // Always written, redirect controls visibility</code></pre>
 <strong>Why</strong>: Configuration happens at <strong>deployment time</strong> (shell redirection), not <strong>compile time</strong> (flags and conditionals).
 <h3>5. <strong>Error Clarity</strong></h3>
 <p>
@@ -930,9 +930,9 @@ Errors go to <strong>stderr</strong>, not stdout or stddbg:
 <pre><code>// Clear error reporting
 <p>
 when validation_failed then
-stderr << "ERROR: Invalid input\n";
-stderr << "  Field: " << field_name << "\n";
-stderr << "  Reason: " << reason << "\n";
+stderr_write("ERROR: Invalid input\n");
+stderr_write("  Field: " << field_name + "\n");
+stderr_write("  Reason: " << reason + "\n");
 return ERR;
 end</code></pre>
 </p>
@@ -1017,13 +1017,13 @@ return result</code></pre>
 <h3>After (Aria)</h3>
 <pre><code>fn process(data: Data) -> Result {
 <p>
-stddbg << "Processing " << data;  // Debug stream
+stddbg_write("Processing " + data);  // Debug stream
 </p>
 <p>
 Result: Result = transform(data);
 </p>
 <p>
-stdout << "Result: " << result;   // Human output
+print("Result: " + result);   // Human output
 stddato.write_json(result);       // Machine output
 </p>
 <p>
@@ -1066,7 +1066,7 @@ logger.debug("Message");  // Goes to stderr unfortunately
 <p>
 // Better: Wrap it
 fn log_debug(msg: string) {
-stddbg << msg;  // Also send to stddbg
+stddbg_write(msg);  // Also send to stddbg
 logger.debug(msg);  // And to logger for compatibility
 }</code></pre>
 </p>
@@ -1077,9 +1077,9 @@ If integrating with a system that expects everything on stdout:
 <pre><code>// Compatibility mode
 <p>
 when legacy_mode then
-stdout << debug_info;  // Violation, but necessary
+print(debug_info);  // Violation, but necessary
 else
-stddbg << debug_info;  // Preferred
+stddbg_write(debug_info);  // Preferred
 end</code></pre>
 </p>
 <strong>But</strong>: Try to fix the legacy system instead of working around it.

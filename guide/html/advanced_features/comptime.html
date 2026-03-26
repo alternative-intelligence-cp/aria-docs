@@ -654,7 +654,7 @@
 <h2>Basic Comptime</h2>
 <pre><code>comptime {
 <p>
-stdout << "This prints during compilation!";
+print("This prints during compilation!");
 }</code></pre>
 </p>
 <hr>
@@ -751,7 +751,7 @@ comptime {
 <pre><code>comptime {
 <p>
 till(9, 1) {
-stdout << "Generating code for iteration $($)";
+print("Generating code for iteration $($)");
 generate_function($);
 }
 }</code></pre>
@@ -764,7 +764,7 @@ type_info: TypeInfo = @type_info(MyStruct);
 </p>
 <p>
 till(type_info.fields.length - 1, 1) {
-stdout << "Field: ${type_info.fields[$].name}, Type: ${type_info.fields[$].type}";
+print("Field: &{type_info.fields[$].name}, Type: &{type_info.fields[$].type}");
 }
 }</code></pre>
 </p>
@@ -916,8 +916,8 @@ if !is_power_of_2(BUFFER_SIZE) {
 <h2>Debugging Comptime</h2>
 <pre><code>comptime {
 <p>
-stdout << "SIZE = $SIZE";
-stdout << "ALIGNMENT = $ALIGNMENT";
+print("SIZE = $SIZE");
+print("ALIGNMENT = $ALIGNMENT");
 </p>
 <p>
 @dump_type(MyStruct);

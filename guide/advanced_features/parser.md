@@ -40,42 +40,42 @@ struct Parser {
 }
 
 impl Parser {
-    pub fn new(tokens: []Token) -> Parser {
+    pub func:new = Parser([]Token:tokens) {
         return Parser {
             tokens: tokens,
             current: 0,
         };
     }
     
-    pub fn parse() -> Result<AST> {
-        return self.parse_program();
+    pub func:parse = Result<AST>() {
+        pass(self.parse_program());
     }
     
-    fn peek() -> Token {
-        return self.tokens[self.current];
+    func:peek = Token() {
+        pass(self.tokens[self.current]);
     }
     
-    fn advance() -> Token {
+    func:advance = Token() {
         token: Token = self.peek();
         if !self.is_at_end() {
             self.current += 1;
         }
-        return token;
+        pass(token);
     }
     
-    fn is_at_end() -> bool {
-        return self.peek().type == TokenType.Eof;
+    func:is_at_end = bool() {
+        pass(self.peek().type == TokenType.Eof);
     }
     
-    fn check(type: TokenType) -> bool {
-        return self.peek().type == type;
+    func:check = bool(TokenType:type) {
+        pass(self.peek().type == type);
     }
     
-    fn expect(type: TokenType, message: string) -> Result<Token> {
+    func:expect = Result<Token>(TokenType:type, string:message) {
         if self.check(type) {
-            return Ok(self.advance());
+            pass(Ok(self.advance()));
         }
-        return Err(message);
+        pass(Err(message));
     }
 }
 ```
@@ -87,7 +87,7 @@ impl Parser {
 ```aria
 impl Parser {
     // program → declaration* EOF
-    fn parse_program() -> Result<Program> {
+    func:parse_program = Result<Program>() {
         declarations: []Declaration = [];
         
         while !self.is_at_end() {
@@ -95,20 +95,20 @@ impl Parser {
             declarations.push(decl);
         }
         
-        return Ok(Program { declarations });
+        pass(Ok(Program { declarations }));
     }
     
     // declaration → function_decl | var_decl | struct_decl
-    fn parse_declaration() -> Result<Declaration> {
+    func:parse_declaration = Result<Declaration>() {
         if self.check(TokenType.Fn) {
-            return self.parse_function();
+            pass(self.parse_function());
         } else if self.check(TokenType.Struct) {
-            return self.parse_struct();
+            pass(self.parse_struct());
         } else if self.check(TokenType.Let) {
-            return self.parse_variable();
+            pass(self.parse_variable());
         }
         
-        return Err("Expected declaration");
+        pass(Err("Expected declaration"));
     }
 }
 ```
@@ -120,7 +120,7 @@ impl Parser {
 ```aria
 impl Parser {
     // fn name(params) -> return_type { body }
-    fn parse_function() -> Result<FunctionDecl> {
+    func:parse_function = Result<FunctionDecl>() {
         self.expect(TokenType.Fn, "Expected 'fn'")?;
         
         name: Token = self.expect(TokenType.Identifier, "Expected function name")?;
@@ -145,7 +145,7 @@ impl Parser {
         });
     }
     
-    fn parse_parameters() -> Result<[]Parameter> {
+    func:parse_parameters = Result<[]Parameter>() {
         params: []Parameter = [];
         
         if !self.check(TokenType.RParen) {
@@ -166,7 +166,7 @@ impl Parser {
             }
         }
         
-        return Ok(params);
+        pass(Ok(params));
     }
 }
 ```
@@ -178,7 +178,7 @@ impl Parser {
 ```aria
 impl Parser {
     // Operator precedence table
-    fn get_precedence(op: TokenType) -> i32 {
+    func:get_precedence = int32(TokenType:op) {
         match op {
             TokenType.Or => return 1,
             TokenType.And => return 2,
@@ -190,11 +190,11 @@ impl Parser {
         }
     }
     
-    fn parse_expression() -> Result<Expression> {
-        return self.parse_binary_expression(0);
+    func:parse_expression = Result<Expression>() {
+        pass(self.parse_binary_expression(0));
     }
     
-    fn parse_binary_expression(min_precedence: i32) -> Result<Expression> {
+    func:parse_binary_expression = Result<Expression>(int32:min_precedence) {
         left: Expression = self.parse_primary()?;
         
         while self.get_precedence(self.peek().type) >= min_precedence {
@@ -209,24 +209,24 @@ impl Parser {
             };
         }
         
-        return Ok(left);
+        pass(Ok(left));
     }
     
-    fn parse_primary() -> Result<Expression> {
+    func:parse_primary = Result<Expression>() {
         if self.check(TokenType.Integer) {
             value: Token = self.advance();
-            return Ok(IntegerLiteral { value: value.value });
+            pass(Ok(IntegerLiteral { value: value.value }));
         } else if self.check(TokenType.Identifier) {
             name: Token = self.advance();
-            return Ok(Variable { name: name.lexeme });
+            pass(Ok(Variable { name: name.lexeme }));
         } else if self.check(TokenType.LParen) {
             self.advance();
             expr: Expression = self.parse_expression()?;
             self.expect(TokenType.RParen, "Expected ')'")?;
-            return Ok(expr);
+            pass(Ok(expr));
         }
         
-        return Err("Expected expression");
+        pass(Err("Expected expression"));
     }
 }
 ```
@@ -237,21 +237,21 @@ impl Parser {
 
 ```aria
 impl Parser {
-    fn parse_statement() -> Result<Statement> {
+    func:parse_statement = Result<Statement>() {
         if self.check(TokenType.Return) {
-            return self.parse_return();
+            pass(self.parse_return());
         } else if self.check(TokenType.If) {
-            return self.parse_if();
+            pass(self.parse_if());
         } else if self.check(TokenType.While) {
-            return self.parse_while();
+            pass(self.parse_while());
         } else if self.check(TokenType.LBrace) {
-            return self.parse_block();
+            pass(self.parse_block());
         } else {
-            return self.parse_expression_statement();
+            pass(self.parse_expression_statement());
         }
     }
     
-    fn parse_return() -> Result<ReturnStatement> {
+    func:parse_return = Result<ReturnStatement>() {
         self.expect(TokenType.Return, "Expected 'return'")?;
         
         value: ?Expression = None;
@@ -261,10 +261,10 @@ impl Parser {
         
         self.expect(TokenType.Semicolon, "Expected ';'")?;
         
-        return Ok(ReturnStatement { value });
+        pass(Ok(ReturnStatement { value }));
     }
     
-    fn parse_if() -> Result<IfStatement> {
+    func:parse_if = Result<IfStatement>() {
         self.expect(TokenType.If, "Expected 'if'")?;
         
         condition: Expression = self.parse_expression()?;
@@ -291,13 +291,13 @@ impl Parser {
 
 ```aria
 impl Parser {
-    fn synchronize() {
+    func:synchronize = NIL() {
         // Skip tokens until we find a statement boundary
         self.advance();
         
         while !self.is_at_end() {
             if self.peek(-1).type == TokenType.Semicolon {
-                return;
+                pass(NIL);
             }
             
             match self.peek().type {
@@ -308,13 +308,13 @@ impl Parser {
         }
     }
     
-    fn parse_declaration_with_recovery() -> ?Declaration {
+    func:parse_declaration_with_recovery = ?Declaration() {
         match self.parse_declaration() {
             Ok(decl) => return Some(decl),
             Err(e) => {
                 self.report_error(e);
                 self.synchronize();
-                return None;
+                pass(None);
             }
         }
     }
@@ -328,23 +328,23 @@ impl Parser {
 ### ✅ DO: Provide Clear Error Messages
 
 ```aria
-fn expect(type: TokenType, message: string) -> Result<Token> {
+func:expect = Result<Token>(TokenType:type, string:message) {
     if !self.check(type) {
         token: Token = self.peek();
         return Err(
-            "Parse error at ${token.line}:${token.column}\n" ++
-            "  $message\n" ++
-            "  Found: ${token.lexeme}"
+            "Parse error at &{token.line}:&{token.column}\n" ++
+            `  &{message}\n` ++
+            "  Found: &{token.lexeme}"
         );
     }
-    return Ok(self.advance());
+    pass(Ok(self.advance()));
 }
 ```
 
 ### ✅ DO: Implement Error Recovery
 
 ```aria
-fn parse_program() -> Result<Program> {
+func:parse_program = Result<Program>() {
     declarations: []Declaration = [];
     errors: []string = [];
     
@@ -359,10 +359,10 @@ fn parse_program() -> Result<Program> {
     }
     
     if errors.len() > 0 {
-        return Err(errors.join("\n"));
+        pass(Err(errors.join("\n")));
     }
     
-    return Ok(Program { declarations });
+    pass(Ok(Program { declarations }));
 }
 ```
 

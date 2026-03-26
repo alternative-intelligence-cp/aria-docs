@@ -28,9 +28,9 @@ The ampersand `&` has two meanings in Aria:
 ```aria
 // Create immutable reference
 value: i32 = 42;
-ref: &i32 = &value;
+ref: $i32 = $value;
 
-stdout << *ref;  // 42
+print(*ref);  // 42
 
 // Can't modify through immutable reference
 *ref = 99;  // ❌ Error!
@@ -41,12 +41,12 @@ stdout << *ref;  // 42
 ## Function Parameters
 
 ```aria
-fn print_value(x: &i32) {
-    stdout << *x;
+func:print_value = NIL(int32->:x) {
+    print(*x);
 }
 
 value: i32 = 42;
-print_value(&value);  // Pass by reference
+print_value($value);  // Pass by reference
 ```
 
 ---
@@ -56,12 +56,12 @@ print_value(&value);  // Pass by reference
 ```aria
 data: i32 = 100;
 
-ref1: &i32 = &data;
-ref2: &i32 = &data;
-ref3: &i32 = &data;
+ref1: $i32 = $data;
+ref2: $i32 = $data;
+ref3: $i32 = $data;
 
 // All valid - multiple immutable borrows allowed
-stdout << *ref1 << *ref2 << *ref3;
+print(*ref1 + *ref2 + *ref3);
 ```
 
 ---
@@ -71,7 +71,7 @@ stdout << *ref1 << *ref2 << *ref3;
 ```aria
 // Get raw memory address
 value: i32 = 42;
-ptr: *i32 = &value;
+ptr: *i32 = $value;
 
 // ptr is a raw pointer
 *ptr = 99;  // Modifies value
@@ -84,12 +84,12 @@ ptr: *i32 = &value;
 ```aria
 // OK: Multiple immutable borrows
 x: i32 = 42;
-a: &i32 = &x;
-b: &i32 = &x;
+a: $i32 = $x;
+b: $i32 = $x;
 
 // Error: Can't mix immutable and mutable borrows
 x: i32 = 42;
-r: &i32 = &x;
+r: $i32 = $x;
 w: $i32 = $x;  // ❌ Error!
 ```
 
@@ -100,8 +100,8 @@ w: $i32 = $x;  // ❌ Error!
 ### ✅ DO: Use for Read-Only Access
 
 ```aria
-fn calculate(data: &Data) -> i32 {
-    return data.field1 + data.field2;
+func:calculate = int32(Data->:data) {
+    pass(data.field1 + data.field2);
 }
 ```
 
@@ -109,12 +109,12 @@ fn calculate(data: &Data) -> i32 {
 
 ```aria
 // Efficient - no copy
-fn process(big_data: &LargeStruct) {
+func:process = NIL(LargeStruct->:big_data) {
     ...
 }
 
 // Inefficient - copies entire struct
-fn process(big_data: LargeStruct) {
+func:process = NIL(LargeStruct:big_data) {
     ...
 }
 ```
@@ -123,9 +123,9 @@ fn process(big_data: LargeStruct) {
 
 ```aria
 // Wrong: Dangling reference
-fn bad() -> &i32 {
+func:bad = int32->() {
     value: i32 = 42;
-    return &value;  // ❌ value destroyed!
+    pass($value);  // ❌ value destroyed!
 }
 ```
 
@@ -135,10 +135,10 @@ fn bad() -> &i32 {
 
 ```aria
 // References auto-dereference in most contexts
-ref: &i32 = &42;
+ref: $i32 = $42;
 
 when ref == 42 then  // Auto-dereference
-    stdout << "Equal";
+    print("Equal");
 end
 
 // Manual dereference when needed

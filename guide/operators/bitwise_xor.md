@@ -39,7 +39,7 @@ a: i32 = 0b1100;  // 12
 b: i32 = 0b1010;  // 10
 Result: i32 = a ^ b;  // 0b0110 = 6
 
-stdout << result;  // 6
+print(result);  // 6
 ```
 
 ---
@@ -84,14 +84,14 @@ diff: i32 = old ^ new;  // 0b0110 (bits that changed)
 
 ```aria
 // Simple XOR cipher
-fn xor_encrypt(data: []byte, key: byte) -> []byte {
+func:xor_encrypt = []byte([]byte:data, byte:key) {
     Result: []byte = aria_alloc_buffer(data.length());
     
     till(data.length() - 1, 1) {
         result[$] = data[$] ^ key;
     }
     
-    return result;
+    pass(result);
 }
 
 // XOR again to decrypt
@@ -105,14 +105,14 @@ decrypted := xor_encrypt(encrypted, 0x5A);  // Original message
 
 ```aria
 // All elements appear twice except one
-fn find_unique(arr: []i32) -> i32 {
+func:find_unique = int32([]i32:arr) {
     Result: i32 = 0;
     
     till(arr.length - 1, 1) {
         result ^= arr[$];  // Pairs cancel out
     }
     
-    return result;  // Only unique remains
+    pass(result);  // Only unique remains
 }
 
 nums: []i32 = [1, 2, 3, 2, 1];
@@ -188,7 +188,7 @@ flags: i32 = 0b1100;
 toggle: i32 = 0b0110;
 
 flags ^= toggle;  // flags = flags ^ toggle
-stdout << flags;  // 0b1010
+print(flags);  // 0b1010
 ```
 
 ---

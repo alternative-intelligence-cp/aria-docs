@@ -29,12 +29,12 @@ ptr: *i32 = nil;  // ✅ Preferred
 ```aria
 // Check for NULL
 when ptr == NULL then
-    stdout << "Null pointer";
+    print("Null pointer");
 end
 
 // Better - use nil
 when ptr == nil then
-    stdout << "Null pointer";
+    print("Null pointer");
 end
 ```
 

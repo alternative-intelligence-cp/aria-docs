@@ -51,7 +51,7 @@ Similarly, in programs:
 **Interactive input from humans**
 
 ```aria
-stdout << "Enter your name: ";
+print("Enter your name: ");
 name: string = stdin.read_line();
 ```
 
@@ -59,21 +59,21 @@ name: string = stdin.read_line();
 **Normal output for humans**
 
 ```aria
-stdout << "Processing complete: " << count << " items\n";
+print("Processing complete: " + count + " items\n");
 ```
 
 ### stderr (FD 2)
 **Error messages for humans**
 
 ```aria
-stderr << "ERROR: File not found\n";
+stderr_write("ERROR: File not found\n");
 ```
 
 ### stddbg (FD 6)
 **Debug/diagnostic output for developers**
 
 ```aria
-stddbg << "Entering function process(), state=" << state;
+stddbg_write("Entering function process(), state=" + state);
 ```
 
 ---
@@ -97,30 +97,30 @@ Use control plane streams when:
 ## Example: Control Plane in Action
 
 ```aria
-fn main() {
-    stddbg << "Program starting";
+func:main = NIL() {
+    stddbg_write("Program starting");
     
     // Interactive prompt (control plane)
-    stdout << "Enter filename: ";
+    print("Enter filename: ");
     filename: string = stdin.read_line();
     
-    stddbg << "User entered: " << filename;
+    stddbg_write("User entered: " + filename);
     
     // Validation
     when !file_exists(filename) then
-        stderr << "ERROR: File not found: " << filename << "\n";
-        return 1;
+        stderr_write("ERROR: File not found: " + filename + "\n");
+        pass(1);
     end
     
     // Processing
-    stdout << "Processing file...\n";
+    print("Processing file...\n");
     Result: Result = process_file(filename);
     
     // Results (control plane - human-readable)
-    stdout << "Complete! Processed " << result.lines << " lines\n";
+    print("Complete! Processed " + result.lines + " lines\n");
     
-    stddbg << "Program exiting";
-    return 0;
+    stddbg_write("Program exiting");
+    pass(0);
 }
 ```
 

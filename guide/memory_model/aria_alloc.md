@@ -9,7 +9,7 @@
 ## Signature
 
 ```aria
-fn aria_alloc(size: i32) -> *byte
+func:aria_alloc = *byte(int32:size)
 ```
 
 ---

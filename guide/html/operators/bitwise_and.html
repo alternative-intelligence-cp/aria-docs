@@ -672,7 +672,7 @@ b: i32 = 0b1010;  // 10
 Result: i32 = a & b;  // 0b1000 = 8
 </p>
 <p>
-stdout << result;  // 8</code></pre>
+print(result);  // 8</code></pre>
 </p>
 <hr>
 <h2>Common Uses</h2>
@@ -690,7 +690,7 @@ bit2: i32 = 0b0010;
 </p>
 <p>
 when (flags & bit2) != 0 then
-stdout << "Bit 2 is set";
+print("Bit 2 is set");
 end</code></pre>
 </p>
 <h3>Mask Bits</h3>
@@ -708,8 +708,8 @@ return n > 0 and (n & (n - 1)) == 0;
 }
 </p>
 <p>
-stdout << is_power_of_two(8);   // true
-stdout << is_power_of_two(10);  // false</code></pre>
+print(is_power_of_two(8));   // true
+print(is_power_of_two(10));  // false</code></pre>
 </p>
 <hr>
 <h2>Even/Odd Check</h2>
@@ -719,8 +719,8 @@ return (n & 1) == 0;
 }
 </p>
 <p>
-stdout << is_even(4);  // true
-stdout << is_even(7);  // false</code></pre>
+print(is_even(4));  // true
+print(is_even(7));  // false</code></pre>
 </p>
 <hr>
 <h2>Best Practices</h2>
@@ -735,7 +735,7 @@ permissions: i32 = READ | WRITE;
 </p>
 <p>
 when (permissions & READ) != 0 then
-stdout << "Can read";
+print("Can read");
 end</code></pre>
 </p>
 <h3>✅ DO: Use Hex for Clarity</h3>
@@ -764,7 +764,7 @@ mask: i32 = 0b0110;
 </p>
 <p>
 flags &= mask;  // flags = flags & mask
-stdout << flags;  // 0b0110</code></pre>
+print(flags);  // 0b0110</code></pre>
 </p>
 <hr>
 <h2>Related</h2>

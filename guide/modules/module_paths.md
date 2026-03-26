@@ -43,9 +43,9 @@ use self.connection.connect; // Current module's 'connection'
 
 ```aria
 mod database {
-    pub fn connect() { }
+    pub func:connect = NIL() { }
     
-    pub fn init() {
+    pub func:init = NIL() {
         self.connect();  // Same as just connect()
     }
 }
@@ -55,10 +55,10 @@ mod database {
 
 ```aria
 mod parent {
-    pub fn parent_fn() { }
+    pub func:parent_fn = NIL() { }
     
     mod child {
-        pub fn use_parent() {
+        pub func:use_parent = NIL() {
             super.parent_fn();  // Call parent's function
         }
     }
@@ -107,8 +107,8 @@ app/
 // services/user_service.aria
 use super.models.user.User;  // Go up to 'app', then to 'models.user'
 
-pub fn create_user(name: string) -> User {
-    return User.new(name);
+pub func:create_user = User(string:name) {
+    pass(User.new(name));
 }
 ```
 
@@ -123,7 +123,7 @@ result2: i32 = std.math.sqrt(16);
 result3: i32 = std.math.pow(2, 10);
 
 // Import and shorten
-import std.math;
+use std.math;
 result1: i32 = math.abs(-5);
 result2: i32 = math.sqrt(16);
 result3: i32 = math.pow(2, 10);
@@ -144,9 +144,9 @@ result3: i32 = pow(2, 10);
 ### Standard Library
 
 ```aria
-import std.io;          // I/O operations
-import std.collections; // Data structures
-import std.http;        // HTTP client
+use std.io;          // I/O operations
+use std.collections; // Data structures
+use std.http;        // HTTP client
 ```
 
 ### Internal Modules
@@ -164,7 +164,7 @@ mod parent {
     pub const CONFIG: Config = load_config();
     
     mod child {
-        pub fn use_config() {
+        pub func:use_config = NIL() {
             config: Config = super.CONFIG;
         }
     }

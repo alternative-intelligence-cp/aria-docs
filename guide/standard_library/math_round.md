@@ -15,7 +15,7 @@
 ## Syntax
 
 ```aria
-import std.math;
+use std.math;
 
 rounded: i32 = math.round(4.7);  // 5
 ```
@@ -67,9 +67,9 @@ math.trunc(-4.9);  // -4 (toward zero)
 ### Round to Decimal Places
 
 ```aria
-fn round_to_places(value: flt64, places: i32) -> flt64 {
+func:round_to_places = flt64(flt64:value, int32:places) {
     multiplier: flt64 = math.pow(10.0, places);
-    return math.round(value * multiplier) / multiplier;
+    pass(math.round(value * multiplier) / multiplier);
 }
 
 price: flt64 = round_to_places(12.3456, 2);  // 12.35
@@ -78,8 +78,8 @@ price: flt64 = round_to_places(12.3456, 2);  // 12.35
 ### Round Currency
 
 ```aria
-fn round_currency(amount: flt64) -> flt64 {
-    return math.round(amount * 100.0) / 100.0;
+func:round_currency = flt64(flt64:amount) {
+    pass(math.round(amount * 100.0) / 100.0);
 }
 
 total: flt64 = round_currency(19.999);  // 20.00
@@ -107,7 +107,7 @@ math.trunc(value);  // 4  - Toward zero
 ```aria
 Result: flt64 = 12.3456789;
 display: flt64 = round_to_places(result, 2);
-stdout << "$display";  // "12.35"
+print(`&{display}`);  // "12.35"
 ```
 
 ### ❌ DON'T: Use for Precise Calculations

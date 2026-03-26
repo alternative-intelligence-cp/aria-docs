@@ -722,7 +722,7 @@ data: string = await get_data();  // OK
 <p>
 async fn main() {
 user: User = await fetch_user(123);
-stdout << "User: " << user.name << "\n";
+print("User: " << user.name + "\n");
 }</code></pre>
 </p>
 <hr>
@@ -952,7 +952,7 @@ return result;
 end
 </p>
 <p>
-stddbg << "Retry " << attempt << "/" << max_attempts << "\n";
+stddbg_write("Retry " << attempt << "/" << max_attempts + "\n");
 }
 return ERR;
 }</code></pre>

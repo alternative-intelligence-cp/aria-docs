@@ -660,20 +660,20 @@ The not equal operator <code>!=</code> tests if two values are <strong>not</stro
 <pre><code>// Different values
 <p>
 when 5 != 3 then
-stdout << "Not equal";  // Prints
+print("Not equal");  // Prints
 end
 </p>
 <p>
 // Same values
 when 5 != 5 then
-stdout << "Won't print";
+print("Won't print");
 end
 </p>
 <p>
 // Variables
 status: string = "pending";
 when status != "complete" then
-stdout << "Still processing";
+print("Still processing");
 end</code></pre>
 </p>
 <hr>
@@ -681,9 +681,9 @@ end</code></pre>
 <pre><code>value: i32? = get_optional();
 <p>
 when value != nil then
-stdout << "Has value: " << value;
+print("Has value: " + value);
 else
-stdout << "No value";
+print("No value");
 end</code></pre>
 </p>
 <hr>
@@ -711,7 +711,7 @@ y: i32 = 100;
 </p>
 <p>
 when x != y then  // OK
-stdout << "Different";
+print("Different");
 end
 </p>
 <p>

@@ -8,6 +8,23 @@ a.out*
 *.3
 *.5
 *.7
+*.ll
+*.s
+*.bak
+*.backup
+
+# Compiled example binaries (extensionless ELF files)
+examples/alife
+examples/diagnostics_demo
+examples/ttt_ffi
+examples/ttt_ffi_norpath
+examples/sieve/sieve
+examples/merge_sort/merge_sort
+examples/ring_buffer/ring_buffer
+examples/philosophers/philosophers
+examples/json_parser/json_tokenizer
+examples/transformer/transformer_experiment
+examples/http_server/http_server
 
 # Editor
 .vscode/

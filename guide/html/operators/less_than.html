@@ -660,19 +660,19 @@ The less than operator <code><</code> tests if the left value is strictly less t
 <pre><code>// Numbers
 <p>
 when 5 < 10 then
-stdout << "5 is less";
+print("5 is less");
 end
 </p>
 <p>
 when 10 < 5 then
-stdout << "Won't print";
+print("Won't print");
 end
 </p>
 <p>
 // Variables
 age: i32 = 15;
 when age < 18 then
-stdout << "Minor";
+print("Minor");
 end</code></pre>
 </p>
 <hr>
@@ -680,13 +680,13 @@ end</code></pre>
 <pre><code>// Strict: not equal
 <p>
 when 5 < 5 then
-stdout << "Won't print";  // false
+print("Won't print");  // false
 end
 </p>
 <p>
 // Use <= for less or equal
 when 5 <= 5 then
-stdout << "Will print";  // true
+print("Will print");  // true
 end</code></pre>
 </p>
 <hr>
@@ -694,18 +694,18 @@ end</code></pre>
 <pre><code>// Lexicographic comparison
 <p>
 when "apple" < "banana" then
-stdout << "a comes before b";
+print("a comes before b");
 end
 </p>
 <p>
 when "cat" < "dog" then
-stdout << "c comes before d";
+print("c comes before d");
 end
 </p>
 <p>
 // Case sensitive
 when "a" < "Z" then  // false ('a' = 97, 'Z' = 90)
-stdout << "Won't print";
+print("Won't print");
 end</code></pre>
 </p>
 <hr>
@@ -713,13 +713,13 @@ end</code></pre>
 <pre><code>// Check if in range
 <p>
 when x < max and x > min then
-stdout << "In range";
+print("In range");
 end
 </p>
 <p>
 // Chained (if supported)
 when min < x < max then
-stdout << "In range";
+print("In range");
 end</code></pre>
 </p>
 <hr>

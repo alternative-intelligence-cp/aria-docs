@@ -20,7 +20,7 @@ enum Color {
     Blue,
 }
 
-fn describe(color: Color) -> string {
+func:describe = string(Color:color) {
     match color {
         Color.Red => return "red",
         Color.Green => return "green",
@@ -34,7 +34,7 @@ fn describe(color: Color) -> string {
 ## Match with Values
 
 ```aria
-fn describe_number(n: i32) -> string {
+func:describe_number = string(int32:n) {
     match n {
         0 => return "zero",
         1 => return "one",
@@ -49,7 +49,7 @@ fn describe_number(n: i32) -> string {
 ## Range Patterns
 
 ```aria
-fn categorize_age(age: i32) -> string {
+func:categorize_age = string(int32:age) {
     match age {
         0..=12 => return "child",
         13..=19 => return "teenager",
@@ -65,13 +65,13 @@ fn categorize_age(age: i32) -> string {
 ## Destructuring Tuples
 
 ```aria
-fn process_point(point: (i32, i32)) -> string {
+func:process_point = NIL((i32, i32:point)) -> string {
     match point {
         (0, 0) => return "origin",
-        (x, 0) => return "on x-axis at $x",
-        (0, y) => return "on y-axis at $y",
+        (x, 0) => return `on x-axis at &{x}`,
+        (0, y) => return `on y-axis at &{y}`,
         (x, y) if x == y => return "on diagonal",
-        (x, y) => return "at ($x, $y)",
+        (x, y) => return `at (&{x}, &{y})`,
     }
 }
 ```
@@ -86,12 +86,12 @@ struct Point {
     y: i32,
 }
 
-fn describe_point(p: Point) -> string {
+func:describe_point = string(Point:p) {
     match p {
         Point { x: 0, y: 0 } => return "origin",
         Point { x, y: 0 } => return "on x-axis",
         Point { x: 0, y } => return "on y-axis",
-        Point { x, y } => return "point at ($x, $y)",
+        Point { x, y } => return `point at (&{x}, &{y})`,
     }
 }
 ```
@@ -107,7 +107,7 @@ enum Shape {
     Point(i32, i32),
 }
 
-fn area(shape: Shape) -> f64 {
+func:area = flt64(Shape:shape) {
     match shape {
         Shape.Circle(r) => return 3.14159 * r * r,
         Shape.Rectangle(w, h) => return w * h,
@@ -121,7 +121,7 @@ fn area(shape: Shape) -> f64 {
 ## Guards
 
 ```aria
-fn classify_number(n: i32) -> string {
+func:classify_number = string(int32:n) {
     match n {
         x if x < 0 => return "negative",
         x if x == 0 => return "zero",
@@ -137,18 +137,18 @@ fn classify_number(n: i32) -> string {
 ## Option Matching
 
 ```aria
-fn get_default(opt: ?i32, default: i32) -> i32 {
+func:get_default = int32(?i32:opt, int32:default) {
     match opt {
         Some(value) => return value,
         None => return default,
     }
 }
 
-fn process_optional(opt: ?string) {
+func:process_optional = NIL(?string:opt) {
     match opt {
-        Some(s) if s.len() > 0 => stdout << s,
-        Some(_) => stdout << "empty string",
-        None => stdout << "no value",
+        Some(s) if s.len() > 0 => print(s),
+        Some(_) => print("empty string"),
+        None => print("no value"),
     }
 }
 ```
@@ -158,19 +158,19 @@ fn process_optional(opt: ?string) {
 ## Result Matching
 
 ```aria
-fn handle_result(Result: Result<i32>) {
+func:handle_result = NIL(Result<int32>:Result) {
     match result {
-        Ok(value) => stdout << "Success: $value",
-        Err(error) => stderr << "Error: $error",
+        Ok(value) => print(`Success: &{value}`),
+        Err(error) => stderr_write(`Error: &{error}`),
     }
 }
 
-fn process_with_recovery(Result: Result<Data>) -> Data {
+func:process_with_recovery = Data(Result<Data>:Result) {
     match result {
         Ok(data) => return data,
         Err(NetworkError) => return fetch_from_cache(),
         Err(ParseError) => return Data.default(),
-        Err(e) => panic("Unexpected error: $e"),
+        Err(e) => panic(`Unexpected error: &{e}`),
     }
 }
 ```
@@ -180,16 +180,16 @@ fn process_with_recovery(Result: Result<Data>) -> Data {
 ## Array/Slice Patterns
 
 ```aria
-fn process_list(items: []i32) {
+func:process_list = NIL([]i32:items) {
     match items {
-        [] => stdout << "empty",
-        [x] => stdout << "one item: $x",
-        [x, y] => stdout << "two items: $x, $y",
+        [] => print("empty"),
+        [x] => print(`one item: &{x}`),
+        [x, y] => print(`two items: &{x}, &{y}`),
         [first, ...rest] => {
-            stdout << "first: $first";
-            stdout << "rest: $rest";
+            print(`first: &{first}`);
+            print(`rest: &{rest}`);
         }
-        _ => stdout << "many items",
+        _ => print("many items"),
     }
 }
 ```
@@ -199,12 +199,12 @@ fn process_list(items: []i32) {
 ## Wildcard Patterns
 
 ```aria
-fn process_tuple(t: (i32, string, bool)) {
+func:process_tuple = NIL((i32, string, bool:t)) {
     match t {
-        (0, _, _) => stdout << "first is zero",
-        (_, "hello", _) => stdout << "second is hello",
-        (_, _, true) => stdout << "third is true",
-        _ => stdout << "no match",
+        (0, _, _) => print("first is zero"),
+        (_, "hello", _) => print("second is hello"),
+        (_, _, true) => print("third is true"),
+        _ => print("no match"),
     }
 }
 ```
@@ -216,7 +216,7 @@ fn process_tuple(t: (i32, string, bool)) {
 ### Error Handling
 
 ```aria
-fn safe_divide(a: f64, b: f64) -> Result<f64> {
+func:safe_divide = Result<flt64>(flt64:a, flt64:b) {
     match b {
         0.0 => return Err("Division by zero"),
         b if b.is_nan() => return Err("Invalid divisor"),
@@ -237,7 +237,7 @@ enum State {
     Done,
 }
 
-fn transition(current: State, event: Event) -> State {
+func:transition = State(State:current, Event:event) {
     match (current, event) {
         (State.Idle, Event.Start) => return State.Running(0),
         (State.Running(n), Event.Pause) => return State.Paused(n),
@@ -262,15 +262,15 @@ enum Command {
     Delete(string),
 }
 
-fn execute(cmd: Command, state: *State) {
+func:execute = NIL(Command:cmd, *State:state) {
     match cmd {
         Command.Quit => exit(0),
         Command.Help => print_help(),
         Command.Set(key, value) => state.insert(key, value),
         Command.Get(key) => {
             match state.get(key) {
-                Some(value) => stdout << value,
-                None => stderr << "Key not found",
+                Some(value) => print(value),
+                None => stderr_write("Key not found"),
             }
         }
         Command.Delete(key) => state.remove(key),
@@ -292,13 +292,13 @@ enum Json {
     Object(HashMap<string, Json>),
 }
 
-fn stringify(json: Json) -> string {
+func:stringify = string(Json:json) {
     match json {
         Json.Null => return "null",
         Json.Bool(true) => return "true",
         Json.Bool(false) => return "false",
-        Json.Number(n) => return "$n",
-        Json.String(s) => return "\"$s\"",
+        Json.Number(n) => return `&{n}`,
+        Json.String(s) => return `\"&{s}\"`,
         Json.Array(items) => {
             // Handle array
         }
@@ -314,7 +314,7 @@ fn stringify(json: Json) -> string {
 ## Multi-Pattern Match
 
 ```aria
-fn is_vowel(c: char) -> bool {
+func:is_vowel = bool(char:c) {
     match c {
         'a' | 'e' | 'i' | 'o' | 'u' => return true,
         'A' | 'E' | 'I' | 'O' | 'U' => return true,
@@ -322,7 +322,7 @@ fn is_vowel(c: char) -> bool {
     }
 }
 
-fn classify_char(c: char) -> string {
+func:classify_char = string(char:c) {
     match c {
         'a'..'z' | 'A'..'Z' => return "letter",
         '0'..'9' => return "digit",
@@ -339,7 +339,7 @@ fn classify_char(c: char) -> string {
 ### ✅ DO: Handle All Cases
 
 ```aria
-fn safe_match(opt: ?i32) -> i32 {
+func:safe_match = int32(?i32:opt) {
     match opt {
         Some(value) => return value,
         None => return 0,  // ✅ All cases handled
@@ -350,7 +350,7 @@ fn safe_match(opt: ?i32) -> i32 {
 ### ✅ DO: Use Guards for Complex Conditions
 
 ```aria
-fn validate_age(age: i32) -> Result<i32> {
+func:validate_age = Result<int32>(int32:age) {
     match age {
         n if n < 0 => return Err("Age cannot be negative"),
         n if n > 150 => return Err("Age too high"),
@@ -368,13 +368,13 @@ struct User {
     email: string,
 }
 
-fn greet(user: User) {
+func:greet = NIL(User:user) {
     match user {
         User { name, age, .. } if age < 18 => {
-            stdout << "Hi $name! You're under 18.";
+            print(`Hi &{name}! You're under 18.`);
         }
         User { name, .. } => {
-            stdout << "Hello $name!";
+            print(`Hello &{name}!`);
         }
     }
 }
@@ -389,7 +389,7 @@ enum Status {
     Pending,
 }
 
-fn process(status: Status) {
+func:process = NIL(Status:status) {
     match status {
         Status.Active => handle_active(),
         Status.Inactive => handle_inactive(),
@@ -398,7 +398,7 @@ fn process(status: Status) {
 }
 
 // ✅ Fix: handle all cases or use _
-fn process_fixed(status: Status) {
+func:process_fixed = NIL(Status:status) {
     match status {
         Status.Active => handle_active(),
         Status.Inactive => handle_inactive(),

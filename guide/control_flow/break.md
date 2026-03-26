@@ -33,7 +33,7 @@ while count < 100 {
     if count == 5 {
         break;  // Stop at 5
     }
-    stdout << count << " ";
+    print(count + " ");
     count = count + 1;
 }
 // Output: 0 1 2 3 4
@@ -50,7 +50,7 @@ till(numbers.length - 1, 1) {
     if numbers[$] > 5 {
         break;  // Stop when we hit 6
     }
-    stdout << numbers[$] << " ";
+    print(numbers[$] + " ");
 }
 // Output: 1 2 3 4 5
 ```
@@ -86,7 +86,7 @@ till(names.length - 1, 1) {
     }
 }
 
-stdout << "Found: " << (found ?? "none") << "\n";
+print("Found: " + (found ?? "none") + "\n");
 ```
 
 ---
@@ -103,9 +103,9 @@ till(4, 1) {
         if j == 3 {
             break;  // Only exits inner loop
         }
-        stdout << "(" << i << "," << j << ") ";
+        print("(" + i + "," + j + ") ");
     }
-    stdout << "\n";
+    print("\n");
 }
 
 // Each row stops at j=3
@@ -202,7 +202,7 @@ till(users.length - 1, 1) {
 till(files.length - 1, 1) {
     result: bool = process_file(files[$]);
     if !result {
-        stderr << "Processing failed\n";
+        stderr_write("Processing failed\n");
         break;
     }
 }

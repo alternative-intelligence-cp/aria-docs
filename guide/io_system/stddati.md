@@ -61,17 +61,17 @@ data: JsonValue = stddati.read_json();
 ```aria
 use std::json;
 
-fn main() {
+func:main = NIL() {
     // Read JSON object from stddati
     config: json::Value = stddati.read_json()?;
     
-    stddbg << "Loaded config: " << config;
+    stddbg_write("Loaded config: " + config);
     
     // Access fields
     port: u16 = config["port"].as_u16()?;
     host: string = config["host"].as_string()?;
     
-    stdout << "Starting server on " << host << ":" << port;
+    print("Starting server on " + host + ":" + port);
 }
 ```
 
@@ -86,7 +86,7 @@ echo '{"port": 8080, "host": "localhost"}' | ./program 4>&0
 ```aria
 use std::msgpack;
 
-fn main() {
+func:main = NIL() {
     // Read MessagePack from stddati
     data: msgpack::Value = stddati.read_msgpack()?;
     
@@ -100,7 +100,7 @@ fn main() {
 ```aria
 use std::json;
 
-fn main() {
+func:main = NIL() {
     // Read multiple JSON objects, one per line
     lines = stddati.lines().collect();
     till(lines.length - 1, 1) {
@@ -138,7 +138,7 @@ fn main() {
 
 ```aria
 // Extract data from database, transform, output to stddato
-fn main() {
+func:main = NIL() {
     records = stddati.read_ndjson().collect();
     till(records.length - 1, 1) {
         transformed: Record = transform(records[$]);
@@ -158,11 +158,11 @@ fn main() {
 ```aria
 use std::json;
 
-fn main() {
+func:main = NIL() {
     // Read API request from stddati
     request: json::Value = stddati.read_json()?;
     
-    stddbg << "Processing API request: " << request["endpoint"];
+    stddbg_write("Processing API request: " + request["endpoint"]);
     
     // Process
     response: json::Value = handle_api_request(request);
@@ -177,11 +177,11 @@ fn main() {
 ```aria
 use std::toml;
 
-fn main() {
+func:main = NIL() {
     // Load config from stddati (TOML format)
     config: Config = stddati.read_toml()?;
     
-    stddbg << "Loaded config: " << config;
+    stddbg_write("Loaded config: " + config);
     
     // Use config to initialize application
     app: Application = Application::new(config);
@@ -197,11 +197,11 @@ fn main() {
 ### 4. Batch Processing
 
 ```aria
-fn main() {
+func:main = NIL() {
     // Read batch of items from stddati
     items: []Item = stddati.read_json()?;
     
-    stddbg << "Processing batch of " << items.len() << " items";
+    stddbg_write("Processing batch of " + items.len() + " items");
     
     results: []Result = [];
     till(items.length - 1, 1) {
@@ -220,7 +220,7 @@ fn main() {
 One of Aria's superpowers: **the same program can handle both human interaction and structured data**.
 
 ```aria
-fn main() {
+func:main = NIL() {
     // Check if stddati has input
     when stddati.has_input() then
         // Data mode: Read from stddati
@@ -228,9 +228,9 @@ fn main() {
         process_data(data);
     else
         // Interactive mode: Prompt user via stdin
-        stdout << "Enter your name: ";
+        print("Enter your name: ");
         name: string = stdin.read_line();
-        stdout << "Hello, " << name << "!";
+        print("Hello, " + name + "!");
     end
 }
 ```
@@ -313,7 +313,7 @@ when stddati.has_input() then
     data: JsonValue = stddati.read_json()?;
     process(data);
 else
-    stderr << "No data input available on stddati";
+    stderr_write("No data input available on stddati");
 end
 
 // Is stddati open and valid?
@@ -336,12 +336,12 @@ Result: Result<JsonValue, IoError> = stddati.read_json();
 
 match result {
     Ok(data) => {
-        stddbg << "Loaded data: " << data;
+        stddbg_write("Loaded data: " + data);
         process(data);
     }
     Err(err) => {
-        stderr << "Failed to read JSON: " << err;
-        return ERR;
+        stderr_write("Failed to read JSON: " + err);
+        pass(ERR);
     }
 }
 ```
@@ -376,8 +376,8 @@ data: JsonValue = stddati.read_json()?;
 
 // Validate schema
 when !validate_schema(data) then
-    stderr << "Invalid data format";
-    return ERR;
+    stderr_write("Invalid data format");
+    pass(ERR);
 end
 
 process(data);
@@ -403,7 +403,7 @@ stddati << "Enter your name: ";  // Won't work (input only!)
 name: string = stddati.read_line();
 
 // RIGHT: Use stdin for human interaction
-stdout << "Enter your name: ";
+print("Enter your name: ");
 name: string = stdin.read_line();
 ```
 
@@ -497,8 +497,8 @@ cat data.json | ./process | ./transform
 ```aria
 use std::json;
 
-fn main() {
-    stddbg << "Starting log processor";
+func:main = NIL() {
+    stddbg_write("Starting log processor");
     
     // Read NDJSON logs from stddati
     lines = stddati.lines().collect();
@@ -516,11 +516,11 @@ fn main() {
             stddato.write_json(log_entry);
             
             // Also print to stdout for humans
-            stdout << "[" << timestamp << "] ERROR: " << message;
+            print("[" + timestamp + "] ERROR: " + message);
         end
     }
     
-    stddbg << "Log processing complete";
+    stddbg_write("Log processing complete");
 }
 ```
 

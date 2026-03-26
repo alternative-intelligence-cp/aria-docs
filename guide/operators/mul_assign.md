@@ -25,7 +25,7 @@ The multiply assignment operator `*=` multiplies the variable by the right opera
 ```aria
 x: i32 = 5;
 x *= 3;  // x = x * 3
-stdout << x;  // 15
+print(x);  // 15
 ```
 
 ---

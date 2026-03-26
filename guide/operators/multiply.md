@@ -63,7 +63,7 @@ Result: i32 = pass checked_mul(large, large);
 
 ```aria
 // Get value from pointer
-ptr: *i32 = &value;
+ptr: *i32 = $value;
 x: i32 = *ptr;  // Dereference
 
 // Modify through pointer
@@ -121,7 +121,7 @@ huge: i32 = pass checked_mul(big1, big2);
 ```aria
 x: i32 = 10;
 x *= 5;  // x = x * 5
-stdout << x;  // 50
+print(x);  // 50
 ```
 
 ---

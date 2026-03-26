@@ -82,12 +82,12 @@ total: f64 = amount * (1.0 + interest);
 
 ```aria
 // Mean calculation
-fn mean(values: []f64) -> f64 {
+func:mean = flt64([]f64:values) {
     sum: f64 = 0.0;
     till(values.length - 1, 1) {
         sum += values[$];
     }
-    return sum / (values.length() as f64);
+    pass(sum / (values.length() as f64));
 }
 ```
 
@@ -174,7 +174,7 @@ rounded: i32 = (pi + 0.5) as i32;  // 3
 ### Safe Division
 
 ```aria
-fn safe_divide(a: f64, b: f64) -> Result<f64> {
+func:safe_divide = Result<flt64>(flt64:a, flt64:b) {
     when b == 0.0 then
         fail("Division by zero");
     end
@@ -193,7 +193,7 @@ fn safe_divide(a: f64, b: f64) -> Result<f64> {
 
 ```aria
 // Trapezoidal rule
-fn integrate(f: fn(f64) -> f64, a: f64, b: f64, n: i32) -> f64 {
+func:integrate = f64,(fn(f64:f)a: f64, b: f64, n: i32) -> f64 {
     h: f64 = (b - a) / (n as f64);
     sum: f64 = (f(a) + f(b)) / 2.0;
     
@@ -203,7 +203,7 @@ fn integrate(f: fn(f64) -> f64, a: f64, b: f64, n: i32) -> f64 {
         sum += f(x);
     }
     
-    return sum * h;
+    pass(sum * h);
 }
 ```
 

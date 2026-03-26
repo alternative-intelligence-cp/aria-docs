@@ -69,8 +69,8 @@ y -= 1;  // Wraps to 127
 
 ```aria
 // Reading byte streams
-fn read_byte(stream: &FileStream) -> int8 {
-    return stream.read_int8();
+func:read_byte = int8(FileStream->:stream) {
+    pass(stream.read_int8());
 }
 ```
 
@@ -105,11 +105,11 @@ percentage: int8 = 85;
 ### ✅ DO: Check Range
 
 ```aria
-fn set_level(value: i32) -> int8 {
+func:set_level = int8(int32:value) {
     when value < -128 or value > 127 then
-        return ERR;
+        pass(ERR);
     end
-    return value as int8;
+    pass(value as int8);
 }
 ```
 
@@ -163,7 +163,7 @@ small: int8 = big as int8;  // Truncates! (-56)
 ### Checked Conversion
 
 ```aria
-fn to_int8(value: i32) -> Result<int8> {
+func:to_int8 = Result<int8>(int32:value) {
     when value < -128 or value > 127 then
         fail("Value out of range");
     end
@@ -179,7 +179,7 @@ fn to_int8(value: i32) -> Result<int8> {
 
 ```aria
 // Process byte data
-fn process_bytes(data: []int8) {
+func:process_bytes = NIL([]int8:data) {
     till(data.length - 1, 1) {
         when data[$] < 0 then
             handle_negative(data[$]);

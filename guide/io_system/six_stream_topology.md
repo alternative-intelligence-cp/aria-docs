@@ -131,7 +131,7 @@ print(json.dumps(results))  # Mixed with debug output!
 **Aria**:
 ```aria
 // Debug output never interferes
-stddbg << "Processing " << item;
+stddbg_write("Processing " + item);
 Result: Result = process(item);
 stddato << result;  // Clean structured output
 ```
@@ -141,19 +141,19 @@ stddato << result;  // Clean structured output
 The same program can serve **both humans and machines**:
 
 ```aria
-fn calculate_balance(account: Account) -> Balance {
+func:calculate_balance = Balance(Account:account) {
     // Debug logging (for developers)
-    stddbg << "Calculating balance for account " << account.id;
+    stddbg_write("Calculating balance for account " + account.id);
     
     balance: Balance = account.compute_balance();
     
     // Human-readable output
-    stdout << "Account " << account.id << ": $" << balance;
+    print("Account " + account.id + ": $" + balance);
     
     // Machine-readable output
     stddato << {"account_id": account.id, "balance": balance};
     
-    return balance;
+    pass(balance);
 }
 ```
 
@@ -331,7 +331,7 @@ Here's when you realize why this matters:
 7. Repeat
 
 **Aria debugging**:
-1. Add `stddbg << "..."` to find bug
+1. Add `stddbg_write("...")` to find bug
 2. Debug output goes to stddbg (separate from stdout)
 3. **Leave debug statements in code**
 4. Commit and deploy

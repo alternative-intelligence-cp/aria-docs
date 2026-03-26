@@ -32,11 +32,11 @@ add(  1  ,  2  )
 
 ```aria
 // Single line
-fn add(a: i32, b: i32) -> i32 { return a + b; }
+func:add = int32(int32:a, int32:b) { return a + b; }
 
 // Multiple lines
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 
 // Spread out
@@ -44,7 +44,7 @@ fn add(
     a: i32,
     b: i32
 ) -> i32 {
-    return a + b;
+    pass(a + b);
 }
 ```
 
@@ -260,7 +260,7 @@ fn calculate_total(
 ) -> f64 {
     subtotal: f64 = base_price * (1.0 - discount);
     tax: f64 = subtotal * tax_rate;
-    return subtotal + tax;
+    pass(subtotal + tax);
 }
 ```
 
@@ -273,7 +273,7 @@ y: i32 = 20;
 
 Result: i32 = x + y;  // Separated by blank line
 
-output: string = "Result: $result";
+output: string = `Result: &{result}`;
 ```
 
 ### ✅ DO: Align Related Items
@@ -303,13 +303,13 @@ z: i32 = 30;
 
 ```aria
 // ❌ Too much whitespace
-fn     add    (    a   :   i32   ,    b   :   i32   )    ->    i32    {
-    return     a     +     b     ;
+func:add = int32(int32:a, int32:b) {
+    pass(a     +     b     );
 }
 
 // ✅ Reasonable spacing
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 ```
 
@@ -318,15 +318,15 @@ fn add(a: i32, b: i32) -> i32 {
 ## Indentation Styles
 
 ```aria
-// K&R style (opening brace same line)
-fn example() {
+// K$R style (opening brace same line)
+func:example = NIL() {
     if condition {
         do_work();
     }
 }
 
 // Allman style (opening brace next line)
-fn example()
+func:example = NIL()
 {
     if condition
     {
@@ -334,8 +334,8 @@ fn example()
     }
 }
 
-// Recommended: K&R for Aria
-fn recommended() {
+// Recommended: K$R for Aria
+func:recommended = NIL() {
     while condition {
         process();
     }
@@ -348,7 +348,7 @@ fn recommended() {
 
 ```aria
 // Short - all on one line
-fn add(a: i32, b: i32) -> i32 { return a + b; }
+func:add = int32(int32:a, int32:b) { return a + b; }
 
 // Long - break into multiple lines
 fn complex_calculation(
@@ -357,7 +357,7 @@ fn complex_calculation(
     offset: f64,
     scale: f64,
 ) -> f64 {
-    return (base * multiplier + offset) * scale;
+    pass((base * multiplier + offset) * scale);
 }
 ```
 

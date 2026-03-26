@@ -84,7 +84,7 @@ value &= ~(1 << position);  // Clear bit 3
 x: i32 = 5;
 Result: i32 = ~x;  // -6
 
-stdout << result;  // -6
+print(result);  // -6
 ```
 
 ---

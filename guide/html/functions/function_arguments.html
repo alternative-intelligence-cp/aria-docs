@@ -652,7 +652,7 @@
 <pre><code>// Parameters: name and age
 <p>
 fn greet(name: string, age: i32) {
-stdout << "Hello, " << name << ", age " << age << "\n";
+print("Hello, " << name << ", age " << age + "\n");
 }
 </p>
 <p>
@@ -775,7 +775,7 @@ Result: i32 = sum(numbers);</code></pre>
 <pre><code>fn process(pair: (i32, string)) {
 <p>
 (num, text) = pair;
-stdout << num << ": " << text << "\n";
+print(num << ": " << text + "\n");
 }
 </p>
 <p>
@@ -797,7 +797,7 @@ y: i32
 </p>
 <p>
 fn print_point(p: Point) {
-stdout << "(" << p.x << ", " << p.y << ")\n";
+print("(" << p.x << ", " << p.y + ")\n");
 }
 </p>
 <p>
@@ -835,9 +835,9 @@ Result: i32 = apply(5, doubler);</code></pre>
 <pre><code>fn greet(name: string, title: string?) {
 <p>
 when title != nil then
-stdout << title << " " << name << "\n";
+print(title << " " << name + "\n");
 else
-stdout << name << "\n";
+print(name + "\n");
 end
 }
 </p>
@@ -860,7 +860,7 @@ $count = $count + 1;
 // Must pass with $
 value: i32 = 10;
 increment($value);  // Pass by reference
-stdout << value;    // 11</code></pre>
+print(value);    // 11</code></pre>
 </p>
 <hr>
 <h2>Generic Arguments</h2>
@@ -885,7 +885,7 @@ Arguments are evaluated <strong>left to right</strong>:
 </p>
 <pre><code>fn test(a: i32, b: i32, c: i32) {
 <p>
-stdout << a << ", " << b << ", " << c << "\n";
+print(a << ", " << b << ", " << c + "\n");
 }
 </p>
 <p>
@@ -912,13 +912,13 @@ x = x + 10;  // Modifies local copy
 <p>
 value: i32 = 5;
 modify(value);
-stdout << value;  // Still 5 (not modified)</code></pre>
+print(value);  // Still 5 (not modified)</code></pre>
 </p>
 <h3>Move Types (Ownership Transfer)</h3>
 <pre><code>fn consume(data: Vec<i32>) {
 <p>
 // data is now owned by this function
-stdout << data.len() << "\n";
+print(data.len() + "\n");
 }
 </p>
 <p>
@@ -935,7 +935,7 @@ $data.push(4);  // Modifies original
 <p>
 vec: Vec<i32> = vec![1, 2, 3];
 modify($vec);  // Pass reference
-stdout << vec.len();  // 4 (modified)</code></pre>
+print(vec.len());  // 4 (modified)</code></pre>
 </p>
 <hr>
 <h2>Argument Patterns</h2>
@@ -1041,7 +1041,7 @@ age: i32 = parse_age(input);
 when age >= 0 and age <= 120 then
 set_user_age(user, age);
 else
-stderr << "Invalid age\n";
+stderr_write("Invalid age\n");
 end</code></pre>
 </p>
 <h3>❌ DON'T: Use Magic Numbers</h3>

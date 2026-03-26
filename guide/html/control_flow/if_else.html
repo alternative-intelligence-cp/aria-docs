@@ -664,7 +664,7 @@
 <pre><code>age: i32 = 20;
 <p>
 if age >= 18 {
-stdout << "Adult\n";
+print("Adult\n");
 }
 </p>
 <p>
@@ -675,9 +675,9 @@ stdout << "Adult\n";
 <pre><code>age: i32 = 16;
 <p>
 if age >= 18 {
-stdout << "Adult\n";
+print("Adult\n");
 } else {
-stdout << "Minor\n";
+print("Minor\n");
 }</code></pre>
 </p>
 <hr>
@@ -697,7 +697,7 @@ grade: string = "F";
 }
 </p>
 <p>
-stdout << "Grade: " << grade << "\n";</code></pre>
+print("Grade: " << grade + "\n");</code></pre>
 </p>
 <hr>
 <h2>Condition Must Be Boolean</h2>
@@ -763,12 +763,12 @@ end</code></pre>
 <pre><code>if user.is_authenticated {
 <p>
 if user.is_admin {
-stdout << "Admin dashboard\n";
+print("Admin dashboard\n");
 } else {
-stdout << "User dashboard\n";
+print("User dashboard\n");
 }
 } else {
-stdout << "Please log in\n";
+print("Please log in\n");
 }</code></pre>
 </p>
 <hr>
@@ -776,7 +776,7 @@ stdout << "Please log in\n";
 <pre><code>Result: File = open("data.txt");
 <p>
 if result == ERR {
-stderr << "Failed to open file\n";
+stderr_write("Failed to open file\n");
 return;
 }
 </p>
@@ -789,9 +789,9 @@ file: File = result;
 <pre><code>file: File = pass open("data.txt");
 <p>
 if file.size() > 1000000 {
-stdout << "Large file\n";
+print("Large file\n");
 } else {
-stdout << "Small file\n";
+print("Small file\n");
 }</code></pre>
 </p>
 <hr>
@@ -799,25 +799,25 @@ stdout << "Small file\n";
 <pre><code>// AND
 <p>
 if age >= 18 && has_license {
-stdout << "Can drive\n";
+print("Can drive\n");
 }
 </p>
 <p>
 // OR
 if is_admin || is_moderator {
-stdout << "Has elevated privileges\n";
+print("Has elevated privileges\n");
 }
 </p>
 <p>
 // NOT
 if !is_banned {
-stdout << "Welcome!\n";
+print("Welcome!\n");
 }
 </p>
 <p>
 // Complex conditions
 if (age >= 18 || has_parent_permission) && !is_banned {
-stdout << "Access granted\n";
+print("Access granted\n");
 }</code></pre>
 </p>
 <hr>
@@ -825,20 +825,20 @@ stdout << "Access granted\n";
 <pre><code>fn process(value: i32) {
 <p>
 if value < 0 {
-stderr << "Invalid value\n";
+stderr_write("Invalid value\n");
 return;
 }
 </p>
 <p>
 if value == 0 {
-stdout << "Zero\n";
+print("Zero\n");
 return;
 }
 </p>
 <p>
 // Main logic for positive values
 Result: i32 = value * 2;
-stdout << "Result: " << result << "\n";
+print("Result: " << result + "\n");
 }</code></pre>
 </p>
 <hr>
@@ -847,19 +847,19 @@ stdout << "Result: " << result << "\n";
 <p>
 // Guard clauses - check error conditions first
 if amount <= 0 {
-stderr << "Amount must be positive\n";
+stderr_write("Amount must be positive\n");
 return false;
 }
 </p>
 <p>
 if amount > balance {
-stderr << "Insufficient funds\n";
+stderr_write("Insufficient funds\n");
 return false;
 }
 </p>
 <p>
 if account_frozen {
-stderr << "Account is frozen\n";
+stderr_write("Account is frozen\n");
 return false;
 }
 </p>
@@ -892,12 +892,12 @@ fail "User not found";
 </p>
 <p>
 // Safe to use user here
-stdout << user.name << "\n";</code></pre>
+print(user.name + "\n");</code></pre>
 </p>
 <h3>Flag Checking</h3>
 <pre><code>if debug_mode {
 <p>
-stdout << "Debug: Processing item " << id << "\n";
+print("Debug: Processing item " << id + "\n");
 }</code></pre>
 </p>
 <hr>
@@ -1039,7 +1039,7 @@ finish_work();
 }
 } else if state == "done" {
 // Already complete
-stdout << "Work already done\n";
+print("Work already done\n");
 }</code></pre>
 </p>
 <hr>

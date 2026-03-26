@@ -154,12 +154,12 @@ till(collection.length - 1, 1) {
 ```aria
 // Before
 for i in 0..10 {
-    stdout << i;
+    print(i);
 }
 
 // After
 till(9, 1) {
-    stdout << $;  // $ is index: 0,1,...,9
+    print($);  // $ is index: 0,1,...,9
 }
 ```
 
@@ -586,7 +586,7 @@ The range operator files (foundational documentation) were teaching:
 ```aria
 // ❌ WRONG (Rust syntax - was being taught!):
 for i in 0..10 {
-    stdout << i;
+    print(i);
 }
 
 // ✅ CORRECT (Aria) - Ranges for SLICING:
@@ -595,7 +595,7 @@ int32[]:slice = arr[0..=10];  // Inclusive (indices 0-10)
 
 // ✅ CORRECT (Aria) - till for LOOPS:
 till(9, 1) {
-    stdout << $;  // $ = 0 to 9 (10 iterations)
+    print($);  // $ = 0 to 9 (10 iterations)
 }
 ```
 
@@ -2791,12 +2791,12 @@ Many files still use outdated or incorrect syntax:
 **Found in error_handling.md**:
 ```aria
 // WRONG (Rust-like):
-fn read_config(path: string) -> Result<Config> {
-    return Ok(config);
+func:read_config = Result<Config>(string:path) {
+    pass(Ok(config));
 }
 match read_config("config.toml") {
     Ok(config) => use_config(config),
-    Err(e) => stderr << "Failed: $e",
+    Err(e) => stderr_write("Failed: $e"),
 }
 
 // RIGHT (Aria):

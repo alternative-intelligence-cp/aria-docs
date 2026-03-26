@@ -62,7 +62,7 @@ print("Name:", name, "Age:", age);
 name: string = "Alice";
 age: i32 = 30;
 
-print("$name is $age years old");
+print(`&{name} is &{age} years old`);
 // Output: Alice is 30 years old
 ```
 
@@ -78,9 +78,9 @@ print("World");
 // Hello
 // World
 
-// stdout << - no automatic newline
-stdout << "Hello";
-stdout << "World";
+// print(- no automatic newline)
+print("Hello");
+print("World");
 // Output:
 // HelloWorld
 ```
@@ -116,9 +116,9 @@ print(p);
 
 ```aria
 // Use stdout directly
-stdout << "Hello";
-stdout << " ";
-stdout << "World";
+print("Hello");
+print(" ");
+print("World");
 // Output: Hello World (no newlines)
 ```
 
@@ -157,4 +157,4 @@ logger.info("User logged in", { username = username });  // ✅
 
 ---
 
-**Remember**: `print()` adds **newline** - use `stdout <<` for no newline!
+**Remember**: `print()` adds **newline** - use `stdout_write()` for no newline!

@@ -659,7 +659,7 @@ return 42;
 })();  // Parentheses invoke the function
 </p>
 <p>
-stdout << result;  // 42</code></pre>
+print(result);  // 42</code></pre>
 </p>
 <hr>
 <h2>Why Use Immediate Execution?</h2>
@@ -674,7 +674,7 @@ return other;
 </p>
 <p>
 // 'temp' and 'other' don't exist here
-stdout << value;  // 84</code></pre>
+print(value);  // 84</code></pre>
 </p>
 <h3>2. Complex Initialization</h3>
 <pre><code>config: Config = (|| {
@@ -755,7 +755,7 @@ return number;
 </p>
 <p>
 when result == ERR then
-stderr << "Failed to load number\n";
+stderr_write("Failed to load number\n");
 end</code></pre>
 </p>
 <hr>

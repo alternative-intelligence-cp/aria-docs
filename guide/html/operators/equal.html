@@ -660,20 +660,20 @@ The equality operator <code>==</code> tests if two values are equal, returning <
 <pre><code>// Numbers
 <p>
 when 5 == 5 then
-stdout << "Equal";
+print("Equal");
 end
 </p>
 <p>
 // Strings
 when "hello" == "hello" then
-stdout << "Match";
+print("Match");
 end
 </p>
 <p>
 // Variables
 x: i32 = 42;
 when x == 42 then
-stdout << "Found";
+print("Found");
 end</code></pre>
 </p>
 <hr>
@@ -683,7 +683,7 @@ end</code></pre>
 a: i32 = 100;
 b: i32 = 100;
 when a == b then  // true
-stdout << "Equal values";
+print("Equal values");
 end</code></pre>
 </p>
 <hr>
@@ -719,7 +719,7 @@ p2: Point = Point { x: 10, y: 20 };
 </p>
 <p>
 when p1 == p2 then  // true (field-wise comparison)
-stdout << "Same point";
+print("Same point");
 end</code></pre>
 </p>
 <hr>
@@ -731,13 +731,13 @@ s2: string = "hello";
 </p>
 <p>
 when s1 == s2 then  // true
-stdout << "Same content";
+print("Same content");
 end
 </p>
 <p>
 // Case sensitive
 when "Hello" == "hello" then  // false
-stdout << "Won't print";
+print("Won't print");
 end</code></pre>
 </p>
 <hr>
@@ -746,14 +746,14 @@ end</code></pre>
 <p>
 x: f64 = 0.1 + 0.2;
 when x == 0.3 then  // May be false!
-stdout << "Might not print";
+print("Might not print");
 end
 </p>
 <p>
 // Use epsilon comparison
 epsilon: f64 = 0.000001;
 when abs(x - 0.3) < epsilon then
-stdout << "Approximately equal";
+print("Approximately equal");
 end</code></pre>
 </p>
 <hr>
@@ -765,12 +765,12 @@ z: i32? = nil;
 </p>
 <p>
 when x == y then  // true
-stdout << "Both 42";
+print("Both 42");
 end
 </p>
 <p>
 when z == nil then  // true
-stdout << "z is nil";
+print("z is nil");
 end</code></pre>
 </p>
 <hr>
@@ -778,7 +778,7 @@ end</code></pre>
 <h3>✅ DO: Use for Value Comparison</h3>
 <pre><code>when count == 0 then
 <p>
-stdout << "Empty";
+print("Empty");
 end</code></pre>
 </p>
 <h3>✅ DO: Compare Same Types</h3>
@@ -834,7 +834,7 @@ end
 <p>
 // Use logical AND
 when x == y and y == z then
-stdout << "All equal";
+print("All equal");
 end</code></pre>
 </p>
 <hr>

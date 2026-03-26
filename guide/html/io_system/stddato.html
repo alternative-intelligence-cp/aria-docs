@@ -686,8 +686,8 @@ print(f"Processed {count} records")</code></pre>
 <h3>Aria's Solution: Dual Output Streams</h3>
 <pre><code>// Human-readable output to stdout
 <p>
-stdout << "Processed " << count << " records";
-stdout << "Total: $" << total;
+print("Processed " << count + " records");
+print("Total: $" + total);
 </p>
 <p>
 // Machine-readable output to stddato
@@ -705,8 +705,8 @@ Result: Result = process_data();
 </p>
 <p>
 // Human output
-stdout << "Processing complete";
-stdout << "Records processed: " << result.count;
+print("Processing complete");
+print("Records processed: " + result.count);
 </p>
 <p>
 // Machine output
@@ -740,7 +740,7 @@ data: LargeStruct = compute_results();
 </p>
 <p>
 // Human summary
-stdout << "Computation complete: " << data.size() << " elements";
+print("Computation complete: " << data.size() + " elements");
 </p>
 <p>
 // Binary output (efficient)
@@ -754,7 +754,7 @@ fn main() {
 records = process_records().collect();
 till(records.length - 1, 1) {
 // Human progress
-stdout << "Processing record " << records[$].id;
+print("Processing record " + records[$].id);
 </p>
 <p>
 // Machine output (one JSON per line)
@@ -795,9 +795,9 @@ Result: Result = execute_operation(args);
 </p>
 <p>
 // Human-friendly output (always shown)
-stdout << "Operation successful";
-stdout << "  Files processed: " << result.files_processed;
-stdout << "  Errors: " << result.errors;
+print("Operation successful");
+print("  Files processed: " + result.files_processed);
+print("  Errors: " + result.errors);
 </p>
 <p>
 // Machine-readable output (captured if redirected)
@@ -831,7 +831,7 @@ Programmatic consumption:
 <h3>2. ETL Pipelines</h3>
 <pre><code>fn main() {
 <p>
-stddbg << "Starting ETL pipeline";
+stddbg_write("Starting ETL pipeline");
 </p>
 <p>
 // Read from stddati
@@ -846,7 +846,7 @@ output_data.push(transformed);
 </p>
 <p>
 // Progress to stdout
-stdout << "Processed record " << input_data[$].id;
+print("Processed record " + input_data[$].id);
 }
 </p>
 <p>
@@ -854,7 +854,7 @@ stdout << "Processed record " << input_data[$].id;
 stddato.write_json(output_data);
 </p>
 <p>
-stddbg << "Pipeline complete: " << output_data.len() << " records";
+stddbg_write("Pipeline complete: " << output_data.len() + " records");
 }</code></pre>
 </p>
 <strong>Pipeline composition</strong>:
@@ -866,11 +866,11 @@ stddbg << "Pipeline complete: " << output_data.len() << " records";
 <pre><code>fn handle_request(req: HttpRequest) -> HttpResponse {
 <p>
 // Log request (human-readable)
-stdout << req.method << " " << req.path;
+print(req.method << " " + req.path);
 </p>
 <p>
 // Debug trace
-stddbg << "Headers: " << req.headers.len();
+stddbg_write("Headers: " + req.headers.len());
 </p>
 <p>
 // Process request
@@ -901,7 +901,7 @@ elapsed: Duration = Time::now() - start_time;
 </p>
 <p>
 // Human output
-stdout << "Job completed in " << elapsed.seconds() << "s";
+print("Job completed in " << elapsed.seconds() + "s");
 </p>
 <p>
 // Metrics (for monitoring systems)
@@ -965,7 +965,7 @@ when stddato.is_redirected() then
 stddato.write_json(expensive_data)?;
 else
 // No, skip expensive serialization
-stddbg << "stddato not redirected, skipping output";
+stddbg_write("stddato not redirected, skipping output");
 end
 </p>
 <p>
@@ -973,7 +973,7 @@ end
 when stddato.is_valid() then
 stddato.write_json(data)?;
 else
-stderr << "stddato is broken";
+stderr_write("stddato is broken");
 end</code></pre>
 </p>
 <hr>
@@ -987,7 +987,7 @@ full_data: JsonValue = serialize_everything(state);
 stddato.write_json(full_data)?;
 else
 // Free: stddato is /dev/null, skip work
-stddbg << "Skipping stddato output (not redirected)";
+stddbg_write("Skipping stddato output (not redirected)");
 end</code></pre>
 </p>
 <strong>Why this matters</strong>:
@@ -1013,10 +1013,10 @@ stddato.flush()?;</code></pre>
 <p>
 match result {
 Ok(()) => {
-stddbg << "Data written successfully";
+stddbg_write("Data written successfully");
 }
 Err(err) => {
-stderr << "Failed to write data: " << err;
+stderr_write("Failed to write data: " + err);
 return ERR;
 }
 }</code></pre>
@@ -1042,7 +1042,7 @@ Result: Result = process();
 </p>
 <p>
 // Humans
-stdout << "Processing complete: " << result.count << " items";
+print("Processing complete: " << result.count + " items");
 </p>
 <p>
 // Machines
@@ -1073,7 +1073,7 @@ stddato << "Processing item 5 of 100...";
 </p>
 <p>
 // RIGHT:
-stdout << "Processing item 5 of 100...";</code></pre>
+print("Processing item 5 of 100...");</code></pre>
 </p>
 <h3>❌ DON'T: Mix Formats</h3>
 <pre><code>// WRONG: Inconsistent output format
@@ -1093,7 +1093,7 @@ stddato << "ERROR: File not found";
 </p>
 <p>
 // RIGHT:
-stderr << "ERROR: File not found";</code></pre>
+stderr_write("ERROR: File not found");</code></pre>
 </p>
 <hr>
 <h2>Comparison to Other Languages</h2>
@@ -1127,7 +1127,7 @@ println!("Result: {:?}", data);
 <h3>Aria</h3>
 <pre><code>// Both outputs simultaneously
 <p>
-stdout << "Result: " << data;
+print("Result: " + data);
 stddato.write_json({"result": data});
 // No conditionals, no conflicts</code></pre>
 </p>
@@ -1143,7 +1143,7 @@ fn main() {
 db: sql::Connection = sql::connect("postgres://...")?;
 </p>
 <p>
-stdout << "Connected to database";
+print("Connected to database");
 </p>
 <p>
 // Execute query
@@ -1152,13 +1152,13 @@ rows: []sql::Row = db.query(query)?;
 </p>
 <p>
 // Human output (table format)
-stdout << "\nActive Users:";
-stdout << "ID    | Name          | Email";
-stdout << "------|---------------|------------------";
+print("\nActive Users:");
+print("ID    | Name          | Email");
+print("------|---------------|------------------");
 till(rows.length - 1, 1) {
-stdout << rows[$]["id"] << " | " << rows[$]["name"] << " | " << rows[$]["email"];
+print(rows[$]["id"] << " | " << rows[$]["name"] << " | " + rows[$]["email"]);
 }
-stdout << "\nTotal: " << rows.len() << " users";
+print("\nTotal: " << rows.len() + " users");
 </p>
 <p>
 // Machine output (JSON array)
@@ -1172,7 +1172,7 @@ return {
 </p>
 <p>
 // Debug info
-stddbg << "Query executed in " << db.last_query_time() << "ms";
+stddbg_write("Query executed in " << db.last_query_time() + "ms");
 }</code></pre>
 </p>
 <strong>Usage</strong>:
@@ -1222,7 +1222,7 @@ You're writing a CLI tool. Your boss says:
 <strong>Aria</strong>: You're done.
 <pre><code>// Users see this
 <p>
-stdout << "Processing files...";
+print("Processing files...");
 </p>
 <p>
 // CI sees this

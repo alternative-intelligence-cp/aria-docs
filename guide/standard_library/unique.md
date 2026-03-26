@@ -15,7 +15,7 @@
 ## Syntax
 
 ```aria
-import std.functional;
+use std.functional;
 
 deduped: []i32 = unique(numbers);
 ```
@@ -110,7 +110,7 @@ struct Person {
 people: []Person = [...];
 
 unique_people: []Person = unique_by(people, fn(p: Person) -> i32 {
-    return p.id;  // Compare by ID
+    pass(p.id);  // Compare by ID
 });
 ```
 
@@ -148,7 +148,7 @@ Result: []i32 = unique(numbers).sort();  // ✅
 
 ```aria
 // Typical implementation keeps first occurrence
-fn unique(arr: []T) -> []T {
+func:unique = []T([]T:arr) {
     seen: set<T> = {};
     Result: []T = [];
     
@@ -159,7 +159,7 @@ fn unique(arr: []T) -> []T {
         end
     end
     
-    return result;
+    pass(result);
 }
 ```
 

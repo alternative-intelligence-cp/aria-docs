@@ -662,7 +662,7 @@
 <pre><code>count: i32 = 0;
 <p>
 while count < 5 {
-stdout << count << "\n";
+print(count + "\n");
 count = count + 1;
 }
 </p>
@@ -682,7 +682,7 @@ count: i32 = 10;
 </p>
 <p>
 while count < 5 {
-stdout << "This never prints\n";
+print("This never prints\n");
 }</code></pre>
 </p>
 <hr>
@@ -691,12 +691,12 @@ stdout << "This never prints\n";
 <pre><code>countdown: i32 = 10;
 <p>
 while countdown > 0 {
-stdout << countdown << "...\n";
+print(countdown + "...\n");
 countdown = countdown - 1;
 }
 </p>
 <p>
-stdout << "Liftoff!\n";</code></pre>
+print("Liftoff!\n");</code></pre>
 </p>
 <h3>Process Until Empty</h3>
 <pre><code>while !queue.is_empty() {
@@ -709,7 +709,7 @@ process(item);
 <pre><code>while !file.eof() {
 <p>
 line: string = pass file.read_line();
-stdout << line << "\n";
+print(line + "\n");
 }</code></pre>
 </p>
 <h3>Retry Until Success</h3>
@@ -753,7 +753,7 @@ continue;  // Skip even numbers
 }
 </p>
 <p>
-stdout << count << " ";
+print(count + " ");
 }
 // Output: 1 3 5 7 9</code></pre>
 </p>
@@ -795,7 +795,7 @@ process(line);
 <p>
 count: i32 = 0;
 while count < 10 {
-stdout << count << "\n";
+print(count + "\n");
 // Missing: count = count + 1;
 }
 // Infinite loop!
@@ -804,7 +804,7 @@ stdout << count << "\n";
 // ✅ Right: Update condition variable
 count: i32 = 0;
 while count < 10 {
-stdout << count << "\n";
+print(count + "\n");
 count = count + 1;
 }</code></pre>
 </p>
@@ -832,12 +832,12 @@ input: string = "";
 </p>
 <p>
 while input.length() == 0 {
-stdout << "Enter your name: ";
+print("Enter your name: ");
 input = read_line();
 </p>
 <p>
 if input.length() == 0 {
-stderr << "Name cannot be empty!\n";
+stderr_write("Name cannot be empty!\n");
 }
 }
 </p>
@@ -848,12 +848,12 @@ return input;
 <h3>Polling</h3>
 <pre><code>while !server.is_ready() {
 <p>
-stdout << "Waiting for server...\n";
+print("Waiting for server...\n");
 sleep(1000);  // Wait 1 second
 }
 </p>
 <p>
-stdout << "Server ready!\n";</code></pre>
+print("Server ready!\n");</code></pre>
 </p>
 <h3>Buffer Processing</h3>
 <pre><code>buffer: []byte = read_buffer();

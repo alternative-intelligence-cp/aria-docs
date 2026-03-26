@@ -662,7 +662,7 @@ data: []u8 = [1, 2, 3];
 <p>
 // Function parameters
 fn greet(name: string, age: i32) {
-stdout << "Hello $name, age $age";
+print(`Hello &{name}, age &{age}`);
 }
 </p>
 <p>
@@ -769,7 +769,7 @@ callback: fn(i32) -> string;</code></pre>
 <h3>Generic Constraints</h3>
 <pre><code>fn process<T: Display + Clone>(value: T) {
 <p>
-stdout << value.to_string();
+print(value.to_string());
 }
 </p>
 <p>
@@ -797,7 +797,7 @@ x = $;
 check: till(99, 1) {
 y = $;
 if found(x, y) {
-stdout << "Found at ($x, $y)";
+print(`Found at (&{x}, &{y})`);
 break search;
 }
 }

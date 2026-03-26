@@ -15,7 +15,7 @@
 ## Syntax
 
 ```aria
-import std.process;
+use std.process;
 
 process: Result<Process> = spawn("long_running_task", ["arg1", "arg2"]);
 ```
@@ -40,9 +40,9 @@ process: Result<Process> = spawn("long_running_task", ["arg1", "arg2"]);
 ```aria
 struct Process {
     pid: i32,                          // Process ID
-    fn wait() -> Result<ProcessResult> // Wait for completion
-    fn kill() -> Result<void>          // Terminate process
-    fn is_alive() -> bool              // Check if running
+    func:wait = Result<ProcessResult>()// Wait for completion
+    func:kill = Result<NIL>()// Terminate process
+    func:is_alive = bool()// Check if running
 }
 ```
 
@@ -53,17 +53,17 @@ struct Process {
 ### Basic Spawn
 
 ```aria
-import std.process;
+use std.process;
 
 // Start process in background
 process: Process = spawn("sleep", ["10"])?;
 
-stdout << "Process started with PID: $(process.pid)";
-stdout << "Doing other work...";
+print("Process started with PID: $(process.pid)");
+print("Doing other work...");
 
 // Wait for it to finish
 Result: ProcessResult = process.wait()?;
-stdout << "Process completed with exit code: $(result.exit_code)";
+print("Process completed with exit code: $(result.exit_code)");
 ```
 
 ### Run Server
@@ -72,7 +72,7 @@ stdout << "Process completed with exit code: $(result.exit_code)";
 // Start server in background
 server: Process = spawn("python3", ["-m", "http.server", "8000"])?;
 
-stdout << "Server started on port 8000";
+print("Server started on port 8000");
 
 // Do other work...
 
@@ -88,14 +88,14 @@ task1: Process = spawn("./process_file1.sh")?;
 task2: Process = spawn("./process_file2.sh")?;
 task3: Process = spawn("./process_file3.sh")?;
 
-stdout << "All tasks running in parallel...";
+print("All tasks running in parallel...");
 
 // Wait for all to complete
 result1: ProcessResult = task1.wait()?;
 result2: ProcessResult = task2.wait()?;
 result3: ProcessResult = task3.wait()?;
 
-stdout << "All tasks completed";
+print("All tasks completed");
 ```
 
 ### Check if Running
@@ -108,7 +108,7 @@ loop
         break;
     end
     
-    stdout << "Still running...";
+    print("Still running...");
     sleep(1);
 end
 
@@ -130,7 +130,7 @@ process: Process = spawn("build.sh")?;
 Result: ProcessResult = process.wait()?;
 
 when result.exit_code != 0 then
-    stderr << "Build failed: $(result.stderr)";
+    stderr_write("Build failed: $(result.stderr)");
 end
 ```
 
@@ -142,7 +142,7 @@ process: Process = spawn("infinite_loop.sh")?;
 // After some time...
 when timeout_occurred then
     process.kill()?;
-    stdout << "Process terminated";
+    print("Process terminated");
 end
 ```
 
@@ -153,10 +153,10 @@ process: Process = spawn("task.sh")?;
 
 // Check without waiting
 when process.is_alive() then
-    stdout << "Task is still running";
+    print("Task is still running");
 else
     Result: ProcessResult = process.wait()?;
-    stdout << "Task finished";
+    print("Task finished");
 end
 ```
 
@@ -221,11 +221,11 @@ defer process.wait()?;  // ✅ Ensures completion
 ```aria
 // exec() - Blocks until complete
 Result: ProcessResult = exec("task", args)?;  // Waits here
-stdout << "Task done";
+print("Task done");
 
 // spawn() - Returns immediately
 process: Process = spawn("task", args)?;  // Continues immediately
-stdout << "Task running in background";
+print("Task running in background");
 process.wait()?;  // Wait when ready
 ```
 

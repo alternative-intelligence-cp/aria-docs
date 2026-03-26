@@ -16,9 +16,9 @@ An **immutable borrow** is a read-only reference created with `&` that allows vi
 
 ```aria
 value: i32 = 42;
-ref: &i32 = &value;  // Immutable borrow
+ref: $i32 = $value;  // Immutable borrow
 
-stdout << ref;  // ✅ Can read
+print(ref);  // ✅ Can read
 ref = 100;      // ❌ Can't modify
 ```
 
@@ -31,11 +31,11 @@ You can have **unlimited** immutable borrows simultaneously:
 ```aria
 value: i32 = 42;
 
-ref1: &i32 = &value;  // ✅
-ref2: &i32 = &value;  // ✅
-ref3: &i32 = &value;  // ✅
+ref1: $i32 = $value;  // ✅
+ref2: $i32 = $value;  // ✅
+ref3: $i32 = $value;  // ✅
 
-stdout << ref1 << ref2 << ref3;  // All valid
+print(ref1 + ref2 + ref3);  // All valid
 ```
 
 ---
@@ -43,13 +43,13 @@ stdout << ref1 << ref2 << ref3;  // All valid
 ## In Functions
 
 ```aria
-fn print_value(v: &i32) {
-    stdout << v << "\n";
+func:print_value = NIL(int32->:v) {
+    print(v + "\n");
 }
 
 value: i32 = 42;
-print_value(&value);  // Borrow
-stdout << value;      // Still usable
+print_value($value);  // Borrow
+print(value);      // Still usable
 ```
 
 ---
@@ -57,15 +57,15 @@ stdout << value;      // Still usable
 ## Multiple Parameters
 
 ```aria
-fn compare(a: &i32, b: &i32) -> bool {
-    return a < b;
+func:compare = bool(int32->:a, int32->:b) {
+    pass(a < b);
 }
 
 x: i32 = 10;
 y: i32 = 20;
 
-Result: bool = compare(&x, &y);  // Both borrowed
-stdout << x << y;  // Both still usable
+Result: bool = compare($x, $y);  // Both borrowed
+print(x + y);  // Both still usable
 ```
 
 ---
@@ -73,17 +73,17 @@ stdout << x << y;  // Both still usable
 ## With Collections
 
 ```aria
-fn find(items: &[]string, target: string) -> i32? {
+func:find = i32?([]string->:items, string:target) {
     till(items.length - 1, 1) {
         if items[$] == target {
-            return $;
+            pass($);
         }
     }
-    return nil;
+    pass(nil);
 }
 
 names: []string = ["Alice", "Bob", "Charlie"];
-index: i32? = find(&names, "Bob");
+index: i32? = find($names, "Bob");
 // names still usable
 ```
 
@@ -96,9 +96,9 @@ index: i32? = find(&names, "Bob");
 ```aria
 value: i32 = 42;
 
-ref1: &i32 = &value;
-ref2: &i32 = &value;
-ref3: &i32 = &value;
+ref1: $i32 = $value;
+ref2: $i32 = $value;
+ref3: $i32 = $value;
 // All OK simultaneously
 ```
 
@@ -106,7 +106,7 @@ ref3: &i32 = &value;
 
 ```aria
 value: i32 = 42;
-ref: &i32 = &value;
+ref: $i32 = $value;
 
 ref = 100;  // ❌ Error: immutable reference
 ```
@@ -116,8 +116,8 @@ ref = 100;  // ❌ Error: immutable reference
 ```aria
 value: i32 = 42;
 
-ref: &i32 = &value;      // Immutable borrow
-mut_ref: &i32 = $value;  // ❌ Error: can't borrow mutably
+ref: $i32 = $value;      // Immutable borrow
+mut_ref: $i32 = $value;  // ❌ Error: can't borrow mutably
 ```
 
 ---
@@ -128,10 +128,10 @@ Aria automatically dereferences in most contexts:
 
 ```aria
 value: i32 = 42;
-ref: &i32 = &value;
+ref: $i32 = $value;
 
 // Automatic dereference
-stdout << ref;          // Works like ref is i32
+print(ref);          // Works like ref is i32
 Result: i32 = ref + 1;  // Works like ref is i32
 ```
 
@@ -142,28 +142,28 @@ Result: i32 = ref + 1;  // Works like ref is i32
 ### Read Configuration
 
 ```aria
-fn get_host(config: &Config) -> string {
-    return config.host;  // Just reading
+func:get_host = string(Config->:config) {
+    pass(config.host);  // Just reading
 }
 ```
 
 ### Calculate from Data
 
 ```aria
-fn calculate_average(numbers: &[]f64) -> f64 {
+func:calculate_average = flt64([]f64->:numbers) {
     sum: f64 = 0.0;
     till(numbers.length - 1, 1) {
         sum = sum + numbers[$];
     }
-    return sum / numbers.length() as f64;
+    pass(sum / numbers.length() as f64);
 }
 ```
 
 ### Validation
 
 ```aria
-fn is_valid(user: &User) -> bool {
-    return user.name.length() > 0 && user.age >= 18;
+func:is_valid = bool(User->:user) {
+    pass(user.name.length() > 0 && user.age >= 18);
 }
 ```
 
@@ -175,8 +175,8 @@ fn is_valid(user: &User) -> bool {
 
 ```aria
 // Good: Just reading
-fn display(data: &Data) {
-    stdout << data.format();
+func:display = NIL(Data->:data) {
+    print(data.format());
 }
 ```
 
@@ -184,7 +184,7 @@ fn display(data: &Data) {
 
 ```aria
 // Good: Immutable unless mutation needed
-fn process(input: &string) {  // Read-only
+func:process = NIL(string->:input) {  // Read-only
     analyze(input);
 }
 ```
@@ -193,12 +193,12 @@ fn process(input: &string) {  // Read-only
 
 ```aria
 // Wrong: Need mutable for this
-fn double(value: &i32) {
+func:double = NIL(int32->:value) {
     value = value * 2;  // ❌ Error: immutable
 }
 
 // Right: Use mutable borrow
-fn double(value: &i32) {
+func:double = NIL(int32->:value) {
     value = value * 2;  // ✅ OK
 }
 ```
@@ -210,28 +210,28 @@ fn double(value: &i32) {
 ### String Operations
 
 ```aria
-fn count_words(text: &string) -> i32 {
-    return text.split(" ").length();
+func:count_words = int32(string->:text) {
+    pass(text.split(" ").length());
 }
 
 doc: string = "Hello world from Aria";
-count: i32 = count_words(&doc);
+count: i32 = count_words($doc);
 ```
 
 ### Comparison
 
 ```aria
-fn max(a: &i32, b: &i32) -> i32 {
+func:max = int32(int32->:a, int32->:b) {
     if a > b {
-        return a;
+        pass(a);
     } else {
-        return b;
+        pass(b);
     }
 }
 
 x: i32 = 10;
 y: i32 = 20;
-Result: i32 = max(&x, &y);
+Result: i32 = max($x, $y);
 ```
 
 ---

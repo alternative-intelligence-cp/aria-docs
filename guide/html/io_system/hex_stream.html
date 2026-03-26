@@ -704,23 +704,23 @@
 <h2>Example</h2>
 <pre><code>fn main() {
 <p>
-stddbg << "Program starting";  // Debug
+stddbg_write("Program starting");  // Debug
 </p>
 <p>
 config: Config = stddati.read_json()?;  // Data input
 </p>
 <p>
-stdout << "Processing...";  // Human output
+print("Processing...");  // Human output
 </p>
 <p>
 Result: Result = process(config);
 </p>
 <p>
-stdout << "Done! Processed " << result.count << " items";  // Human
+print("Done! Processed " << result.count + " items");  // Human
 stddato.write_json(result);  // Machine output
 </p>
 <p>
-stddbg << "Completed in " << elapsed << "ms";  // Debug
+stddbg_write("Completed in " << elapsed + "ms");  // Debug
 }</code></pre>
 </p>
 <strong>Deployment</strong>:

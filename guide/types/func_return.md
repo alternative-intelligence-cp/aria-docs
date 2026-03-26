@@ -9,18 +9,18 @@
 
 ```aria
 // Returns integer
-fn get_value() -> i32 {
-    return 42;
+func:get_value = int32() {
+    pass(42);
 }
 
 // Returns string
-fn get_name() -> string {
-    return "Alice";
+func:get_name = string() {
+    pass("Alice");
 }
 
 // Returns nothing
-fn print_hello() -> void {
-    stdout << "Hello";
+func:print_hello = NIL() {
+    print("Hello");
 }
 ```
 
@@ -30,11 +30,11 @@ fn print_hello() -> void {
 
 ```aria
 // Returns optional value
-fn find_user(id: i32) -> ?User {
+func:find_user = ?User(int32:id) {
     when not found then
-        return nil;
+        pass(nil);
     end
-    return user;
+    pass(user);
 }
 ```
 
@@ -44,7 +44,7 @@ fn find_user(id: i32) -> ?User {
 
 ```aria
 // Returns Result for error handling
-fn divide(a: i32, b: i32) -> Result<i32> {
+func:divide = Result<int32>(int32:a, int32:b) {
     when b == 0 then
         fail("Division by zero");
     end
@@ -58,9 +58,9 @@ fn divide(a: i32, b: i32) -> Result<i32> {
 
 ```aria
 // Returns function
-fn make_multiplier(n: i32) -> fn(i32) -> i32 {
+func:make_multiplier = fn(i32)(int32:n)-> i32 {
     return fn(x: i32) -> i32 {
-        return x * n;
+        pass(x * n);
     };
 }
 ```
@@ -71,10 +71,10 @@ fn make_multiplier(n: i32) -> fn(i32) -> i32 {
 
 ```aria
 // Return multiple values as tuple
-fn divide_with_remainder(a: i32, b: i32) -> (i32, i32) {
+func:divide_with_remainder = (i32,(int32:a, int32:b)i32) {
     quotient: i32 = a / b;
     remainder: i32 = a % b;
-    return (quotient, remainder);
+    pass((quotient, remainder));
 }
 
 // Use

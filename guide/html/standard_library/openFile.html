@@ -690,7 +690,7 @@ chunk: ?string = file.read_line();
 when chunk == nil then break; end
 </p>
 <p>
-stdout << chunk;
+print(chunk);
 end
 </p>
 <p>
@@ -712,7 +712,7 @@ file.close();</code></pre>
 file: File = openFile("log.txt", "a")?;
 </p>
 <p>
-file.write("[$timestamp] Event occurred\n")?;
+file.write(`[&{timestamp}] Event occurred\n`)?;
 </p>
 <p>
 file.close();</code></pre>
@@ -793,7 +793,7 @@ defer file.close();  // Auto-close when scope ends
 defer log.close();
 </p>
 <p>
-log.write("[$time] Application started\n")?;</code></pre>
+log.write(`[&{time}] Application started\n`)?;</code></pre>
 </p>
 <h3>❌ DON'T: Forget to Close</h3>
 <pre><code>file: File = openFile("data.txt", "r")?;

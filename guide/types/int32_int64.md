@@ -102,7 +102,7 @@ UserRecord:user = {
 // Query by ID
 func:find_user = (user_id: int32) -> ?UserRecord {
     // Database lookup
-    return database_query("SELECT * FROM users WHERE user_id = ?", user_id);
+    pass(database_query("SELECT * FROM users WHERE user_id = ?", user_id));
 }
 ```
 
@@ -183,7 +183,7 @@ struct:HighResEvent = {
 
 func:get_current_time_ns = () -> int64 {
     // Get nanoseconds since January 1, 1970
-    return system_time_nanoseconds();
+    pass(system_time_nanoseconds());
 }
 
 HighResEvent:event = {
@@ -680,10 +680,10 @@ int64[]:large = aria.alloc<int64>(1000000000);
 ```aria
 func:narrow_to_i32 = (value: int64) -> ?int32 {
     if (value < -2147483648i64 || value > 2147483647i64) {
-        return NIL;  // Out of range
+        pass(NIL);  // Out of range
     }
     
-    return int32(value);  // Safe cast
+    pass(int32(value));  // Safe cast
 }
 
 // Usage

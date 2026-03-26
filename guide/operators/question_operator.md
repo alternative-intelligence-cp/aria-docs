@@ -42,7 +42,7 @@ maybe = 42;
 
 // Check before use
 when maybe != nil then
-    stdout << maybe;
+    print(maybe);
 end
 ```
 

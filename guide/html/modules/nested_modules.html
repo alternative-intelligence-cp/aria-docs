@@ -656,13 +656,13 @@ Modules can contain other modules, creating a <strong>hierarchy</strong> for bet
 <pre><code>mod outer {
 <p>
 pub fn outer_function() {
-stdout << "Outer";
+print("Outer");
 }
 </p>
 <p>
 pub mod inner {
 pub fn inner_function() {
-stdout << "Inner";
+print("Inner");
 }
 }
 }

@@ -19,7 +19,7 @@
 **Automatic, fast, limited:**
 
 ```aria
-fn example() {
+func:example = NIL() {
     value: i32 = 42;     // Stack allocated
     array: [i32; 10];    // Stack allocated
 }  // Automatically freed
@@ -193,8 +193,8 @@ node.right = aria_gc_alloc(Node);
 
 // ✅ Shared ownership
 data: Data = aria_gc_alloc(Data);
-ref1: &Data = data;
-ref2: &Data = data;
+ref1: $Data = data;
+ref2: $Data = data;
 // Freed when all refs gone
 ```
 
@@ -212,17 +212,17 @@ struct PoolAllocator {
 }
 
 impl PoolAllocator {
-    fn alloc(size: i32) -> *byte {
+    func:alloc = *byte(int32:size) {
         when self.used + size > self.capacity then
             fail "Pool exhausted";
         end
         
         ptr: *byte = self.pool + self.used;
         self.used = self.used + size;
-        return ptr;
+        pass(ptr);
     }
     
-    fn reset() {
+    func:reset = NIL() {
         self.used = 0;  // Reuse entire pool
     }
 }
@@ -294,13 +294,13 @@ vec: Vec<i32> = Vec::new();  // Manages allocation internally
 
 ```aria
 // Wrong: Memory leak
-fn bad() {
+func:bad = NIL() {
     ptr: *i32 = aria_alloc(sizeof(i32));
     // Never freed!
 }
 
 // Right: Always free
-fn good() {
+func:good = NIL() {
     ptr: *i32 = aria_alloc(sizeof(i32));
     defer aria_free(ptr);
 }
@@ -327,14 +327,14 @@ ptr = nil;  // Prevent accidental reuse
 ### Dynamic Array
 
 ```aria
-fn create_array(size: i32) -> []i32 {
+func:create_array = []i32(int32:size) {
     arr: []i32 = aria_alloc_array(i32, size);
     
     till(size - 1, 1) {
         arr[$] = $;
     }
     
-    return arr;
+    pass(arr);
 }
 
 // Caller must free
@@ -352,7 +352,7 @@ struct StringBuilder {
 }
 
 impl StringBuilder {
-    fn new() -> StringBuilder {
+    func:new = StringBuilder() {
         capacity: i32 = 256;
         return StringBuilder{
             buffer: aria_alloc_buffer(capacity),
@@ -361,7 +361,7 @@ impl StringBuilder {
         };
     }
     
-    fn append(text: string) {
+    func:append = NIL(string:text) {
         // Grow if needed
         when self.length + text.length() > self.capacity then
             self.grow();
@@ -373,7 +373,7 @@ impl StringBuilder {
 }
 
 impl Drop for StringBuilder {
-    fn drop() {
+    func:drop = NIL() {
         aria_free(self.buffer);
     }
 }
@@ -388,24 +388,24 @@ struct ObjectPool<T> {
 }
 
 impl<T> ObjectPool<T> {
-    fn new(capacity: i32) -> ObjectPool<T> {
+    func:new = ObjectPool<T>(int32:capacity) {
         return ObjectPool{
             objects: aria_alloc_array(T, capacity),
             available: aria_alloc_array(bool, capacity)
         };
     }
     
-    fn acquire() -> &T? {
+    func:acquire = T?->() {
         till(self.objects.length - 1, 1) {
             when self.available[$] then
                 self.available[$] = false;
-                return &self.objects[$];
+                pass($self.objects[$]);
             end
         }
-        return nil;
+        pass(nil);
     }
     
-    fn release(obj: &T) {
+    func:release = NIL(T->:obj) {
         // Mark as available
     }
 }

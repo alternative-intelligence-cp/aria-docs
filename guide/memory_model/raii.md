@@ -63,9 +63,9 @@ struct File {
 }
 
 impl File {
-    fn open(path: string) -> File {
+    func:open = File(string:path) {
         handle: FileHandle = system_open(path);
-        return File{handle: handle};  // Resource acquired
+        pass(File{handle: handle});  // Resource acquired
     }
 }
 ```
@@ -74,7 +74,7 @@ impl File {
 
 ```aria
 impl Drop for File {
-    fn drop() {
+    func:drop = NIL() {
         system_close(self.handle);  // Resource released
     }
 }
@@ -96,7 +96,7 @@ impl Drop for File {
 ### File Handles
 
 ```aria
-fn process_file() {
+func:process_file = NIL() {
     file: File = pass File::open("data.txt");
     content: string = pass file.read();
     
@@ -112,12 +112,12 @@ struct Connection {
 }
 
 impl Drop for Connection {
-    fn drop() {
+    func:drop = NIL() {
         self.handle.disconnect();
     }
 }
 
-fn query() {
+func:query = NIL() {
     conn: Connection = Connection::connect();
     Result: Result = conn.query("SELECT * FROM users");
 }  // Connection closed automatically
@@ -127,16 +127,16 @@ fn query() {
 
 ```aria
 struct MutexGuard<T> {
-    lock: &Mutex<T>
+    lock: $Mutex<T>
 }
 
 impl<T> Drop for MutexGuard<T> {
-    fn drop() {
+    func:drop = NIL() {
         self.lock.unlock();  // Unlock automatically
     }
 }
 
-fn critical_section() {
+func:critical_section = NIL() {
     guard: MutexGuard = mutex.lock();
     // Critical section
 }  // Automatically unlocked
@@ -152,12 +152,12 @@ struct Vec<T> {
 }
 
 impl<T> Drop for Vec<T> {
-    fn drop() {
+    func:drop = NIL() {
         aria_free(self.data);  // Free memory automatically
     }
 }
 
-fn example() {
+func:example = NIL() {
     vec: Vec<i32> = Vec::new();
     vec.push(1);
     vec.push(2);
@@ -171,7 +171,7 @@ fn example() {
 Aria's `defer` provides RAII-like behavior:
 
 ```aria
-fn process() {
+func:process = NIL() {
     file: File = pass open("data.txt");
     defer file.close();  // Guaranteed to run
     
@@ -187,7 +187,7 @@ fn process() {
 ### 1. No Resource Leaks
 
 ```aria
-fn example() {
+func:example = NIL() {
     file1: File = File::open("a.txt");
     file2: File = File::open("b.txt");
     file3: File = File::open("c.txt");
@@ -199,7 +199,7 @@ fn example() {
 ### 2. Exception Safety
 
 ```aria
-fn process() {
+func:process = NIL() {
     file: File = File::open("data.txt");
     
     Result: Data = pass parse(file);  // Error here
@@ -230,15 +230,15 @@ struct Resource {
 
 impl Resource {
     // Acquire in constructor
-    fn new() -> Resource {
+    func:new = Resource() {
         handle: Handle = acquire_handle();
-        return Resource{handle: handle};
+        pass(Resource{handle: handle});
     }
 }
 
 impl Drop for Resource {
     // Release in destructor
-    fn drop() {
+    func:drop = NIL() {
         release_handle(self.handle);
     }
 }
@@ -252,19 +252,19 @@ struct SafeFile {
 }
 
 impl SafeFile {
-    fn open(path: string) -> SafeFile? {
+    func:open = SafeFile?(string:path) {
         handle: FileHandle? = try_open(path);
         
         when handle == nil then
-            return nil;
+            pass(nil);
         end
         
-        return SafeFile{handle: handle};
+        pass(SafeFile{handle: handle});
     }
 }
 
 impl Drop for SafeFile {
-    fn drop() {
+    func:drop = NIL() {
         when self.handle != nil then
             close(self.handle);
         end
@@ -284,15 +284,15 @@ struct ScopeGuard {
 }
 
 impl Drop for ScopeGuard {
-    fn drop() {
+    func:drop = NIL() {
         self.cleanup();
     }
 }
 
-fn example() {
+func:example = NIL() {
     guard: ScopeGuard = ScopeGuard{
         cleanup: || {
-            stdout << "Cleaning up\n";
+            print("Cleaning up\n");
         }
     };
     
@@ -304,16 +304,16 @@ fn example() {
 
 ```aria
 struct LockGuard {
-    mutex: &Mutex
+    mutex: $Mutex
 }
 
 impl Drop for LockGuard {
-    fn drop() {
+    func:drop = NIL() {
         self.mutex.unlock();
     }
 }
 
-fn synchronized() {
+func:synchronized = NIL() {
     guard: LockGuard = mutex.lock();
     
     // Critical section - mutex locked
@@ -326,18 +326,18 @@ fn synchronized() {
 ```aria
 struct Transaction {
     committed: bool,
-    connection: &Connection
+    connection: $Connection
 }
 
 impl Drop for Transaction {
-    fn drop() {
+    func:drop = NIL() {
         if !self.committed {
             self.connection.rollback();  // Auto-rollback if not committed
         }
     }
 }
 
-fn example() {
+func:example = NIL() {
     tx: Transaction = Transaction::begin();
     
     tx.execute("INSERT ...");
@@ -401,7 +401,7 @@ struct Connection {
 
 // Right: Implement Drop
 impl Drop for Connection {
-    fn drop() {
+    func:drop = NIL() {
         self.handle.close();
     }
 }
@@ -415,24 +415,24 @@ impl Drop for Connection {
 
 ```aria
 struct Transaction {
-    conn: &Connection,
+    conn: $Connection,
     active: bool
 }
 
 impl Transaction {
-    fn begin(conn: &Connection) -> Transaction {
+    func:begin = Transaction(Connection->:conn) {
         conn.execute("BEGIN");
-        return Transaction{conn: conn, active: true};
+        pass(Transaction{conn: conn, active: true});
     }
     
-    fn commit() {
+    func:commit = NIL() {
         self.conn.execute("COMMIT");
         self.active = false;
     }
 }
 
 impl Drop for Transaction {
-    fn drop() {
+    func:drop = NIL() {
         when self.active then
             self.conn.execute("ROLLBACK");
         end
@@ -440,8 +440,8 @@ impl Drop for Transaction {
 }
 
 // Usage
-fn transfer_money(from: i32, to: i32, amount: f64) {
-    tx: Transaction = Transaction::begin(&db);
+func:transfer_money = NIL(int32:from, int32:to, flt64:amount) {
+    tx: Transaction = Transaction::begin($db);
     
     pass db.execute("UPDATE accounts SET balance = balance - ? WHERE id = ?", amount, from);
     pass db.execute("UPDATE accounts SET balance = balance + ? WHERE id = ?", amount, to);
@@ -458,20 +458,20 @@ struct TempDir {
 }
 
 impl TempDir {
-    fn create() -> TempDir {
+    func:create = TempDir() {
         path: string = format("/tmp/aria-{}", random_id());
         create_directory(path);
-        return TempDir{path: path};
+        pass(TempDir{path: path});
     }
 }
 
 impl Drop for TempDir {
-    fn drop() {
+    func:drop = NIL() {
         remove_directory_recursive(self.path);
     }
 }
 
-fn test() {
+func:test = NIL() {
     tmp: TempDir = TempDir::create();
     
     // Write test files to tmp.path

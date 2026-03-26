@@ -260,17 +260,17 @@ uint256:balance = 1500000000000000000;  // 1.5 ether
 void:transfer(uint256:from_balance, uint256:to_balance, uint256:amount) -> bool {
     if (from_balance < amount) {
         log.write("ERROR: Insufficient balance\n");
-        return false;
+        pass(false);
     }
     from_balance -= amount;  // Safe after check
     to_balance += amount;
-    return true;
+    pass(true);
 }
 
 // Overflow check on receiving
 if (to_balance > uint256.max - amount) {
     log.write("ERROR: Balance overflow\n");
-    return false;
+    pass(false);
 }
 ```
 
@@ -309,7 +309,7 @@ uint256:result = mod_exp(a, b, m);
 uint256:mod_add(uint256:a, uint256:b, uint256:m) -> uint256 {
     // Use uint512 to prevent overflow
     uint512:sum = a.to_uint512() + b.to_uint512();
-    return (sum % m.to_uint512()).to_uint256();
+    pass((sum % m.to_uint512()).to_uint256());
 }
 ```
 
@@ -511,16 +511,16 @@ if (sum < a || sum < b) {
 uint256:saturating_add(uint256:a, uint256:b) -> uint256 {
     uint256:sum = a + b;
     if (sum < a) {  // Overflow occurred
-        return uint256.max;  // Saturate
+        pass(uint256.max);  // Saturate
     }
-    return sum;
+    pass(sum);
 }
 
 uint256:saturating_sub(uint256:a, uint256:b) -> uint256 {
     if (a < b) {  // Would underflow
-        return 0;  // Saturate
+        pass(0);  // Saturate
     }
-    return a - b;
+    pass(a - b);
 }
 ```
 
@@ -543,12 +543,12 @@ uint128:half_mask = mask >> 64;  // Clean 64-bit shift (zeros on left)
 ```aria
 // Rotate left (bits wrap around to right)
 uint256:rotate_left(uint256:value, uint8:bits) -> uint256 {
-    return (value << bits) | (value >> (256 - bits));
+    pass((value << bits) | (value >> (256 - bits)));
 }
 
 // Rotate right
 uint256:rotate_right(uint256:value, uint8:bits) -> uint256 {
-    return (value >> bits) | (value << (256 - bits));
+    pass((value >> bits) | (value << (256 - bits)));
 }
 ```
 
@@ -595,9 +595,9 @@ uint256:unsigned_value = signed_value;  // COMPILE ERROR in Aria
 uint256:to_unsigned_safe(int256:value) -> uint256 {
     if (value < 0) {
         log.write("ERROR: Cannot convert negative to unsigned\n");
-        return 0;
+        pass(0);
     }
-    return value.to_uint256();
+    pass(value.to_uint256());
 }
 
 // Signed to unsigned (when value known non-negative)
@@ -622,9 +622,9 @@ if (large > int256.max.to_uint256()) {
 uint256:safe_subtract(uint256:a, uint256:b) -> uint256 {
     if (a < b) {
         log.write("ERROR: Underflow would occur\n");
-        return 0;  // Or return ERR
+        pass(0);  // Or return ERR
     }
-    return a - b;
+    pass(a - b);
 }
 
 // Usage
@@ -641,9 +641,9 @@ uint256:checked_add(uint256:a, uint256:b) -> uint256 {
     uint256:sum = a + b;
     if (sum < a) {  // Overflow occurred
         log.write("ERROR: Addition overflow\n");
-        return uint256.max;  // Saturate
+        pass(uint256.max);  // Saturate
     }
-    return sum;
+    pass(sum);
 }
 ```
 
@@ -659,7 +659,7 @@ uint8:popcount(uint256:value) -> uint8 {
         }
         value >>= 1;
     }
-    return count;
+    pass(count);
 }
 
 // Count leading zeros
@@ -673,7 +673,7 @@ uint16:count_leading_zeros(uint256:value) -> uint16 {
         count += 1;
         mask >>= 1;
     }
-    return count;
+    pass(count);
 }
 ```
 
@@ -684,9 +684,9 @@ uint16:count_leading_zeros(uint256:value) -> uint16 {
 uint128:to_uint128_safe(uint256:value) -> uint128 {
     if (value > uint128.max.to_uint256()) {
         log.write("ERROR: Value exceeds uint128 range\n");
-        return uint128.max;  // Saturate
+        pass(uint128.max);  // Saturate
     }
-    return value.to_uint128();
+    pass(value.to_uint128());
 }
 ```
 
@@ -742,9 +742,9 @@ uint256:unsigned_delta = delta.to_uint256();  // WRONG! Becomes huge positive
 // GOOD: Handle negative values explicitly
 uint256:absolute_value(int256:value) -> uint256 {
     if (value < 0) {
-        return (-value).to_uint256();  // Negate first
+        pass((-value).to_uint256());  // Negate first
     }
-    return value.to_uint256();
+    pass(value.to_uint256());
 }
 ```
 

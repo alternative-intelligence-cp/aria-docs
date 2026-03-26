@@ -676,9 +676,9 @@ Result: Result<obj> = readJSON("config.json");
 when result is Ok(data) then
 host: string = data.server.host;
 port: i32 = data.server.port;
-stdout << "Server: $host:$port";
+print(`Server: &{host}:&{port}`);
 elsif result is Err(msg) then
-stderr << "Failed to read JSON: $msg";
+stderr_write(`Failed to read JSON: &{msg}`);
 end</code></pre>
 </p>
 <h3>Parse into Struct</h3>
@@ -711,7 +711,7 @@ items: []i32 = data.items;  // Array from JSON
 </p>
 <p>
 till(items.length - 1, 1) {
-stdout << "Item: $(items[$])";
+print("Item: $(items[$])");
 end</code></pre>
 </p>
 <h3>Nested Objects</h3>
@@ -724,7 +724,7 @@ name: string = data.user.name;
 age: i32 = data.user.age;
 </p>
 <p>
-stdout << "$name is $age years old";</code></pre>
+print(`&{name} is &{age} years old`);</code></pre>
 </p>
 <hr>
 <h2>Error Cases</h2>
@@ -750,7 +750,7 @@ end</code></pre>
 when data.port is i32(p) then
 port: i32 = p;
 else
-stderr << "Port is not an integer";
+stderr_write("Port is not an integer");
 end</code></pre>
 </p>
 <h3>❌ DON'T: Assume Structure</h3>

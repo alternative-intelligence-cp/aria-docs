@@ -208,16 +208,16 @@ in_range: bool = (x >= min and x <= max);
 ### Validation
 
 ```aria
-fn validate_user(user: User) -> bool {
+func:validate_user = bool(User:user) {
     when user.name.is_empty() then
-        return false;
+        pass(false);
     end
     
     when user.age < 18 then
-        return false;
+        pass(false);
     end
     
-    return true;
+    pass(true);
 }
 ```
 
@@ -227,12 +227,12 @@ fn validate_user(user: User) -> bool {
 is_running: bool = false;
 is_paused: bool = false;
 
-fn start() {
+func:start = NIL() {
     is_running = true;
     is_paused = false;
 }
 
-fn pause() {
+func:pause = NIL() {
     when is_running then
         is_paused = true;
     end
@@ -252,7 +252,7 @@ till(items.length - 1, 1) {
 }
 
 when found then
-    stdout << "Found it!";
+    print("Found it!");
 end
 ```
 

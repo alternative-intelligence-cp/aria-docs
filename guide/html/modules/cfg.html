@@ -661,19 +661,19 @@ item</code></pre>
 <pre><code>#[cfg(os = "linux")]
 <p>
 fn linux_specific() {
-stdout << "Running on Linux";
+print("Running on Linux");
 }
 </p>
 <p>
 #[cfg(os = "windows")]
 fn windows_specific() {
-stdout << "Running on Windows";
+print("Running on Windows");
 }
 </p>
 <p>
 #[cfg(os = "macos")]
 fn macos_specific() {
-stdout << "Running on macOS";
+print("Running on macOS");
 }</code></pre>
 </p>
 <hr>
@@ -681,19 +681,19 @@ stdout << "Running on macOS";
 <pre><code>#[cfg(arch = "x86_64")]
 <p>
 fn x86_64_code() {
-stdout << "64-bit x86";
+print("64-bit x86");
 }
 </p>
 <p>
 #[cfg(arch = "aarch64")]
 fn arm_code() {
-stdout << "ARM 64-bit";
+print("ARM 64-bit");
 }
 </p>
 <p>
 #[cfg(arch = "wasm32")]
 fn wasm_code() {
-stdout << "WebAssembly";
+print("WebAssembly");
 }</code></pre>
 </p>
 <hr>
@@ -701,7 +701,7 @@ stdout << "WebAssembly";
 <pre><code>#[cfg(feature = "logging")]
 <p>
 fn log_message(msg: string) {
-stdout << "[LOG] $msg";
+print(`[LOG] &{msg}`);
 }
 </p>
 <p>
@@ -719,13 +719,13 @@ mod cache {
 <pre><code>#[cfg(debug)]
 <p>
 fn debug_only() {
-stdout << "Debug build";
+print("Debug build");
 }
 </p>
 <p>
 #[cfg(release)]
 fn release_only() {
-stdout << "Release build";
+print("Release build");
 }</code></pre>
 </p>
 <hr>
@@ -811,13 +811,13 @@ linux_setting: i32,
 <p>
 #[cfg(os = "linux")]
 {
-stdout << "Linux code";
+print("Linux code");
 }
 </p>
 <p>
 #[cfg(os = "windows")]
 {
-stdout << "Windows code";
+print("Windows code");
 }
 }</code></pre>
 </p>

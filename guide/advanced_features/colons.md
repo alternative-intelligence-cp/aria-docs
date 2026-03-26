@@ -20,13 +20,13 @@ name: string = "Alice";
 data: []u8 = [1, 2, 3];
 
 // Function parameters
-fn greet(name: string, age: i32) {
-    stdout << "Hello $name, age $age";
+func:greet = NIL(string:name, int32:age) {
+    print(`Hello &{name}, age &{age}`);
 }
 
 // Return types
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 ```
 
@@ -145,8 +145,8 @@ callback: fn(i32) -> string;
 ### Generic Constraints
 
 ```aria
-fn process<T: Display + Clone>(value: T) {
-    stdout << value.to_string();
+func:process = NIL(T:value) {
+    print(value.to_string());
 }
 
 struct Container<T> where T: Clone {
@@ -163,8 +163,8 @@ point: (i32, i32) = (10, 20);
 person: (string, i32, string) = ("Alice", 30, "alice@example.com");
 
 // Named tuple fields
-fn get_user() -> (name: string, age: i32) {
-    return ("Bob", 25);
+func:get_user = (name:()string, age: i32) {
+    pass(("Bob", 25));
 }
 ```
 
@@ -178,7 +178,7 @@ search: till(99, 1) {
     check: till(99, 1) {
         y = $;
         if found(x, y) {
-            stdout << "Found at ($x, $y)";
+            print(`Found at (&{x}, &{y})`);
             break search;
         }
     }
@@ -192,8 +192,8 @@ search: till(99, 1) {
 ### ✅ DO: Always Annotate Function Parameters
 
 ```aria
-fn calculate(amount: f64, rate: f64) -> f64 {
-    return amount * rate;
+func:calculate = flt64(flt64:amount, flt64:rate) {
+    pass(amount * rate);
 }
 ```
 
@@ -228,13 +228,13 @@ config: Config = load_config();
 
 ```aria
 // ❌ Hard to understand what this returns
-fn process(data) {
-    return transform(data);
+func:process = NIL(data) {
+    pass(transform(data));
 }
 
 // ✅ Clear return type
-fn process(data: Data) -> Result<Processed> {
-    return transform(data);
+func:process = Result<Processed>(Data:data) {
+    pass(transform(data));
 }
 ```
 

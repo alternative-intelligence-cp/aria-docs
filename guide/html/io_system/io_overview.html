@@ -691,11 +691,11 @@ Aria doesn't fight human nature - it redirects it. Instead of three streams, Ari
 <h3>Debug Output Never Pollutes Production</h3>
 <pre><code>// Debug output goes to stddbg - NEVER stdout
 <p>
-stddbg << "Processing user: " << user.name;
+stddbg_write("Processing user: " + user.name);
 </p>
 <p>
 // Production output is clean
-stdout << result;</code></pre>
+print(result);</code></pre>
 </p>
 <strong>In Production</strong>:
 <ul><li><code>stddbg</code> → <code>/dev/null</code> (or log file)</li>
@@ -705,7 +705,7 @@ stdout << result;</code></pre>
 <h3>Structured Data is Separate from Human-Readable Text</h3>
 <pre><code>// Human-readable output
 <p>
-stdout << "Balance: $" << balance;
+print("Balance: $" + balance);
 </p>
 <p>
 // Machine-readable JSON to stddato
@@ -759,12 +759,12 @@ return results</code></pre>
 <h3>With Aria</h3>
 <pre><code>fn process_data(items: []Item) -> []Result {
 <p>
-stddbg << "Processing " << items.len() << " items";
+stddbg_write("Processing " << items.len() + " items");
 </p>
 <p>
 results: []Result = [];
 till(items.length - 1, 1) {
-stddbg << "Processing item: " << items[$];
+stddbg_write("Processing item: " + items[$]);
 Result: Result = expensive_operation(items[$]);
 results.push(result);
 }
@@ -831,7 +831,7 @@ return results;
 <li><a href="stream_separation.md">Stream Separation</a> - Best practices</li>
 </ul>
 <hr>
-<strong>Remember</strong>: Every time you write <code>stddbg << "..."</code>, you're using a feature <strong>no other language</strong> provides as a core primitive. This is Aria's "Uno reverse" on debugging culture.
+<strong>Remember</strong>: Every time you write <code>stddbg_write("...")</code>, you're using a feature <strong>no other language</strong> provides as a core primitive. This is Aria's "Uno reverse" on debugging culture.
     </main>
 </body>
 </html>

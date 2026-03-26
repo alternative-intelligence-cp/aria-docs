@@ -655,12 +655,12 @@
 <pre><code>pick value {
 <p>
 case 1:
-stdout << "One\n";
+print("One\n");
 fall;  // Continue to next case
 case 2:
-stdout << "Two\n";
+print("Two\n");
 else:
-stdout << "Other\n";
+print("Other\n");
 }</code></pre>
 </p>
 <hr>
@@ -669,12 +669,12 @@ stdout << "Other\n";
 <p>
 pick value {
 case 1:
-stdout << "Matched 1\n";
+print("Matched 1\n");
 fall;  // Fall through to case 2
 case 2:
-stdout << "Matched 2\n";  // This also runs!
+print("Matched 2\n");  // This also runs!
 else:
-stdout << "Other\n";
+print("Other\n");
 }
 </p>
 <p>
@@ -691,10 +691,10 @@ Unlike C, Aria <strong>doesn't fall through</strong> by default:
 <p>
 pick value {
 case 1:
-stdout << "One\n";
+print("One\n");
 // No fall - stops here
 case 2:
-stdout << "Two\n";  // Doesn't run
+print("Two\n");  // Doesn't run
 }
 </p>
 <p>
@@ -706,12 +706,12 @@ stdout << "Two\n";  // Doesn't run
 <p>
 pick day {
 case "Saturday":
-stdout << "It's the weekend!\n";
+print("It's the weekend!\n");
 fall;  // Continue to Sunday
 case "Sunday":
-stdout << "No work today!\n";
+print("No work today!\n");
 else:
-stdout << "Workday\n";
+print("Workday\n");
 }
 </p>
 <p>
@@ -725,15 +725,15 @@ stdout << "Workday\n";
 <p>
 pick grade {
 case "A":
-stdout << "Excellent\n";
+print("Excellent\n");
 fall;
 case "B":
-stdout << "Good\n";
+print("Good\n");
 fall;
 case "C":
-stdout << "Passing\n";
+print("Passing\n");
 else:
-stdout << "Needs improvement\n";
+print("Needs improvement\n");
 }
 </p>
 <p>
@@ -748,12 +748,12 @@ stdout << "Needs improvement\n";
 <p>
 pick value {
 case 1:
-stdout << "One\n";
+print("One\n");
 case 5:
-stdout << "Five\n";
+print("Five\n");
 fall;  // Falls to else
 else:
-stdout << "Done\n";
+print("Done\n");
 }
 </p>
 <p>
@@ -776,9 +776,9 @@ fall;
 case "o":
 fall;
 case "u":
-stdout << "Vowel\n";
+print("Vowel\n");
 else:
-stdout << "Consonant\n";
+print("Consonant\n");
 }</code></pre>
 </p>
 <h3>Progressive Actions</h3>
@@ -924,10 +924,10 @@ break;  // Explicit break needed
 <pre><code>pick value {
 <p>
 case 1:
-stdout << "One\n";
+print("One\n");
 fall;  // Explicit fall needed
 case 2:
-stdout << "Two\n";
+print("Two\n");
 }</code></pre>
 </p>
 <hr>

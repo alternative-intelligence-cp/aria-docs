@@ -690,19 +690,19 @@ Similarly, in programs:
 <h2>Control Plane Streams</h2>
 <h3>stdin (FD 0)</h3>
 <strong>Interactive input from humans</strong>
-<pre><code>stdout << "Enter your name: ";
+<pre><code>print("Enter your name: ");
 <p>
 name: string = stdin.read_line();</code></pre>
 </p>
 <h3>stdout (FD 1)</h3>
 <strong>Normal output for humans</strong>
-<pre><code>stdout << "Processing complete: " << count << " items\n";</code></pre>
+<pre><code>print("Processing complete: " << count + " items\n");</code></pre>
 <h3>stderr (FD 2)</h3>
 <strong>Error messages for humans</strong>
-<pre><code>stderr << "ERROR: File not found\n";</code></pre>
+<pre><code>stderr_write("ERROR: File not found\n");</code></pre>
 <h3>stddbg (FD 6)</h3>
 <strong>Debug/diagnostic output for developers</strong>
-<pre><code>stddbg << "Entering function process(), state=" << state;</code></pre>
+<pre><code>stddbg_write("Entering function process(), state=" + state);</code></pre>
 <hr>
 <h2>When to Use Control Plane</h2>
 <p>
@@ -723,34 +723,34 @@ Use control plane streams when:
 <h2>Example: Control Plane in Action</h2>
 <pre><code>fn main() {
 <p>
-stddbg << "Program starting";
+stddbg_write("Program starting");
 </p>
 <p>
 // Interactive prompt (control plane)
-stdout << "Enter filename: ";
+print("Enter filename: ");
 filename: string = stdin.read_line();
 </p>
 <p>
-stddbg << "User entered: " << filename;
+stddbg_write("User entered: " + filename);
 </p>
 <p>
 // Validation
 when !file_exists(filename) then
-stderr << "ERROR: File not found: " << filename << "\n";
+stderr_write("ERROR: File not found: " << filename + "\n");
 return 1;
 end
 </p>
 <p>
 // Processing
-stdout << "Processing file...\n";
+print("Processing file...\n");
 Result: Result = process_file(filename);
 </p>
 <p>
 // Results (control plane - human-readable)
-stdout << "Complete! Processed " << result.lines << " lines\n";
+print("Complete! Processed " << result.lines + " lines\n");
 </p>
 <p>
-stddbg << "Program exiting";
+stddbg_write("Program exiting");
 return 0;
 }</code></pre>
 </p>

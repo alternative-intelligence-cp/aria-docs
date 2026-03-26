@@ -9,7 +9,7 @@
 ## Signature
 
 ```aria
-fn aria_alloc_array<T>(count: i32) -> []T
+func:aria_alloc_array = []T(int32:count)
 ```
 
 ---

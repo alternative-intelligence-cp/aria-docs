@@ -655,7 +655,7 @@ Braces <code>{ }</code> delimit <strong>blocks</strong> of code in Aria.
 <h2>Function Bodies</h2>
 <pre><code>fn simple() {
 <p>
-stdout << "Hello";
+print("Hello");
 }
 </p>
 <p>
@@ -667,7 +667,7 @@ return 42;
 fn multi_statement() {
 x: i32 = 10;
 y: i32 = 20;
-stdout << x + y;
+print(x + y);
 }</code></pre>
 </p>
 <hr>
@@ -680,9 +680,9 @@ do_something();
 </p>
 <p>
 if x > 10 {
-stdout << "big";
+print("big");
 } else {
-stdout << "small";
+print("small");
 }
 </p>
 <p>
@@ -694,7 +694,7 @@ process();
 <p>
 // Till loops
 till(9, 1) {
-stdout << $;
+print($);
 }</code></pre>
 </p>
 <hr>
@@ -746,11 +746,11 @@ _ => "many",
 // Multi-line arms
 match request {
 Request::Get { path } => {
-stdout << "GET $path";
+print(`GET &{path}`);
 handle_get(path)
 }
 Request::Post { path, body } => {
-stdout << "POST $path";
+print(`POST &{path}`);
 handle_post(path, body)
 }
 }</code></pre>
@@ -761,13 +761,13 @@ handle_post(path, body)
 <p>
 {
 x: i32 = 10;
-stdout << x;
+print(x);
 }  // x goes out of scope here
 </p>
 <p>
 {
 y: i32 = 20;
-stdout << y;
+print(y);
 }  // y goes out of scope here
 }</code></pre>
 </p>
@@ -780,12 +780,12 @@ x: i32 = 10;
 <p>
 {
 y: i32 = 20;
-stdout << x + y;  // Both x and y visible
+print(x + y);  // Both x and y visible
 }  // y destroyed
 </p>
 <p>
-stdout << x;  // Only x visible
-// stdout << y;  // Error: y not in scope
+print(x);  // Only x visible
+// print(y);  // Error: y not in scope
 }</code></pre>
 </p>
 <hr>
@@ -998,7 +998,7 @@ do_other();
 <h2>Single-Line Blocks</h2>
 <pre><code>// Allowed but use sparingly
 <p>
-if x > 0 { stdout << "positive"; }
+if x > 0 { print("positive"); }
 </p>
 <p>
 fn one_liner() { return 42; }
@@ -1006,7 +1006,7 @@ fn one_liner() { return 42; }
 <p>
 // Preferred - multi-line for readability
 if x > 0 {
-stdout << "positive";
+print("positive");
 }
 </p>
 <p>

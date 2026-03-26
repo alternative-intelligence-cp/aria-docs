@@ -17,10 +17,10 @@ See [Colon (:)](colon.md) for complete documentation.
 x: i32 = 42;
 
 // Function parameter
-fn process(data: string) { ... }
+func:process = NIL(string:data) { ... }
 
 // Return type (uses ->)
-fn calculate() -> i32 { ... }
+func:calculate = int32() { ... }
 
 // Struct field
 struct User {

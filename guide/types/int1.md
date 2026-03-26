@@ -250,15 +250,15 @@ if (zero) {
 
 ```aria
 func:logical_and = (a: int1, b: int1) -> int1 {
-    return (a != 0i1 && b != 0i1) ? -1i1 : 0i1;
+    pass((a != 0i1 && b != 0i1) ? -1i1 : 0i1);
 }
 
 func:logical_or = (a: int1, b: int1) -> int1 {
-    return (a != 0i1 || b != 0i1) ? -1i1 : 0i1;
+    pass((a != 0i1 || b != 0i1) ? -1i1 : 0i1);
 }
 
 func:logical_not = (a: int1) -> int1 {
-    return (a == 0i1) ? -1i1 : 0i1;
+    pass((a == 0i1) ? -1i1 : 0i1);
 }
 
 int1:a = -1i1;
@@ -429,7 +429,7 @@ end
 ```aria
 func:sign_of = (value: int32) -> int1 {
     if (value < 0i32) return -1i1;
-    return 0i1;  // Zero or positive
+    pass(0i1);  // Zero or positive
 }
 
 int32:number = -42i32;
@@ -455,7 +455,7 @@ int1:state = 0i1;
 
 // Toggle: 0 → -1, -1 → 0
 func:toggle = (s: int1) -> int1 {
-    return (s == 0i1) ? -1i1 : 0i1;
+    pass((s == 0i1) ? -1i1 : 0i1);
 }
 
 state = toggle(state);  // 0 → -1

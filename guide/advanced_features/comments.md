@@ -33,7 +33,7 @@ x: i32 = 42;  // Comment after code
  Useful for longer explanations.
 */
 
-fn complex_function() {
+func:complex_function = NIL() {
     /* Inline comment */ x: i32 = 42;
 }
 ```
@@ -57,8 +57,8 @@ fn complex_function() {
 /// Result: i32 = add(2, 3);
 /// assert(result == 5);
 /// ```
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 ```
 
@@ -74,8 +74,8 @@ fn add(a: i32, b: i32) -> i32 {
 
 mod math;
 
-pub fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+pub func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 ```
 
@@ -90,7 +90,7 @@ pub fn add(a: i32, b: i32) -> i32 {
  Still in outer comment
 */
 
-fn example() {
+func:example = NIL() {
     /* This /* works */ too */
     x: i32 = 42;
 }
@@ -101,7 +101,7 @@ fn example() {
 ## TODO Comments
 
 ```aria
-fn incomplete_feature() {
+func:incomplete_feature = NIL() {
     // TODO: Implement error handling
     // FIXME: This has a bug with negative numbers
     // NOTE: Consider refactoring this
@@ -121,7 +121,7 @@ fn incomplete_feature() {
 // File Operations
 // ============================================
 
-fn read_file(path: string) -> Result<string> {
+func:read_file = Result<string>(string:path) {
     // Implementation
 }
 
@@ -129,7 +129,7 @@ fn read_file(path: string) -> Result<string> {
 // Data Processing
 // ============================================
 
-fn process_data(data: Data) -> Result<void> {
+func:process_data = Result<NIL>(Data:data) {
     // Implementation
 }
 ```
@@ -139,7 +139,7 @@ fn process_data(data: Data) -> Result<void> {
 ### Explaining Complex Logic
 
 ```aria
-fn calculate_hash(data: []u8) -> u64 {
+func:calculate_hash = uint64([]u8:data) {
     // Use FNV-1a hash algorithm
     // https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function
     
@@ -150,7 +150,7 @@ fn calculate_hash(data: []u8) -> u64 {
         hash *= 0x100000001b3;  // FNV prime
     }
     
-    return hash;
+    pass(hash);
 }
 ```
 
@@ -159,14 +159,14 @@ fn calculate_hash(data: []u8) -> u64 {
 ### Disabling Code
 
 ```aria
-fn debug_mode() {
-    stdout << "Running";
+func:debug_mode = NIL() {
+    print("Running");
     
     // Temporarily disabled
     // debug_print_state();
     // validate_invariants();
     
-    stdout << "Done";
+    print("Done");
 }
 ```
 
@@ -198,7 +198,7 @@ impl User {
     ///
     /// # Returns
     /// A new `User` instance with generated ID and timestamp
-    pub fn new(name: string, email: string) -> User {
+    pub func:new = User(string:name, string:email) {
         return User {
             id: generate_id(),
             name: name,
@@ -234,16 +234,16 @@ mod core;
 
 ```aria
 // ❌ Bad - obvious what code does
-fn increment(x: i32) -> i32 {
+func:increment = int32(int32:x) {
     // Add 1 to x
-    return x + 1;
+    pass(x + 1);
 }
 
 // ✅ Good - explains why
-fn increment_retry_count(count: i32) -> i32 {
+func:increment_retry_count = int32(int32:count) {
     // Increment to track failed attempts
     // Max retries is 3 (see config)
-    return count + 1;
+    pass(count + 1);
 }
 ```
 
@@ -262,9 +262,9 @@ fn increment_retry_count(count: i32) -> i32 {
 /// # Example
 /// ```
 /// user: User = fetch_user(42)?;
-/// stdout << user.name;
+/// print(user.name);
 /// ```
-pub fn fetch_user(user_id: i32) -> Result<User> {
+pub func:fetch_user = Result<User>(int32:user_id) {
     // Implementation
 }
 ```
@@ -273,15 +273,15 @@ pub fn fetch_user(user_id: i32) -> Result<User> {
 
 ```aria
 // ✅ Good - accurate comment
-fn calculate_tax(amount: f64) -> f64 {
+func:calculate_tax = flt64(flt64:amount) {
     // Tax rate is 8.5% (updated 2025)
-    return amount * 0.085;
+    pass(amount * 0.085);
 }
 
 // ❌ Bad - outdated comment
-fn calculate_tax(amount: f64) -> f64 {
+func:calculate_tax = flt64(flt64:amount) {
     // Tax rate is 7.5%  <- WRONG!
-    return amount * 0.085;
+    pass(amount * 0.085);
 }
 ```
 
@@ -289,7 +289,7 @@ fn calculate_tax(amount: f64) -> f64 {
 
 ```aria
 // ❌ Too many obvious comments
-fn add(a: i32, b: i32) -> i32 {
+func:add = int32(int32:a, int32:b) {
     // Declare result variable
     Result: i32 = 0;
     
@@ -300,12 +300,12 @@ fn add(a: i32, b: i32) -> i32 {
     result = result + b;
     
     // Return the result
-    return result;
+    pass(result);
 }
 
 // ✅ Clean, self-documenting code
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 ```
 
@@ -313,7 +313,7 @@ fn add(a: i32, b: i32) -> i32 {
 
 ```aria
 // ❌ Bad - commented-out code
-fn process() {
+func:process = NIL() {
     do_step1();
     // do_step2();  // <- Remove this or use version control
     // old_implementation();
@@ -321,7 +321,7 @@ fn process() {
 }
 
 // ✅ Good - clean code
-fn process() {
+func:process = NIL() {
     do_step1();
     do_step3();
 }
@@ -332,7 +332,7 @@ fn process() {
 ## Comment Markers
 
 ```aria
-fn example() {
+func:example = NIL() {
     // TODO: Implement feature X
     // FIXME: Bug with negative values
     // HACK: Temporary workaround for issue #123

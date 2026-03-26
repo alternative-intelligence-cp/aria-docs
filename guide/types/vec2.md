@@ -1,5 +1,8 @@
 # The `vec2` Type (2D Vector)
 
+> **⚠️ DESIGN DOCUMENT — LIMITED COMPILER SUPPORT**
+> SIMD vector types have limited compiler support. The documentation below describes the planned design. Use the `aria-vec` ecosystem package for vector operations.
+
 **Category**: Types → Vectors → 2D  
 **Syntax**: `vec2`  
 **Purpose**: Two-dimensional vector for 2D graphics, physics, and mathematics  

@@ -46,7 +46,7 @@ balance: u256 = 1000000000000000000u256;
 total_supply: u256 = 21000000000000000000000000u256;
 
 // ERC-20 token amounts
-fn transfer(amount: u256) -> Result<void> {
+func:transfer = Result<NIL>(u256:amount) {
     when balance < amount then
         fail("Insufficient balance");
     end

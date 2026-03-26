@@ -9,7 +9,7 @@
 ## Basic Parameter Syntax
 
 ```aria
-fn function_name(param_name: Type) {
+func:function_name = NIL(Type:param_name) {
     // Use param_name here
 }
 ```
@@ -19,8 +19,8 @@ fn function_name(param_name: Type) {
 ## Single Parameter
 
 ```aria
-fn greet(name: string) {
-    stdout << "Hello, " << name << "\n";
+func:greet = NIL(string:name) {
+    print("Hello, " + name + "\n");
 }
 
 // Call
@@ -32,8 +32,8 @@ greet("Alice");
 ## Multiple Parameters
 
 ```aria
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 
 // Call with positional arguments
@@ -72,14 +72,14 @@ fn format_user(
 ### References
 
 ```aria
-fn modify(data: $Vec<i32>) {
+func:modify = NIL($Vec<i32>:data) {
     // data is mutable reference
     $data.push(42);
 }
 
-fn read(data: Vec<i32>) {
+func:read = NIL(Vec<i32>:data) {
     // data is owned/copied
-    stdout << data.len() << "\n";
+    print(data.len() + "\n");
 }
 ```
 
@@ -90,11 +90,11 @@ fn read(data: Vec<i32>) {
 Aria doesn't have default parameters, use `Option<T>`:
 
 ```aria
-fn greet(name: string, title: string?) {
+func:greet = NIL(string:name, string?:title) {
     when title != nil then
-        stdout << title << " " << name << "\n";
+        print(title + " " + name + "\n");
     else
-        stdout << name << "\n";
+        print(name + "\n");
     end
 }
 
@@ -108,8 +108,8 @@ greet("Bob", nil);
 ## Multiple Parameters of Same Type
 
 ```aria
-fn calculate_area(width: i32, height: i32) -> i32 {
-    return width * height;
+func:calculate_area = int32(int32:width, int32:height) {
+    pass(width * height);
 }
 
 // Must specify each type
@@ -122,13 +122,13 @@ fn calculate_area(width: i32, height: i32) -> i32 {
 ## Array Parameters
 
 ```aria
-fn sum(numbers: []i32) -> i32 {
+func:sum = int32([]i32:numbers) {
     total: i32 = 0;
     till(numbers.length - 1, 1) {
         num: i32 = numbers[$];
         total = total + num;
     }
-    return total;
+    pass(total);
 }
 
 // Call
@@ -140,9 +140,9 @@ Result: i32 = sum([1, 2, 3, 4, 5]);
 ## Tuple Parameters
 
 ```aria
-fn process_pair(pair: (i32, string)) {
+func:process_pair = NIL((i32, string:pair)) {
     (num, text) = pair;
-    stdout << num << ": " << text << "\n";
+    print(num + ": " + text + "\n");
 }
 
 // Call
@@ -159,8 +159,8 @@ struct Point {
     y: i32
 }
 
-fn distance(p: Point) -> f64 {
-    return sqrt((p.x * p.x + p.y * p.y) as f64);
+func:distance = flt64(Point:p) {
+    pass(sqrt((p.x * p.x + p.y * p.y) as f64));
 }
 
 // Call
@@ -173,15 +173,15 @@ dist: f64 = distance(point);
 ## Function Parameters (Higher-Order)
 
 ```aria
-fn apply(value: i32, transform: fn(i32) -> i32) -> i32 {
-    return transform(value);
+func:apply = i32)(int32:value, fn(i32:transform)-> i32 {
+    pass(transform(value));
 }
 
 // Call with lambda
 Result: i32 = apply(5, |x| x * 2);
 
 // Call with named function
-fn double(x: i32) -> i32 { return x * 2; }
+func:double = int32(int32:x) { return x * 2; }
 Result: i32 = apply(5, double);
 ```
 
@@ -190,8 +190,8 @@ Result: i32 = apply(5, double);
 ## Generic Parameters
 
 ```aria
-fn identity<T>(value: T) -> T {
-    return value;
+func:identity = T(T:value) {
+    pass(value);
 }
 
 // T inferred from argument
@@ -204,14 +204,14 @@ text: string = identity("hello");
 ## Mutable Parameters
 
 ```aria
-fn increment(count: $i32) {
+func:increment = NIL($i32:count) {
     $count = $count + 1;
 }
 
 // Usage
 value: i32 = 10;
 increment($value);
-stdout << value;  // 11
+print(value);  // 11
 ```
 
 ---
@@ -225,18 +225,18 @@ struct Counter {
 
 impl Counter {
     // Immutable self
-    fn get() -> i32 {
-        return self.count;
+    func:get = int32() {
+        pass(self.count);
     }
     
     // Mutable self
-    fn increment() {
+    func:increment = NIL() {
         self.count = self.count + 1;
     }
     
     // Consuming self
-    fn into_i32() -> i32 {
-        return self.count;
+    func:into_i32 = int32() {
+        pass(self.count);
     }
 }
 ```
@@ -248,8 +248,8 @@ impl Counter {
 ### Destructuring Tuple Parameter
 
 ```aria
-fn process((x, y): (i32, i32)) -> i32 {
-    return x + y;
+func:process = NIL((x, y): (i32, i32)) -> i32 {
+    pass(x + y);
 }
 
 // Call
@@ -259,8 +259,8 @@ Result: i32 = process((5, 10));  // 15
 ### Underscore for Unused
 
 ```aria
-fn get_first((first, _): (i32, i32)) -> i32 {
-    return first;
+func:get_first = NIL((first, _): (i32, i32)) -> i32 {
+    pass(first);
 }
 ```
 
@@ -289,13 +289,13 @@ fn create_user(
 // fn sum(numbers: ...i32) -> i32 { }
 
 // ✅ Right: Use array
-fn sum(numbers: []i32) -> i32 {
+func:sum = int32([]i32:numbers) {
     total: i32 = 0;
     till(numbers.length - 1, 1) {
         num: i32 = numbers[$];
         total = total + num;
     }
-    return total;
+    pass(total);
 }
 
 // Call
@@ -317,7 +317,7 @@ struct UserParams {
     age: i32?
 }
 
-fn create_user(params: UserParams) -> User {
+func:create_user = User(UserParams:params) {
     // Implementation
 }
 
@@ -338,18 +338,18 @@ user = create_user(UserParams{
 // fn greet(name: string = "World") { }
 
 // ✅ Right: Use separate functions or Option
-fn greet() {
+func:greet = NIL() {
     greet_name("World");
 }
 
-fn greet_name(name: string) {
-    stdout << "Hello, " << name << "\n";
+func:greet_name = NIL(string:name) {
+    print("Hello, " + name + "\n");
 }
 
 // Or use Option
-fn greet_optional(name: string?) {
+func:greet_optional = NIL(string?:name) {
     actual_name: string = name ?? "World";
-    stdout << "Hello, " << actual_name << "\n";
+    print("Hello, " + actual_name + "\n");
 }
 ```
 
@@ -361,14 +361,14 @@ fn greet_optional(name: string?) {
 
 ```aria
 // Good: Clear parameter names
-fn create_invoice(customer_id: i32, amount: f64, date: Date) { }
+func:create_invoice = NIL(int32:customer_id, flt64:amount, Date:date) { }
 ```
 
 ### ✅ DO: Keep Parameter Count Low
 
 ```aria
 // Good: 3-4 parameters
-fn format_address(street: string, city: string, zip: string) { }
+func:format_address = NIL(string:street, string:city, string:zip) { }
 
 // Better for many parameters: use struct
 struct Address {
@@ -379,14 +379,14 @@ struct Address {
     country: string
 }
 
-fn format_address(addr: Address) { }
+func:format_address = NIL(Address:addr) { }
 ```
 
 ### ✅ DO: Use Types That Prevent Errors
 
 ```aria
 // Good: Type safety
-fn set_age(age: u8) { }  // Can't be negative
+func:set_age = NIL(uint8:age) { }  // Can't be negative
 
 // Instead of:
 // fn set_age(age: i32) { }  // Could be negative
@@ -415,18 +415,18 @@ struct UserData {
     // ... other fields
 }
 
-fn create_user(data: UserData) { }
+func:create_user = NIL(UserData:data) { }
 ```
 
 ### ❌ DON'T: Use Ambiguous Types
 
 ```aria
 // Wrong: What do these booleans mean?
-fn configure(true, false, true) { }
+func:configure = NIL(true, false, true) { }
 
 // Right: Use enum or named struct
 enum Mode { Active, Inactive }
-fn configure(mode: Mode, debug: bool, verbose: bool) { }
+func:configure = NIL(Mode:mode, bool:debug, bool:verbose) { }
 ```
 
 ---

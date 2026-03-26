@@ -656,19 +656,19 @@
 <h2>Basic Usage</h2>
 <pre><code>// Simple output
 <p>
-stdout << "Hello, world!\n";
+print("Hello, world!\n");
 </p>
 <p>
 // Multiple values
-stdout << "Result: " << result << "\n";
+print("Result: " << result + "\n");
 </p>
 <p>
 // Expressions
-stdout << "Array has " << items.len() << " elements\n";
+print("Array has " << items.len() + " elements\n");
 </p>
 <p>
 // Formatted output
-stdout << format("Balance: ${:.2f}", balance);</code></pre>
+print(format("Balance: &{:.2f}", balance));</code></pre>
 </p>
 <hr>
 <h2>stdout vs stddato</h2>
@@ -676,8 +676,8 @@ stdout << format("Balance: ${:.2f}", balance);</code></pre>
 <h3>stdout (Human Output)</h3>
 <pre><code>// User-facing messages
 <p>
-stdout << "Processing complete\n";
-stdout << "Files processed: " << count << "\n";</code></pre>
+print("Processing complete\n");
+print("Files processed: " << count + "\n");</code></pre>
 </p>
 <strong>Purpose</strong>: Messages that humans read in terminals
 <h3>stddato (Machine Output)</h3>
@@ -689,7 +689,7 @@ stddato.write_json({"count": count, "status": "ok"});</code></pre>
 <h3>The Power: Both at Once!</h3>
 <pre><code>// Humans see progress
 <p>
-stdout << "Processing batch...\n";
+print("Processing batch...\n");
 </p>
 <p>
 // Machines get structured results
@@ -706,7 +706,7 @@ total: usize = items.len();
 <p>
 till(total - 1, 1) {
 // Human progress on stdout
-stdout << "Processing " << ($ + 1) << "/" << total << "...\r";
+print("Processing " << ($ + 1) << "/" << total + "...\r");
 stdout.flush();  // Update immediately
 </p>
 <p>
@@ -714,35 +714,35 @@ process_item(items[$]);
 }
 </p>
 <p>
-stdout << "\n";  // Newline after progress
+print("\n");  // Newline after progress
 }</code></pre>
 </p>
 <h3>Results Display</h3>
 <pre><code>fn display_results(results: []Result) {
 <p>
-stdout << "\nResults:\n";
-stdout << "========\n";
+print("\nResults:\n");
+print("========\n");
 </p>
 <p>
 till(results.length - 1, 1) {
-stdout << "  " << results[$].name << ": " << results[$].value << "\n";
+print("  " << results[$].name << ": " << results[$].value + "\n");
 }
 </p>
 <p>
-stdout << "\nTotal: " << results.len() << " items\n";
+print("\nTotal: " << results.len() + " items\n");
 }</code></pre>
 </p>
 <hr>
 <h2>Best Practices</h2>
 <h3>✅ DO: Use for User Messages</h3>
-<pre><code>stdout << "Welcome to MyApp!\n";
+<pre><code>print("Welcome to MyApp!\n");
 <p>
-stdout << "Operation completed successfully.\n";</code></pre>
+print("Operation completed successfully.\n");</code></pre>
 </p>
 <h3>✅ DO: Provide Both Human and Machine Output</h3>
 <pre><code>// Humans
 <p>
-stdout << "Processed " << count << " records\n";
+print("Processed " << count + " records\n");
 </p>
 <p>
 // Machines
@@ -751,16 +751,16 @@ stddato.write_json({"records_processed": count});</code></pre>
 <h3>❌ DON'T: Use for Debug Output</h3>
 <pre><code>// WRONG: Debug output pollutes stdout
 <p>
-stdout << "DEBUG: Entering function\n";
+print("DEBUG: Entering function\n");
 </p>
 <p>
 // RIGHT: Use stddbg
-stddbg << "Entering function";</code></pre>
+stddbg_write("Entering function");</code></pre>
 </p>
 <h3>❌ DON'T: Use for Structured Data</h3>
 <pre><code>// WRONG: JSON on stdout breaks human output
 <p>
-stdout << json_dumps(data);
+print(json_dumps(data));
 </p>
 <p>
 // RIGHT: Use stddato

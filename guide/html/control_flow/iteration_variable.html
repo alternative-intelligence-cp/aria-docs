@@ -666,7 +666,7 @@ item: auto = collection[$];
 <p>
 till(numbers.length - 1, 1) {
 // $ is the index, numbers[$] is the current value
-stdout << numbers[$] << "\n";
+print(numbers[$] + "\n");
 }</code></pre>
 </p>
 <hr>
@@ -691,7 +691,7 @@ till(items.length - 1, 1) { i: auto = items[$]; }  // i suggests index, not item
 <p>
 till(numbers.length - 1, 1) {
 num: auto = numbers[$];  // num is local read-only copy
-stdout << num;           // ✅ Can read
+print(num);           // ✅ Can read
 num = 10;                // ✅ Can modify local copy
 numbers[$] = 10;         // ❌ Can't modify array directly
 }</code></pre>
@@ -712,7 +712,7 @@ numbers[$] = numbers[$] * 2;  // ✅ Can modify
 // $ is the index - access both item and index
 till(items.length - 1, 1) {
 item: auto = items[$];
-stdout << $ << ": " << item << "\n";
+print($ << ": " << item + "\n");
 }</code></pre>
 </p>
 <hr>
@@ -724,7 +724,7 @@ Aria uses <strong>$</strong> as the index variable in loops:
 <p>
 till(items.length - 1, 1) {
 // $ varies from 0 to items.length-1
-stdout << "Index: " << $ << "\n";
+print("Index: " << $ + "\n");
 }</code></pre>
 </p>
 <hr>
@@ -784,12 +784,12 @@ Iteration variable exists <strong>only inside the loop</strong>:
 <pre><code>till(items.length - 1, 1) {
 <p>
 item: auto = items[$];
-stdout << item;
+print(item);
 }
 </p>
 <p>
 // item doesn't exist here
-stdout << item;  // ❌ Error</code></pre>
+print(item);  // ❌ Error</code></pre>
 </p>
 <hr>
 <h2>Shadowing</h2>
@@ -800,11 +800,11 @@ Can shadow outer variables:
 <p>
 till(items.length - 1, 1) {
 item: auto = items[$];  // This 'item' shadows the outer one
-stdout << item;
+print(item);
 }
 </p>
 <p>
-stdout << item;  // Back to "outer"</code></pre>
+print(item);  // Back to "outer"</code></pre>
 </p>
 <hr>
 <h2>Accessing Index and Value</h2>
@@ -828,7 +828,7 @@ keys: []string = map.keys();
 till(keys.length - 1, 1) {
 key: auto = keys[$];
 value: auto = map[key];
-stdout << key << ": " << value << "\n";
+print(key << ": " << value + "\n");
 }</code></pre>
 </p>
 <hr>
@@ -836,14 +836,14 @@ stdout << key << ": " << value << "\n";
 <pre><code>// Only need index - just use $
 <p>
 till(items.length - 1, 1) {
-stdout << "Position: " << $ << "\n";
+print("Position: " << $ + "\n");
 }
 </p>
 <p>
 // Only need value - declare variable
 till(items.length - 1, 1) {
 item: auto = items[$];
-stdout << "Item: " << item << "\n";
+print("Item: " << item + "\n");
 }</code></pre>
 </p>
 <hr>
@@ -972,8 +972,8 @@ till(students.length - 1, 1) {
 student: auto = students[$];
 rank: int64 = $;  // Index is the rank ($ is int64)
 // Both student and rank are clear
-stdout << format("{}. {} - GPA: {}",
-rank + 1, student.name, student.gpa);
+print(format("{}. {} - GPA: {}",
+rank + 1, student.name, student.gpa));
 }</code></pre>
 </p>
 <hr>

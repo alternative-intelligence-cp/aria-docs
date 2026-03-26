@@ -680,7 +680,7 @@ return 42.5;
 <p>
 // No return value (void)
 fn print_message(msg: string) {
-stdout << msg << "\n";
+print(msg + "\n");
 // No return statement needed
 }</code></pre>
 </p>
@@ -708,7 +708,7 @@ area: f64 = calculate_area(10.0, 20.0);  // 200.0</code></pre>
 <h3>No Return Value</h3>
 <pre><code>fn log_message(level: string, msg: string) {
 <p>
-stdout << "[" << level << "] " << msg << "\n";
+print("[" << level << "] " << msg + "\n");
 }
 </p>
 <p>

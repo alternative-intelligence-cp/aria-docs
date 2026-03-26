@@ -772,11 +772,11 @@ content: string = readFile(path).expect("Failed to read");  // ❌
 <p>
 fn load_user_data(user_id: i32) -> Result<UserData> {
 user: User = fetch_user(user_id)
-.context("Failed to fetch user $user_id")?;
+.context(`Failed to fetch user &{user_id}`)?;
 </p>
 <p>
 profile: Profile = fetch_profile(user_id)
-.context("Failed to fetch profile for user $user_id")?;
+.context(`Failed to fetch profile for user &{user_id}`)?;
 </p>
 <p>
 return Ok(UserData { user, profile });
@@ -945,7 +945,7 @@ return user?.name;
 /// # Example
 /// ``<code>
 /// user: User = fetch_user(42)?;
-/// stdout << user.name;
+/// print(user.name);
 /// </code>``
 pub fn fetch_user(user_id: i32) -> Result<User> {
 // Implementation
@@ -1017,7 +1017,7 @@ return Err("Invalid age");
 <pre><code>// ❌ SQL injection vulnerability
 <p>
 fn bad_query(username: string) -> Result<User> {
-query: string = "SELECT * FROM users WHERE name = '$username'";
+query: string = `SELECT * FROM users WHERE name = '&{username}'`;
 return db.execute(query);  // ❌ Vulnerable!
 }
 </p>

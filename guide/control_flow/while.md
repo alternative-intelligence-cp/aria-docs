@@ -28,7 +28,7 @@ while condition {
 count: i32 = 0;
 
 while count < 5 {
-    stdout << count << "\n";
+    print(count + "\n");
     count = count + 1;
 }
 
@@ -49,7 +49,7 @@ while count < 5 {
 count: i32 = 10;
 
 while count < 5 {
-    stdout << "This never prints\n";
+    print("This never prints\n");
 }
 ```
 
@@ -63,11 +63,11 @@ while count < 5 {
 countdown: i32 = 10;
 
 while countdown > 0 {
-    stdout << countdown << "...\n";
+    print(countdown + "...\n");
     countdown = countdown - 1;
 }
 
-stdout << "Liftoff!\n";
+print("Liftoff!\n");
 ```
 
 ### Process Until Empty
@@ -84,7 +84,7 @@ while !queue.is_empty() {
 ```aria
 while !file.eof() {
     line: string = pass file.read_line();
-    stdout << line << "\n";
+    print(line + "\n");
 }
 ```
 
@@ -132,7 +132,7 @@ while count < 10 {
         continue;  // Skip even numbers
     }
     
-    stdout << count << " ";
+    print(count + " ");
 }
 // Output: 1 3 5 7 9
 ```
@@ -184,7 +184,7 @@ while !file.eof() {
 // ❌ Wrong: Forgot to increment
 count: i32 = 0;
 while count < 10 {
-    stdout << count << "\n";
+    print(count + "\n");
     // Missing: count = count + 1;
 }
 // Infinite loop!
@@ -192,7 +192,7 @@ while count < 10 {
 // ✅ Right: Update condition variable
 count: i32 = 0;
 while count < 10 {
-    stdout << count << "\n";
+    print(count + "\n");
     count = count + 1;
 }
 ```
@@ -220,19 +220,19 @@ till(9, 1) {
 ### Input Loop
 
 ```aria
-fn get_user_input() -> string {
+func:get_user_input = string() {
     input: string = "";
     
     while input.length() == 0 {
-        stdout << "Enter your name: ";
+        print("Enter your name: ");
         input = read_line();
         
         if input.length() == 0 {
-            stderr << "Name cannot be empty!\n";
+            stderr_write("Name cannot be empty!\n");
         }
     }
     
-    return input;
+    pass(input);
 }
 ```
 
@@ -240,11 +240,11 @@ fn get_user_input() -> string {
 
 ```aria
 while !server.is_ready() {
-    stdout << "Waiting for server...\n";
+    print("Waiting for server...\n");
     sleep(1000);  // Wait 1 second
 }
 
-stdout << "Server ready!\n";
+print("Server ready!\n");
 ```
 
 ### Buffer Processing

@@ -716,7 +716,7 @@ full = ["logging", "database", "cache"]</code></pre>
 <pre><code>#[cfg(feature = "logging")]
 <p>
 pub fn log(msg: string) {
-stdout << "[LOG] $msg";
+print(`[LOG] &{msg}`);
 }
 </p>
 <p>
@@ -740,8 +740,8 @@ pub fn get(key: string) -> ?Data {
 <pre><code>#[cfg(debug)]
 <p>
 pub fn debug_info() {
-stdout << "Debug build";
-stdout << "Extra checks enabled";
+print("Debug build");
+print("Extra checks enabled");
 }
 </p>
 <p>

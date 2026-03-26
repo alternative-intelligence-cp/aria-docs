@@ -1,5 +1,8 @@
 # frac64 - 64-bit Extreme Precision Exact Rational Arithmetic
 
+> **⚠️ DESIGN DOCUMENT — NOT YET IMPLEMENTED IN COMPILER**
+> Fractional types are part of the Aria language specification but are not yet available in the compiler. The documentation below describes the planned design.
+
 ## Overview
 
 `frac64` is a 64-bit **mixed-fraction rational number** that provides **extreme-precision exact rational arithmetic** with a range of ±9,223,372,036,854,775,807 (±9.2 quintillion). This is the **ultimate exact rational type** in Aria, designed for applications where both massive scale and mathematical perfection are non-negotiable.

@@ -15,10 +15,10 @@
 ## Basic Async Function
 
 ```aria
-async fn fetch_data(url: string) -> Result<string> {
+async func:fetch_data = Result<string>(string:url) {
     response: Response = await http.get(url)?;
     text: string = await response.text()?;
-    return Ok(text);
+    pass(Ok(text));
 }
 ```
 
@@ -28,9 +28,9 @@ async fn fetch_data(url: string) -> Result<string> {
 
 ```aria
 // Must use await
-async fn main() {
+async func:main = NIL() {
     data: string = await fetch_data("https://example.com")?;
-    stdout << data;
+    print(data);
 }
 ```
 
@@ -40,15 +40,15 @@ async fn main() {
 
 ```aria
 // Synchronous - blocks thread
-fn sync_fetch(url: string) -> Result<string> {
+func:sync_fetch = Result<string>(string:url) {
     // Blocks until complete
-    return http_blocking.get(url)?;
+    pass(http_blocking.get(url)?);
 }
 
 // Asynchronous - doesn't block
-async fn async_fetch(url: string) -> Result<string> {
+async func:async_fetch = Result<string>(string:url) {
     // Suspends, other tasks can run
-    return await http.get(url)?;
+    pass(await http.get(url)?);
 }
 ```
 
@@ -57,20 +57,20 @@ async fn async_fetch(url: string) -> Result<string> {
 ## Return Types
 
 ```aria
-async fn get_number() -> i32 {
-    return 42;
+async func:get_number = int32() {
+    pass(42);
 }
 
-async fn may_fail() -> Result<Data> {
+async func:may_fail = Result<Data>() {
     data: Data = await fetch()?;
-    return Ok(data);
+    pass(Ok(data));
 }
 
-async fn optional_data() -> ?Data {
+async func:optional_data = ?Data() {
     if available {
-        return Some(await fetch());
+        pass(Some(await fetch()));
     }
-    return None;
+    pass(None);
 }
 ```
 
@@ -79,7 +79,7 @@ async fn optional_data() -> ?Data {
 ## Async Blocks
 
 ```aria
-fn main() {
+func:main = NIL() {
     future = async {
         data: Data = await fetch_data();
         await process(data);
@@ -94,7 +94,7 @@ fn main() {
 ## Concurrent Execution
 
 ```aria
-async fn fetch_all() -> Result<void> {
+async func:fetch_all = Result<NIL>() {
     // Start both requests concurrently
     task1 = fetch_data("url1");
     task2 = fetch_data("url2");
@@ -103,8 +103,8 @@ async fn fetch_all() -> Result<void> {
     data1: Data = await task1?;
     data2: Data = await task2?;
     
-    stdout << "Got $data1 and $data2";
-    return Ok();
+    print(`Got &{data1} and &{data2}`);
+    pass(Ok());
 }
 ```
 
@@ -115,11 +115,11 @@ async fn fetch_all() -> Result<void> {
 ### Sequential Async
 
 ```aria
-async fn sequential() -> Result<void> {
+async func:sequential = Result<NIL>() {
     user: User = await fetch_user()?;
     posts: []Post = await fetch_posts(user.id)?;
     comments: []Comment = await fetch_comments(posts[0].id)?;
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -128,7 +128,7 @@ async fn sequential() -> Result<void> {
 ### Concurrent Async
 
 ```aria
-async fn concurrent() -> Result<void> {
+async func:concurrent = Result<NIL>() {
     // Start all at once
     user_task = fetch_user();
     posts_task = fetch_posts();
@@ -139,7 +139,7 @@ async fn concurrent() -> Result<void> {
     posts: []Post = await posts_task?;
     stats: Stats = await stats_task?;
     
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -155,10 +155,10 @@ async fn* async_generator() -> i32 {
     }
 }
 
-async fn use_generator() {
+async func:use_generator = NIL() {
     values = await async_generator().collect();
     till(values.length - 1, 1) {
-        stdout << values[$];
+        print(values[$]);
     }
 }
 ```
@@ -170,18 +170,18 @@ async fn use_generator() {
 ### ✅ DO: Use for I/O Operations
 
 ```aria
-async fn read_files() -> Result<void> {
+async func:read_files = Result<NIL>() {
     // Good - async I/O
     content1: string = await readFile("file1.txt")?;
     content2: string = await readFile("file2.txt")?;
-    return Ok();
+    pass(Ok());
 }
 ```
 
 ### ✅ DO: Run Independent Tasks Concurrently
 
 ```aria
-async fn fetch_dashboard() -> Dashboard {
+async func:fetch_dashboard = Dashboard() {
     user = fetch_user();
     posts = fetch_posts();
     notifications = fetch_notifications();
@@ -197,17 +197,17 @@ async fn fetch_dashboard() -> Dashboard {
 ### ❌ DON'T: Use for CPU-Bound Work
 
 ```aria
-async fn compute() -> i32 {
+async func:compute = int32() {
     // ❌ Bad - blocks thread with CPU work
     sum: i32 = 0;
     till(999999, 1) {
         sum += $;
     }
-    return sum;
+    pass(sum);
 }
 
 // Better - use regular function or thread
-fn compute() -> i32 {
+func:compute = int32() {
     // CPU work in sync function
 }
 ```

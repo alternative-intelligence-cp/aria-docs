@@ -672,15 +672,15 @@ The Unix tradition gave us <strong>three streams</strong> for a reason:
 <h2>Basic Usage</h2>
 <pre><code>// Simple error message
 <p>
-stderr << "ERROR: File not found\n";
+stderr_write("ERROR: File not found\n");
 </p>
 <p>
 // Error with details
-stderr << "ERROR: Cannot open '" << filename << "': " << error_msg << "\n";
+stderr_write("ERROR: Cannot open '" << filename << "': " << error_msg + "\n");
 </p>
 <p>
 // Warning message
-stderr << "WARNING: Deprecated feature used\n";</code></pre>
+stderr_write("WARNING: Deprecated feature used\n");</code></pre>
 </p>
 <hr>
 <h2>stderr vs stdout vs stddbg</h2>
@@ -688,14 +688,14 @@ stderr << "WARNING: Deprecated feature used\n";</code></pre>
 <p>
 | Stream | Purpose | Example |
 |--------|---------|---------|
-| <strong>stdout</strong> | Normal output for humans | <code>stdout << "Processing complete\n";</code> |
-| <strong>stderr</strong> | Error messages | <code>stderr << "ERROR: Invalid input\n";</code> |
-| <strong>stddbg</strong> | Debug/diagnostic info | <code>stddbg << "Entering function foo()";</code> |
+| <strong>stdout</strong> | Normal output for humans | <code>print("Processing complete\n");</code> |
+| <strong>stderr</strong> | Error messages | <code>stderr_write("ERROR: Invalid input\n");</code> |
+| <strong>stddbg</strong> | Debug/diagnostic info | <code>stddbg_write("Entering function foo()");</code> |
 </p>
 <strong>Why three?</strong>
 <pre><code>fn main() {
 <p>
-stddbg << "Program starting";  // Debug trace
+stddbg_write("Program starting");  // Debug trace
 </p>
 <p>
 Result: Result = process();
@@ -703,10 +703,10 @@ Result: Result = process();
 <p>
 match result {
 Ok(data) => {
-stdout << "Success: " << data;  // Normal output
+print("Success: " + data);  // Normal output
 }
 Err(err) => {
-stderr << "ERROR: " << err;  // Error message
+stderr_write("ERROR: " + err);  // Error message
 }
 }
 }</code></pre>
@@ -729,16 +729,16 @@ stderr << "ERROR: " << err;  // Error message
 <h3>Simple Error</h3>
 <pre><code>when !file.exists() then
 <p>
-stderr << "ERROR: File not found: " << filename << "\n";
+stderr_write("ERROR: File not found: " << filename + "\n");
 return ERR;
 end</code></pre>
 </p>
 <h3>Error with Context</h3>
 <pre><code>when balance < amount then
 <p>
-stderr << "ERROR: Insufficient funds\n";
-stderr << "  Balance: $" << balance << "\n";
-stderr << "  Required: $" << amount << "\n";
+stderr_write("ERROR: Insufficient funds\n");
+stderr_write("  Balance: $" << balance + "\n");
+stderr_write("  Required: $" << amount + "\n");
 return ERR;
 end</code></pre>
 </p>
@@ -756,7 +756,7 @@ panic("Critical error occurred");
 <pre><code>// Error: Stop execution
 <p>
 when !validate(data) then
-stderr << "ERROR: Invalid data format\n";
+stderr_write("ERROR: Invalid data format\n");
 return ERR;  // Stop
 end</code></pre>
 </p>
@@ -764,56 +764,56 @@ end</code></pre>
 <pre><code>// Warning: Continue execution
 <p>
 when version < MIN_VERSION then
-stderr << "WARNING: Old version detected, please upgrade\n";
+stderr_write("WARNING: Old version detected, please upgrade\n");
 // But continue anyway
 end</code></pre>
 </p>
 <hr>
 <h2>Best Practices</h2>
 <h3>✅ DO: Use for Actual Errors</h3>
-<pre><code>stderr << "ERROR: Cannot connect to database\n";
+<pre><code>stderr_write("ERROR: Cannot connect to database\n");
 <p>
-stderr << "FATAL: Out of memory\n";</code></pre>
+stderr_write("FATAL: Out of memory\n");</code></pre>
 </p>
 <h3>✅ DO: Prefix with Severity</h3>
-<pre><code>stderr << "ERROR: " << message << "\n";
+<pre><code>stderr_write("ERROR: " << message + "\n");
 <p>
-stderr << "WARNING: " << message << "\n";
-stderr << "FATAL: " << message << "\n";</code></pre>
+stderr_write("WARNING: " << message + "\n");
+stderr_write("FATAL: " << message + "\n");</code></pre>
 </p>
 <h3>✅ DO: Include Context</h3>
-<pre><code>stderr << "ERROR: Failed to parse JSON\n";
+<pre><code>stderr_write("ERROR: Failed to parse JSON\n");
 <p>
-stderr << "  File: " << filename << "\n";
-stderr << "  Line: " << line_num << "\n";
-stderr << "  Reason: " << err.message << "\n";</code></pre>
+stderr_write("  File: " << filename + "\n");
+stderr_write("  Line: " << line_num + "\n");
+stderr_write("  Reason: " << err.message + "\n");</code></pre>
 </p>
 <h3>❌ DON'T: Use for Debug Output</h3>
 <pre><code>// WRONG: Debug info should go to stddbg
 <p>
-stderr << "DEBUG: Entering function\n";
+stderr_write("DEBUG: Entering function\n");
 </p>
 <p>
 // RIGHT:
-stddbg << "Entering function";</code></pre>
+stddbg_write("Entering function");</code></pre>
 </p>
 <h3>❌ DON'T: Use for Normal Output</h3>
 <pre><code>// WRONG: Normal output goes to stdout
 <p>
-stderr << "Processing complete\n";
+stderr_write("Processing complete\n");
 </p>
 <p>
 // RIGHT:
-stdout << "Processing complete\n";</code></pre>
+print("Processing complete\n");</code></pre>
 </p>
 <h3>❌ DON'T: Mix Errors with Data</h3>
 <pre><code>// WRONG: JSON on stderr is weird
 <p>
-stderr << json_dumps(error_object);
+stderr_write(json_dumps(error_object));
 </p>
 <p>
 // RIGHT: Errors are human-readable
-stderr << "ERROR: " << error_object.message << "\n";</code></pre>
+stderr_write("ERROR: " << error_object.message + "\n");</code></pre>
 </p>
 <hr>
 <h2>Error Exit Codes</h2>
@@ -827,11 +827,11 @@ Result: Result = process();
 <p>
 match result {
 Ok(data) => {
-stdout << "Success\n";
+print("Success\n");
 return 0;  // Success exit code
 }
 Err(err) => {
-stderr << "ERROR: " << err << "\n";
+stderr_write("ERROR: " << err + "\n");
 return 1;  // Error exit code
 }
 }

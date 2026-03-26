@@ -45,16 +45,16 @@ data: Data = aria_gc_alloc(Data);
 
 ```aria
 // Manual - possible dangling pointer
-fn bad() -> *Data {
+func:bad = *Data() {
     data: *Data = aria_alloc(sizeof(Data));
     aria_free(data);
-    return data;  // Dangling!
+    pass(data);  // Dangling!
 }
 
 // GC - safe
-fn good() -> Data {
+func:good = Data() {
     data: Data = aria_gc_alloc(Data);
-    return data;  // Valid until no references
+    pass(data);  // Valid until no references
 }
 ```
 
@@ -176,7 +176,7 @@ data = nil;  // Allow GC to collect
 
 ```aria
 // Good: Short-lived
-fn process() {
+func:process = NIL() {
     temp: Data = aria_gc_alloc(Data);
     // temp collected soon
 }

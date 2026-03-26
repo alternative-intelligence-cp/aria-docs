@@ -44,7 +44,7 @@ loop
     line: ?string = file.read_line();
     when line == nil then break; end
     
-    stdout << "Line: $line";
+    print(`Line: &{line}`);
 end
 ```
 

@@ -113,7 +113,7 @@ struct Lexer {
 }
 
 impl Lexer {
-    pub fn new(source: string) -> Lexer {
+    pub func:new = Lexer(string:source) {
         return Lexer {
             source: source,
             position: 0,
@@ -122,11 +122,11 @@ impl Lexer {
         };
     }
     
-    pub fn next_token() -> Token {
+    pub func:next_token = Token() {
         self.skip_whitespace();
         
         if self.is_at_end() {
-            return self.make_token(TokenType.Eof);
+            pass(self.make_token(TokenType.Eof));
         }
         
         c: char = self.peek();
@@ -141,11 +141,11 @@ impl Lexer {
             '=' => return self.scan_eq_or_eqeq(),
             _ => {
                 if c.is_digit() {
-                    return self.scan_number();
+                    pass(self.scan_number());
                 } else if c.is_alpha() {
-                    return self.scan_identifier_or_keyword();
+                    pass(self.scan_identifier_or_keyword());
                 } else {
-                    return self.make_token(TokenType.Unknown);
+                    pass(self.make_token(TokenType.Unknown));
                 }
             }
         }
@@ -159,7 +159,7 @@ impl Lexer {
 
 ```aria
 impl Lexer {
-    fn scan_number() -> Token {
+    func:scan_number = Token() {
         start: i32 = self.position;
         
         // Integer part
@@ -200,7 +200,7 @@ impl Lexer {
 
 ```aria
 impl Lexer {
-    fn scan_identifier_or_keyword() -> Token {
+    func:scan_identifier_or_keyword = Token() {
         start: i32 = self.position;
         
         // Scan identifier
@@ -237,7 +237,7 @@ impl Lexer {
 
 ```aria
 impl Lexer {
-    fn scan_string() -> Token {
+    func:scan_string = Token() {
         self.advance();  // Skip opening quote
         start: i32 = self.position;
         
@@ -251,7 +251,7 @@ impl Lexer {
         }
         
         if self.is_at_end() {
-            return self.error_token("Unterminated string");
+            pass(self.error_token("Unterminated string"));
         }
         
         value: string = self.source[start..self.position];
@@ -259,7 +259,7 @@ impl Lexer {
         
         return Token {
             type: TokenType.String(value),
-            lexeme: "\"$value\"",
+            lexeme: `\"&{value}\"`,
             // ... position info
         };
     }
@@ -272,7 +272,7 @@ impl Lexer {
 
 ```aria
 impl Lexer {
-    fn skip_whitespace() {
+    func:skip_whitespace = NIL() {
         while true {
             c: char = self.peek();
             
@@ -293,7 +293,7 @@ impl Lexer {
                         // Block comment
                         self.skip_block_comment();
                     } else {
-                        return;
+                        pass(NIL);
                     }
                 }
                 _ => return,
@@ -301,7 +301,7 @@ impl Lexer {
         }
     }
     
-    fn skip_block_comment() {
+    func:skip_block_comment = NIL() {
         self.advance();  // Skip /
         self.advance();  // Skip *
         
@@ -330,7 +330,7 @@ impl Lexer {
 
 ```aria
 impl Lexer {
-    fn error_token(message: string) -> Token {
+    func:error_token = Token(string:message) {
         return Token {
             type: TokenType.Unknown,
             lexeme: message,
@@ -342,15 +342,15 @@ impl Lexer {
 }
 
 // Usage
-fn compile(source: string) {
+func:compile = NIL(string:source) {
     lexer: Lexer = Lexer.new(source);
     
     while true {
         token: Token = lexer.next_token();
         
         if token.type == TokenType.Unknown {
-            stderr << "Lexer error at ${token.line}:${token.column}: ${token.lexeme}";
-            return;
+            stderr_write("Lexer error at &{token.line}:&{token.column}: &{token.lexeme}");
+            pass(NIL);
         }
         
         if token.type == TokenType.Eof {
@@ -382,7 +382,7 @@ struct Token {
 ### ✅ DO: Handle Unicode
 
 ```aria
-fn scan_identifier() -> Token {
+func:scan_identifier = Token() {
     // Support Unicode identifiers
     while self.peek().is_alphabetic() || self.peek() == '_' {
         self.advance();
@@ -393,11 +393,11 @@ fn scan_identifier() -> Token {
 ### ✅ DO: Provide Good Error Messages
 
 ```aria
-fn error(message: string) {
-    stderr << "Error at ${self.line}:${self.column}";
-    stderr << "  ${message}";
-    stderr << "  ${self.get_line_text()}";
-    stderr << "  ${' ' * (self.column - 1)}^";
+func:error = NIL(string:message) {
+    stderr_write("Error at &{self.line}:&{self.column}");
+    stderr_write("  &{message}");
+    stderr_write("  &{self.get_line_text()}");
+    stderr_write("  &{' ' * (self.column - 1)}^");
 }
 ```
 

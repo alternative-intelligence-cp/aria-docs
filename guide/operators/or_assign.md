@@ -25,7 +25,7 @@ The bitwise OR assignment operator `|=` performs a bitwise OR and assigns the re
 ```aria
 x: i32 = 0b0011;
 x |= 0b0100;  // x = x | 0b0100
-stdout << x;  // 0b0111 = 7
+print(x);  // 0b0111 = 7
 ```
 
 ---

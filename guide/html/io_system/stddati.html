@@ -698,7 +698,7 @@ fn main() {
 config: json::Value = stddati.read_json()?;
 </p>
 <p>
-stddbg << "Loaded config: " << config;
+stddbg_write("Loaded config: " + config);
 </p>
 <p>
 // Access fields
@@ -706,7 +706,7 @@ port: u16 = config["port"].as_u16()?;
 host: string = config["host"].as_string()?;
 </p>
 <p>
-stdout << "Starting server on " << host << ":" << port;
+print("Starting server on " << host << ":" + port);
 }</code></pre>
 </p>
 <strong>Usage</strong>:
@@ -782,7 +782,7 @@ fn main() {
 request: json::Value = stddati.read_json()?;
 </p>
 <p>
-stddbg << "Processing API request: " << request["endpoint"];
+stddbg_write("Processing API request: " + request["endpoint"]);
 </p>
 <p>
 // Process
@@ -801,7 +801,7 @@ fn main() {
 config: Config = stddati.read_toml()?;
 </p>
 <p>
-stddbg << "Loaded config: " << config;
+stddbg_write("Loaded config: " + config);
 </p>
 <p>
 // Use config to initialize application
@@ -818,7 +818,7 @@ app.run();
 items: []Item = stddati.read_json()?;
 </p>
 <p>
-stddbg << "Processing batch of " << items.len() << " items";
+stddbg_write("Processing batch of " << items.len() + " items");
 </p>
 <p>
 results: []Result = [];
@@ -845,9 +845,9 @@ data: JsonValue = stddati.read_json()?;
 process_data(data);
 else
 // Interactive mode: Prompt user via stdin
-stdout << "Enter your name: ";
+print("Enter your name: ");
 name: string = stdin.read_line();
-stdout << "Hello, " << name << "!";
+print("Hello, " << name + "!");
 end
 }</code></pre>
 </p>
@@ -909,7 +909,7 @@ when stddati.has_input() then
 data: JsonValue = stddati.read_json()?;
 process(data);
 else
-stderr << "No data input available on stddati";
+stderr_write("No data input available on stddati");
 end
 </p>
 <p>
@@ -930,11 +930,11 @@ Result: Result<JsonValue, IoError> = stddati.read_json();
 <p>
 match result {
 Ok(data) => {
-stddbg << "Loaded data: " << data;
+stddbg_write("Loaded data: " + data);
 process(data);
 }
 Err(err) => {
-stderr << "Failed to read JSON: " << err;
+stderr_write("Failed to read JSON: " + err);
 return ERR;
 }
 }</code></pre>
@@ -962,7 +962,7 @@ batch_data: []Record = stddati.read_msgpack()?;</code></pre>
 <p>
 // Validate schema
 when !validate_schema(data) then
-stderr << "Invalid data format";
+stderr_write("Invalid data format");
 return ERR;
 end
 </p>
@@ -987,7 +987,7 @@ name: string = stddati.read_line();
 </p>
 <p>
 // RIGHT: Use stdin for human interaction
-stdout << "Enter your name: ";
+print("Enter your name: ");
 name: string = stdin.read_line();</code></pre>
 </p>
 <h3>❌ DON'T: Mix with stdin</h3>
@@ -1065,7 +1065,7 @@ user_input: string = stdin.read_line();</code></pre>
 <pre><code>use std::json;
 <p>
 fn main() {
-stddbg << "Starting log processor";
+stddbg_write("Starting log processor");
 </p>
 <p>
 // Read NDJSON logs from stddati
@@ -1087,12 +1087,12 @@ stddato.write_json(log_entry);
 </p>
 <p>
 // Also print to stdout for humans
-stdout << "[" << timestamp << "] ERROR: " << message;
+print("[" << timestamp << "] ERROR: " + message);
 end
 }
 </p>
 <p>
-stddbg << "Log processing complete";
+stddbg_write("Log processing complete");
 }</code></pre>
 </p>
 <strong>Usage</strong>:

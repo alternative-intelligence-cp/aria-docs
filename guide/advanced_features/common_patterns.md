@@ -29,7 +29,7 @@ struct ConfigBuilder {
 }
 
 impl ConfigBuilder {
-    pub fn new() -> ConfigBuilder {
+    pub func:new = ConfigBuilder() {
         return ConfigBuilder {
             host: None,
             port: None,
@@ -38,17 +38,17 @@ impl ConfigBuilder {
         };
     }
     
-    pub fn host(host: string) -> ConfigBuilder {
+    pub func:host = ConfigBuilder(string:host) {
         self.host = Some(host);
-        return self;
+        pass(self);
     }
     
-    pub fn port(port: i32) -> ConfigBuilder {
+    pub func:port = ConfigBuilder(int32:port) {
         self.port = Some(port);
-        return self;
+        pass(self);
     }
     
-    pub fn build() -> Config {
+    pub func:build = Config() {
         return Config {
             host: self.host.unwrap_or("localhost"),
             port: self.port.unwrap_or(8080),
@@ -70,13 +70,13 @@ config: Config = ConfigBuilder.new()
 ## Option and Result Chaining
 
 ```aria
-fn get_user_email(user_id: i32) -> ?string {
+func:get_user_email = ?string(int32:user_id) {
     return find_user(user_id)?
         .get_profile()?
         .email;
 }
 
-fn fetch_and_process() -> Result<Data> {
+func:fetch_and_process = Result<Data>() {
     return fetch_data()?
         .validate()?
         .transform()?
@@ -89,16 +89,16 @@ fn fetch_and_process() -> Result<Data> {
 ## Iterator Pattern
 
 ```aria
-fn process_users(users: []User) {
+func:process_users = NIL([]User:users) {
     users
         .filter(|u| u.age >= 18)
         .map(|u| u.name)
         .forEach(|name| {
-            stdout << name;
+            print(name);
         });
 }
 
-fn sum_even_squares(numbers: []i32) -> i32 {
+func:sum_even_squares = int32([]i32:numbers) {
     return numbers
         .filter(|n| n % 2 == 0)
         .map(|n| n * n)
@@ -118,14 +118,14 @@ enum DatabaseType {
 }
 
 trait Database {
-    fn connect() -> Result<void>;
-    fn query(sql: string) -> Result<[]Row>;
+    func:connect = Result<NIL>()
+    func:query = Result<[]Row>(string:sql)
 }
 
 struct DatabaseFactory;
 
 impl DatabaseFactory {
-    pub fn create(db_type: DatabaseType) -> Box<dyn Database> {
+    pub func:create = Box<dyn(DatabaseType:db_type)Database> {
         match db_type {
             DatabaseType.Postgres => return Box.new(PostgresDB.new()),
             DatabaseType.MySQL => return Box.new(MySQLDB.new()),
@@ -149,17 +149,17 @@ struct Logger {
 }
 
 impl Logger {
-    pub fn get_instance() -> *Logger {
+    pub func:get_instance = *Logger() {
         if Logger.instance is None {
             Logger.instance = Some(alloc(Logger {
                 // Initialize
             }));
         }
-        return Logger.instance?;
+        pass(Logger.instance?);
     }
     
-    pub fn log(message: string) {
-        stdout << "[LOG] $message";
+    pub func:log = NIL(string:message) {
+        print(`[LOG] &{message}`);
     }
 }
 
@@ -173,19 +173,19 @@ Logger.get_instance().log("Application started");
 
 ```aria
 trait SortStrategy {
-    fn sort(data: []i32) -> []i32;
+    func:sort = []i32;([]i32:data)
 }
 
 struct QuickSort;
 impl SortStrategy for QuickSort {
-    fn sort(data: []i32) -> []i32 {
+    func:sort = []i32([]i32:data) {
         // Quick sort implementation
     }
 }
 
 struct MergeSort;
 impl SortStrategy for MergeSort {
-    fn sort(data: []i32) -> []i32 {
+    func:sort = []i32([]i32:data) {
         // Merge sort implementation
     }
 }
@@ -195,12 +195,12 @@ struct Sorter {
 }
 
 impl Sorter {
-    pub fn new(strategy: Box<dyn SortStrategy>) -> Sorter {
-        return Sorter { strategy: strategy };
+    pub func:new = Sorter(Box<dyn SortStrategy>:strategy) {
+        pass(Sorter { strategy: strategy });
     }
     
-    pub fn sort(data: []i32) -> []i32 {
-        return self.strategy.sort(data);
+    pub func:sort = []i32([]i32:data) {
+        pass(self.strategy.sort(data));
     }
 }
 
@@ -219,24 +219,24 @@ struct File {
 }
 
 impl File {
-    pub fn open(path: string) -> Result<File> {
+    pub func:open = Result<File>(string:path) {
         handle: *FileHandle = open_file(path)?;
-        return Ok(File { handle: handle });
+        pass(Ok(File { handle: handle }));
     }
 }
 
 impl Drop for File {
-    fn drop() {
+    func:drop = NIL() {
         close_file(self.handle);
-        stdout << "File closed automatically";
+        print("File closed automatically");
     }
 }
 
 // Usage
-fn process() -> Result<void> {
+func:process = Result<NIL>() {
     file: File = File.open("data.txt")?;
     // Use file
-    return Ok();
+    pass(Ok());
 }  // File automatically closed
 ```
 
@@ -248,7 +248,7 @@ fn process() -> Result<void> {
 struct UserId(i32);
 struct ProductId(i32);
 
-fn get_user(id: UserId) -> Result<User> {
+func:get_user = Result<User>(UserId:id) {
     // Implementation
 }
 
@@ -273,20 +273,20 @@ struct Door<State> {
 }
 
 impl Door<Locked> {
-    pub fn unlock() -> Door<Unlocked> {
-        stdout << "Door unlocked";
-        return Door { state: Unlocked };
+    pub func:unlock = Door<Unlocked>() {
+        print("Door unlocked");
+        pass(Door { state: Unlocked });
     }
 }
 
 impl Door<Unlocked> {
-    pub fn open() {
-        stdout << "Door opened";
+    pub func:open = NIL() {
+        print("Door opened");
     }
     
-    pub fn lock() -> Door<Locked> {
-        stdout << "Door locked";
-        return Door { state: Locked };
+    pub func:lock = Door<Locked>() {
+        print("Door locked");
+        pass(Door { state: Locked });
     }
 }
 
@@ -303,7 +303,7 @@ door.open();                 // ✅ Now can open
 
 ```aria
 trait Expression {
-    fn accept(visitor: *Visitor) -> i32;
+    func:accept = i32;(*Visitor:visitor)
 }
 
 struct Number {
@@ -311,8 +311,8 @@ struct Number {
 }
 
 impl Expression for Number {
-    fn accept(visitor: *Visitor) -> i32 {
-        return visitor.visit_number(self);
+    func:accept = int32(*Visitor:visitor) {
+        pass(visitor.visit_number(self));
     }
 }
 
@@ -322,27 +322,27 @@ struct Add {
 }
 
 impl Expression for Add {
-    fn accept(visitor: *Visitor) -> i32 {
-        return visitor.visit_add(self);
+    func:accept = int32(*Visitor:visitor) {
+        pass(visitor.visit_add(self));
     }
 }
 
 trait Visitor {
-    fn visit_number(num: *Number) -> i32;
-    fn visit_add(add: *Add) -> i32;
+    func:visit_number = i32;(*Number:num)
+    func:visit_add = i32;(*Add:add)
 }
 
 struct Evaluator;
 
 impl Visitor for Evaluator {
-    fn visit_number(num: *Number) -> i32 {
-        return num.value;
+    func:visit_number = int32(*Number:num) {
+        pass(num.value);
     }
     
-    fn visit_add(add: *Add) -> i32 {
+    func:visit_add = int32(*Add:add) {
         left: i32 = add.left.accept(self);
         right: i32 = add.right.accept(self);
-        return left + right;
+        pass(left + right);
     }
 }
 ```
@@ -353,8 +353,8 @@ impl Visitor for Evaluator {
 
 ```aria
 trait Command {
-    fn execute();
-    fn undo();
+    func:execute = NIL();
+    func:undo = NIL();
 }
 
 struct AddUserCommand {
@@ -362,11 +362,11 @@ struct AddUserCommand {
 }
 
 impl Command for AddUserCommand {
-    fn execute() {
+    func:execute = NIL() {
         database.insert(self.user);
     }
     
-    fn undo() {
+    func:undo = NIL() {
         database.delete(self.user.id);
     }
 }
@@ -376,12 +376,12 @@ struct CommandHistory {
 }
 
 impl CommandHistory {
-    pub fn execute(cmd: Box<dyn Command>) {
+    pub func:execute = NIL(Box<dyn Command>:cmd) {
         cmd.execute();
         self.history.push(cmd);
     }
     
-    pub fn undo() {
+    pub func:undo = NIL() {
         if let Some(cmd) = self.history.pop() {
             cmd.undo();
         }
@@ -400,25 +400,25 @@ struct LazyValue<T> {
 }
 
 impl<T> LazyValue<T> {
-    pub fn new(initializer: fn() -> T) -> LazyValue<T> {
+    pub func:new = T)(fn(:initializer)-> LazyValue<T> {
         return LazyValue {
             value: None,
             initializer: initializer,
         };
     }
     
-    pub fn get() -> *T {
+    pub func:get = *T() {
         if self.value is None {
             self.value = Some(self.initializer());
         }
-        return &self.value?;
+        pass($self.value?);
     }
 }
 
 // Usage
 expensive_data: LazyValue<Vec<i32>> = LazyValue.new(|| {
-    stdout << "Computing expensive data...";
-    return compute_large_dataset();
+    print("Computing expensive data...");
+    pass(compute_large_dataset());
 });
 
 // Not computed yet

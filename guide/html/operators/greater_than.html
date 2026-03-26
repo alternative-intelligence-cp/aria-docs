@@ -660,19 +660,19 @@ The greater than operator <code>></code> tests if the left value is strictly gre
 <pre><code>// Numbers
 <p>
 when 10 > 5 then
-stdout << "10 is greater";
+print("10 is greater");
 end
 </p>
 <p>
 when 5 > 10 then
-stdout << "Won't print";
+print("Won't print");
 end
 </p>
 <p>
 // Variables
 age: i32 = 25;
 when age > 18 then
-stdout << "Adult";
+print("Adult");
 end</code></pre>
 </p>
 <hr>
@@ -680,13 +680,13 @@ end</code></pre>
 <pre><code>// Strict: not equal
 <p>
 when 5 > 5 then
-stdout << "Won't print";  // false
+print("Won't print");  // false
 end
 </p>
 <p>
 // Use >= for greater or equal
 when 5 >= 5 then
-stdout << "Will print";  // true
+print("Will print");  // true
 end</code></pre>
 </p>
 <hr>
@@ -698,7 +698,7 @@ y: i32 = 5;
 </p>
 <p>
 when x > y then  // OK
-stdout << "x is greater";
+print("x is greater");
 end
 </p>
 <p>
@@ -712,18 +712,18 @@ end</code></pre>
 <pre><code>// Lexicographic comparison
 <p>
 when "banana" > "apple" then
-stdout << "b comes after a";
+print("b comes after a");
 end
 </p>
 <p>
 when "dog" > "cat" then
-stdout << "d comes after c";
+print("d comes after c");
 end
 </p>
 <p>
 // Case sensitive
 when "Z" > "a" then  // false ('Z' = 90, 'a' = 97 in ASCII)
-stdout << "Won't print";
+print("Won't print");
 end</code></pre>
 </p>
 <hr>
@@ -734,7 +734,7 @@ y: f64 = 10.3;
 </p>
 <p>
 when x > y then
-stdout << "x is greater";
+print("x is greater");
 end
 </p>
 <p>
@@ -749,13 +749,13 @@ end</code></pre>
 <pre><code>// Natural chaining (if supported)
 <p>
 when 0 < x < 10 then
-stdout << "x is between 0 and 10";
+print("x is between 0 and 10");
 end
 </p>
 <p>
 // Otherwise use AND
 when x > 0 and x < 10 then
-stdout << "x is between 0 and 10";
+print("x is between 0 and 10");
 end</code></pre>
 </p>
 <hr>
@@ -773,7 +773,7 @@ end</code></pre>
 <h3>✅ DO: Combine with AND/OR</h3>
 <pre><code>when age > 18 and age < 65 then
 <p>
-stdout << "Working age";
+print("Working age");
 end</code></pre>
 </p>
 <h3>❌ DON'T: Mix Types Without Casting</h3>

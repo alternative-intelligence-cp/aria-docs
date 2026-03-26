@@ -677,10 +677,10 @@ Result: ForkResult = fork()?;
 </p>
 <p>
 when result is Parent(child_pid) then
-stdout << "Parent: Child PID is $child_pid";
+print(`Parent: Child PID is &{child_pid}`);
 // Parent code...
 elsif result is Child then
-stdout << "Child: I am the child process";
+print("Child: I am the child process");
 // Child code...
 exit(0);
 end</code></pre>
@@ -690,9 +690,9 @@ end</code></pre>
 <p>
 when result is Parent(child_pid) then
 // Parent waits for child
-stdout << "Parent waiting for child $child_pid";
+print(`Parent waiting for child &{child_pid}`);
 wait(child_pid)?;
-stdout << "Child finished";
+print("Child finished");
 </p>
 <p>
 elsif result is Child then
@@ -714,7 +714,7 @@ Result: ForkResult = fork()?;
 when result is Parent(child_pid) then
 children.append(child_pid);
 elsif result is Child then
-stdout << "Child $($) working...";
+print("Child $($) working...");
 // Do work...
 exit(0);
 end
@@ -727,7 +727,7 @@ wait(children[$])?;
 end
 </p>
 <p>
-stdout << "All children completed";</code></pre>
+print("All children completed");</code></pre>
 </p>
 <hr>
 <h2>Common Patterns</h2>
@@ -752,7 +752,7 @@ end</code></pre>
 <pre><code>Result: ForkResult = fork()?;
 <p>
 when result is Parent(child_pid) then
-stdout << "Background task started: $child_pid";
+print(`Background task started: &{child_pid}`);
 // Parent continues immediately
 </p>
 <p>
@@ -774,13 +774,13 @@ Result: ForkResult = fork()?;
 <p>
 when result is Parent(child_pid) then
 value = 20;  // Parent's value
-stdout << "Parent value: $value";  // 20
+print(`Parent value: &{value}`);  // 20
 wait(child_pid)?;
 </p>
 <p>
 elsif result is Child then
 value = 30;  // Child's value (doesn't affect parent)
-stdout << "Child value: $value";  // 30
+print(`Child value: &{value}`);  // 30
 exit(0);
 end</code></pre>
 </p>

@@ -676,7 +676,7 @@ writer.close();
 <p>
 // Read from pipe
 message: string = reader.read_all()?;
-stdout << message;  // "Hello through pipe!"
+print(message);  // "Hello through pipe!"
 </p>
 <p>
 reader.close();</code></pre>
@@ -693,7 +693,7 @@ writer.close();  // Close write end
 </p>
 <p>
 message: string = reader.read_all()?;
-stdout << "Parent received: $message";
+print(`Parent received: &{message}`);
 </p>
 <p>
 reader.close();
@@ -727,7 +727,7 @@ writer.close();
 <p>
 // Read output from child
 output: string = reader.read_all()?;
-stdout << "Result: $output";
+print(`Result: &{output}`);
 </p>
 <p>
 reader.close();

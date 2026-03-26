@@ -720,7 +720,7 @@ fn main() {
 input_data: msgpack::Value = stddati.read_msgpack()?;
 </p>
 <p>
-stddbg << "Read " << input_data.size() << " bytes (binary)";
+stddbg_write("Read " << input_data.size() + " bytes (binary)");
 </p>
 <p>
 // Process
@@ -731,7 +731,7 @@ output_data: msgpack::Value = transform(input_data);
 stddato.write_msgpack(output_data)?;
 </p>
 <p>
-stdout << "Binary processing complete\n";
+print("Binary processing complete\n");
 }</code></pre>
 </p>
 <strong>Usage</strong>:

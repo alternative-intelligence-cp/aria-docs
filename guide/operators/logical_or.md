@@ -37,17 +37,17 @@ false  false  | false
 ```aria
 // Both true
 when true or true then
-    stdout << "At least one true";  // Prints
+    print("At least one true");  // Prints
 end
 
 // One true
 when true or false then
-    stdout << "Prints";  // Prints
+    print("Prints");  // Prints
 end
 
 // Both false
 when false or false then
-    stdout << "Won't print";
+    print("Won't print");
 end
 ```
 
@@ -136,7 +136,7 @@ end
 ```aria
 when is_error or is_cancelled or is_complete then
     cleanup();
-    return;
+    pass(NIL);
 end
 ```
 

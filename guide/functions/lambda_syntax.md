@@ -30,7 +30,7 @@ multiply = |a: i32, b: i32| -> i32 { return a * b; };
 // Both
 divide = |a: i32, b: i32| -> i32 {
     when b == 0 then return 0; end
-    return a / b;
+    pass(a / b);
 };
 ```
 
@@ -69,7 +69,7 @@ add = |a: i32, b: i32| a + b;
 
 // Many parameters
 format_user = |id: i32, name: string, age: i32| {
-    return format("User {} ({}): {}", id, name, age);
+    pass(format("User {} ({}): {}", id, name, age));
 };
 ```
 
@@ -93,15 +93,15 @@ format = |x| "Value: " + format("{}", x);
 process = |x| {
     temp: i32 = x * 2;
     temp = temp + 1;
-    return temp;
+    pass(temp);
 };
 
 // Control flow
 absolute = |x: i32| -> i32 {
     when x < 0 then
-        return -x;
+        pass(-x);
     else
-        return x;
+        pass(x);
     end
 };
 ```
@@ -125,7 +125,7 @@ callback: fn(i32) -> i32 = |x| x * 2;
 ```aria
 // Arrow syntax
 parse = |s: string| -> i32 {
-    return s.parse::<i32>();
+    pass(s.parse::<i32>());
 };
 
 // Optional return
@@ -134,7 +134,7 @@ find = |array: []i32, target: i32| -> i32? {
         item: i32 = array[$];
         when item == target then return item; end
     }
-    return nil;
+    pass(nil);
 };
 ```
 
@@ -161,7 +161,7 @@ count: i32 = 0;
 // $count captured by reference
 increment = || {
     $count = $count + 1;
-    return $count;
+    pass($count);
 };
 
 increment();  // 1
@@ -175,7 +175,7 @@ increment();  // 2
 ```aria
 // Variable type includes full lambda signature
 callback: fn(i32, i32) -> i32 = |a: i32, b: i32| -> i32 {
-    return a + b;
+    pass(a + b);
 };
 
 // Can omit types in lambda (inferred from variable type)
@@ -189,7 +189,7 @@ callback: fn(i32, i32) -> i32 = |a, b| a + b;
 ```aria
 // Async lambda
 fetch = async |url: string| -> Data {
-    return await http_get(url);
+    pass(await http_get(url));
 };
 
 // Call with await
@@ -205,8 +205,8 @@ data: Data = await fetch("https://api.example.com");
 // identity = |x: T| -> T { return x; };
 
 // ✅ Right: Use regular generic function
-fn identity<T>(x: T) -> T {
-    return x;
+func:identity = T(T:x) {
+    pass(x);
 }
 
 // Or use type inference
@@ -225,7 +225,7 @@ callback = |
     a: i32,
     b: i32,  // Trailing comma OK
 | {
-    return a + b;
+    pass(a + b);
 };
 ```
 
@@ -247,7 +247,7 @@ Result: i32 = process(999, 5);  // 10 (first arg ignored)
 
 ```aria
 button.on_click(|| {
-    stdout << "Button clicked!\n";
+    print("Button clicked!\n");
 });
 ```
 
@@ -269,8 +269,8 @@ sum: i32 = numbers.reduce(0, |acc, x| acc + x);
 ### As Function Argument
 
 ```aria
-fn apply<T>(value: T, f: fn(T) -> T) -> T {
-    return f(value);
+func:apply = T)(T:value, fn(T:f)-> T {
+    pass(f(value));
 }
 
 // Pass lambda directly
@@ -283,8 +283,8 @@ Result: i32 = apply(5, |x| x * 2);  // 10
 
 ```aria
 // Named function
-fn double(x: i32) -> i32 {
-    return x * 2;
+func:double = int32(int32:x) {
+    pass(x * 2);
 }
 
 // Equivalent lambda
@@ -310,7 +310,7 @@ numbers.map(|x| x * 2)
 ```aria
 // Good: Clear parameter types
 callback: fn(User) -> bool = |user: User| {
-    return user.age >= 18;
+    pass(user.age >= 18);
 };
 ```
 
@@ -321,9 +321,9 @@ callback: fn(User) -> bool = |user: User| {
 process = |data: Data| {
     validated: Data = validate(data);
     when validated == ERR then
-        return ERR;
+        pass(ERR);
     end
-    return transform(validated);
+    pass(transform(validated));
 };
 ```
 
@@ -336,7 +336,7 @@ complicated = |x| {
 };
 
 // Right: Use named function
-fn complicated_process(x: i32) -> Result {
+func:complicated_process = Result(int32:x) {
     // 50 lines of code...
 }
 ```
@@ -364,7 +364,7 @@ doubled = filtered.map(|z| z * 2);
 
 ```aria
 on_success: fn(string) = |msg| {
-    stdout << "Success: " << msg << "\n";
+    print("Success: " + msg + "\n");
 };
 
 on_success("Operation complete");
@@ -376,11 +376,11 @@ on_success("Operation complete");
 counter: i32 = 0;
 increment: fn() -> i32 = || {
     $counter = $counter + 1;
-    return $counter;
+    pass($counter);
 };
 
-stdout << increment();  // 1
-stdout << increment();  // 2
+print(increment());  // 1
+print(increment());  // 2
 ```
 
 ### Data Pipeline

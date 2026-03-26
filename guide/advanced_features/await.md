@@ -15,10 +15,10 @@
 ## Basic Await
 
 ```aria
-async fn fetch() -> Result<Data> {
+async func:fetch = Result<Data>() {
     response: Response = await http.get("https://api.example.com")?;
     data: Data = await response.json()?;
-    return Ok(data);
+    pass(Ok(data));
 }
 ```
 
@@ -39,11 +39,11 @@ data: Data = await async_function();
 ## Sequential Awaits
 
 ```aria
-async fn sequential() -> Result<void> {
+async func:sequential = Result<NIL>() {
     user: User = await fetch_user()?;       // Wait for user
     posts: []Post = await fetch_posts()?;   // Then wait for posts
     comments: []Comment = await fetch_comments()?;  // Then comments
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -54,7 +54,7 @@ Total time: time(user) + time(posts) + time(comments)
 ## Concurrent Awaits
 
 ```aria
-async fn concurrent() -> Result<void> {
+async func:concurrent = Result<NIL>() {
     // Start all tasks
     user_task = fetch_user();
     posts_task = fetch_posts();
@@ -65,7 +65,7 @@ async fn concurrent() -> Result<void> {
     posts: []Post = await posts_task?;
     comments: []Comment = await comments_task?;
     
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -76,12 +76,12 @@ Total time: max(time(user), time(posts), time(comments))
 ## Error Handling
 
 ```aria
-async fn with_error_handling() -> Result<Data> {
+async func:with_error_handling = Result<Data>() {
     match await fetch_data() {
         Ok(data) => return Ok(data),
         Err(e) => {
-            stdout << "Error: $e";
-            return Err(e);
+            print(`Error: &{e}`);
+            pass(Err(e));
         }
     }
 }
@@ -92,11 +92,11 @@ async fn with_error_handling() -> Result<Data> {
 ## Await with Try Operator
 
 ```aria
-async fn fetch_and_process() -> Result<Processed> {
+async func:fetch_and_process = Result<Processed>() {
     data: Data = await fetch_data()?;     // Propagate error
     validated: Valid = await validate(data)?;
     processed: Processed = await process(validated)?;
-    return Ok(processed);
+    pass(Ok(processed));
 }
 ```
 
@@ -105,11 +105,11 @@ async fn fetch_and_process() -> Result<Processed> {
 ## Timeout
 
 ```aria
-import std.time.timeout;
+use std.time.timeout;
 
-async fn with_timeout() -> Result<Data> {
+async func:with_timeout = Result<Data>() {
     result = timeout(5000, async {  // 5 second timeout
-        return await slow_operation();
+        pass(await slow_operation());
     });
     
     match await result {
@@ -126,13 +126,13 @@ async fn with_timeout() -> Result<Data> {
 ### Retry Logic
 
 ```aria
-async fn fetch_with_retry(url: string, retries: i32) -> Result<Data> {
+async func:fetch_with_retry = Result<Data>(string:url, int32:retries) {
     till(retries - 1, 1) {
         match await fetch(url) {
             Ok(data) => return Ok(data),
             Err(e) => {
                 if $ == retries - 1 {
-                    return Err(e);
+                    pass(Err(e));
                 }
                 await sleep(1000 * ($ + 1));  // Backoff
             }
@@ -146,16 +146,16 @@ async fn fetch_with_retry(url: string, retries: i32) -> Result<Data> {
 ### Race Condition
 
 ```aria
-import std.async.race;
+use std.async.race;
 
-async fn fetch_fastest() -> Result<Data> {
+async func:fetch_fastest = Result<Data>() {
     task1 = fetch_from_server1();
     task2 = fetch_from_server2();
     task3 = fetch_from_server3();
     
     // Return whichever completes first
     Result: Data = await race([task1, task2, task3])?;
-    return Ok(result);
+    pass(Ok(result));
 }
 ```
 
@@ -164,16 +164,16 @@ async fn fetch_fastest() -> Result<Data> {
 ### Join All
 
 ```aria
-import std.async.join_all;
+use std.async.join_all;
 
-async fn fetch_multiple(urls: []string) -> Result<[]Data> {
+async func:fetch_multiple = Result<[]Data>([]string:urls) {
     tasks: []Future<Data> = [];
     till(urls.length - 1, 1) {
         tasks.push(fetch(urls[$]));
     }
     
     results: []Data = await join_all(tasks)?;
-    return Ok(results);
+    pass(Ok(results));
 }
 ```
 
@@ -184,21 +184,21 @@ async fn fetch_multiple(urls: []string) -> Result<[]Data> {
 ### ✅ DO: Await in Async Functions
 
 ```aria
-async fn correct() -> Result<Data> {
+async func:correct = Result<Data>() {
     data: Data = await fetch()?;  // ✅ In async function
-    return Ok(data);
+    pass(Ok(data));
 }
 ```
 
 ### ✅ DO: Handle Errors
 
 ```aria
-async fn with_error_check() -> Result<Data> {
+async func:with_error_check = Result<Data>() {
     match await fetch() {
         Ok(data) => process(data),
         Err(e) => {
             log_error(e);
-            return Err(e);
+            pass(Err(e));
         }
     }
 }
@@ -207,7 +207,7 @@ async fn with_error_check() -> Result<Data> {
 ### ❌ DON'T: Await in Sync Functions
 
 ```aria
-fn sync_function() -> Data {
+func:sync_function = Data() {
     data: Data = await fetch();  // ❌ Error: can't await in sync
 }
 ```
@@ -215,7 +215,7 @@ fn sync_function() -> Data {
 ### ❌ DON'T: Forget to Await
 
 ```aria
-async fn wrong() {
+async func:wrong = NIL() {
     fetch();  // ❌ Returns Future, doesn't execute!
     
     await fetch();  // ✅ Actually executes
@@ -227,7 +227,7 @@ async fn wrong() {
 ## Async Iteration
 
 ```aria
-async fn process_stream() {
+async func:process_stream = NIL() {
     stream: AsyncStream<Data> = get_stream();
     
     items = await stream.collect();

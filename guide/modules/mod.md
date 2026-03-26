@@ -18,12 +18,12 @@ Modules organize code into logical units, provide **namespacing**, and control *
 ```aria
 // math.aria - automatically becomes module 'math'
 
-pub fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+pub func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 
-pub fn multiply(a: i32, b: i32) -> i32 {
-    return a * b;
+pub func:multiply = int32(int32:a, int32:b) {
+    pass(a * b);
 }
 ```
 
@@ -44,8 +44,8 @@ Result: i32 = add(5, 3);  // 8
 
 ```aria
 mod math {
-    pub fn add(a: i32, b: i32) -> i32 {
-        return a + b;
+    pub func:add = int32(int32:a, int32:b) {
+        pass(a + b);
     }
 }
 
@@ -95,19 +95,19 @@ reverse("hello");
 
 ```aria
 // math.aria
-fn helper() -> i32 {  // Private
-    return 42;
+func:helper = int32() {  // Private
+    pass(42);
 }
 
-pub fn public_fn() -> i32 {  // Public
-    return helper();
+pub func:public_fn = int32() {  // Public
+    pass(helper());
 }
 ```
 
 ### Public Items
 
 ```aria
-pub fn function() { }       // Public function
+pub func:function = NIL() { }       // Public function
 pub struct Data { }         // Public struct
 pub const MAX: i32 = 100;   // Public constant
 ```
@@ -134,7 +134,7 @@ pub use internal.ImportantType;
 Result: i32 = std.math.sqrt(16);
 
 // Import to shorten
-import std.math;
+use std.math;
 Result: i32 = math.sqrt(16);
 
 // Import specific function
@@ -174,18 +174,18 @@ pub use utils.helpers.helper_function;
 
 ```aria
 mod database {
-    pub fn connect() -> Connection { }
-    pub fn query() -> Result<Data> { }
+    pub func:connect = Connection() { }
+    pub func:query = Result<Data>() { }
 }
 
 mod api {
-    pub fn start_server() -> Result<void> { }
-    pub fn handle_request() -> Response { }
+    pub func:start_server = Result<NIL>() { }
+    pub func:handle_request = Response() { }
 }
 
 mod auth {
-    pub fn login() -> Result<User> { }
-    pub fn verify_token() -> bool { }
+    pub func:login = Result<User>() { }
+    pub func:verify_token = bool() { }
 }
 ```
 
@@ -220,21 +220,21 @@ mod um;               // ❌ Unclear
 
 ```aria
 // Public interface
-pub fn create_user() -> User { }
+pub func:create_user = User() { }
 
 // Private implementation
-fn validate_email() -> bool { }  // Hidden
-fn hash_password() -> string { } // Hidden
+func:validate_email = bool() { }  // Hidden
+func:hash_password = string() { } // Hidden
 ```
 
 ### ❌ DON'T: Deep Nesting
 
 ```aria
 // Too deep
-import app.modules.features.user.auth.login.handlers;  // ❌
+use app.modules.features.user.auth.login.handlers;  // ❌
 
 // Better - flatten
-import app.auth.login;  // ✅
+use app.auth.login;  // ✅
 ```
 
 ---

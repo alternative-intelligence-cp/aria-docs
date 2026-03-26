@@ -17,7 +17,7 @@ External functions are **foreign functions** called from Aria or **Aria function
 
 ```aria
 extern "C" {
-    fn strlen(s: *u8) -> usize;
+    func:strlen = usize;(*u8:s)
 }
 
 // Call it
@@ -30,12 +30,12 @@ length: usize = extern.strlen("Hello");
 
 ```aria
 extern "C" {
-    fn strcmp(s1: *u8, s2: *u8) -> i32;
+    func:strcmp = i32;(*u8:s1, *u8:s2)
 }
 
 Result: i32 = extern.strcmp("abc", "abd");
 if result < 0 {
-    stdout << "First string is less";
+    print("First string is less");
 }
 ```
 
@@ -45,9 +45,9 @@ if result < 0 {
 
 ```aria
 extern "C" {
-    fn abs(x: i32) -> i32;
-    fn sqrt(x: f64) -> f64;
-    fn malloc(size: usize) -> *void;
+    func:abs = i32;(int32:x)
+    func:sqrt = f64;(flt64:x)
+    func:malloc = *void;(uint64:size)
 }
 
 value: i32 = extern.abs(-42);        // 42
@@ -61,11 +61,11 @@ ptr: *void = extern.malloc(1024);    // Memory pointer
 
 ```aria
 extern "C" {
-    fn process_data(data: *void, size: usize) -> i32;
+    func:process_data = i32;(*void:data, uint64:size)
 }
 
 data: [u8; 100];
-Result: i32 = extern.process_data(&data, 100);
+Result: i32 = extern.process_data($data, 100);
 ```
 
 ---
@@ -74,7 +74,7 @@ Result: i32 = extern.process_data(&data, 100);
 
 ```aria
 extern "C" {
-    fn printf(format: *u8, ...) -> i32;
+    func:printf = i32;(*u8:format, ...)
 }
 
 extern.printf("Number: %d, String: %s\n", 42, "hello");
@@ -89,7 +89,7 @@ extern.printf("Number: %d, String: %s\n", 42, "hello");
 ```aria
 #[no_mangle]
 pub extern "C" fn aria_add(a: i32, b: i32) -> i32 {
-    return a + b;
+    pass(a + b);
 }
 ```
 
@@ -103,7 +103,7 @@ The `#[no_mangle]` attribute prevents name mangling so C can find the function.
 #[no_mangle]
 pub extern "C" fn aria_process_array(arr: *i32, len: usize) -> i32 {
     if arr == NULL {
-        return -1;
+        pass(-1);
     }
     
     sum: i32 = 0;
@@ -111,7 +111,7 @@ pub extern "C" fn aria_process_array(arr: *i32, len: usize) -> i32 {
         sum += arr[$];
     }
     
-    return sum;
+    pass(sum);
 }
 ```
 
@@ -123,7 +123,7 @@ pub extern "C" fn aria_process_array(arr: *i32, len: usize) -> i32 {
 #[no_mangle]
 #[export_name = "custom_function_name"]
 pub extern "C" fn internal_name() -> i32 {
-    return 42;
+    pass(42);
 }
 ```
 
@@ -137,12 +137,12 @@ C code can call it as `custom_function_name()`.
 
 ```aria
 extern "C" {
-    fn c_function() -> i32;  // Returns 0 on success, -1 on error
+    func:c_function = i32;()// Returns 0 on success, -1 on error
 }
 
 Result: i32 = extern.c_function();
 if result != 0 {
-    stdout << "Error occurred!";
+    print("Error occurred!");
 }
 ```
 
@@ -154,15 +154,15 @@ if result != 0 {
 #[no_mangle]
 pub extern "C" fn aria_divide(a: i32, b: i32, Result: *mut i32) -> i32 {
     if b == 0 {
-        return -1;  // Error code
+        pass(-1);  // Error code
     }
     
     if result == NULL {
-        return -2;  // Null pointer error
+        pass(-2);  // Null pointer error
     }
     
     *result = a / b;
-    return 0;  // Success
+    pass(0);  // Success
 }
 ```
 
@@ -174,7 +174,7 @@ pub extern "C" fn aria_divide(a: i32, b: i32, Result: *mut i32) -> i32 {
 
 ```aria
 extern "C" {
-    fn strlen(s: *u8) -> usize;
+    func:strlen = usize;(*u8:s)
 }
 
 c_str: *u8 = "Hello from C";
@@ -189,7 +189,7 @@ length: usize = extern.strlen(c_str);
 #[no_mangle]
 pub extern "C" fn aria_get_string() -> *u8 {
     // Must be static or heap-allocated
-    return "Hello from Aria\0";
+    pass("Hello from Aria\0");
 }
 ```
 
@@ -203,8 +203,8 @@ pub extern "C" fn aria_get_string() -> *u8 {
 
 ```aria
 extern "C" {
-    fn malloc(size: usize) -> *void;
-    fn free(ptr: *void);
+    func:malloc = *void;(uint64:size)
+    func:free = NIL(*void:ptr);
 }
 
 ptr: *void = extern.malloc(1024);
@@ -221,15 +221,15 @@ extern.free(ptr);
 pub extern "C" fn aria_allocate(size: usize) -> *void {
     // Allocate using C-compatible allocator
     extern "C" {
-        fn malloc(size: usize) -> *void;
+        func:malloc = *void;(uint64:size)
     }
-    return extern.malloc(size);
+    pass(extern.malloc(size));
 }
 
 #[no_mangle]
 pub extern "C" fn aria_free(ptr: *void) {
     extern "C" {
-        fn free(ptr: *void);
+        func:free = NIL(*void:ptr);
     }
     extern.free(ptr);
 }
@@ -244,22 +244,22 @@ pub extern "C" fn aria_free(ptr: *void) {
 ```aria
 // Unsafe extern declaration
 extern "C" {
-    fn unsafe_c_function(data: *void, size: usize) -> i32;
+    func:unsafe_c_function = i32;(*void:data, uint64:size)
 }
 
 // Safe Aria wrapper
-pub fn safe_process(data: []u8) -> Result<i32> {
+pub func:safe_process = Result<int32>([]u8:data) {
     if data.len() == 0 {
-        return Err("Empty data");
+        pass(Err("Empty data"));
     }
     
-    Result: i32 = extern.unsafe_c_function(&data[0], data.len());
+    Result: i32 = extern.unsafe_c_function($data[0], data.len());
     
     if result < 0 {
-        return Err("C function failed");
+        pass(Err("C function failed"));
     }
     
-    return Ok(result);
+    pass(Ok(result));
 }
 ```
 
@@ -270,13 +270,13 @@ pub fn safe_process(data: []u8) -> Result<i32> {
 ```aria
 // C expects a callback
 extern "C" {
-    fn register_callback(cb: extern "C" fn(i32) -> i32);
+    func:register_callback = i32);(extern "C" fn(i32:cb)
 }
 
 // Define callback in Aria
 #[no_mangle]
 extern "C" fn my_callback(value: i32) -> i32 {
-    return value * 2;
+    pass(value * 2);
 }
 
 // Register it
@@ -293,7 +293,7 @@ extern.register_callback(my_callback);
 #[no_mangle]
 pub extern "C" fn aria_func(ptr: *void) -> i32 {
     if ptr == NULL {
-        return -1;  // ✅ Check for null
+        pass(-1);  // ✅ Check for null
     }
     // Process...
 }
@@ -319,9 +319,9 @@ pub extern "C" fn aria_func(
 #[no_mangle]
 pub extern "C" fn aria_allocate_string() -> *u8 {
     extern "C" {
-        fn malloc(size: usize) -> *void;
+        func:malloc = *void;(uint64:size)
     }
-    return extern.malloc(100);
+    pass(extern.malloc(100));
 }
 ```
 
@@ -334,10 +334,10 @@ pub extern "C" fn aria_func() -> i32 {
     // Use error codes instead
     
     if error_condition {
-        return -1;  // ✅ Return error code
+        pass(-1);  // ✅ Return error code
     }
     
-    return 0;
+    pass(0);
 }
 ```
 

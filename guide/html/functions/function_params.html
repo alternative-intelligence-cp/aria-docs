@@ -658,7 +658,7 @@
 <h2>Single Parameter</h2>
 <pre><code>fn greet(name: string) {
 <p>
-stdout << "Hello, " << name << "\n";
+print("Hello, " << name + "\n");
 }
 </p>
 <p>
@@ -709,7 +709,7 @@ $data.push(42);
 <p>
 fn read(data: Vec<i32>) {
 // data is owned/copied
-stdout << data.len() << "\n";
+print(data.len() + "\n");
 }</code></pre>
 </p>
 <hr>
@@ -720,9 +720,9 @@ Aria doesn't have default parameters, use <code>Option<T></code>:
 <pre><code>fn greet(name: string, title: string?) {
 <p>
 when title != nil then
-stdout << title << " " << name << "\n";
+print(title << " " << name + "\n");
 else
-stdout << name << "\n";
+print(name + "\n");
 end
 }
 </p>
@@ -764,7 +764,7 @@ Result: i32 = sum([1, 2, 3, 4, 5]);</code></pre>
 <pre><code>fn process_pair(pair: (i32, string)) {
 <p>
 (num, text) = pair;
-stdout << num << ": " << text << "\n";
+print(num << ": " << text + "\n");
 }
 </p>
 <p>
@@ -828,7 +828,7 @@ $count = $count + 1;
 // Usage
 value: i32 = 10;
 increment($value);
-stdout << value;  // 11</code></pre>
+print(value);  // 11</code></pre>
 </p>
 <hr>
 <h2>Self Parameter (Methods)</h2>
@@ -950,14 +950,14 @@ greet_name("World");
 </p>
 <p>
 fn greet_name(name: string) {
-stdout << "Hello, " << name << "\n";
+print("Hello, " << name + "\n");
 }
 </p>
 <p>
 // Or use Option
 fn greet_optional(name: string?) {
 actual_name: string = name ?? "World";
-stdout << "Hello, " << actual_name << "\n";
+print("Hello, " << actual_name + "\n");
 }</code></pre>
 </p>
 <hr>

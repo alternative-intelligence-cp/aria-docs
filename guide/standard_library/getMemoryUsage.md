@@ -15,7 +15,7 @@
 ## Syntax
 
 ```aria
-import std.system;
+use std.system;
 
 mem: MemoryInfo = getMemoryUsage();
 ```
@@ -47,12 +47,12 @@ struct MemoryInfo {
 ### Basic Usage
 
 ```aria
-import std.system;
+use std.system;
 
 mem: MemoryInfo = getMemoryUsage();
 
-stdout << "Heap used: $(mem.heap_used) bytes";
-stdout << "RSS: $(mem.rss) bytes";
+print("Heap used: $(mem.heap_used) bytes");
+print("RSS: $(mem.rss) bytes");
 ```
 
 ### Monitor Memory Growth
@@ -66,13 +66,13 @@ large_array: []i32 = allocate_large_array();
 after: MemoryInfo = getMemoryUsage();
 
 increase: i64 = after.heap_used - before.heap_used;
-stdout << "Memory increased by $increase bytes";
+print(`Memory increased by &{increase} bytes`);
 ```
 
 ### Memory Leak Detection
 
 ```aria
-fn detect_leak() {
+func:detect_leak = NIL() {
     initial: MemoryInfo = getMemoryUsage();
     
     till(999, 1) {
@@ -83,7 +83,7 @@ fn detect_leak() {
     final: MemoryInfo = getMemoryUsage();
     
     when final.heap_used > initial.heap_used * 2 then
-        stderr << "Possible memory leak detected!";
+        stderr_write("Possible memory leak detected!");
     end
 }
 ```
@@ -91,20 +91,20 @@ fn detect_leak() {
 ### Format Memory Size
 
 ```aria
-fn format_bytes(bytes: i64) -> string {
+func:format_bytes = string(int64:bytes) {
     when bytes < 1024 then
-        return "$bytes B";
+        pass(`&{bytes} B`);
     elsif bytes < 1024 * 1024 then
-        return "$(bytes / 1024) KB";
+        pass("$(bytes / 1024) KB");
     elsif bytes < 1024 * 1024 * 1024 then
-        return "$(bytes / (1024 * 1024)) MB";
+        pass("$(bytes / (1024 * 1024)) MB");
     else
-        return "$(bytes / (1024 * 1024 * 1024)) GB";
+        pass("$(bytes / (1024 * 1024 * 1024)) GB");
     end
 }
 
 mem: MemoryInfo = getMemoryUsage();
-stdout << "Memory used: $(format_bytes(mem.heap_used))";
+print("Memory used: $(format_bytes(mem.heap_used))");
 ```
 
 ---

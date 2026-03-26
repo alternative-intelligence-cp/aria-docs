@@ -39,7 +39,7 @@ a: i32 = 0b1100;  // 12
 b: i32 = 0b1010;  // 10
 Result: i32 = a & b;  // 0b1000 = 8
 
-stdout << result;  // 8
+print(result);  // 8
 ```
 
 ---
@@ -62,7 +62,7 @@ flags: i32 = 0b1010;
 bit2: i32 = 0b0010;
 
 when (flags & bit2) != 0 then
-    stdout << "Bit 2 is set";
+    print("Bit 2 is set");
 end
 ```
 
@@ -80,12 +80,12 @@ masked: i32 = data & mask;  // 0b00000101
 ## Power of Two Check
 
 ```aria
-fn is_power_of_two(n: i32) -> bool {
-    return n > 0 and (n & (n - 1)) == 0;
+func:is_power_of_two = bool(int32:n) {
+    pass(n > 0 and (n & (n - 1)) == 0);
 }
 
-stdout << is_power_of_two(8);   // true
-stdout << is_power_of_two(10);  // false
+print(is_power_of_two(8));   // true
+print(is_power_of_two(10));  // false
 ```
 
 ---
@@ -93,12 +93,12 @@ stdout << is_power_of_two(10);  // false
 ## Even/Odd Check
 
 ```aria
-fn is_even(n: i32) -> bool {
-    return (n & 1) == 0;
+func:is_even = bool(int32:n) {
+    pass((n & 1) == 0);
 }
 
-stdout << is_even(4);  // true
-stdout << is_even(7);  // false
+print(is_even(4));  // true
+print(is_even(7));  // false
 ```
 
 ---
@@ -115,7 +115,7 @@ EXEC: i32 = 0b100;
 permissions: i32 = READ | WRITE;
 
 when (permissions & READ) != 0 then
-    stdout << "Can read";
+    print("Can read");
 end
 ```
 
@@ -148,7 +148,7 @@ flags: i32 = 0b1111;
 mask: i32 = 0b0110;
 
 flags &= mask;  // flags = flags & mask
-stdout << flags;  // 0b0110
+print(flags);  // 0b0110
 ```
 
 ---

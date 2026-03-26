@@ -1,8 +1,8 @@
-# String Interpolation ($)
+# String Interpolation (&{})
 
 **Category**: Operators → String  
-**Operator**: `$` in strings  
-**Purpose**: Embed expressions
+**Operator**: `&{expr}` in template literals  
+**Purpose**: Embed expressions in backtick strings
 
 ---
 
@@ -13,18 +13,18 @@ See [String Interpolation](interpolation.md) for complete documentation.
 ## Quick Reference
 
 ```aria
-// Simple variable
-name: string = "Alice";
-msg: string = "Hello, $name!";
+// Backtick template literals support &{} interpolation
+string:name = "Alice";
+string:msg = `Hello, &{name}!`;
 
 // Expression
-x: i32 = 10;
-text: string = "Value: ${x + 5}";
+int32:x = 10;
+string:text = `Value: &{x + 5}`;
 
 // Method calls
-info: string = "Status: ${user.status()}";
+string:info = `Status: &{user.status()}`;
 ```
 
 ---
 
-**Remember**: `$variable` or `${expression}` in strings!
+**Remember**: Use backtick strings with `&{expression}` for interpolation. Double-quoted strings do not interpolate.

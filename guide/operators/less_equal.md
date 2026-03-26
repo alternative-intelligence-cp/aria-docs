@@ -25,17 +25,17 @@ The less than or equal operator `<=` tests if the left value is less than **or e
 ```aria
 // Less than
 when 5 <= 10 then
-    stdout << "True";
+    print("True");
 end
 
 // Equal
 when 5 <= 5 then
-    stdout << "Also true";
+    print("Also true");
 end
 
 // Greater than
 when 10 <= 5 then
-    stdout << "Won't print";
+    print("Won't print");
 end
 ```
 
@@ -48,12 +48,12 @@ max_age: i32 = 65;
 age: i32 = 65;
 
 when age <= max_age then
-    stdout << "Allowed";  // Prints (65 <= 65)
+    print("Allowed");  // Prints (65 <= 65)
 end
 
 // Contrast with <
 when age < max_age then
-    stdout << "Won't print";  // false
+    print("Won't print");  // false
 end
 ```
 
@@ -75,7 +75,7 @@ end
 
 ```aria
 when age >= 18 and age <= 65 then
-    stdout << "Working age";
+    print("Working age");
 end
 ```
 
@@ -96,7 +96,7 @@ end
 ```aria
 // Inclusive range [min, max]
 when value >= min and value <= max then
-    stdout << "Valid";
+    print("Valid");
 end
 ```
 
@@ -131,7 +131,7 @@ end
 ```aria
 i: i32 = 10;
 while i >= 0 {
-    stdout << i;
+    print(i);
     i--;
 }
 // Prints: 10 9 8 7 6 5 4 3 2 1 0

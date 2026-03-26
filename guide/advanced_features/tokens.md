@@ -239,7 +239,7 @@ enum TokenType {
 
 ```aria
 impl Token {
-    pub fn is_keyword() -> bool {
+    pub func:is_keyword = bool() {
         match self.type {
             TokenType.Fn | TokenType.Let | TokenType.If |
             TokenType.Else | TokenType.While | TokenType.Return => true,
@@ -247,7 +247,7 @@ impl Token {
         }
     }
     
-    pub fn is_operator() -> bool {
+    pub func:is_operator = bool() {
         match self.type {
             TokenType.Plus | TokenType.Minus | TokenType.Star |
             TokenType.Slash | TokenType.EqEq | TokenType.Ne => true,
@@ -255,7 +255,7 @@ impl Token {
         }
     }
     
-    pub fn is_literal() -> bool {
+    pub func:is_literal = bool() {
         match self.type {
             TokenType.Integer | TokenType.Float |
             TokenType.String | TokenType.Char |

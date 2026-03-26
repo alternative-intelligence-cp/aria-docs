@@ -779,7 +779,7 @@ action(item);
 <p>
 names: []string = ["Alice", "Bob", "Carol"];
 for_each(names, |name| {
-stdout << "Hello, " << name << "\n";
+print("Hello, " << name + "\n");
 });</code></pre>
 </p>
 <h3>Any - Check if Any Match</h3>
@@ -921,7 +921,7 @@ return result;
 </p>
 <p>
 expensive: fn(i32) -> i32 = |n| {
-stddbg << "Calculating for " << n << "\n";
+stddbg_write("Calculating for " << n + "\n");
 return n * n;
 };
 </p>
@@ -948,7 +948,7 @@ end
 </p>
 <p>
 attempts = attempts + 1;
-stddbg << "Retry " << attempts << "/" << max_attempts << "\n";
+stddbg_write("Retry " << attempts << "/" << max_attempts + "\n");
 }
 </p>
 <p>
@@ -1031,8 +1031,8 @@ handler(event);
 dispatcher: EventDispatcher<string> = EventDispatcher::new();
 </p>
 <p>
-dispatcher.on(|msg| stdout << "Log: " << msg << "\n");
-dispatcher.on(|msg| stddbg << "Debug: " << msg << "\n");
+dispatcher.on(|msg| print("Log: " << msg + "\n"));
+dispatcher.on(|msg| stddbg_write("Debug: " << msg + "\n"));
 dispatcher.on(|msg| save_to_file(msg));
 </p>
 <p>

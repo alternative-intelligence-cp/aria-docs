@@ -25,14 +25,14 @@ name: string = stdin.read_line();
 content: string = stdin.read_all();
 
 // With prompt
-stdout << "Enter name: ";
+print("Enter name: ");
 name: string = stdin.read_line();
 
 // Check if interactive (TTY)
 when stdin.is_tty() then
-    stdout << "Interactive mode";
+    print("Interactive mode");
 else
-    stddbg << "Piped input";
+    stddbg_write("Piped input");
 end
 ```
 
@@ -66,16 +66,16 @@ end
 ## Example
 
 ```aria
-fn main() {
+func:main = NIL() {
     // Interactive mode
     when stdin.is_tty() then
-        stdout << "Enter your name: ";
+        print("Enter your name: ");
         name: string = stdin.read_line();
-        stdout << "Hello, " << name << "!\n";
+        print("Hello, " + name + "!\n");
     else
         // Piped mode (read text)
         lines: []string = stdin.lines().collect();
-        stddbg << "Read " << lines.len() << " lines from pipe";
+        stddbg_write("Read " + lines.len() + " lines from pipe");
     end
 }
 ```

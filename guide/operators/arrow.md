@@ -24,13 +24,13 @@ The arrow operator `->` declares a function's return type.
 
 ```aria
 // Returns i32
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 
 // Returns string
-fn greet(name: string) -> string {
-    return "Hello, " + name;
+func:greet = string(string:name) {
+    pass("Hello, " + name);
 }
 ```
 
@@ -40,13 +40,13 @@ fn greet(name: string) -> string {
 
 ```aria
 // No return type needed for void
-fn print_message(msg: string) {
-    stdout << msg;
+func:print_message = NIL(string:msg) {
+    print(msg);
 }
 
 // Or explicit void
-fn log(text: string) -> void {
-    stdout << text;
+func:log = NIL(string:text) {
+    print(text);
 }
 ```
 
@@ -56,22 +56,22 @@ fn log(text: string) -> void {
 
 ```aria
 // Array
-fn get_numbers() -> []i32 {
-    return [1, 2, 3, 4, 5];
+func:get_numbers = []i32() {
+    pass([1, 2, 3, 4, 5]);
 }
 
 // Optional
-fn find_user(id: i32) -> User? {
+func:find_user = User?(int32:id) {
     when exists(id) then
-        return get_user(id);
+        pass(get_user(id));
     else
-        return nil;
+        pass(nil);
     end
 }
 
 // Tuple
-fn divide(a: i32, b: i32) -> (i32, i32) {
-    return (a / b, a % b);
+func:divide = (i32,(int32:a, int32:b)i32) {
+    pass((a / b, a % b));
 }
 ```
 
@@ -80,12 +80,12 @@ fn divide(a: i32, b: i32) -> (i32, i32) {
 ## Generic Returns
 
 ```aria
-fn create<T>() -> T {
-    return T::new();
+func:create = T() {
+    pass(T::new());
 }
 
-fn wrap<T>(value: T) -> Option<T> {
-    return Option::Some(value);
+func:wrap = Result<T>(T:value) {
+    pass(Option::Some(value));
 }
 ```
 
@@ -96,8 +96,8 @@ fn wrap<T>(value: T) -> Option<T> {
 ### ✅ DO: Be Explicit
 
 ```aria
-fn calculate() -> f64 {
-    return 42.0;
+func:calculate = flt64() {
+    pass(42.0);
 }
 ```
 
@@ -105,8 +105,8 @@ fn calculate() -> f64 {
 
 ```aria
 // Clear contract
-fn validate(input: string) -> bool {
-    return input.length() > 0;
+func:validate = bool(string:input) {
+    pass(input.length() > 0);
 }
 ```
 
@@ -114,13 +114,13 @@ fn validate(input: string) -> bool {
 
 ```aria
 // Wrong: Missing return type
-fn compute(x: i32) {  // Should specify -> i32
-    return x * 2;
+func:compute = NIL(int32:x) {  // Should specify -> i32
+    pass(x * 2);
 }
 
 // Right
-fn compute(x: i32) -> i32 {
-    return x * 2;
+func:compute = int32(int32:x) {
+    pass(x * 2);
 }
 ```
 

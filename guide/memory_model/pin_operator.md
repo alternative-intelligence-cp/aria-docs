@@ -31,7 +31,7 @@ data: Data = aria_gc_alloc(Data);
 pin data;
 
 // Get stable pointer
-ptr: *Data = &data;
+ptr: *Data = $data;
 
 // Unpin
 unpin data;
@@ -57,24 +57,24 @@ defer unpin data;  // Auto-unpin
 ### C Interop
 
 ```aria
-extern fn c_sort(arr: *i32, len: i32);
+extern func:c_sort = NIL(*i32:arr, int32:len);
 
 arr: []i32 = aria_gc_alloc_array(i32, 100);
 
 pin arr;
 defer unpin arr;
 
-c_sort(&arr[0], arr.length());
+c_sort($arr[0], arr.length());
 ```
 
 ### Async I/O
 
 ```aria
-async fn save(data: Data) {
+async func:save = NIL(Data:data) {
     pin data;
     defer unpin data;
     
-    await file.write(&data);
+    await file.write($data);
 }
 ```
 
@@ -94,7 +94,7 @@ defer unpin data;
 ```aria
 // Good: Short duration
 pin data;
-c_call(&data);
+c_call($data);
 unpin data;
 
 // Wrong: Forever pinned

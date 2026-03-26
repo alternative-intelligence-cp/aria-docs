@@ -661,7 +661,7 @@ return x * x;
 <p>
 fn main() {
 Result: i32 = square(5);  // Expands to: 5 * 5
-stdout << result;  // 25
+print(result);  // 25
 }</code></pre>
 </p>
 <hr>
@@ -692,14 +692,14 @@ till(n - 1, 1) {
 <p>
 fn main() {
 repeat(3, {
-stdout << "Hello";
+print("Hello");
 });
 </p>
 <p>
 // Expands to:
-// stdout << "Hello";
-// stdout << "Hello";
-// stdout << "Hello";
+// print("Hello");
+// print("Hello");
+// print("Hello");
 }</code></pre>
 </p>
 <hr>
@@ -724,27 +724,27 @@ make_getter(age);   // Generates get_age()
 <p>
 fn main() {
 user: User = User { name: "Alice", age: 30 };
-stdout << user.get_name();  // "Alice"
+print(user.get_name());  // "Alice"
 }</code></pre>
 </p>
 <hr>
 <h2>Variadic Macros</h2>
 <pre><code>macro log(level, ...args) {
 <p>
-stdout << "[$level] ";
+print(`[&{level}] `);
 comptime {
 till(args.length - 1, 1) {
-@emit(stdout << args[$] << " ");
+@emit(print(args[$] + " "));
 }
 }
-stdout << "\n";
+print("\n");
 }
 </p>
 <p>
 fn main() {
 log("INFO", "User", "logged in", "from", "192.168.1.1");
 // Expands to:
-// stdout << "[INFO] " << "User" << " " << "logged in" << " " << "from" << " " << "192.168.1.1" << "\n";
+// print("[INFO] " << "User" << " " << "logged in" << " " << "from" << " " << "192.168.1.1" + "\n");
 }</code></pre>
 </p>
 <hr>
@@ -752,7 +752,7 @@ log("INFO", "User", "logged in", "from", "192.168.1.1");
 <h3>Debug Print Macro</h3>
 <pre><code>macro debug_print(expr) {
 <p>
-stdout << "$expr = " << expr << "\n";
+print(`&{expr} = ` << expr + "\n");
 }
 </p>
 <p>
@@ -767,8 +767,8 @@ debug_print(x + 10);   // x + 10 = 52
 <pre><code>macro assert(condition, message) {
 <p>
 if !condition {
-stderr << "Assertion failed: $message\n";
-stderr << "  at $__FILE__:$__LINE__\n";
+stderr_write(`Assertion failed: &{message}\n`);
+stderr_write(`  at &{__FILE__}:&{__LINE__}\n`);
 exit(1);
 }
 }
@@ -825,21 +825,21 @@ return Ok();
 <h3>Generic Builder Macro</h3>
 <pre><code>macro make_builder(TypeName, ...fields) {
 <p>
-struct ${TypeName}Builder {
+struct &{TypeName}Builder {
 comptime {
 till(fields.length - 1, 1) {
-${fields[$].name}: ?${fields[$].type},
+&{fields[$].name}: ?&{fields[$].type},
 }
 }
 }
 </p>
 <p>
-impl ${TypeName}Builder {
-pub fn new() -> ${TypeName}Builder {
-return ${TypeName}Builder {
+impl &{TypeName}Builder {
+pub fn new() -> &{TypeName}Builder {
+return &{TypeName}Builder {
 comptime {
 till(fields.length - 1, 1) {
-${fields[$].name}: None,
+&{fields[$].name}: None,
 }
 }
 };
@@ -848,19 +848,19 @@ ${fields[$].name}: None,
 <p>
 comptime {
 till(fields.length - 1, 1) {
-pub fn ${fields[$].name}(value: ${fields[$].type}) -> ${TypeName}Builder {
-self.${fields[$].name} = Some(value);
+pub fn &{fields[$].name}(value: &{fields[$].type}) -> &{TypeName}Builder {
+self.&{fields[$].name} = Some(value);
 return self;
 }
 }
 }
 </p>
 <p>
-pub fn build() -> ${TypeName} {
-return ${TypeName} {
+pub fn build() -> &{TypeName} {
+return &{TypeName} {
 comptime {
 till(fields.length - 1, 1) {
-${fields[$].name}: self.${fields[$].name}?,
+&{fields[$].name}: self.&{fields[$].name}?,
 }
 }
 };
@@ -921,7 +921,7 @@ enum_variants(Color);
 fn main() {
 variant_list = Color.variants();
 till(variant_list.length - 1, 1) {
-stdout << variant_list[$];  // "Red", "Green", "Blue"
+print(variant_list[$]);  // "Red", "Green", "Blue"
 }
 }</code></pre>
 </p>
@@ -947,14 +947,14 @@ b = temp_$__COUNTER__;
 <h2>Compile-Time Introspection</h2>
 <pre><code>macro print_type_info(T) {
 <p>
-stdout << "Type: $T\n";
-stdout << "Size: ${@sizeof(T)}\n";
-stdout << "Align: ${@alignof(T)}\n";
+print("Type: $T\n");
+print("Size: &{@sizeof(T)}\n");
+print("Align: &{@alignof(T)}\n");
 </p>
 <p>
 comptime {
 if @has_field(T, "name") {
-stdout << "Has field 'name'\n";
+print("Has field 'name'\n");
 }
 }
 }
@@ -979,13 +979,13 @@ impl struct_name {
 comptime {
 till(fields.length - 1, 1) {
 field = fields[$];
-pub fn get_${field}() -> auto {
-return self.${field};
+pub fn get_&{field}() -> auto {
+return self.&{field};
 }
 </p>
 <p>
-pub fn set_${field}(value: auto) {
-self.${field} = value;
+pub fn set_&{field}(value: auto) {
+self.&{field} = value;
 }
 }
 }

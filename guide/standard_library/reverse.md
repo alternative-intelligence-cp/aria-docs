@@ -15,7 +15,7 @@
 ## Syntax
 
 ```aria
-import std.functional;
+use std.functional;
 
 reversed: []i32 = reverse(numbers);
 ```
@@ -45,7 +45,7 @@ reversed: []i32 = reverse(numbers);
 // [5, 4, 3, 2, 1]
 
 // Original unchanged
-stdout << numbers;  // [1, 2, 3, 4, 5]
+print(numbers);  // [1, 2, 3, 4, 5]
 ```
 
 ### Reverse Strings
@@ -87,7 +87,7 @@ reversed: []i32 = numbers.reverse();
 // Reverse in-place (modifies original)
 numbers: []i32 = [1, 2, 3, 4, 5];
 numbers.reverse_in_place();
-stdout << numbers;  // [5, 4, 3, 2, 1]
+print(numbers);  // [5, 4, 3, 2, 1]
 ```
 
 ---

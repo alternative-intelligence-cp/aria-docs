@@ -790,7 +790,7 @@ activations: tensor<flt32, batch, features> = forward(input);</code></pre>
 <h3>✅ DO: Check Shapes</h3>
 <pre><code>when a.shape() != b.shape() then
 <p>
-stderr << "Shape mismatch";
+stderr_write("Shape mismatch");
 fail("Cannot add tensors");
 end</code></pre>
 </p>

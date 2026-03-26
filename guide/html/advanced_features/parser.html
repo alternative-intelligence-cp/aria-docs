@@ -989,9 +989,9 @@ return None;
 if !self.check(type) {
 token: Token = self.peek();
 return Err(
-"Parse error at ${token.line}:${token.column}\n" ++
-"  $message\n" ++
-"  Found: ${token.lexeme}"
+"Parse error at &{token.line}:&{token.column}\n" ++
+`  &{message}\n` ++
+"  Found: &{token.lexeme}"
 );
 }
 return Ok(self.advance());

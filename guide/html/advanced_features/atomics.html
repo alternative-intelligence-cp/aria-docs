@@ -704,9 +704,9 @@ success: bool = atomic.compare_and_swap(
 </p>
 <p>
 if success {
-stdout << "Swapped!";  // atomic is now 20
+print("Swapped!");  // atomic is now 20
 } else {
-stdout << "Failed - value was not 10";
+print("Failed - value was not 10");
 }</code></pre>
 </p>
 <hr>

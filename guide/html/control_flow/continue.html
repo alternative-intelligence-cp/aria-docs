@@ -672,7 +672,7 @@ continue;  // Skip even numbers
 }
 </p>
 <p>
-stdout << $ << " ";
+print($ + " ");
 }
 // Output: 1 3 5 7 9</code></pre>
 </p>
@@ -686,7 +686,7 @@ continue;  // Skip negative numbers
 }
 </p>
 <p>
-stdout << numbers[$] << " ";
+print(numbers[$] + " ");
 }
 // Output: 1 3 5</code></pre>
 </p>
@@ -703,7 +703,7 @@ continue;  // Skip 5
 }
 </p>
 <p>
-stdout << count << " ";
+print(count + " ");
 }
 // Output: 1 2 3 4 6 7 8 9 10</code></pre>
 </p>
@@ -714,7 +714,7 @@ stdout << count << " ";
 till(records.length - 1, 1) {
 record: auto = records[$];
 if !record.is_valid() {
-stderr << "Skipping invalid record: " << record.id << "\n";
+stderr_write("Skipping invalid record: " << record.id + "\n");
 continue;
 }
 </p>
@@ -736,9 +736,9 @@ j: i32 = $;
 if j == 2 {
 continue;  // Skip j=2 in inner loop
 }
-stdout << "(" << i << "," << j << ") ";
+print("(" << i << "," << j + ") ");
 }
-stdout << "\n";
+print("\n");
 }
 </p>
 <p>
@@ -776,7 +776,7 @@ result: Result = validate(items[$]);
 </p>
 <p>
 if result == ERR {
-stderr << "Invalid item, skipping\n";
+stderr_write("Invalid item, skipping\n");
 continue;
 }
 </p>
@@ -792,7 +792,7 @@ process(items[$]);
 if $ == 2 {
 continue;  // Skip 2, keep going
 }
-stdout << $ << " ";
+print($ + " ");
 }
 // Output: 0 1 3 4</code></pre>
 </p>
@@ -802,7 +802,7 @@ stdout << $ << " ";
 if $ == 2 {
 break;  // Stop completely
 }
-stdout << $ << " ";
+print($ + " ");
 }
 // Output: 0 1</code></pre>
 </p>
@@ -921,7 +921,7 @@ save_result(record, result);
 }
 </p>
 <p>
-stdout << "Processed: " << success_count << " successful, "
+print("Processed: " + success_count + " successful, ")
 << error_count << " errors\n";</code></pre>
 </p>
 <hr>

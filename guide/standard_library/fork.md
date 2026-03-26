@@ -15,7 +15,7 @@
 ## Syntax
 
 ```aria
-import std.process;
+use std.process;
 
 fork_Result: Result<ForkResult> = fork();
 ```
@@ -44,15 +44,15 @@ enum ForkResult {
 ### Basic Fork
 
 ```aria
-import std.process;
+use std.process;
 
 Result: ForkResult = fork()?;
 
 when result is Parent(child_pid) then
-    stdout << "Parent: Child PID is $child_pid";
+    print(`Parent: Child PID is &{child_pid}`);
     // Parent code...
 elsif result is Child then
-    stdout << "Child: I am the child process";
+    print("Child: I am the child process");
     // Child code...
     exit(0);
 end
@@ -65,9 +65,9 @@ Result: ForkResult = fork()?;
 
 when result is Parent(child_pid) then
     // Parent waits for child
-    stdout << "Parent waiting for child $child_pid";
+    print(`Parent waiting for child &{child_pid}`);
     wait(child_pid)?;
-    stdout << "Child finished";
+    print("Child finished");
     
 elsif result is Child then
     // Child executes different program
@@ -88,7 +88,7 @@ till(4, 1) {
     when result is Parent(child_pid) then
         children.append(child_pid);
     elsif result is Child then
-        stdout << "Child $($) working...";
+        print("Child $($) working...");
         // Do work...
         exit(0);
     end
@@ -99,7 +99,7 @@ till(children.length - 1, 1) {
     wait(children[$])?;
 end
 
-stdout << "All children completed";
+print("All children completed");
 ```
 
 ---
@@ -129,7 +129,7 @@ end
 Result: ForkResult = fork()?;
 
 when result is Parent(child_pid) then
-    stdout << "Background task started: $child_pid";
+    print(`Background task started: &{child_pid}`);
     // Parent continues immediately
     
 elsif result is Child then
@@ -152,12 +152,12 @@ Result: ForkResult = fork()?;
 
 when result is Parent(child_pid) then
     value = 20;  // Parent's value
-    stdout << "Parent value: $value";  // 20
+    print(`Parent value: &{value}`);  // 20
     wait(child_pid)?;
     
 elsif result is Child then
     value = 30;  // Child's value (doesn't affect parent)
-    stdout << "Child value: $value";  // 30
+    print(`Child value: &{value}`);  // 30
     exit(0);
 end
 ```
@@ -242,7 +242,7 @@ Result: ForkResult = fork()?;
 
 when result is Parent(child_pid) then
     // Parent exits without waiting
-    return;  // ❌ Child becomes zombie!
+    pass(NIL);  // ❌ Child becomes zombie!
 elsif result is Child then
     work();
     exit(0);

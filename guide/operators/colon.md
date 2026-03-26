@@ -39,8 +39,8 @@ z := 42;  // Type inferred as i32
 ## Function Parameters
 
 ```aria
-fn greet(name: string, age: i32) {
-    stdout << "Hello " << name << ", age " << age;
+func:greet = NIL(string:name, int32:age) {
+    print("Hello " + name + ", age " + age);
 }
 ```
 
@@ -49,8 +49,8 @@ fn greet(name: string, age: i32) {
 ## Return Types
 
 ```aria
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 ```
 
@@ -98,7 +98,7 @@ data := load();  // What type?
 ### ✅ DO: Use for Function Signatures
 
 ```aria
-fn calculate(input: f64, precision: i32) -> f64 {
+func:calculate = flt64(flt64:input, int32:precision) {
     ...
 }
 ```

@@ -40,7 +40,7 @@ z: f64 = 5.0 + (3 as f64);  // 8.0
 ```aria
 // Concatenate strings
 greeting: string = "Hello" + " " + "World";
-stdout << greeting;  // "Hello World"
+print(greeting);  // "Hello World"
 
 // String + number (requires conversion)
 message: string = "Count: " + to_string(42);
@@ -136,7 +136,7 @@ Result: i32 = pass checked_add(huge_number, another_huge);
 ```aria
 x: i32 = 10;
 x += 5;  // x = x + 5
-stdout << x;  // 15
+print(x);  // 15
 ```
 
 ---

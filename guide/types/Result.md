@@ -18,7 +18,7 @@
 int update_neuron(int id) {
     if (id < 0) return -1;  // Error!
     // ... update logic
-    return 0;  // Success
+    pass(0);  // Success
 }
 
 // Caller ignores error - silent corruption!

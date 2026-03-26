@@ -668,7 +668,7 @@ value: i32 = 42;
 ref: &i32 = &value;
 </p>
 <p>
-stdout << *ref;  // 42
+print(*ref);  // 42
 </p>
 <p>
 // Can't modify through immutable reference
@@ -678,7 +678,7 @@ stdout << *ref;  // 42
 <h2>Function Parameters</h2>
 <pre><code>fn print_value(x: &i32) {
 <p>
-stdout << *x;
+print(*x);
 }
 </p>
 <p>
@@ -695,7 +695,7 @@ ref3: &i32 = &data;
 </p>
 <p>
 // All valid - multiple immutable borrows allowed
-stdout << <em>ref1 << </em>ref2 << *ref3;</code></pre>
+print(<em>ref1 << </em>ref2 + *ref3);</code></pre>
 </p>
 <hr>
 <h2>Address Operator</h2>
@@ -759,7 +759,7 @@ ref: &i32 = &42;
 </p>
 <p>
 when ref == 42 then  // Auto-dereference
-stdout << "Equal";
+print("Equal");
 end
 </p>
 <p>

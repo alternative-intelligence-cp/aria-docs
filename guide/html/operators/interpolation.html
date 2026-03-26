@@ -649,9 +649,9 @@
 <strong>Purpose</strong>: Embed expressions in strings
 <hr>
 <h2>Syntax</h2>
-<pre><code>"text $variable text"
+<pre><code>`text &{variable} text`
 <p>
-"text ${expression} text"</code></pre>
+"text &{expression} text"</code></pre>
 </p>
 <hr>
 <h2>Description</h2>
@@ -666,12 +666,12 @@ age: i32 = 25;
 </p>
 <p>
 // Simple interpolation
-msg: string = "Hello, $name!";
+msg: string = `Hello, &{name}!`;
 // "Hello, Alice!"
 </p>
 <p>
 // With expressions
-info: string = "Age: ${age + 1}";
+info: string = "Age: &{age + 1}";
 // "Age: 26"</code></pre>
 </p>
 <hr>
@@ -681,21 +681,21 @@ info: string = "Age: ${age + 1}";
 y: i32 = 20;
 </p>
 <p>
-Result: string = "${x} + ${y} = ${x + y}";
+Result: string = "&{x} + &{y} = &{x + y}";
 // "10 + 20 = 30"</code></pre>
 </p>
 <hr>
 <h2>Method Calls</h2>
 <pre><code>user: User = get_user();
 <p>
-msg: string = "User: ${user.name()}, Status: ${user.status()}";</code></pre>
+msg: string = "User: &{user.name()}, Status: &{user.status()}";</code></pre>
 </p>
 <hr>
 <h2>Formatting</h2>
 <pre><code>price: f64 = 19.99;
 <p>
 // With format specifiers (if supported)
-text: string = "Price: $${price:.2f}";
+text: string = "Price: $&{price:.2f}";
 // "Price: $19.99"</code></pre>
 </p>
 <hr>
@@ -703,30 +703,30 @@ text: string = "Price: $${price:.2f}";
 <h3>✅ DO: Use for Readability</h3>
 <pre><code>// Clear
 <p>
-msg: string = "User $name has $count items";
+msg: string = `User &{name} has &{count} items`;
 </p>
 <p>
 // Less clear
 msg: string = "User " + name + " has " + to_string(count) + " items";</code></pre>
 </p>
 <h3>✅ DO: Use Braces for Complex Expressions</h3>
-<pre><code>text: string = "Result: ${calculate(x, y)}";</code></pre>
+<pre><code>text: string = "Result: &{calculate(x, y)}";</code></pre>
 <h3>❌ DON'T: Nest Too Deeply</h3>
 <pre><code>// Confusing
 <p>
-msg: string = "${outer(${inner(${deep()})})}";
+msg: string = "&{outer(&{inner(&{deep()})})}";
 </p>
 <p>
 // Better
 temp := inner(deep());
 result := outer(temp);
-msg: string = "$result";</code></pre>
+msg: string = `&{result}`;</code></pre>
 </p>
 <hr>
 <h2>Escape Dollar Sign</h2>
 <pre><code>// Literal $
 <p>
-price: string = "Cost: \$${amount}";
+price: string = "Cost: \$&{amount}";
 // "Cost: $50"</code></pre>
 </p>
 <hr>

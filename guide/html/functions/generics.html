@@ -734,7 +734,7 @@ fn sum<T>(array: []T) -> T { ... }</code></pre>
 <pre><code>// T must implement Display
 <p>
 fn print<T>(value: T) where T: Display {
-stdout << value << "\n";
+print(value + "\n");
 }
 </p>
 <p>
@@ -747,7 +747,7 @@ fn sort<T>(array: []T) where T: Comparable {
 // T must implement both traits
 fn process<T>(value: T) where T: Display, T: Clone {
 copy: T = value.clone();
-stdout << copy << "\n";
+print(copy + "\n");
 }</code></pre>
 </p>
 <h3>Multiple Constraints</h3>

@@ -52,7 +52,7 @@ maybe_str: Option<string> = Some("hello");
 type Result<T> = Result<T, Error>;
 
 // Now use simpler name
-fn parse(input: string) -> Result<i32> {
+func:parse = Result<int32>(string:input) {
     // Returns Result<i32, Error>
 }
 
@@ -114,8 +114,8 @@ c: C = Box{value: 42};
 
 ```aria
 // Function accepts any Box<T>
-fn unbox<T>(box: Box<T>) -> T {
-    return box.value;
+func:unbox = T(Box<T>:box) {
+    pass(box.value);
 }
 
 // T inferred from argument type
@@ -151,16 +151,16 @@ users: Vec<User>;      // Uses Vec_User
 ```aria
 // T in scope for entire impl block
 impl<T> Vec<T> {
-    fn new() -> Vec<T> {
+    func:new = Vec<T>() {
         // T available here
     }
     
-    fn push(item: T) {
+    func:push = NIL(T:item) {
         // T available here
     }
     
     // U is separate type parameter
-    fn map<U>(f: fn(T) -> U) -> Vec<U> {
+    func:map = U)(fn(T:f)-> Vec<U> {
         // Both T and U available here
     }
 }
@@ -179,7 +179,7 @@ struct Container<T> {
 }
 
 // Must specify T when using
-fn process(c: Container<i32>) { }
+func:process = NIL(Container<i32>:c) { }
 ```
 
 ### Associated Type
@@ -189,7 +189,7 @@ fn process(c: Container<i32>) { }
 trait Iterator {
     type Item;  // Associated type
     
-    fn next() -> Option<Self::Item>;
+    func:next = Result<Self::Item>()
 }
 
 // Type determined by trait impl
@@ -198,7 +198,7 @@ struct NumberIterator;
 impl Iterator for NumberIterator {
     type Item = i32;  // Concrete type
     
-    fn next() -> Option<i32> { }
+    func:next = Result<int32>() { }
 }
 ```
 
@@ -224,7 +224,7 @@ large: Array<i32, 1000>;
 ```aria
 // Generic over type constructors
 trait Functor<F<_>> {
-    fn map<A, B>(fa: F<A>, f: fn(A) -> B) -> F<B>;
+    func:map = B)(F<A>:fa, fn(A:f)-> F<B>;
 }
 
 // F could be Box, Option, Vec, etc.
@@ -295,15 +295,15 @@ struct Weak<T>;    // Weak reference
 ### Single Bound
 
 ```aria
-fn print<T>(value: T) where T: Display {
-    stdout << value << "\n";
+func:print = NIL(T:value)where T: Display {
+    print(value + "\n");
 }
 ```
 
 ### Multiple Bounds
 
 ```aria
-fn process<T>(value: T) 
+func:process = NIL(T:value)
     where T: Clone, T: Debug, T: Send {
     // Can clone, debug, send to threads
 }
@@ -312,7 +312,7 @@ fn process<T>(value: T)
 ### Bounds on Associated Types
 
 ```aria
-fn iterate<I>(iter: I)
+func:iterate = NIL(I:iter)
     where I: Iterator,
           I::Item: Display {
     // Iterator's items must be displayable
@@ -393,8 +393,8 @@ vec = Vec::new();  // Type unknown yet
 vec.push(42);      // Now Vec<i32>
 
 // Type inferred from return
-fn get_numbers() -> Vec<i32> {
-    return Vec::new();  // T = i32 from return type
+func:get_numbers = Vec<i32>() {
+    pass(Vec::new());  // T = i32 from return type
 }
 ```
 
@@ -431,7 +431,7 @@ struct ApiResponse<T> {
 }
 
 impl<T> ApiResponse<T> where T: Deserialize {
-    fn from_json(json: string) -> ApiResponse<T>? {
+    func:from_json = ApiResponse<T>?(string:json) {
         // Parse JSON and create response
     }
 }

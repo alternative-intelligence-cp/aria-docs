@@ -668,9 +668,9 @@ return $count;
 </p>
 <p>
 counter: fn() -> i32 = make_counter();
-stdout << counter();  // 1
-stdout << counter();  // 2
-stdout << counter();  // 3</code></pre>
+print(counter());  // 1
+print(counter());  // 2
+print(counter());  // 3</code></pre>
 </p>
 <strong>What happened</strong>:
 <p>
@@ -704,7 +704,7 @@ total: i32 = 0;
 // total is captured by reference
 return |value: i32| {
 $total = $total + value;  // Modifies original total
-stdout << "Total: " << $total << "\n";
+print("Total: " << $total + "\n");
 };
 }
 </p>
@@ -724,11 +724,11 @@ return || greeting + ", " + name + "!";
 </p>
 <p>
 say_hello: fn() -> string = make_greeter("Hello", "Alice");
-stdout << say_hello();  // "Hello, Alice!"
+print(say_hello());  // "Hello, Alice!"
 </p>
 <p>
 say_hi: fn() -> string = make_greeter("Hi", "Bob");
-stdout << say_hi();  // "Hi, Bob!"</code></pre>
+print(say_hi());  // "Hi, Bob!"</code></pre>
 </p>
 <hr>
 <h2>Closures in Data Structures</h2>
@@ -750,9 +750,9 @@ return multipliers;
 </p>
 <p>
 funcs: []fn(i32) -> i32 = create_multipliers();
-stdout << funcs<a href="10">0</a>;  // 10 (10 * 1)
-stdout << funcs<a href="10">2</a>;  // 30 (10 * 3)
-stdout << funcs<a href="10">4</a>;  // 50 (10 * 5)</code></pre>
+print(funcs<a href="10">0</a>;  // 10 (10 * 1)
+print(funcs<a href="10">2</a>;  // 30 (10 * 3)
+print(funcs<a href="10">4</a>;  // 50 (10 * 5)</code></pre>
 </p>
 <h3>Closure in Struct</h3>
 <pre><code>struct Button {
@@ -767,7 +767,7 @@ return Button{
 label: label,
 on_click: || {
 $counter = $counter + 1;
-stdout << label << " clicked " << $counter << " times\n";
+print(label << " clicked " << $counter + " times\n");
 }
 };
 }
@@ -779,7 +779,7 @@ btn: Button = create_button("Submit", $clicks);
 <p>
 btn.on_click();  // "Submit clicked 1 times"
 btn.on_click();  // "Submit clicked 2 times"
-stdout << clicks;  // 2</code></pre>
+print(clicks);  // 2</code></pre>
 </p>
 <hr>
 <h2>Common Patterns</h2>
@@ -790,7 +790,7 @@ user_name: string = "Alice";
 </p>
 <p>
 button.on_click(|| {
-stdout << "Hello, " << user_name << "!\n";
+print("Hello, " << user_name + "!\n");
 });
 </p>
 <p>
@@ -860,9 +860,9 @@ return $state;
 </p>
 <p>
 toggle: fn() -> bool = make_toggle();
-stdout << toggle();  // true
-stdout << toggle();  // false
-stdout << toggle();  // true</code></pre>
+print(toggle());  // true
+print(toggle());  // false
+print(toggle());  // true</code></pre>
 </p>
 <h3>Multiple Mutable Captures</h3>
 <pre><code>fn make_stats_tracker() -> fn(i32) {
@@ -877,7 +877,7 @@ $sum = $sum + value;
 </p>
 <p>
 avg: f64 = ($sum as f64) / ($count as f64);
-stdout << "Count: " << $count << ", Average: " << avg << "\n";
+print("Count: " << $count << ", Average: " << avg + "\n");
 };
 }
 </p>
@@ -908,7 +908,7 @@ user_id: i32 = 123;
 <p>
 fetch_data(|| {
 // Closure has access to user_id
-stddbg << "Fetching for user " << user_id;
+stddbg_write("Fetching for user " + user_id);
 });
 }</code></pre>
 </p>
@@ -917,7 +917,7 @@ stddbg << "Fetching for user " << user_id;
 <p>
 fn make_printer(prefix: string) -> fn(string) {
 return |msg: string| {
-stdout << prefix << ": " << msg << "\n";
+print(prefix << ": " << msg + "\n");
 };
 }</code></pre>
 </p>
@@ -938,7 +938,7 @@ return $count;
 fn make_handler(data: LargeStruct) -> fn() {
 return || {
 // Uses only one field!
-stdout << data.id << "\n";
+print(data.id + "\n");
 };
 }
 </p>
@@ -947,7 +947,7 @@ stdout << data.id << "\n";
 fn make_handler(data: LargeStruct) -> fn() {
 id: i32 = data.id;
 return || {
-stdout << id << "\n";
+print(id + "\n");
 };
 }</code></pre>
 </p>
@@ -991,7 +991,7 @@ f();  // Call original function
 <p>
 // Usage
 save_config: fn() = debounce(|| {
-stdout << "Saving configuration...\n";
+print("Saving configuration...\n");
 }, 1000);
 </p>
 <p>
@@ -1062,9 +1062,9 @@ can_call: fn() -> bool = rate_limit(5, 1000);
 till(9, 1) {
 i: i32 = $ + 1;
 when can_call() then
-stdout << "API call " << i << "\n";
+print("API call " << i + "\n");
 else
-stdout << "Rate limited!\n";
+print("Rate limited!\n");
 end
 }</code></pre>
 </p>

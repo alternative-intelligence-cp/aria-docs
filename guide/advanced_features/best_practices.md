@@ -19,8 +19,8 @@ Follow these best practices to write **clean**, **maintainable**, and **efficien
 // File: user_service.aria
 
 // 1. Imports
-import std.io.{File, readFile, writeFile};
-import std.collections.HashMap;
+use std.io.{File, readFile, writeFile};
+use std.collections.HashMap;
 
 // 2. Constants
 USER_MAX_AGE: i32 = 150;
@@ -34,12 +34,12 @@ struct User {
 }
 
 // 4. Functions
-pub fn create_user(name: string, age: i32) -> Result<User> {
+pub func:create_user = Result<User>(string:name, int32:age) {
     // Implementation
 }
 
 // 5. Main (if applicable)
-fn main() {
+func:main = NIL() {
     // Entry point
 }
 ```
@@ -74,11 +74,11 @@ project/
 user_count: i32 = 0;
 max_retry_attempts: i32 = 3;
 
-fn calculate_total_price(items: []Item) -> f64 {
+func:calculate_total_price = flt64([]Item:items) {
     // Implementation
 }
 
-fn fetch_user_by_id(id: i32) -> Result<User> {
+func:fetch_user_by_id = Result<User>(int32:id) {
     // Implementation
 }
 ```
@@ -101,7 +101,7 @@ enum Status {
 }
 
 trait Displayable {
-    fn display() -> string;
+    func:display = string;()
 }
 ```
 
@@ -124,14 +124,14 @@ API_BASE_URL: string = "https://api.example.com";
 
 ```aria
 // ✅ Return Result for operations that can fail
-fn read_config(path: string) -> Result<Config> {
+func:read_config = Result<Config>(string:path) {
     content: string = readFile(path)?;
     config: Config = parse_config(content)?;
-    return Ok(config);
+    pass(Ok(config));
 }
 
 // ❌ Don't panic for expected errors
-fn bad_read_config(path: string) -> Config {
+func:bad_read_config = Config(string:path) {
     content: string = readFile(path).expect("Failed to read");  // ❌
     // ...
 }
@@ -143,14 +143,14 @@ fn bad_read_config(path: string) -> Config {
 
 ```aria
 // ✅ Add context to errors
-fn load_user_data(user_id: i32) -> Result<UserData> {
+func:load_user_data = Result<UserData>(int32:user_id) {
     user: User = fetch_user(user_id)
-        .context("Failed to fetch user $user_id")?;
+        .context(`Failed to fetch user &{user_id}`)?;
     
     profile: Profile = fetch_profile(user_id)
-        .context("Failed to fetch profile for user $user_id")?;
+        .context(`Failed to fetch profile for user &{user_id}`)?;
     
-    return Ok(UserData { user, profile });
+    pass(Ok(UserData { user, profile }));
 }
 ```
 
@@ -162,14 +162,14 @@ fn load_user_data(user_id: i32) -> Result<UserData> {
 
 ```aria
 // ✅ Resources cleaned up automatically
-fn process_file(path: string) -> Result<void> {
+func:process_file = Result<NIL>(string:path) {
     file: File = open(path)?;
     defer file.close();  // Automatically called
     
     data: string = file.read_all()?;
     process(data);
     
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -179,14 +179,14 @@ fn process_file(path: string) -> Result<void> {
 
 ```aria
 // ❌ Manual allocation/deallocation
-fn bad_buffer() {
+func:bad_buffer = NIL() {
     buffer: *u8 = alloc(1024);
     // Use buffer
     free(buffer);  // Easy to forget!
 }
 
 // ✅ Use safe containers
-fn good_buffer() {
+func:good_buffer = NIL() {
     buffer: []u8 = [0; 1024];  // Automatically managed
     // Use buffer
 }  // Automatically freed
@@ -200,13 +200,13 @@ fn good_buffer() {
 
 ```aria
 // ✅ Immutable by default
-fn calculate(data: []i32) -> i32 {
+func:calculate = int32([]i32:data) {
     total: i32 = data.sum();  // data not modified
-    return total * 2;
+    pass(total * 2);
 }
 
 // Only use mut when necessary
-fn process(data: []mut i32) {
+func:process = NIL([]mut i32:data) {
     till(data.len() - 1, 1) {
         data[$] *= 2;  // Mutation needed
     }
@@ -219,22 +219,22 @@ fn process(data: []mut i32) {
 
 ```aria
 // ❌ Inefficient - creates temp string each iteration
-fn bad_concat(words: []string) -> string {
+func:bad_concat = string([]string:words) {
     Result: string = "";
     till(words.length - 1, 1) {
         result = result ++ words[$];  // Reallocates each time
     }
-    return result;
+    pass(result);
 }
 
 // ✅ Efficient - pre-allocate capacity
-fn good_concat(words: []string) -> string {
+func:good_concat = string([]string:words) {
     total_len: i32 = words.map(|w| w.len()).sum();
     Result: StringBuilder = StringBuilder.with_capacity(total_len);
     till(words.length - 1, 1) {
         result.append(words[$]);
     }
-    return result.to_string();
+    pass(result.to_string());
 }
 ```
 
@@ -246,21 +246,21 @@ fn good_concat(words: []string) -> string {
 
 ```aria
 // ✅ Small, focused functions
-fn validate_user(user: User) -> Result<void> {
+func:validate_user = Result<NIL>(User:user) {
     validate_name(user.name)?;
     validate_email(user.email)?;
     validate_age(user.age)?;
-    return Ok();
+    pass(Ok());
 }
 
-fn validate_name(name: string) -> Result<void> {
+func:validate_name = Result<NIL>(string:name) {
     if name.len() == 0 {
-        return Err("Name cannot be empty");
+        pass(Err("Name cannot be empty"));
     }
     if name.len() > 100 {
-        return Err("Name too long");
+        pass(Err("Name too long"));
     }
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -285,32 +285,32 @@ config: Config = load_config()?;
 
 ```aria
 // ❌ Too much nesting
-fn bad_nested(user: ?User) -> string {
+func:bad_nested = string(?User:user) {
     if user is Some {
         if user?.age > 18 {
             if user?.name.len() > 0 {
-                return user?.name;
+                pass(user?.name);
             }
         }
     }
-    return "Unknown";
+    pass("Unknown");
 }
 
 // ✅ Early returns
-fn good_early_return(user: ?User) -> string {
+func:good_early_return = string(?User:user) {
     if user is None {
-        return "Unknown";
+        pass("Unknown");
     }
     
     if user?.age <= 18 {
-        return "Minor";
+        pass("Minor");
     }
     
     if user?.name.len() == 0 {
-        return "Unnamed";
+        pass("Unnamed");
     }
     
-    return user?.name;
+    pass(user?.name);
 }
 ```
 
@@ -333,9 +333,9 @@ fn good_early_return(user: ?User) -> string {
 /// # Example
 /// ```
 /// user: User = fetch_user(42)?;
-/// stdout << user.name;
+/// print(user.name);
 /// ```
-pub fn fetch_user(user_id: i32) -> Result<User> {
+pub func:fetch_user = Result<User>(int32:user_id) {
     // Implementation
 }
 ```
@@ -346,16 +346,16 @@ pub fn fetch_user(user_id: i32) -> Result<User> {
 
 ```aria
 // ✅ Explain why, not what
-fn calculate_discount(price: f64) -> f64 {
+func:calculate_discount = flt64(flt64:price) {
     // Apply 10% discount for bulk orders
     // Based on business rule BR-2025-01
-    return price * 0.9;
+    pass(price * 0.9);
 }
 
 // ❌ Obvious comment
-fn add(a: i32, b: i32) -> i32 {
+func:add = int32(int32:a, int32:b) {
     // Add a and b together  ← Obvious!
-    return a + b;
+    pass(a + b);
 }
 ```
 
@@ -367,7 +367,7 @@ fn add(a: i32, b: i32) -> i32 {
 
 ```aria
 #[test]
-fn test_calculate_total() {
+func:test_calculate_total = NIL() {
     items: []Item = [
         Item { price: 10.0 },
         Item { price: 20.0 },
@@ -379,7 +379,7 @@ fn test_calculate_total() {
 }
 
 #[test]
-fn test_validate_email_invalid() {
+func:test_validate_email_invalid = NIL() {
     Result: Result<void> = validate_email("invalid");
     assert(result.is_err());
 }
@@ -393,13 +393,13 @@ fn test_validate_email_invalid() {
 
 ```aria
 // ✅ Always validate user input
-fn create_user(name: string, age: i32) -> Result<User> {
+func:create_user = Result<User>(string:name, int32:age) {
     if name.len() == 0 {
-        return Err("Name cannot be empty");
+        pass(Err("Name cannot be empty"));
     }
     
     if age < 0 || age > 150 {
-        return Err("Invalid age");
+        pass(Err("Invalid age"));
     }
     
     // Create user
@@ -412,15 +412,15 @@ fn create_user(name: string, age: i32) -> Result<User> {
 
 ```aria
 // ❌ SQL injection vulnerability
-fn bad_query(username: string) -> Result<User> {
-    query: string = "SELECT * FROM users WHERE name = '$username'";
-    return db.execute(query);  // ❌ Vulnerable!
+func:bad_query = Result<User>(string:username) {
+    query: string = `SELECT * FROM users WHERE name = '&{username}'`;
+    pass(db.execute(query));  // ❌ Vulnerable!
 }
 
 // ✅ Use parameterized queries
-fn good_query(username: string) -> Result<User> {
+func:good_query = Result<User>(string:username) {
     query: string = "SELECT * FROM users WHERE name = ?";
-    return db.execute(query, username);  // ✅ Safe
+    pass(db.execute(query, username));  // ✅ Safe
 }
 ```
 
@@ -432,7 +432,7 @@ fn good_query(username: string) -> Result<User> {
 
 ```aria
 // ✅ Use channels for communication
-fn producer_consumer() {
+func:producer_consumer = NIL() {
     channel: Channel<i32> = Channel.new();
     
     // Producer thread
@@ -459,7 +459,7 @@ fn producer_consumer() {
 // ✅ Use Mutex for shared state
 shared_counter: Mutex<i32> = Mutex.new(0);
 
-fn increment() {
+func:increment = NIL() {
     lock = shared_counter.lock();
     *lock += 1;
 }  // Automatically unlocked

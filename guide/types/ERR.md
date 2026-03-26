@@ -110,7 +110,7 @@ tbb32:temp_reading = read_sensor(temperature_sensor);      // Still ERR
 if (temp_reading == ERR) {
     stderr.write("Sensor reading failed - ERR propagated through entire chain\n");
     stderr.write("Could be: DB failure, missing therapist, invalid room, or sensor error\n");
-    return HTTP_500_INTERNAL_SERVER_ERROR;
+    pass(HTTP_500_INTERNAL_SERVER_ERROR);
 }
 
 // If we got here, entire chain succeeded
@@ -143,10 +143,10 @@ if (combined == ERR) {
     
     // Graceful degradation: use only working sensors
     tbb16:fallback = compute_with_available_sensors(audio_sensor, facial_sensor, posture_sensor);
-    return fallback;
+    pass(fallback);
 }
 
-return combined;
+pass(combined);
 ```
 
 ---
@@ -238,7 +238,7 @@ tbb32:result = compute();
 
 if (result == ERR) {
     stderr.write("Computation failed\n");
-    return;
+    pass(NIL);
 }
 
 // Safe to use result here
@@ -430,7 +430,7 @@ sort(values);
 // ERR: Simple, automatic, no context
 func:safe_divide_tbb = (a: tbb32, b: tbb32) -> tbb32 {
     if (b == 0) return ERR;
-    return a / b;
+    pass(a / b);
 }
 
 tbb32:result = safe_divide_tbb(10, 0);
@@ -654,7 +654,7 @@ end
 func:process_data = (input: tbb32) -> tbb32 {
     // Guard against ERR input
     if (input == ERR) {
-        return ERR;  // Propagate immediately
+        pass(ERR);  // Propagate immediately
     }
     
     // Safe to use input
@@ -663,10 +663,10 @@ func:process_data = (input: tbb32) -> tbb32 {
     if (result == ERR) {
         // Overflow during computation
         stderr.write("Computation overflow\n");
-        return ERR;
+        pass(ERR);
     }
     
-    return result;
+    pass(result);
 }
 ```
 
@@ -730,7 +730,7 @@ func:compute_risk_score = (patient_id: tbb32) -> tbb32 {
         if (blood_pressure == ERR) stderr.write("  Missing BP\n");
     }
     
-    return risk;
+    pass(risk);
 }
 ```
 
@@ -759,7 +759,7 @@ log.write(result);  // ❌ Might print ERR value (-2147483648)!
 tbb32:result = a + b;
 if (result == ERR) {
     stderr.write("Addition overflow\n");
-    return;
+    pass(NIL);
 }
 log.write(result);  // ✅ Safe
 ```
@@ -787,13 +787,13 @@ if (value == ERR) {
 func:find_user = (username: string) -> tbb32 {
     // User might not exist - this is expected!
     if (!exists(username)) return ERR;  // ❌ Misleading (not error, just not found)
-    return get_user_id(username);
+    pass(get_user_id(username));
 }
 
 // RIGHT: Use optional or Result
 func:find_user = (username: string) -> tbb32? {
     if (!exists(username)) return NIL;  // ✅ Clear: no user
-    return get_user_id(username);
+    pass(get_user_id(username));
 }
 ```
 
@@ -830,7 +830,7 @@ tbb32:result = divide(a, b);  // Division by zero → ERR automatically
 
 if (result == ERR) {
     stderr.write("Division error\n");
-    return ERR;  // Propagates automatically
+    pass(ERR);  // Propagates automatically
 }
 
 // No global state!
@@ -870,13 +870,13 @@ if (result == -1) {  // ❌ -1 could be valid result OR error!
 // Aria equivalent with ERR
 func:aria_compute = (input: tbb32) -> tbb32 {
     if (input < 0) {
-        return ERR;  // Clear error signal (not -1!)
+        pass(ERR);  // Clear error signal (not -1!)
     }
     tbb32:result = input * 2;
     if (result > 1000) {
-        return ERR;  // Automatic if overflow
+        pass(ERR);  // Automatic if overflow
     }
-    return result;
+    pass(result);
 }
 
 // Usage

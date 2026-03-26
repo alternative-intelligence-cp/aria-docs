@@ -9,7 +9,7 @@
 ## Signature
 
 ```aria
-fn aria_alloc_buffer(size: i32) -> []byte
+func:aria_alloc_buffer = []byte(int32:size)
 ```
 
 ---

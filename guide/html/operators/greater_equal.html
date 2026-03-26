@@ -660,19 +660,19 @@ The greater than or equal operator <code>>=</code> tests if the left value is gr
 <pre><code>// Greater than
 <p>
 when 10 >= 5 then
-stdout << "True";
+print("True");
 end
 </p>
 <p>
 // Equal
 when 5 >= 5 then
-stdout << "Also true";
+print("Also true");
 end
 </p>
 <p>
 // Less than
 when 3 >= 5 then
-stdout << "Won't print";
+print("Won't print");
 end</code></pre>
 </p>
 <hr>
@@ -683,13 +683,13 @@ age: i32 = 18;
 </p>
 <p>
 when age >= min_age then
-stdout << "Allowed";  // Prints (18 >= 18)
+print("Allowed");  // Prints (18 >= 18)
 end
 </p>
 <p>
 // Contrast with >
 when age > min_age then
-stdout << "Won't print";  // false (18 not > 18)
+print("Won't print");  // false (18 not > 18)
 end</code></pre>
 </p>
 <hr>
@@ -697,22 +697,22 @@ end</code></pre>
 <h3>Minimum Values</h3>
 <pre><code>when score >= 60 then
 <p>
-stdout << "Pass";
+print("Pass");
 else
-stdout << "Fail";
+print("Fail");
 end</code></pre>
 </p>
 <h3>Range Lower Bound</h3>
 <pre><code>when age >= 18 and age <= 65 then
 <p>
-stdout << "Working age";
+print("Working age");
 end</code></pre>
 </p>
 <h3>Loop Conditions</h3>
 <pre><code>i: i32 = 10;
 <p>
 while i >= 0 {
-stdout << i;
+print(i);
 i -= 1;
 }
 // Prints: 10 9 8 7 6 5 4 3 2 1 0</code></pre>
@@ -723,7 +723,7 @@ i -= 1;
 <pre><code>// Inclusive range [min, max]
 <p>
 when value >= min and value <= max then
-stdout << "In range";
+print("In range");
 end</code></pre>
 </p>
 <h3>✅ DO: Use for Validation</h3>

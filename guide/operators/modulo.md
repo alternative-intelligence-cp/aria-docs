@@ -38,16 +38,16 @@ y: i32 = 10 % 5;  // 0
 ## Even/Odd Test
 
 ```aria
-fn is_even(n: i32) -> bool {
-    return n % 2 == 0;
+func:is_even = bool(int32:n) {
+    pass(n % 2 == 0);
 }
 
-fn is_odd(n: i32) -> bool {
-    return n % 2 != 0;
+func:is_odd = bool(int32:n) {
+    pass(n % 2 != 0);
 }
 
-stdout << is_even(4);  // true
-stdout << is_odd(7);   // true
+print(is_even(4));  // true
+print(is_odd(7));   // true
 ```
 
 ---
@@ -103,7 +103,7 @@ current: i32 = (current + 1) % array.length();
 
 ```aria
 when n % 2 == 0 then
-    stdout << "Even";
+    print("Even");
 end
 ```
 
@@ -128,9 +128,9 @@ end
 ```aria
 till(9, 1) {
     when $ % 2 == 0 then
-        stdout << "Even: " << $;
+        print("Even: " + $);
     else
-        stdout << "Odd: " << $;
+        print("Odd: " + $);
     end
 }
 ```
@@ -139,7 +139,7 @@ till(9, 1) {
 
 ```aria
 when value % 10 == 0 then
-    stdout << "Multiple of 10";
+    print("Multiple of 10");
 end
 ```
 
@@ -160,7 +160,7 @@ digit: i32 = (number / power_of_10) % 10;
 ```aria
 x: i32 = 17;
 x %= 5;  // x = x % 5
-stdout << x;  // 2
+print(x);  // 2
 ```
 
 ---

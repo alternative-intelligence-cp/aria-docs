@@ -657,7 +657,7 @@ Concurrency enables <strong>parallel execution</strong> for better performance a
 <pre><code>import std.thread;
 <p>
 fn worker(id: i32) {
-stdout << "Worker $id running";
+print(`Worker &{id} running`);
 }
 </p>
 <p>
@@ -680,7 +680,7 @@ return Ok(data);
 <p>
 async fn main() {
 data: Data = await fetch_data("https://api.example.com/data")?;
-stdout << data;
+print(data);
 }</code></pre>
 </p>
 <hr>
@@ -695,7 +695,7 @@ yield 3;
 <p>
 values = generator().collect();
 till(values.length - 1, 1) {
-stdout << values[$];  // Prints 1, 2, 3
+print(values[$]);  // Prints 1, 2, 3
 }</code></pre>
 </p>
 <hr>
@@ -742,7 +742,7 @@ channel.send($);
 fn consumer() {
 while true {
 value: i32 = channel.recv()?;
-stdout << "Received: $value";
+print(`Received: &{value}`);
 }
 }</code></pre>
 </p>
@@ -761,7 +761,7 @@ ch.send($);
 fn consumer(ch: Channel<i32>) {
 while true {
 match ch.recv() {
-Ok(value) => stdout << value,
+Ok(value) => print(value),
 Err(_) => break,
 }
 }
@@ -856,15 +856,15 @@ barrier: Barrier = Barrier.new(3);  // 3 threads
 </p>
 <p>
 fn worker(id: i32) {
-stdout << "Worker $id: Phase 1";
+print(`Worker &{id}: Phase 1`);
 barrier.wait();  // Wait for all threads
 </p>
 <p>
-stdout << "Worker $id: Phase 2";
+print(`Worker &{id}: Phase 2`);
 barrier.wait();
 </p>
 <p>
-stdout << "Worker $id: Done";
+print(`Worker &{id}: Done`);
 }</code></pre>
 </p>
 <hr>

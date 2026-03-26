@@ -30,7 +30,7 @@ The inclusive range operator `..=` creates a range that **includes** both start 
 
 // ✅ CORRECT: Use till for loops
 till(10, 1) {  // 1 to 10 ($ = 1, 2, 3, ..., 10)
-    stdout << $;
+    print($);
 }
 // Prints: 1 2 3 4 5 6 7 8 9 10
 ```

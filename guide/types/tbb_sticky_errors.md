@@ -83,7 +83,7 @@ fee: tbb32 = calculate_fee(balance);  // ERR if balance is ERR
 total: tbb32 = balance + fee;        // ERR if either is ERR
 
 when total == ERR then
-    stdout << "Transaction failed";
+    print("Transaction failed");
 else
     commit_transaction(total);
 end
@@ -94,7 +94,7 @@ end
 ## Example: Safe Calculator
 
 ```aria
-fn safe_calculate(expr: string) -> tbb32 {
+func:safe_calculate = tbb32(string:expr) {
     a: tbb32 = parse_number(expr.get_operand(0));  // ERR if invalid
     op: string = expr.get_operator();
     b: tbb32 = parse_number(expr.get_operand(1));  // ERR if invalid
@@ -112,15 +112,15 @@ fn safe_calculate(expr: string) -> tbb32 {
         ERR
     end;
     
-    return result;  // ERR if any step failed
+    pass(result);  // ERR if any step failed
 }
 
 // Use
 Result: tbb32 = safe_calculate("10 + abc");
 when result == ERR then
-    stdout << "Invalid expression";
+    print("Invalid expression");
 else
-    stdout << "Result: $result";
+    print(`Result: &{result}`);
 end
 ```
 
@@ -136,7 +136,7 @@ y: tbb32 = 1;
 sum: tbb32 = x + y;  // ERR (overflow!)
 
 when sum == ERR then
-    stdout << "Calculation overflowed";
+    print("Calculation overflowed");
 end
 ```
 
@@ -160,7 +160,7 @@ end
 
 ```aria
 // Returns ERR if file not found or invalid format
-fn load_config(path: string) -> tbb32 {
+func:load_config = tbb32(string:path) {
     ...
 }
 ```

@@ -15,7 +15,7 @@
 ## Syntax
 
 ```aria
-import std.io;
+use std.io;
 
 (read_end, write_end): (File, File) = createPipe()?;
 ```
@@ -33,7 +33,7 @@ import std.io;
 ### Basic Pipe
 
 ```aria
-import std.io;
+use std.io;
 
 // Create pipe
 (reader, writer): (File, File) = createPipe()?;
@@ -44,7 +44,7 @@ writer.close();
 
 // Read from pipe
 message: string = reader.read_all()?;
-stdout << message;  // "Hello through pipe!"
+print(message);  // "Hello through pipe!"
 
 reader.close();
 ```
@@ -61,7 +61,7 @@ when fork_result is Parent(child_pid) then
     writer.close();  // Close write end
     
     message: string = reader.read_all()?;
-    stdout << "Parent received: $message";
+    print(`Parent received: &{message}`);
     
     reader.close();
     wait(child_pid)?;
@@ -90,7 +90,7 @@ when fork_result is Parent(child_pid) then
     
     // Read output from child
     output: string = reader.read_all()?;
-    stdout << "Result: $output";
+    print(`Result: &{output}`);
     
     reader.close();
     wait(child_pid)?;

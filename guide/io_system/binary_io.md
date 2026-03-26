@@ -87,11 +87,11 @@ stddato.write(bytes)?;
 ```aria
 use std::msgpack;
 
-fn main() {
+func:main = NIL() {
     // Read binary data from stddati
     input_data: msgpack::Value = stddati.read_msgpack()?;
     
-    stddbg << "Read " << input_data.size() << " bytes (binary)";
+    stddbg_write("Read " + input_data.size() + " bytes (binary)");
     
     // Process
     output_data: msgpack::Value = transform(input_data);
@@ -99,7 +99,7 @@ fn main() {
     // Write binary data to stddato
     stddato.write_msgpack(output_data)?;
     
-    stdout << "Binary processing complete\n";
+    print("Binary processing complete\n");
 }
 ```
 

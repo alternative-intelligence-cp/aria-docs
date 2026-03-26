@@ -14,18 +14,18 @@ Braces `{ }` delimit **blocks** of code in Aria.
 ## Function Bodies
 
 ```aria
-fn simple() {
-    stdout << "Hello";
+func:simple = NIL() {
+    print("Hello");
 }
 
-fn with_return() -> i32 {
-    return 42;
+func:with_return = int32() {
+    pass(42);
 }
 
-fn multi_statement() {
+func:multi_statement = NIL() {
     x: i32 = 10;
     y: i32 = 20;
-    stdout << x + y;
+    print(x + y);
 }
 ```
 
@@ -40,9 +40,9 @@ if condition {
 }
 
 if x > 10 {
-    stdout << "big";
+    print("big");
 } else {
-    stdout << "small";
+    print("small");
 }
 
 // While loops
@@ -52,7 +52,7 @@ while running {
 
 // Till loops
 till(9, 1) {
-    stdout << $;
+    print($);
 }
 ```
 
@@ -109,11 +109,11 @@ value: string = match number {
 // Multi-line arms
 match request {
     Request::Get { path } => {
-        stdout << "GET $path";
+        print(`GET &{path}`);
         handle_get(path)
     }
     Request::Post { path, body } => {
-        stdout << "POST $path";
+        print(`POST &{path}`);
         handle_post(path, body)
     }
 }
@@ -124,15 +124,15 @@ match request {
 ## Nested Blocks
 
 ```aria
-fn nested() {
+func:nested = NIL() {
     {
         x: i32 = 10;
-        stdout << x;
+        print(x);
     }  // x goes out of scope here
     
     {
         y: i32 = 20;
-        stdout << y;
+        print(y);
     }  // y goes out of scope here
 }
 ```
@@ -142,16 +142,16 @@ fn nested() {
 ## Scope and Lifetime
 
 ```aria
-fn scoping_example() {
+func:scoping_example = NIL() {
     x: i32 = 10;
     
     {
         y: i32 = 20;
-        stdout << x + y;  // Both x and y visible
+        print(x + y);  // Both x and y visible
     }  // y destroyed
     
-    stdout << x;  // Only x visible
-    // stdout << y;  // Error: y not in scope
+    print(x);  // Only x visible
+    // print(y;  // Error: y not in scope)
 }
 ```
 
@@ -162,16 +162,16 @@ fn scoping_example() {
 ### Early Return
 
 ```aria
-fn validate(x: i32) -> Result<i32> {
+func:validate = Result<int32>(int32:x) {
     if x < 0 {
-        return Err("Negative value");
+        pass(Err("Negative value"));
     }
     
     if x > 100 {
-        return Err("Value too large");
+        pass(Err("Value too large"));
     }
     
-    return Ok(x);
+    pass(Ok(x));
 }
 ```
 
@@ -180,7 +180,7 @@ fn validate(x: i32) -> Result<i32> {
 ### Initialization Block
 
 ```aria
-fn initialize() {
+func:initialize = NIL() {
     // Setup block
     {
         load_config();
@@ -198,7 +198,7 @@ fn initialize() {
 ### Resource Management
 
 ```aria
-fn process_file(path: string) -> Result<void> {
+func:process_file = Result<NIL>(string:path) {
     {
         file: File = open(path)?;
         defer file.close();
@@ -208,7 +208,7 @@ fn process_file(path: string) -> Result<void> {
         process(data);
     }  // file.close() called here
     
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -248,11 +248,11 @@ complex = |x| {
 ## Empty Blocks
 
 ```aria
-fn empty() {
+func:empty = NIL() {
     // Empty function
 }
 
-fn placeholder() {
+func:placeholder = NIL() {
     if condition {
         // TODO: implement
     }
@@ -273,14 +273,14 @@ if condition {
 
 // ✅ Even for single statements
 if error {
-    return Err("Failed");
+    pass(Err("Failed"));
 }
 ```
 
 ### ✅ DO: Indent Consistently
 
 ```aria
-fn proper_indentation() {
+func:proper_indentation = NIL() {
     if condition {
         if nested {
             do_work();
@@ -292,7 +292,7 @@ fn proper_indentation() {
 ### ✅ DO: Use Blocks for Scope Control
 
 ```aria
-fn scoped_variables() {
+func:scoped_variables = NIL() {
     {
         temp: []u8 = allocate_large_buffer();
         process(temp);
@@ -306,13 +306,13 @@ fn scoped_variables() {
 
 ```aria
 // ⚠️ Unclosed brace
-fn bad() {
+func:bad = NIL() {
     if condition {
         do_work();
     // Missing closing brace!
 
 // ✅ Proper closing
-fn good() {
+func:good = NIL() {
     if condition {
         do_work();
     }
@@ -323,7 +323,7 @@ fn good() {
 
 ```aria
 // ❌ Too many nested braces
-fn over_nested() {
+func:over_nested = NIL() {
     {
         {
             {
@@ -334,7 +334,7 @@ fn over_nested() {
 }
 
 // ✅ Simpler
-fn better() {
+func:better = NIL() {
     do_work();
 }
 ```
@@ -346,7 +346,7 @@ fn better() {
 ### K&R Style (Recommended)
 
 ```aria
-fn k_and_r() {
+func:k_and_r = NIL() {
     if condition {
         do_work();
     } else {
@@ -360,7 +360,7 @@ fn k_and_r() {
 ### Allman Style
 
 ```aria
-fn allman()
+func:allman = NIL()
 {
     if condition
     {
@@ -378,7 +378,7 @@ fn allman()
 ### GNU Style
 
 ```aria
-fn gnu()
+func:gnu = NIL()
   {
     if condition
       {
@@ -397,17 +397,17 @@ fn gnu()
 
 ```aria
 // Allowed but use sparingly
-if x > 0 { stdout << "positive"; }
+if x > 0 { print("positive"); }
 
-fn one_liner() { return 42; }
+func:one_liner = NIL() { return 42; }
 
 // Preferred - multi-line for readability
 if x > 0 {
-    stdout << "positive";
+    print("positive");
 }
 
-fn readable() {
-    return 42;
+func:readable = NIL() {
+    pass(42);
 }
 ```
 

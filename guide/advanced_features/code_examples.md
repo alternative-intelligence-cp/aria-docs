@@ -14,21 +14,21 @@ Practical examples showing how to use Aria features in real-world scenarios.
 ## HTTP Server
 
 ```aria
-import std.net.{TcpListener, TcpStream};
-import std.io.{read, write};
+use std.net.{TcpListener, TcpStream};
+use std.io.{read, write};
 
 struct Server {
     listener: TcpListener,
 }
 
 impl Server {
-    pub fn new(port: i32) -> Result<Server> {
-        listener: TcpListener = TcpListener.bind("0.0.0.0:$port")?;
-        return Ok(Server { listener });
+    pub func:new = Result<Server>(int32:port) {
+        listener: TcpListener = TcpListener.bind(`0.0.0.0:&{port}`)?;
+        pass(Ok(Server { listener }));
     }
     
-    pub fn run() -> Result<void> {
-        stdout << "Server listening on port ${self.listener.port()}";
+    pub func:run = Result<NIL>() {
+        print("Server listening on port &{self.listener.port()}");
         
         while true {
             stream: TcpStream = self.listener.accept()?;
@@ -38,7 +38,7 @@ impl Server {
         }
     }
     
-    fn handle_client(stream: TcpStream) {
+    func:handle_client = NIL(TcpStream:stream) {
         defer stream.close();
         
         request: string = stream.read_to_string()?;
@@ -46,18 +46,18 @@ impl Server {
         stream.write_all(response.as_bytes())?;
     }
     
-    fn process_request(request: string) -> string {
+    func:process_request = string(string:request) {
         if request.starts_with("GET /") {
-            return "HTTP/1.1 200 OK\r\n\r\nHello, World!";
+            pass("HTTP/1.1 200 OK\r\n\r\nHello, World!");
         }
-        return "HTTP/1.1 404 Not Found\r\n\r\n404 Not Found";
+        pass("HTTP/1.1 404 Not Found\r\n\r\n404 Not Found");
     }
 }
 
-fn main() -> Result<void> {
+func:main = Result<NIL>() {
     server: Server = Server.new(8080)?;
     server.run()?;
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -81,12 +81,12 @@ struct JsonParser {
 }
 
 impl JsonParser {
-    pub fn parse(input: string) -> Result<Json> {
+    pub func:parse = Result<Json>(string:input) {
         parser: JsonParser = JsonParser { input, pos: 0 };
-        return parser.parse_value();
+        pass(parser.parse_value());
     }
     
-    fn parse_value() -> Result<Json> {
+    func:parse_value = Result<Json>() {
         self.skip_whitespace();
         
         c: char = self.peek()?;
@@ -102,7 +102,7 @@ impl JsonParser {
         }
     }
     
-    fn parse_string() -> Result<Json> {
+    func:parse_string = Result<Json>() {
         self.expect('"')?;
         start: i32 = self.pos;
         
@@ -116,17 +116,17 @@ impl JsonParser {
         value: string = self.input[start..self.pos];
         self.expect('"')?;
         
-        return Ok(Json.String(value));
+        pass(Ok(Json.String(value)));
     }
     
-    fn parse_array() -> Result<Json> {
+    func:parse_array = Result<Json>() {
         self.expect('[')?;
         items: []Json = [];
         
         self.skip_whitespace();
         if self.peek()? == ']' {
             self.advance();
-            return Ok(Json.Array(items));
+            pass(Ok(Json.Array(items)));
         }
         
         while true {
@@ -142,7 +142,7 @@ impl JsonParser {
             self.expect(',')?;
         }
         
-        return Ok(Json.Array(items));
+        pass(Ok(Json.Array(items)));
     }
 }
 
@@ -155,7 +155,7 @@ json: Json = JsonParser.parse('{"name": "Alice", "age": 30}')?;
 ## Database Connection Pool
 
 ```aria
-import std.sync.{Mutex, Semaphore};
+use std.sync.{Mutex, Semaphore};
 
 struct Connection {
     id: i32,
@@ -163,7 +163,7 @@ struct Connection {
 }
 
 impl Connection {
-    fn execute(query: string) -> Result<[]Row> {
+    func:execute = Result<[]Row>(string:query) {
         // Execute query
     }
 }
@@ -175,7 +175,7 @@ struct ConnectionPool {
 }
 
 impl ConnectionPool {
-    pub fn new(max_size: i32) -> ConnectionPool {
+    pub func:new = ConnectionPool(int32:max_size) {
         connections: []Connection = [];
         
         till(max_size - 1, 1) {
@@ -189,7 +189,7 @@ impl ConnectionPool {
         };
     }
     
-    pub fn acquire() -> Result<Connection> {
+    pub func:acquire = Result<Connection>() {
         // Wait for available connection
         self.semaphore.acquire();
         
@@ -197,10 +197,10 @@ impl ConnectionPool {
         lock = self.connections.lock();
         conn: Connection = lock.pop()?;
         
-        return Ok(conn);
+        pass(Ok(conn));
     }
     
-    pub fn release(conn: Connection) {
+    pub func:release = NIL(Connection:conn) {
         // Return connection to pool
         lock = self.connections.lock();
         lock.push(conn);
@@ -213,12 +213,12 @@ impl ConnectionPool {
 // Usage
 pool: ConnectionPool = ConnectionPool.new(10);
 
-fn query_database() -> Result<[]Row> {
+func:query_database = Result<[]Row>() {
     conn: Connection = pool.acquire()?;
     defer pool.release(conn);
     
     results: []Row = conn.execute("SELECT * FROM users")?;
-    return Ok(results);
+    pass(Ok(results));
 }
 ```
 
@@ -227,8 +227,8 @@ fn query_database() -> Result<[]Row> {
 ## File Watcher
 
 ```aria
-import std.fs.{watch, Event, EventKind};
-import std.path.Path;
+use std.fs.{watch, Event, EventKind};
+use std.path.Path;
 
 struct FileWatcher {
     path: Path,
@@ -236,18 +236,18 @@ struct FileWatcher {
 }
 
 impl FileWatcher {
-    pub fn new(path: Path) -> FileWatcher {
+    pub func:new = FileWatcher(Path:path) {
         return FileWatcher {
             path: path,
             handlers: HashMap.new(),
         };
     }
     
-    pub fn on(kind: EventKind, handler: fn(Event)) {
+    pub func:on = NIL(EventKind:kind, fn(Event:handler)) {
         self.handlers.insert(kind, handler);
     }
     
-    pub fn start() -> Result<void> {
+    pub func:start = Result<NIL>() {
         watcher = watch(self.path)?;
         
         while event = watcher.recv()? {
@@ -256,28 +256,28 @@ impl FileWatcher {
             }
         }
         
-        return Ok();
+        pass(Ok());
     }
 }
 
 // Usage
-fn main() -> Result<void> {
+func:main = Result<NIL>() {
     watcher: FileWatcher = FileWatcher.new(Path.new("./watched"));
     
     watcher.on(EventKind.Create, |event| {
-        stdout << "File created: ${event.path}";
+        print("File created: &{event.path}");
     });
     
     watcher.on(EventKind.Modify, |event| {
-        stdout << "File modified: ${event.path}";
+        print("File modified: &{event.path}");
     });
     
     watcher.on(EventKind.Delete, |event| {
-        stdout << "File deleted: ${event.path}";
+        print("File deleted: &{event.path}");
     });
     
     watcher.start()?;
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -294,7 +294,7 @@ struct Args {
 }
 
 impl Args {
-    pub fn parse(args: []string) -> Args {
+    pub func:parse = Args([]string:args) {
         Result: Args = Args {
             program: args[0],
             flags: HashMap.new(),
@@ -330,25 +330,25 @@ impl Args {
             i += 1;
         }
         
-        return result;
+        pass(result);
     }
     
-    pub fn get_flag(name: string) -> bool {
-        return self.flags.get(name).unwrap_or(false);
+    pub func:get_flag = bool(string:name) {
+        pass(self.flags.get(name).unwrap_or(false));
     }
     
-    pub fn get_option(name: string) -> ?string {
-        return self.options.get(name);
+    pub func:get_option = ?string(string:name) {
+        pass(self.options.get(name));
     }
 }
 
 // Usage
-fn main() {
+func:main = NIL() {
     args: Args = Args.parse(std.env.args());
     
     if args.get_flag("help") {
         print_help();
-        return;
+        pass(NIL);
     }
     
     port: i32 = args.get_option("port")
@@ -366,7 +366,7 @@ fn main() {
 ## Async HTTP Client
 
 ```aria
-import std.http.{Request, Response};
+use std.http.{Request, Response};
 
 struct HttpClient {
     base_url: string,
@@ -374,15 +374,15 @@ struct HttpClient {
 }
 
 impl HttpClient {
-    pub fn new(base_url: string) -> HttpClient {
+    pub func:new = HttpClient(string:base_url) {
         return HttpClient {
             base_url: base_url,
             timeout: 30,
         };
     }
     
-    pub async fn get(path: string) -> Result<Response> {
-        url: string = "${self.base_url}$path";
+    pub async func:get = Result<Response>(string:path) {
+        url: string = `&{self.base_url}&{path}`;
         
         request: Request = Request.builder()
             .url(url)
@@ -393,14 +393,14 @@ impl HttpClient {
         response: Response = await request.send()?;
         
         if !response.ok() {
-            return Err("HTTP ${response.status}");
+            pass(Err("HTTP &{response.status}"));
         }
         
-        return Ok(response);
+        pass(Ok(response));
     }
     
-    pub async fn post(path: string, body: string) -> Result<Response> {
-        url: string = "${self.base_url}$path";
+    pub async func:post = Result<Response>(string:path, string:body) {
+        url: string = `&{self.base_url}&{path}`;
         
         request: Request = Request.builder()
             .url(url)
@@ -410,22 +410,22 @@ impl HttpClient {
             .build();
         
         response: Response = await request.send()?;
-        return Ok(response);
+        pass(Ok(response));
     }
 }
 
 // Usage
-async fn main() -> Result<void> {
+async func:main = Result<NIL>() {
     client: HttpClient = HttpClient.new("https://api.example.com");
     
     response: Response = await client.get("/users")?;
     users: []User = await response.json()?;
     
     till(users.length - 1, 1) {
-        stdout << users[$].name;
+        print(users[$].name);
     }
     
-    return Ok();
+    pass(Ok());
 }
 ```
 

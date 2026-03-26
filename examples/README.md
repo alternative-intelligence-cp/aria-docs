@@ -24,22 +24,20 @@ These examples cover fundamental language concepts:
 **Run:** `ariac examples/basic/01_hello_world.aria`
 
 ### 02_variables.aria
-- Variable declarations
-- Type annotations
-- Type inference (`:=` operator)
-- Integer types (i8, i16, i32, i64, u8, u16, u32, u64)
-- Float types (f32, f64)
+- Variable declarations with type:name syntax
+- Integer types (int8 through int4096, uint8 through uint64)
+- Float types (flt32, flt64, flt128 through flt512)
 - Boolean and string types
-- Mutable variables (`mut`)
+- LBIM (Large Binary Integer Math) types
 
 **Run:** `ariac examples/basic/02_variables.aria`
 
 ### 03_functions.aria
-- Function definitions
+- Function definitions with `func:name = ReturnType(params)` syntax
 - Parameters and return types
 - Function calls
-- Multiple parameters
-- Void return type
+- `pass()` and `fail()` for return values
+- `failsafe` error handler
 
 **Run:** `ariac examples/basic/03_functions.aria`
 
@@ -47,8 +45,7 @@ These examples cover fundamental language concepts:
 - If/else statements
 - If-else if-else chains
 - While loops
-- For loops with ranges
-- Break and continue
+- `till` loops (Aria's for-loop equivalent)
 - Nested loops
 - Comparison operators
 
@@ -56,10 +53,8 @@ These examples cover fundamental language concepts:
 
 ### 05_memory.aria
 - Ownership semantics
-- Borrowing with `&` (immutable)
-- Mutable borrowing with `&mut`
+- Borrowing with `$x` (immutable) and `$mut x` (mutable)
 - Move semantics
-- Reference parameters
 - Memory safety guarantees
 
 **Run:** `ariac examples/basic/05_memory.aria`

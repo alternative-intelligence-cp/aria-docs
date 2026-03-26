@@ -69,7 +69,7 @@ x: i32 = 42;
 
 // Comparison (double ==)
 when x == 42 then
-    stdout << "Equal";
+    print("Equal");
 end
 ```
 
@@ -98,7 +98,7 @@ y: i32 = (x = 42);  // x and y both 42
 
 // Useful in conditionals
 when (x = get_value()) > 0 then
-    stdout << "Positive: " << x;
+    print("Positive: " + x);
 end
 ```
 
@@ -123,12 +123,12 @@ x += 5;  // Clearer than x = x + 5
 ```aria
 // Wrong: Assignment in condition (probably a bug)
 when x = 42 then  // Assigns 42 to x, always true!
-    stdout << "Bug!";
+    print("Bug!");
 end
 
 // Right: Comparison
 when x == 42 then
-    stdout << "Correct";
+    print("Correct");
 end
 ```
 

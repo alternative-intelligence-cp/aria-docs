@@ -25,7 +25,7 @@ The add assignment operator `+=` adds the right operand to the variable and assi
 ```aria
 x: i32 = 10;
 x += 5;  // x = x + 5
-stdout << x;  // 15
+print(x);  // 15
 ```
 
 ---
@@ -68,7 +68,7 @@ message: string = "";
 message += "Hello";
 message += " ";
 message += "World";
-stdout << message;  // "Hello World"
+print(message);  // "Hello World"
 ```
 
 ---

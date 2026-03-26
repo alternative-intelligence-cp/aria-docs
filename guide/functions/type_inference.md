@@ -17,8 +17,8 @@
 ### From Arguments
 
 ```aria
-fn identity<T>(value: T) -> T {
-    return value;
+func:identity = T(T:value) {
+    pass(value);
 }
 
 // Explicit type
@@ -31,7 +31,7 @@ Result: i32 = identity(42);  // T inferred as i32
 ### From Return Type
 
 ```aria
-fn parse<T>(input: string) -> T {
+func:parse = T(string:input) {
     // Implementation
 }
 
@@ -43,8 +43,8 @@ flag: bool = parse("true");  // T = bool
 ### From Context
 
 ```aria
-fn first<T>(array: []T) -> T {
-    return array[0];
+func:first = T([]T:array) {
+    pass(array[0]);
 }
 
 numbers: []i32 = [1, 2, 3];
@@ -58,8 +58,8 @@ value: i32 = first(numbers);  // T inferred as i32
 ### All Inferred
 
 ```aria
-fn pair<T, U>(first: T, second: U) -> (T, U) {
-    return (first, second);
+func:pair = (T,(T:first, U:second)U) {
+    pass((first, second));
 }
 
 // Both T and U inferred
@@ -69,7 +69,7 @@ Result: (i32, string) = pair(42, "hello");  // T=i32, U=string
 ### Partial Inference
 
 ```aria
-fn convert<From, To>(value: From) -> To {
+func:convert = To(From:value) {
     // Implementation
 }
 
@@ -87,7 +87,7 @@ Result: string = convert::<i32, string>(42);
 ### Trait Bounds Help Inference
 
 ```aria
-fn max<T>(a: T, b: T) -> T where T: Comparable {
+func:max = T(T:a, T:b)where T: Comparable {
     when a > b then return a; else return b; end
 }
 
@@ -106,7 +106,7 @@ Result: i32 = max(10, 20);
 ### Ambiguous Types
 
 ```aria
-fn create<T>() -> T {
+func:create = T() {
     // Create default value
 }
 
@@ -120,8 +120,8 @@ value: i32 = create();  // OK: T = i32
 ### Multiple Possibilities
 
 ```aria
-fn process<T>(f: fn() -> T) -> T {
-    return f();
+func:process = T)(fn(:f)-> T {
+    pass(f());
 }
 
 // Error: T could be anything
@@ -134,8 +134,8 @@ Result: i32 = process(|| 42);  // T = i32
 ### No Context
 
 ```aria
-fn wrap<T>(value: T) -> Box<T> {
-    return Box{value: value};
+func:wrap = Box<T>(T:value) {
+    pass(Box{value: value});
 }
 
 // Error: T unknown
@@ -173,8 +173,8 @@ Result: string = convert::<_, string>(42);  // From inferred, To specified
 ### Arrays
 
 ```aria
-fn first<T>(array: []T) -> T {
-    return array[0];
+func:first = T([]T:array) {
+    pass(array[0]);
 }
 
 // T inferred from array element type
@@ -188,8 +188,8 @@ value: i32 = first([1, 2, 3]);  // T = i32
 ### Maps
 
 ```aria
-fn get<K, V>(map: Map<K, V>, key: K) -> V? {
-    return map.get(key);
+func:get = V?(Map<K, V>:map, K:key) {
+    pass(map.get(key));
 }
 
 users: Map<i32, string> = Map::new();
@@ -210,12 +210,12 @@ struct Box<T> {
 }
 
 impl<T> Box<T> {
-    fn get() -> T {
-        return self.value;
+    func:get = T() {
+        pass(self.value);
     }
     
-    fn map<U>(f: fn(T) -> U) -> Box<U> {
-        return Box{value: f(self.value)};
+    func:map = U)(fn(T:f)-> Box<U> {
+        pass(Box{value: f(self.value)});
     }
 }
 
@@ -244,8 +244,8 @@ doubled: []i32 = numbers.map(|x| x * 2);  // x: i32
 ### Return Types
 
 ```aria
-fn apply<T, U>(value: T, f: fn(T) -> U) -> U {
-    return f(value);
+func:apply = U)(T:value, fn(T:f)-> U {
+    pass(f(value));
 }
 
 // T=i32 from argument, U inferred from lambda body
@@ -313,8 +313,8 @@ The compiler uses **bidirectional type inference**:
 ### Forward Inference (Argument → Return)
 
 ```aria
-fn double(x: i32) -> i32 {
-    return x * 2;
+func:double = int32(int32:x) {
+    pass(x * 2);
 }
 
 // Flows forward: argument type known
@@ -324,7 +324,7 @@ result = double(42);  // Result: i32
 ### Backward Inference (Return → Argument)
 
 ```aria
-fn parse<T>(input: string) -> T {
+func:parse = T(string:input) {
     // Implementation
 }
 
@@ -335,7 +335,7 @@ num: i32 = parse("42");  // T = i32
 ### Constraint Solving
 
 ```aria
-fn process<T>(a: T, b: T) -> T {
+func:process = T(T:a, T:b) {
     // Implementation
 }
 
@@ -354,10 +354,10 @@ Result: i32 = process(10, 20);
 ### Cannot Infer From Implementation
 
 ```aria
-fn mystery<T>() -> T {
+func:mystery = T() {
     // Compiler sees this could return any T
     when true then
-        return 42;  // Doesn't help: could be coerced
+        pass(42);  // Doesn't help: could be coerced
     end
 }
 
@@ -368,7 +368,7 @@ value: i32 = mystery::<i32>();
 ### Cannot Infer Unrelated Types
 
 ```aria
-fn convert<From, To>(value: From) -> To {
+func:convert = To(From:value) {
     // No relationship between From and To
 }
 
@@ -385,10 +385,10 @@ Result: string = convert::<_, string>(42);
 ### API Response Parsing
 
 ```aria
-async fn fetch<T>(url: string) -> T? where T: Deserialize {
+async func:fetch = T?(string:url)where T: Deserialize {
     response: Response = pass await http_get(url);
     data: T = pass response.json::<T>();
-    return data;
+    pass(data);
 }
 
 // T inferred from return type
@@ -405,7 +405,7 @@ struct Query<T> {
 }
 
 impl<T> Query<T> {
-    fn execute() -> []T {
+    func:execute = []T() {
         // Execute and return results
     }
 }

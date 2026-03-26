@@ -74,25 +74,25 @@ func:process_file = result<int32>(string:filename) {
 
 ### TBB Integers
 ```aria
-fn divide(a: tbb32, b: tbb32) -> tbb32 {
+func:divide = tbb32(tbb32:a, tbb32:b) {
     when b == 0 then
-        return ERR;  // Division by zero
+        pass(ERR);  // Division by zero
     end
     
-    return a / b;
+    pass(a / b);
 }
 
 // Using pass
-fn calculate() -> tbb32 {
+func:calculate = tbb32() {
     Result: tbb32 = pass divide(10, 2);  // Gets 5
-    return result * 2;  // Returns 10
+    pass(result * 2);  // Returns 10
 }
 
 // Error propagation
-fn calculate_fail() -> tbb32 {
+func:calculate_fail = tbb32() {
     Result: tbb32 = pass divide(10, 0);  // divide returns ERR
     // Function exits here, returns ERR
-    return result * 2;  // Never executed
+    pass(result * 2);  // Never executed
 }
 ```
 
@@ -103,14 +103,14 @@ fn calculate_fail() -> tbb32 {
 ### Chaining Operations
 
 ```aria
-fn process_data(input: string) -> tbb32 {
+func:process_data = tbb32(string:input) {
     // Each step might fail, pass propagates errors
     parsed: Data = pass parse(input);
     validated: Data = pass validate(parsed);
     processed: Data = pass transform(validated);
     Result: tbb32 = pass save(processed);
     
-    return result;  // Success
+    pass(result);  // Success
 }
 ```
 
@@ -119,22 +119,22 @@ fn process_data(input: string) -> tbb32 {
 ### File I/O Chain
 
 ```aria
-fn load_config(path: string) -> Config? {
+func:load_config = Config?(string:path) {
     file: File = pass open_file(path);
     content: string = pass file.read();
     config: Config = pass parse_json(content);
     validated: Config = pass validate_config(config);
     
-    return validated;
+    pass(validated);
 }
 ```
 
 ### Multiple Fallible Operations
 
 ```aria
-fn calculate_average(numbers: []tbb32) -> tbb32 {
+func:calculate_average = tbb32([]tbb32:numbers) {
     when numbers.len() == 0 then
-        return ERR;  // Can't average empty array
+        pass(ERR);  // Can't average empty array
     end
     
     sum: tbb32 = 0;
@@ -143,7 +143,7 @@ fn calculate_average(numbers: []tbb32) -> tbb32 {
         sum = pass add_checked(sum, num);  // Overflow-safe addition
     }
     
-    return pass divide(sum, numbers.len());
+    pass(pass divide(sum, numbers.len()));
 }
 ```
 
@@ -154,19 +154,19 @@ fn calculate_average(numbers: []tbb32) -> tbb32 {
 ### Adding Context to Errors
 
 ```aria
-fn load_user(id: i32) -> User? {
+func:load_user = User?(int32:id) {
     user: User = pass fetch_user(id);  // Returns ERR if not found
     
-    stddbg << "Loaded user: " << user.name;
+    stddbg_write("Loaded user: " + user.name);
     
-    return user;
+    pass(user);
 }
 
 // Caller can check for ERR
 user: User? = load_user(123);
 
 when user == ERR then
-    stderr << "ERROR: User not found\n";
+    stderr_write("ERROR: User not found\n");
 end
 ```
 
@@ -186,9 +186,9 @@ fn process() -> Result<i32, Error> {
 
 ### Aria
 ```aria
-fn process() -> tbb32 {
+func:process = tbb32() {
     value: tbb32 = pass some_operation();
-    return value * 2;
+    pass(value * 2);
 }
 ```
 
@@ -199,18 +199,18 @@ fn process() -> tbb32 {
 ## When `pass` Returns ERR
 
 ```aria
-fn outer() -> tbb32 {
+func:outer = tbb32() {
     Result: tbb32 = pass failing_function();
     // If failing_function() returns ERR:
     // 1. outer() immediately returns ERR
     // 2. Lines below never execute
     
-    stdout << "This won't print if error occurred\n";
-    return result;
+    print("This won't print if error occurred\n");
+    pass(result);
 }
 
-fn failing_function() -> tbb32 {
-    return ERR;  // Simulate failure
+func:failing_function = tbb32() {
+    pass(ERR);  // Simulate failure
 }
 
 // Usage
@@ -223,25 +223,25 @@ value: tbb32 = outer();
 ## Combining `pass` with Validation
 
 ```aria
-fn create_user(name: string, age: tbb32) -> User? {
+func:create_user = User?(string:name, tbb32:age) {
     // Validate age
     validated_age: tbb32 = pass check_age_valid(age);
     
     // Validate name
     when name.len() == 0 then
-        return ERR;  // Empty name not allowed
+        pass(ERR);  // Empty name not allowed
     end
     
     // Both validations passed
     user: User = User{name: name, age: validated_age};
-    return user;
+    pass(user);
 }
 
-fn check_age_valid(age: tbb32) -> tbb32 {
+func:check_age_valid = tbb32(tbb32:age) {
     when age < 0 or age > 150 then
-        return ERR;
+        pass(ERR);
     end
-    return age;
+    pass(age);
 }
 ```
 
@@ -253,10 +253,10 @@ fn check_age_valid(age: tbb32) -> tbb32 {
 
 ```aria
 // Good: Clean error handling
-fn load_and_process(file: string) -> tbb32 {
+func:load_and_process = tbb32(string:file) {
     data: Data = pass load(file);
     Result: tbb32 = pass process(data);
-    return result;
+    pass(result);
 }
 ```
 
@@ -264,25 +264,25 @@ fn load_and_process(file: string) -> tbb32 {
 
 ```aria
 // Good: Multiple steps, clear flow
-fn pipeline(input: string) -> Result? {
+func:pipeline = Result?(string:input) {
     step1: Data = pass parse(input);
     step2: Data = pass validate(step1);
     step3: Data = pass transform(step2);
-    return step3;
+    pass(step3);
 }
 ```
 
 ### ✅ DO: Add Debug Context
 
 ```aria
-fn process(id: i32) -> Data? {
-    stddbg << "Processing ID: " << id;
+func:process = Data?(int32:id) {
+    stddbg_write("Processing ID: " + id);
     
     data: Data = pass fetch(id);
     
-    stddbg << "Fetched data: " << data.size() << " bytes";
+    stddbg_write("Fetched data: " + data.size() + " bytes");
     
-    return data;
+    pass(data);
 }
 ```
 
@@ -319,12 +319,12 @@ end
 `pass` leverages **TBB sticky errors**:
 
 ```aria
-fn compute() -> tbb32 {
+func:compute = tbb32() {
     a: tbb32 = pass get_value();  // Might return ERR
     b: tbb32 = pass get_value();
     
     // If either a or b is ERR, this returns ERR
-    return a + b;  // TBB arithmetic propagates ERR
+    pass(a + b);  // TBB arithmetic propagates ERR
 }
 ```
 
@@ -349,12 +349,12 @@ def process_file(filename):
 
 ### Aria with `pass`
 ```aria
-fn process_file(filename: string) -> Result? {
+func:process_file = Result?(string:filename) {
     file: File = pass open(filename);
     content: string = pass file.read();
     data: Data = pass parse(content);
     Result: Result = pass process(data);
-    return result;
+    pass(result);
 }
 ```
 
@@ -369,8 +369,8 @@ fn process_file(filename: string) -> Result? {
 ## Real-World Example
 
 ```aria
-fn process_transaction(txn_id: string) -> Transaction? {
-    stddbg << "Processing transaction: " << txn_id;
+func:process_transaction = Transaction?(string:txn_id) {
+    stddbg_write("Processing transaction: " + txn_id);
     
     // Fetch transaction from database
     txn: Transaction = pass db.fetch_transaction(txn_id);
@@ -383,17 +383,17 @@ fn process_transaction(txn_id: string) -> Transaction? {
     balance: tbb64 = pass account.get_balance();
     
     when balance < validated.amount then
-        stderr << "ERROR: Insufficient funds\n";
-        return ERR;
+        stderr_write("ERROR: Insufficient funds\n");
+        pass(ERR);
     end
     
     // Apply transaction
     new_balance: tbb64 = pass subtract_checked(balance, validated.amount);
     pass db.update_balance(account.id, new_balance);
     
-    stddbg << "Transaction complete, new balance: " << new_balance;
+    stddbg_write("Transaction complete, new balance: " + new_balance);
     
-    return validated;
+    pass(validated);
 }
 ```
 

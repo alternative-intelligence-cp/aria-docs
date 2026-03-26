@@ -83,7 +83,7 @@ end
 ```aria
 x: i32 = 100;
 x /= 5;  // x = x / 5
-stdout << x;  // 20
+print(x);  // 20
 ```
 
 ---
@@ -189,7 +189,7 @@ part: i32 = 30;
 total: i32 = 200;
 
 percentage: f64 = ((part as f64) / (total as f64)) * 100.0;
-stdout << percentage << "%";  // 15%
+print(percentage + "%");  // 15%
 ```
 
 ### Split Into Groups

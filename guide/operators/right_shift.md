@@ -175,7 +175,7 @@ while temp != 0 {
 ```aria
 value: i32 = 80;
 value >>= 2;  // value = value >> 2
-stdout << value;  // 20
+print(value);  // 20
 ```
 
 ---

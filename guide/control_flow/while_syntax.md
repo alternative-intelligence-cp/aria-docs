@@ -66,7 +66,7 @@ while condition {
 // Count down
 count: i32 = 10;
 while count > 0 {
-    stdout << count;
+    print(count);
     count = count - 1;
 }
 
@@ -79,7 +79,7 @@ while !queue.is_empty() {
 // Read file
 while !file.eof() {
     line: string = file.read_line();
-    stdout << line;
+    print(line);
 }
 ```
 

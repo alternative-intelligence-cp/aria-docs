@@ -770,7 +770,7 @@ biggest: f64 = max(3.14, 2.71);  // 3.14</code></pre>
 <pre><code>// T must implement Display trait
 <p>
 fn print_value<T>(value: T) where T: Display {
-stdout << value << "\n";
+print(value + "\n");
 }
 </p>
 <p>
@@ -974,13 +974,13 @@ fn store<Key, Value>(key: Key, value: Value) { ... }</code></pre>
 <pre><code>// Wrong: Unnecessarily generic
 <p>
 fn print_number<T>(x: T) {  // Only works with numbers anyway!
-stdout << x << "\n";
+print(x + "\n");
 }
 </p>
 <p>
 // Right: Be specific when you can
 fn print_number(x: i32) {
-stdout << x << "\n";
+print(x + "\n");
 }</code></pre>
 </p>
 <h3>❌ DON'T: Forget Type Constraints</h3>

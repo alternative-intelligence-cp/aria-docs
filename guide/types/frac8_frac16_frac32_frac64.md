@@ -486,7 +486,7 @@ func:add_transaction = void(Account@:account, frac32:amount) {
 // Add 1000 transactions
 Account:checking = {balance: {0, 0, 1}};  // Start at $0.00
 till(999, 1) {
-    add_transaction(&checking, {0, 152, 100});  // +$1.52 each
+    add_transaction($checking, {0, 152, 100});  // +$1.52 each
 }
 // checking.balance = {1520, 0, 1} = exactly $1,520.00
 // IEEE would have drift!
@@ -560,7 +560,7 @@ func:generate_share = frac64(frac64:secret, frac64:a1, frac64:a2, int32:x) {
     frac64:x_frac = frac64(x);
     frac64:x_squared = x_frac * x_frac;
     
-    return secret + (a1 * x_frac) + (a2 * x_squared);
+    pass(secret + (a1 * x_frac) + (a2 * x_squared));
 }
 
 frac64:share1 = generate_share(secret, a1, a2, 1);  // f(1) = exact!
@@ -682,9 +682,9 @@ frac16:overflow2 = tiny_denom + {0, 1, 30001};  // LCM overflows!
 ```aria
 func:safe_divide = frac16 | unknown(frac16:a, frac16:b) {
     if b == {0, 0, 1} {
-        return unknown;  // Soft error
+        pass(unknown);  // Soft error
     }
-    return a / b;
+    pass(a / b);
 }
 
 // Caller handles unknown

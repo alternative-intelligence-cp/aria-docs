@@ -279,7 +279,7 @@ func:compute_trajectory = tfp32[](tfp32:initial_velocity, uint32:frames) {
         positions.push(pos);
     }
     
-    return positions;
+    pass(positions);
 }
 
 // Node 1 (x86-64):  hash(positions) = 0xABCD1234
@@ -548,9 +548,9 @@ tfp32:tiny = 1e-5000tf32;  // 0.0tf32 (underflows)
 ```aria
 func:safe_divide = tfp32 | unknown(tfp32:a, tfp32:b) {
     if b == 0.0tf32 {
-        return unknown;  // Soft error
+        pass(unknown);  // Soft error
     }
-    return a / b;
+    pass(a / b);
 }
 
 // Caller handles unknown
@@ -612,7 +612,7 @@ func:replay_game = void(ReplayEvent[]:events) {
     
     till(events.length - 1, 1) {
         // Deterministic physics
-        tick_physics(&player, 0.016tf32);
+        tick_physics($player, 0.016tf32);
         
         // Apply recorded input
         if events[$].input == JUMP {

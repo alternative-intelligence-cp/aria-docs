@@ -656,7 +656,7 @@ Threads enable <strong>true parallelism</strong> by running code on multiple CPU
 <pre><code>import std.thread.Thread;
 <p>
 fn worker() {
-stdout << "Hello from thread!";
+print("Hello from thread!");
 }
 </p>
 <p>
@@ -670,7 +670,7 @@ thread.join();  // Wait for completion
 <pre><code>import std.thread.Thread;
 <p>
 fn worker(id: i32, message: string) {
-stdout << "Thread $id: $message";
+print(`Thread &{id}: &{message}`);
 }
 </p>
 <p>
@@ -691,7 +691,7 @@ threads: []Thread = [];
 <p>
 till(3, 1) {
 thread: Thread = Thread.spawn(|| {
-stdout << "Worker $($)";
+print("Worker $($)");
 });
 threads.push(thread);
 }
@@ -719,7 +719,7 @@ return compute(10);
 </p>
 <p>
 Result: i32 = thread.join();
-stdout << "Result: $result";  // Result: 100
+print(`Result: &{result}`);  // Result: 100
 }</code></pre>
 </p>
 <hr>
@@ -754,7 +754,7 @@ threads[$].join();
 }
 </p>
 <p>
-stdout << "Counter: ${counter.lock()}";  // Counter: 4000
+print("Counter: &{counter.lock()}");  // Counter: 4000
 }</code></pre>
 </p>
 <hr>
@@ -773,7 +773,7 @@ tx.send($);
 <p>
 fn consumer(rx: Receiver<i32>) {
 while value = rx.recv() {
-stdout << "Received: $value";
+print(`Received: &{value}`);
 }
 }
 </p>
@@ -874,7 +874,7 @@ pool.submit($);
 // Collect results
 till(99, 1) {
 Result: i32 = pool.get_result()?;
-stdout << result;
+print(result);
 }
 </p>
 <p>
@@ -899,7 +899,7 @@ Thread.sleep(100);  // Simulate work
 <p>
 fn consumer(id: i32, rx: Receiver<string>) {
 while message = rx.recv() {
-stdout << "Consumer $id got: $message";
+print(`Consumer &{id} got: &{message}`);
 Thread.sleep(50);  // Simulate processing
 }
 }
@@ -984,7 +984,7 @@ return x * x;
 fn main() {
 numbers: []i32 = [1, 2, 3, 4, 5, 6, 7, 8];
 squared: []i32 = parallel_map(numbers, square, 4);
-stdout << squared;
+print(squared);
 }</code></pre>
 </p>
 <hr>
@@ -1000,7 +1000,7 @@ thread_id.set(id);
 <p>
 // Each thread has its own copy
 my_id: i32 = thread_id.get();
-stdout << "Thread $my_id";
+print(`Thread &{my_id}`);
 }</code></pre>
 </p>
 <hr>

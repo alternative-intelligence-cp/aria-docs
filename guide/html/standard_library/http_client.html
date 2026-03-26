@@ -691,7 +691,7 @@ headers = { "Content-Type" = "application/json" }
 <h2>Custom Headers</h2>
 <pre><code>headers: map<string, string> = {
 <p>
-"Authorization" = "Bearer $token",
+"Authorization" = `Bearer &{token}`,
 "Content-Type" = "application/json",
 "User-Agent" = "AriaApp/1.0"
 };
@@ -768,7 +768,7 @@ string:body = to_json({ name = name, email = email });
 </p>
 <p>
 HttpResponse:response = http.put(
-"https://api.example.com/users/$id",
+`https://api.example.com/users/&{id}`,
 body,
 headers = { "Content-Type" = "application/json" }
 )?;
@@ -787,7 +787,7 @@ pass(map_to_user(user_data));
 // DELETE - Remove user
 func:delete_user = Result<nil, string>(int32:id) {
 HttpResponse:response = http.delete(
-"https://api.example.com/users/$id"
+`https://api.example.com/users/&{id}`
 )?;
 </p>
 <p>

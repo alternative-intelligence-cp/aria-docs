@@ -662,10 +662,10 @@ fall;  // Continue to next case</code></pre>
 <pre><code>pick x {
 <p>
 case 1:
-stdout << "One\n";
+print("One\n");
 fall;  // Falls to case 2
 case 2:
-stdout << "Two\n";
+print("Two\n");
 }</code></pre>
 </p>
 <hr>
@@ -673,14 +673,14 @@ stdout << "Two\n";
 <pre><code>// ✅ Correct: fall is last
 <p>
 case 1:
-stdout << "One\n";
+print("One\n");
 fall;
 </p>
 <p>
 // ❌ Wrong: Code after fall
 case 1:
 fall;
-stdout << "Never runs\n";  // Unreachable</code></pre>
+print("Never runs\n");  // Unreachable</code></pre>
 </p>
 <hr>
 <h2>Falls to Next Case</h2>

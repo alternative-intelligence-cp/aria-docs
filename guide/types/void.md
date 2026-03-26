@@ -16,15 +16,15 @@
 
 ```aria
 // Function that returns nothing
-fn print_message(msg: string) -> void {
-    stdout << msg;
+func:print_message = NIL(string:msg) {
+    print(msg);
     // No return statement needed
 }
 
 // Explicit return
-fn log_error(err: string) -> void {
-    stderr << err;
-    return;  // Optional
+func:log_error = NIL(string:err) {
+    stderr_write(err);
+    pass(NIL);  // Optional
 }
 ```
 
@@ -34,13 +34,13 @@ fn log_error(err: string) -> void {
 
 ```aria
 // void can be omitted
-fn greet(name: string) {
-    stdout << "Hello, $name!";
+func:greet = NIL(string:name) {
+    print(`Hello, &{name}!`);
 }
 
 // Equivalent to
-fn greet(name: string) -> void {
-    stdout << "Hello, $name!";
+func:greet = NIL(string:name) {
+    print(`Hello, &{name}!`);
 }
 ```
 
@@ -52,7 +52,7 @@ fn greet(name: string) -> void {
 
 ```aria
 // Modify state, no return
-fn increment_counter() -> void {
+func:increment_counter = NIL() {
     counter += 1;
 }
 ```
@@ -60,7 +60,7 @@ fn increment_counter() -> void {
 ### I/O Operations
 
 ```aria
-fn write_file(path: string, data: string) -> void {
+func:write_file = NIL(string:path, string:data) {
     file: File = File.open(path, "w");
     file.write(data);
     file.close();
@@ -75,7 +75,7 @@ fn write_file(path: string, data: string) -> void {
 
 ```aria
 // Clear without -> void
-fn process() {
+func:process = NIL() {
     ...
 }
 ```
@@ -84,7 +84,7 @@ fn process() {
 
 ```aria
 // Function changes state
-fn update_display() -> void {
+func:update_display = NIL() {
     screen.refresh();
 }
 ```
@@ -92,7 +92,7 @@ fn update_display() -> void {
 ### ❌ DON'T: Try to Use the Value
 
 ```aria
-fn do_something() -> void {
+func:do_something = NIL() {
     ...
 }
 

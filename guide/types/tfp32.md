@@ -1,8 +1,11 @@
 # tfp32 - Twisted Floating Point 32-bit (Deterministic Float)
 
+> **⚠️ DESIGN DOCUMENT — NOT YET IMPLEMENTED IN COMPILER**
+> This type is part of the Aria language specification but is not yet available in the compiler. The documentation below describes the planned design.
+
 **Category**: Types → Floating-Point / Deterministic  
 **Purpose**: Cross-platform bit-exact deterministic floating-point arithmetic  
-**Status**: ✅ COMPLETE (All operations implemented)
+**Status**: 📋 SPECIFIED (not yet implemented)
 
 ---
 
@@ -204,7 +207,7 @@ bool:less_eq = (a <= c);     // true
 bool:greater_eq = (b >= a);  // true
 
 // Three-way comparison
-int32:cmp = aria_tfp32_cmp(&a, &b);  // Returns -1 (a < b)
+int32:cmp = aria_tfp32_cmp($a, $b);  // Returns -1 (a < b)
 // Returns: -1 if a < b, 0 if a == b, 1 if a > b
 
 // ERR handling
@@ -613,7 +616,7 @@ function update_particle(Particle:p, tfp32:dt) : Particle begin
         !!! ERR_PARTICLE_CORRUPTED;
     }
     
-    return p;
+    pass(p);
 end
 
 // Simulation loop

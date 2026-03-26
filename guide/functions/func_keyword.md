@@ -17,12 +17,12 @@
 ```aria
 // Long form
 func add(a: i32, b: i32) -> i32 {
-    return a + b;
+    pass(a + b);
 }
 
 // Short form (same thing)
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 ```
 
@@ -34,8 +34,8 @@ fn add(a: i32, b: i32) -> i32 {
 
 ```aria
 // Common: Short and clean
-fn calculate(x: i32) -> i32 {
-    return x * 2;
+func:calculate = int32(int32:x) {
+    pass(x * 2);
 }
 ```
 
@@ -55,7 +55,7 @@ func important_algorithm(data: []i32) -> Result<i32> {
 ```aria
 // These are 100% identical:
 
-fn method1() { }
+func:method1 = NIL() { }
 func method2() { }
 
 // No difference in:
@@ -88,13 +88,13 @@ func method2() { }
 
 ```aria
 // fn style (common)
-fn greet(name: string) {
-    stdout << "Hello, " << name << "\n";
+func:greet = NIL(string:name) {
+    print("Hello, " + name + "\n");
 }
 
 // func style (also valid)
 func farewell(name: string) {
-    stdout << "Goodbye, " << name << "\n";
+    print("Goodbye, " + name + "\n");
 }
 ```
 
@@ -102,7 +102,7 @@ func farewell(name: string) {
 
 ```aria
 // fn
-fn max<T>(a: T, b: T) -> T where T: Comparable {
+func:max = T(T:a, T:b)where T: Comparable {
     when a > b then return a; else return b; end
 }
 
@@ -119,13 +119,13 @@ struct Calculator;
 
 impl Calculator {
     // fn style
-    fn add(a: i32, b: i32) -> i32 {
-        return a + b;
+    func:add = int32(int32:a, int32:b) {
+        pass(a + b);
     }
     
     // func style
     func subtract(a: i32, b: i32) -> i32 {
-        return a - b;
+        pass(a - b);
     }
 }
 ```
@@ -138,13 +138,13 @@ Works with both:
 
 ```aria
 // fn
-async fn fetch_data() -> Data? {
-    return await http_get("/api/data");
+async func:fetch_data = Data?() {
+    pass(await http_get("/api/data"));
 }
 
 // func
 async func save_data(data: Data) -> bool {
-    return await http_post("/api/data", data);
+    pass(await http_post("/api/data", data));
 }
 ```
 

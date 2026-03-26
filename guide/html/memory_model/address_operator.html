@@ -659,7 +659,7 @@ The <strong>address operator</strong> <code>&</code> gets the <strong>memory add
 ptr: *i32 = &value;  // Get address of value
 </p>
 <p>
-stdout << ptr;  // Prints memory address (e.g., 0x7ffc8b4d5a1c)</code></pre>
+print(ptr);  // Prints memory address (e.g., 0x7ffc8b4d5a1c)</code></pre>
 </p>
 <hr>
 <h2>Address vs Borrow</h2>
@@ -683,8 +683,8 @@ ptr: *i32 = &value;  // Pointer</code></pre>
 address: *i32 = &value;
 </p>
 <p>
-stdout << "Value: " << value << "\n";        // 42
-stdout << "Address: " << address << "\n";    // 0x...</code></pre>
+print("Value: " << value + "\n");        // 42
+print("Address: " << address + "\n");    // 0x...</code></pre>
 </p>
 <hr>
 <h2>For All Types</h2>
@@ -709,7 +709,7 @@ ptr: *i32 = &value;
 </p>
 <p>
 dereferenced: i32 = *ptr;  // Get value at address
-stdout << dereferenced;     // 42</code></pre>
+print(dereferenced);     // 42</code></pre>
 </p>
 <hr>
 <h2>Use Cases</h2>

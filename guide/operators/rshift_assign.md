@@ -25,7 +25,7 @@ The right shift assignment operator `>>=` shifts bits right and assigns the resu
 ```aria
 x: i32 = 20;
 x >>= 2;  // x = x >> 2
-stdout << x;  // 5 (20 / 4)
+print(x);  // 5 (20 / 4)
 ```
 
 ---

@@ -16,13 +16,13 @@ The **star prefix** `*T` is an alternative way to write generic type parameters.
 
 ```aria
 // Standard syntax
-fn identity<T>(value: T) -> T {
-    return value;
+func:identity = T(T:value) {
+    pass(value);
 }
 
 // Star prefix syntax (if supported)
-fn identity<*T>(value: T) -> T {
-    return value;
+func:identity = T(T:value) {
+    pass(value);
 }
 ```
 
@@ -34,8 +34,8 @@ Both syntaxes do **exactly the same thing**:
 
 ```aria
 // These are equivalent:
-fn max<T>(a: T, b: T) -> T where T: Comparable { }
-fn max<*T>(a: T, b: T) -> T where T: Comparable { }
+func:max = T(T:a, T:b)where T: Comparable { }
+func:max = T(T:a, T:b)where T: Comparable { }
 
 // Both create the same function
 ```
@@ -46,10 +46,10 @@ fn max<*T>(a: T, b: T) -> T where T: Comparable { }
 
 ```aria
 // Standard
-fn pair<T, U>(first: T, second: U) -> (T, U) { }
+func:pair = (T,(T:first, U:second)U) { }
 
 // Star prefix
-fn pair<*T, *U>(first: T, second: U) -> (T, U) { }
+func:pair = (T,(T:first, U:second)U) { }
 ```
 
 ---
@@ -75,15 +75,15 @@ struct Box<*T> {
 ```aria
 // Standard
 impl<T> Box<T> {
-    fn get() -> T {
-        return self.value;
+    func:get = T() {
+        pass(self.value);
     }
 }
 
 // Star prefix
 impl<*T> Box<T> {
-    fn get() -> T {
-        return self.value;
+    func:get = T() {
+        pass(self.value);
     }
 }
 ```
@@ -96,10 +96,10 @@ The star prefix is meant to **emphasize** that `T` is a **type variable**:
 
 ```aria
 // Standard: T looks like a type name
-fn process<T>(value: T) { }
+func:process = NIL(T:value) { }
 
 // Star: Makes it obvious T is a placeholder
-fn process<*T>(value: T) { }
+func:process = NIL(T:value) { }
 ```
 
 ---
@@ -126,8 +126,8 @@ fn process<*T>(value: T) { }
 
 ```aria
 // Don't mix styles in same codebase
-fn identity<T>(value: T) -> T { }      // Standard
-fn wrap<*U>(value: U) -> Box<U> { }    // Star
+func:identity = T(T:value) { }      // Standard
+func:wrap = Box<U>(U:value) { }    // Star
 
 // Pick one and stick with it!
 ```
@@ -138,10 +138,10 @@ fn wrap<*U>(value: U) -> Box<U> { }    // Star
 
 ```aria
 // Standard
-fn max<T>(a: T, b: T) -> T where T: Comparable { }
+func:max = T(T:a, T:b)where T: Comparable { }
 
 // Star prefix
-fn max<*T>(a: T, b: T) -> T where T: Comparable { }
+func:max = T(T:a, T:b)where T: Comparable { }
 
 // Both work the same
 ```
@@ -169,10 +169,10 @@ Both compile to **identical** code:
 
 ```aria
 // This code:
-fn add<*T>(a: T, b: T) -> T { return a + b; }
+func:add = T(T:a, T:b) { return a + b; }
 
 // Compiles exactly the same as:
-fn add<T>(a: T, b: T) -> T { return a + b; }
+func:add = T(T:a, T:b) { return a + b; }
 
 // No performance difference
 // No size difference
@@ -204,12 +204,12 @@ fn add<T>(a: T, b: T) -> T { return a + b; }
 
 ```aria
 // Good: All standard
-fn identity<T>(value: T) -> T { }
-fn pair<T, U>(a: T, b: U) -> (T, U) { }
+func:identity = T(T:value) { }
+func:pair = (T,(T:a, U:b)U) { }
 
 // Also good: All star
-fn identity<*T>(value: T) -> T { }
-fn pair<*T, *U>(a: T, b: U) -> (T, U) { }
+func:identity = T(T:value) { }
+func:pair = (T,(T:a, U:b)U) { }
 ```
 
 ### ✅ DO: Follow Project Conventions
@@ -223,12 +223,12 @@ fn pair<*T, *U>(a: T, b: U) -> (T, U) { }
 
 ```aria
 // Wrong: Inconsistent
-fn foo<T>(x: T) { }      // Standard
-fn bar<*U>(y: U) { }     // Star
+func:foo = NIL(T:x) { }      // Standard
+func:bar = NIL(U:y) { }     // Star
 
 // Right: Pick one
-fn foo<T>(x: T) { }
-fn bar<U>(y: U) { }
+func:foo = NIL(T:x) { }
+func:bar = NIL(U:y) { }
 ```
 
 ### ❌ DON'T: Overthink It
@@ -254,10 +254,10 @@ struct Vec<T> {
 }
 
 impl<T> Vec<T> {
-    fn push(item: T) { }
+    func:push = NIL(T:item) { }
 }
 
-fn map<T, U>(array: []T, f: fn(T) -> U) -> []U { }
+func:map = U)([]T:array, fn(T:f)-> []U { }
 ```
 
 ### Star Prefix (Rare)
@@ -269,10 +269,10 @@ struct Vec<*T> {
 }
 
 impl<*T> Vec<T> {
-    fn push(item: T) { }
+    func:push = NIL(T:item) { }
 }
 
-fn map<*T, *U>(array: []T, f: fn(T) -> U) -> []U { }
+func:map = U)([]T:array, fn(T:f)-> []U { }
 ```
 
 ---
@@ -288,7 +288,7 @@ When writing documentation, **prefer standard syntax** for wider compatibility:
 /// # Type Parameters
 /// - `T`: The element type
 /// 
-fn first<T>(array: []T) -> T { }
+func:first = T([]T:array) { }
 ```
 
 ---

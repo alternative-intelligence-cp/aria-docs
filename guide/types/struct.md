@@ -55,12 +55,12 @@ struct Rectangle {
 }
 
 // Methods defined separately
-fn area(self: &Rectangle) -> f32 {
-    return self.width * self.height;
+func:area = flt32(Rectangle->:self) {
+    pass(self.width * self.height);
 }
 
-fn perimeter(self: &Rectangle) -> f32 {
-    return 2.0 * (self.width + self.height);
+func:perimeter = flt32(Rectangle->:self) {
+    pass(2.0 * (self.width + self.height));
 }
 
 // Use
@@ -151,7 +151,7 @@ struct Config {
     timeout: i32
 }
 
-fn default_config() -> Config {
+func:default_config = Config() {
     return {
         host = "localhost",
         port = 8080,
@@ -173,7 +173,7 @@ struct UserDTO {
     email: string
 }
 
-fn get_user(id: i32) -> UserDTO {
+func:get_user = UserDTO(int32:id) {
     // Fetch and return
     ...
 }

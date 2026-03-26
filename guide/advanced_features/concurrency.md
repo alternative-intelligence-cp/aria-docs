@@ -16,10 +16,10 @@ Concurrency enables **parallel execution** for better performance and responsive
 ### Threading
 
 ```aria
-import std.thread;
+use std.thread;
 
-fn worker(id: i32) {
-    stdout << "Worker $id running";
+func:worker = NIL(int32:id) {
+    print(`Worker &{id} running`);
 }
 
 thread1: Thread = Thread.spawn(worker, 1);
@@ -34,15 +34,15 @@ thread2.join();
 ### Async/Await
 
 ```aria
-async fn fetch_data(url: string) -> Result<Data> {
+async func:fetch_data = Result<Data>(string:url) {
     response: Response = await http.get(url)?;
     data: Data = await response.json()?;
-    return Ok(data);
+    pass(Ok(data));
 }
 
-async fn main() {
+async func:main = NIL() {
     data: Data = await fetch_data("https://api.example.com/data")?;
-    stdout << data;
+    print(data);
 }
 ```
 
@@ -59,7 +59,7 @@ fn* generator() -> i32 {
 
 values = generator().collect();
 till(values.length - 1, 1) {
-    stdout << values[$];  // Prints 1, 2, 3
+    print(values[$]);  // Prints 1, 2, 3
 }
 ```
 
@@ -70,11 +70,11 @@ till(values.length - 1, 1) {
 ### Atomic Operations
 
 ```aria
-import std.sync.Atomic;
+use std.sync.Atomic;
 
 counter: Atomic<i32> = Atomic.new(0);
 
-fn increment() {
+func:increment = NIL() {
     counter.fetch_add(1);  // Thread-safe
 }
 ```
@@ -84,11 +84,11 @@ fn increment() {
 ### Mutex
 
 ```aria
-import std.sync.Mutex;
+use std.sync.Mutex;
 
 data: Mutex<i32> = Mutex.new(0);
 
-fn update() {
+func:update = NIL() {
     lock: MutexGuard = data.lock();
     *lock += 1;
     // Automatically unlocks when lock goes out of scope
@@ -100,22 +100,22 @@ fn update() {
 ### Channels
 
 ```aria
-import std.sync.Channel;
+use std.sync.Channel;
 
 channel: Channel<i32> = Channel.new();
 
 // Producer
-fn producer() {
+func:producer = NIL() {
     till(9, 1) {
         channel.send($);
     }
 }
 
 // Consumer
-fn consumer() {
+func:consumer = NIL() {
     while true {
         value: i32 = channel.recv()?;
-        stdout << "Received: $value";
+        print(`Received: &{value}`);
     }
 }
 ```
@@ -127,18 +127,18 @@ fn consumer() {
 ### Producer-Consumer
 
 ```aria
-import std.sync.{Channel, Thread};
+use std.sync.{Channel, Thread};
 
-fn producer(ch: Channel<i32>) {
+func:producer = NIL(Channel<i32>:ch) {
     till(99, 1) {
         ch.send($);
     }
 }
 
-fn consumer(ch: Channel<i32>) {
+func:consumer = NIL(Channel<i32>:ch) {
     while true {
         match ch.recv() {
-            Ok(value) => stdout << value,
+            Ok(value) => print(value),
             Err(_) => break,
         }
     }
@@ -157,7 +157,7 @@ cons.join();
 ### Worker Pool
 
 ```aria
-import std.sync.{Channel, Thread};
+use std.sync.{Channel, Thread};
 
 struct WorkerPool {
     workers: []Thread,
@@ -165,7 +165,7 @@ struct WorkerPool {
 }
 
 impl WorkerPool {
-    pub fn new(size: i32) -> WorkerPool {
+    pub func:new = WorkerPool(int32:size) {
         channel: Channel<Task> = Channel.new();
         workers: []Thread = [];
         
@@ -180,7 +180,7 @@ impl WorkerPool {
         };
     }
     
-    pub fn execute(task: Task) {
+    pub func:execute = NIL(Task:task) {
         self.sender.send(task);
     }
 }
@@ -191,7 +191,7 @@ impl WorkerPool {
 ### Async Request Handling
 
 ```aria
-async fn handle_request(req: Request) -> Response {
+async func:handle_request = Response(Request:req) {
     // Multiple concurrent operations
     user_task = fetch_user(req.user_id);
     posts_task = fetch_posts(req.user_id);
@@ -200,7 +200,7 @@ async fn handle_request(req: Request) -> Response {
     user: User = await user_task?;
     posts: []Post = await posts_task?;
     
-    return Response.ok(render(user, posts));
+    pass(Response.ok(render(user, posts)));
 }
 ```
 
@@ -211,18 +211,18 @@ async fn handle_request(req: Request) -> Response {
 ### RwLock (Reader-Writer Lock)
 
 ```aria
-import std.sync.RwLock;
+use std.sync.RwLock;
 
 data: RwLock<HashMap<string, i32>> = RwLock.new(HashMap.new());
 
 // Multiple readers
-fn read_data(key: string) -> ?i32 {
+func:read_data = ?i32(string:key) {
     reader: ReadGuard = data.read();
-    return reader.get(key);
+    pass(reader.get(key));
 }
 
 // Exclusive writer
-fn write_data(key: string, value: i32) {
+func:write_data = NIL(string:key, int32:value) {
     writer: WriteGuard = data.write();
     writer.insert(key, value);
 }
@@ -233,18 +233,18 @@ fn write_data(key: string, value: i32) {
 ### Barrier
 
 ```aria
-import std.sync.Barrier;
+use std.sync.Barrier;
 
 barrier: Barrier = Barrier.new(3);  // 3 threads
 
-fn worker(id: i32) {
-    stdout << "Worker $id: Phase 1";
+func:worker = NIL(int32:id) {
+    print(`Worker &{id}: Phase 1`);
     barrier.wait();  // Wait for all threads
     
-    stdout << "Worker $id: Phase 2";
+    print(`Worker &{id}: Phase 2`);
     barrier.wait();
     
-    stdout << "Worker $id: Done";
+    print(`Worker &{id}: Done`);
 }
 ```
 
@@ -253,11 +253,11 @@ fn worker(id: i32) {
 ### Semaphore
 
 ```aria
-import std.sync.Semaphore;
+use std.sync.Semaphore;
 
 semaphore: Semaphore = Semaphore.new(3);  // Max 3 concurrent
 
-fn limited_resource() {
+func:limited_resource = NIL() {
     semaphore.acquire();
     // Only 3 threads can be here at once
     process_data();
@@ -282,7 +282,7 @@ thread2.send_channel(channel);
 
 ```aria
 // Good - each thread owns its data
-fn worker(data: Data) {
+func:worker = NIL(Data:data) {
     // Process independently
 }
 

@@ -15,8 +15,8 @@
 ## Basic Two-Parameter Function
 
 ```aria
-fn pair<T, U>(first: T, second: U) -> (T, U) {
-    return (first, second);
+func:pair = (T,(T:first, U:second)U) {
+    pass((first, second));
 }
 
 // Different types
@@ -59,7 +59,7 @@ struct Triple<T, U, V> {
     third: V
 }
 
-fn create<T, U, V>(a: T, b: U, c: V) -> Triple<T, U, V> {
+func:create = Triple<T,(T:a, U:b, V:c)U, V> {
     return Triple{
         first: a,
         second: b,
@@ -78,7 +78,7 @@ data: Triple<i32, string, bool> = create(42, "hello", true);
 Each parameter can be **any type**:
 
 ```aria
-fn convert<From, To>(value: From) -> To {
+func:convert = To(From:value) {
     // From and To are completely independent
 }
 
@@ -97,13 +97,13 @@ Parameters can be **related** through constraints or usage:
 
 ```aria
 // U depends on T through function parameter
-fn map<T, U>(array: []T, f: fn(T) -> U) -> []U {
+func:map = U)([]T:array, fn(T:f)-> []U {
     Result: []U = [];
     till(array.length - 1, 1) {
         item: T = array[$];
         result.push(f(item));
     }
-    return result;
+    pass(result);
 }
 
 // T and U are related by the transformation function
@@ -119,7 +119,7 @@ strings: []string = map(numbers, |x| format("{}", x));
 Each parameter can have **different constraints**:
 
 ```aria
-fn process<T, U>(input: T, config: U) -> Result
+func:process = Result(T:input, U:config)
     where T: Serialize,      // T must be serializable
           U: Display {        // U must be displayable
     // Implementation
@@ -138,8 +138,8 @@ struct Map<K, V> {
 }
 
 impl<K, V> Map<K, V> where K: Hashable {
-    fn insert(key: K, value: V) { }
-    fn get(key: K) -> V? { }
+    func:insert = NIL(K:key, V:value) { }
+    func:get = V?(K:key) { }
 }
 
 // Usage
@@ -150,8 +150,8 @@ sessions: Map<string, Session> = Map::new();
 ### Input-Output Transform
 
 ```aria
-fn transform<In, Out>(data: In, converter: fn(In) -> Out) -> Out {
-    return converter(data);
+func:transform = Out)(In:data, fn(In:converter)-> Out {
+    pass(converter(data));
 }
 
 // Convert i32 to string
@@ -166,7 +166,7 @@ enum Result<T, E> {
     Err(E)
 }
 
-fn parse<E>(input: string) -> Result<i32, E> {
+func:parse = Result<i32,(string:input)E> {
     // T = i32, E is the error type
 }
 ```
@@ -180,14 +180,14 @@ struct Builder<T, U> {
 }
 
 impl<T, U> Builder<T, U> {
-    fn add(item: T) -> Builder<T, U> {
+    func:add = Builder<T,(T:item)U> {
         self.items.push(item);
-        return self;
+        pass(self);
     }
     
-    fn with_metadata(meta: U) -> Builder<T, U> {
+    func:with_metadata = Builder<T,(U:meta)U> {
         self.metadata = meta;
-        return self;
+        pass(self);
     }
 }
 ```
@@ -199,8 +199,8 @@ impl<T, U> Builder<T, U> {
 ### All Inferred
 
 ```aria
-fn pair<T, U>(first: T, second: U) -> (T, U) {
-    return (first, second);
+func:pair = (T,(T:first, U:second)U) {
+    pass((first, second));
 }
 
 // Both T and U inferred
@@ -210,7 +210,7 @@ Result: (i32, string) = pair(42, "hello");
 ### Partial Inference
 
 ```aria
-fn convert<From, To>(value: From) -> To {
+func:convert = To(From:value) {
     // Implementation
 }
 
@@ -232,13 +232,13 @@ struct Box<T> {
 
 impl<T> Box<T> {
     // Method adds new parameter U
-    fn map<U>(f: fn(T) -> U) -> Box<U> {
-        return Box{value: f(self.value)};
+    func:map = U)(fn(T:f)-> Box<U> {
+        pass(Box{value: f(self.value)});
     }
     
     // Method adds two new parameters
-    fn zip<U, V>(other: Box<U>, combiner: fn(T, U) -> V) -> Box<V> {
-        return Box{value: combiner(self.value, other.value)};
+    func:zip = V)(Box<U>:other, fn(T, U:combiner)-> Box<V> {
+        pass(Box{value: combiner(self.value, other.value)});
     }
 }
 
@@ -251,7 +251,7 @@ str_box: Box<string> = int_box.map(|x| format("{}", x));
 // T=i32, U=bool, V=string
 other: Box<bool> = Box{value: true};
 Result: Box<string> = int_box.zip(other, |x, y| {
-    return format("{}: {}", x, y);
+    pass(format("{}: {}", x, y));
 });
 ```
 
@@ -287,7 +287,7 @@ enum Result<T, E> {
 struct Map<K, V> { }
 
 // Good: Input first, output second
-fn transform<In, Out>(data: In) -> Out { }
+func:transform = Out(In:data) { }
 ```
 
 ---
@@ -298,19 +298,19 @@ fn transform<In, Out>(data: In) -> Out { }
 
 ```aria
 // Good: Clear purpose
-fn convert<Source, Target>(value: Source) -> Target { }
-fn cache<Key, Value>(k: Key, v: Value) { }
+func:convert = Target(Source:value) { }
+func:cache = NIL(Key:k, Value:v) { }
 ```
 
 ### ✅ DO: Limit Parameter Count
 
 ```aria
 // Good: 2-3 parameters
-fn process<T, U, V>(a: T, b: U) -> V { }
+func:process = V(T:a, U:b) { }
 
 // Consider refactoring if you need more:
 struct Config<T, U> { }
-fn process<V>(config: Config<T, U>) -> V { }
+func:process = V(Config<T, U>:config) { }
 ```
 
 ### ✅ DO: Group Related Types
@@ -327,11 +327,11 @@ struct Request<Payload, Response> {
 
 ```aria
 // Wrong: Too many
-fn complex<T, U, V, W, X, Y, Z>(...) { }
+func:complex = NIL(...) { }
 
 // Right: Simplify
 struct Params<T, U> { }
-fn complex<V>(params: Params<T, U>) -> V { }
+func:complex = V(Params<T, U>:params) { }
 ```
 
 ### ❌ DON'T: Make All Parameters Generic
@@ -369,10 +369,10 @@ impl<Req, Res> ApiClient<Req, Res>
     where Req: Serialize,
           Res: Deserialize {
     
-    async fn call(request: Req) -> Res? {
+    async func:call = Res?(Req:request) {
         json: string = request.serialize();
         response: string = pass await http_post(self.endpoint, json);
-        return Res::deserialize(response);
+        pass(Res::deserialize(response));
     }
 }
 
@@ -394,7 +394,7 @@ impl<S, E, O> StateMachine<S, E, O>
     where S: Hash + Eq,
           E: Hash + Eq {
     
-    fn transition(event: E) -> O? {
+    func:transition = O?(E:event) {
         key: (S, E) = (self.current, event);
         next_state: S? = self.transitions.get(key);
         
@@ -402,11 +402,11 @@ impl<S, E, O> StateMachine<S, E, O>
             self.current = next_state;
             action: fn() -> O? = self.actions.get(next_state);
             when action != nil then
-                return action();
+                pass(action());
             end
         end
         
-        return nil;
+        pass(nil);
     }
 }
 ```
@@ -423,7 +423,7 @@ fn pipeline<A, B, C, D>(
     result1: B = step1(input);
     result2: C = step2(result1);
     result3: D = step3(result2);
-    return result3;
+    pass(result3);
 }
 
 // Usage

@@ -43,7 +43,7 @@ text: string = "  Hello World  "
     |> to_lowercase()
     |> replace("world", "aria");
 
-stdout << text;  // "hello aria"
+print(text);  // "hello aria"
 ```
 
 ---

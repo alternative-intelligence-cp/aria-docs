@@ -373,7 +373,7 @@ gc Node@:tree = buildTree();
 
 ```aria
 // WRONG: Don't use C syntax in Aria code
-int64*:ptr = &value;  // ❌ Error
+int64*:ptr = $value;  // ❌ Error
 
 // CORRECT: Use Aria syntax
 int64@:ptr = @value;  // ✅

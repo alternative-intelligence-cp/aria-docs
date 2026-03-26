@@ -660,19 +660,19 @@ The less than or equal operator <code><=</code> tests if the left value is less 
 <pre><code>// Less than
 <p>
 when 5 <= 10 then
-stdout << "True";
+print("True");
 end
 </p>
 <p>
 // Equal
 when 5 <= 5 then
-stdout << "Also true";
+print("Also true");
 end
 </p>
 <p>
 // Greater than
 when 10 <= 5 then
-stdout << "Won't print";
+print("Won't print");
 end</code></pre>
 </p>
 <hr>
@@ -683,13 +683,13 @@ age: i32 = 65;
 </p>
 <p>
 when age <= max_age then
-stdout << "Allowed";  // Prints (65 <= 65)
+print("Allowed");  // Prints (65 <= 65)
 end
 </p>
 <p>
 // Contrast with <
 when age < max_age then
-stdout << "Won't print";  // false
+print("Won't print");  // false
 end</code></pre>
 </p>
 <hr>
@@ -705,7 +705,7 @@ end</code></pre>
 <h3>Range Upper Bound</h3>
 <pre><code>when age >= 18 and age <= 65 then
 <p>
-stdout << "Working age";
+print("Working age");
 end</code></pre>
 </p>
 <h3>Array Bounds</h3>
@@ -720,7 +720,7 @@ end</code></pre>
 <pre><code>// Inclusive range [min, max]
 <p>
 when value >= min and value <= max then
-stdout << "Valid";
+print("Valid");
 end</code></pre>
 </p>
 <h3>✅ DO: Use for Limits</h3>
@@ -748,7 +748,7 @@ end</code></pre>
 <pre><code>i: i32 = 10;
 <p>
 while i >= 0 {
-stdout << i;
+print(i);
 i--;
 }
 // Prints: 10 9 8 7 6 5 4 3 2 1 0</code></pre>

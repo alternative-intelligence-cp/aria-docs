@@ -25,17 +25,17 @@ The greater than operator `>` tests if the left value is strictly greater than t
 ```aria
 // Numbers
 when 10 > 5 then
-    stdout << "10 is greater";
+    print("10 is greater");
 end
 
 when 5 > 10 then
-    stdout << "Won't print";
+    print("Won't print");
 end
 
 // Variables
 age: i32 = 25;
 when age > 18 then
-    stdout << "Adult";
+    print("Adult");
 end
 ```
 
@@ -46,12 +46,12 @@ end
 ```aria
 // Strict: not equal
 when 5 > 5 then
-    stdout << "Won't print";  // false
+    print("Won't print");  // false
 end
 
 // Use >= for greater or equal
 when 5 >= 5 then
-    stdout << "Will print";  // true
+    print("Will print");  // true
 end
 ```
 
@@ -65,7 +65,7 @@ x: i32 = 10;
 y: i32 = 5;
 
 when x > y then  // OK
-    stdout << "x is greater";
+    print("x is greater");
 end
 
 // Can't compare incompatible types
@@ -81,16 +81,16 @@ end
 ```aria
 // Lexicographic comparison
 when "banana" > "apple" then
-    stdout << "b comes after a";
+    print("b comes after a");
 end
 
 when "dog" > "cat" then
-    stdout << "d comes after c";
+    print("d comes after c");
 end
 
 // Case sensitive
 when "Z" > "a" then  // false ('Z' = 90, 'a' = 97 in ASCII)
-    stdout << "Won't print";
+    print("Won't print");
 end
 ```
 
@@ -103,7 +103,7 @@ x: f64 = 10.5;
 y: f64 = 10.3;
 
 when x > y then
-    stdout << "x is greater";
+    print("x is greater");
 end
 
 // Beware of precision
@@ -120,12 +120,12 @@ end
 ```aria
 // Natural chaining (if supported)
 when 0 < x < 10 then
-    stdout << "x is between 0 and 10";
+    print("x is between 0 and 10");
 end
 
 // Otherwise use AND
 when x > 0 and x < 10 then
-    stdout << "x is between 0 and 10";
+    print("x is between 0 and 10");
 end
 ```
 
@@ -149,7 +149,7 @@ end
 
 ```aria
 when age > 18 and age < 65 then
-    stdout << "Working age";
+    print("Working age");
 end
 ```
 
@@ -175,11 +175,11 @@ end
 ### Maximum
 
 ```aria
-fn max(a: i32, b: i32) -> i32 {
+func:max = int32(int32:a, int32:b) {
     when a > b then
-        return a;
+        pass(a);
     else
-        return b;
+        pass(b);
     end
 }
 ```

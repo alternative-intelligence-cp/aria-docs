@@ -657,29 +657,29 @@ Debug I/O in Aria centers on the <strong>stddbg stream</strong> - a dedicated ch
 <strong>Traditional approach</strong>:
 <pre><code># print("DEBUG: ...") # Commented out before shipping</code></pre>
 <strong>Aria approach</strong>:
-<pre><code>stddbg << "Debug information";  // Always present, redirected in production</code></pre>
+<pre><code>stddbg_write("Debug information");  // Always present, redirected in production</code></pre>
 <strong>Result</strong>: Debug code <strong>stays in</strong> the codebase forever, always available when needed.
 <hr>
 <h2>Basic Usage</h2>
 <pre><code>// Function entry/exit
 <p>
-stddbg << "Entering process_batch()";
+stddbg_write("Entering process_batch()");
 Result: Result = process_batch(items);
-stddbg << "Exiting process_batch, result=" << result.status;
+stddbg_write("Exiting process_batch, result=" + result.status);
 </p>
 <p>
 // State transitions
-stddbg << "State: " << old_state << " -> " << new_state;
+stddbg_write("State: " << old_state << " -> " + new_state);
 </p>
 <p>
 // Performance timing
 start: Time = Time::now();
 expensive_operation();
-stddbg << "Operation took " << (Time::now() - start).milliseconds() << "ms";
+stddbg_write("Operation took " << (Time::now() - start).milliseconds() + "ms");
 </p>
 <p>
 // Variable dumps
-stddbg << "balance=" << balance << ", limit=" << limit;</code></pre>
+stddbg_write("balance=" << balance << ", limit=" + limit);</code></pre>
 </p>
 <hr>
 <h2>Deployment Modes</h2>
@@ -708,24 +708,24 @@ stddbg << "balance=" << balance << ", limit=" << limit;</code></pre>
 <h3>✅ DO: Leave Debug Statements In</h3>
 <pre><code>fn calculate_tax(income: f64) -> f64 {
 <p>
-stddbg << "calculate_tax: income=" << income;
+stddbg_write("calculate_tax: income=" + income);
 </p>
 <p>
 tax: f64 = income * TAX_RATE;
 </p>
 <p>
-stddbg << "  -> tax=" << tax;
+stddbg_write("  -> tax=" + tax);
 return tax;
 }</code></pre>
 </p>
 <h3>❌ DON'T: Use stdout for Debug</h3>
 <pre><code>// WRONG: Pollutes production output
 <p>
-stdout << "DEBUG: Entering function\n";
+print("DEBUG: Entering function\n");
 </p>
 <p>
 // RIGHT: Dedicated stream
-stddbg << "Entering function";</code></pre>
+stddbg_write("Entering function");</code></pre>
 </p>
 <hr>
 <h2>See Also</h2>

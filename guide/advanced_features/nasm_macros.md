@@ -28,7 +28,7 @@ NASM-style macros provide **low-level code generation** similar to assembly prep
     pop rax
 %endmacro
 
-fn low_level_operation() {
+func:low_level_operation = NIL() {
     asm {
         SAVE_REGS
         
@@ -49,7 +49,7 @@ fn low_level_operation() {
     mov %1, %2
 %endmacro
 
-fn main() {
+func:main = NIL() {
     asm {
         LOAD_IMM rax, 42
         LOAD_IMM rbx, 100
@@ -78,7 +78,7 @@ fn main() {
     ret
 %endmacro
 
-fn asm_function() {
+func:asm_function = NIL() {
     asm {
         FUNCTION_PROLOGUE 32
         
@@ -108,7 +108,7 @@ fn asm_function() {
     %endmacro
 %endif
 
-fn main() {
+func:main = NIL() {
     asm {
         LOG "Starting operation"
         // Code here
@@ -172,7 +172,7 @@ fn main() {
     syscall
 %endmacro
 
-fn write_to_stdout(message: *u8, length: i64) {
+func:write_to_stdout = NIL(*u8:message, int64:length) {
     asm {
         SYSCALL 1, message, length  ; sys_write(stdout, message, length)
     }
@@ -198,7 +198,7 @@ fn write_to_stdout(message: *u8, length: i64) {
     rep movsb
 %endmacro
 
-fn initialize_buffer(buffer: *u8, size: i64) {
+func:initialize_buffer = NIL(*u8:buffer, int64:size) {
     asm {
         ZERO_MEMORY buffer, size
     }
@@ -228,7 +228,7 @@ fn initialize_buffer(buffer: *u8, size: i64) {
     %define %1 [rbp - %2]
 %endmacro
 
-fn complex_function() {
+func:complex_function = NIL() {
     asm {
         ENTER_FRAME 64
         
@@ -263,7 +263,7 @@ fn complex_function() {
 
 lock: u64 = 0;
 
-fn critical_section() {
+func:critical_section = NIL() {
     asm {
         ACQUIRE_LOCK lock
         
@@ -298,7 +298,7 @@ fn critical_section() {
 
 counter: u64 = 0;
 
-fn increment_counter() {
+func:increment_counter = NIL() {
     asm {
         ATOMIC_INC counter
     }
@@ -316,7 +316,7 @@ fn increment_counter() {
     %endrep
 %endmacro
 
-fn unrolled_loop() {
+func:unrolled_loop = NIL() {
     asm {
         UNROLL_4 {
             add rax, 1
@@ -464,7 +464,7 @@ fn unrolled_loop() {
 ## Integration with Aria
 
 ```aria
-fn low_level_function() {
+func:low_level_function = NIL() {
     x: i64 = 42;
     Result: i64;
     
@@ -478,7 +478,7 @@ fn low_level_function() {
         SQUARE result, x
     }
     
-    stdout << "Result: $result";  // Result: 1764
+    print(`Result: &{result}`);  // Result: 1764
 }
 ```
 

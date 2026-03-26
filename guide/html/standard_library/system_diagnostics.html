@@ -660,8 +660,8 @@ Aria provides system diagnostics for monitoring resource usage and performance.
 mem: MemoryInfo = getMemoryUsage();
 </p>
 <p>
-stdout << "Heap: $(mem.heap_used) / $(mem.heap_total)";
-stdout << "RSS: $(mem.rss)";</code></pre>
+print("Heap: $(mem.heap_used) / $(mem.heap_total)");
+print("RSS: $(mem.rss)");</code></pre>
 </p>
 <h3>Network Diagnostics</h3>
 <pre><code>// Get active connections
@@ -669,7 +669,7 @@ stdout << "RSS: $(mem.rss)";</code></pre>
 connections: []ConnectionInfo = getActiveConnections();
 </p>
 <p>
-stdout << "Active connections: $(connections.length())";</code></pre>
+print("Active connections: $(connections.length())");</code></pre>
 </p>
 <hr>
 <h2>Common Patterns</h2>

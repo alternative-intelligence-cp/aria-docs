@@ -39,8 +39,8 @@ Result: i32 = 15 <=> 10; //  1
 
 ```aria
 // Perfect for sort comparisons
-fn compare_users(a: User, b: User) -> i32 {
-    return a.name <=> b.name;
+func:compare_users = int32(User:a, User:b) {
+    pass(a.name <=> b.name);
 }
 
 users.sort(compare_users);
@@ -52,15 +52,15 @@ users.sort(compare_users);
 
 ```aria
 // Try multiple criteria
-fn compare(a: Item, b: Item) -> i32 {
+func:compare = int32(Item:a, Item:b) {
     // First by priority
     Result: i32 = a.priority <=> b.priority;
     when result != 0 then
-        return result;
+        pass(result);
     end
     
     // Then by name
-    return a.name <=> b.name;
+    pass(a.name <=> b.name);
 }
 ```
 
@@ -71,19 +71,19 @@ fn compare(a: Item, b: Item) -> i32 {
 ### ✅ DO: Use for Sorting
 
 ```aria
-fn compare(a: i32, b: i32) -> i32 {
-    return a <=> b;
+func:compare = int32(int32:a, int32:b) {
+    pass(a <=> b);
 }
 ```
 
 ### ✅ DO: Use for Multi-Field Comparison
 
 ```aria
-fn compare_records(a: Record, b: Record) -> i32 {
+func:compare_records = int32(Record:a, Record:b) {
     result := a.date <=> b.date;
     when result != 0 then return result end;
     
-    return a.id <=> b.id;
+    pass(a.id <=> b.id);
 }
 ```
 

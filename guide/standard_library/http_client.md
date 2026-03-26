@@ -14,7 +14,7 @@ The HTTP client provides comprehensive support for HTTP requests: GET, POST, PUT
 ## Importing
 
 ```aria
-import std.http;
+use std.http;
 ```
 
 ---
@@ -75,7 +75,7 @@ response: HttpResponse = http.patch(
 
 ```aria
 headers: map<string, string> = {
-    "Authorization" = "Bearer $token",
+    "Authorization" = `Bearer &{token}`,
     "Content-Type" = "application/json",
     "User-Agent" = "AriaApp/1.0"
 };
@@ -147,7 +147,7 @@ func:update_user = Result<User, string>(int32:id, string:name, string:email) {
     string:body = to_json({ name = name, email = email });
     
     HttpResponse:response = http.put(
-        "https://api.example.com/users/$id",
+        `https://api.example.com/users/&{id}`,
         body,
         headers = { "Content-Type" = "application/json" }
     )?;
@@ -163,7 +163,7 @@ func:update_user = Result<User, string>(int32:id, string:name, string:email) {
 // DELETE - Remove user
 func:delete_user = Result<nil, string>(int32:id) {
     HttpResponse:response = http.delete(
-        "https://api.example.com/users/$id"
+        `https://api.example.com/users/&{id}`
     )?;
     
     when response.status != 204 then

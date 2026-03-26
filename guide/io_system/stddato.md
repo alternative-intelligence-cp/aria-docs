@@ -53,8 +53,8 @@ else:
 
 ```aria
 // Human-readable output to stdout
-stdout << "Processed " << count << " records";
-stdout << "Total: $" << total;
+print("Processed " + count + " records");
+print("Total: $" + total);
 
 // Machine-readable output to stddato
 stddato.write_json({"count": count, "total": total});
@@ -71,13 +71,13 @@ stddato.write_json({"count": count, "total": total});
 ```aria
 use std::json;
 
-fn main() {
+func:main = NIL() {
     // Process some data
     Result: Result = process_data();
     
     // Human output
-    stdout << "Processing complete";
-    stdout << "Records processed: " << result.count;
+    print("Processing complete");
+    print("Records processed: " + result.count);
     
     // Machine output
     stddato.write_json({
@@ -107,11 +107,11 @@ fn main() {
 ```aria
 use std::msgpack;
 
-fn main() {
+func:main = NIL() {
     data: LargeStruct = compute_results();
     
     // Human summary
-    stdout << "Computation complete: " << data.size() << " elements";
+    print("Computation complete: " + data.size() + " elements");
     
     // Binary output (efficient)
     stddato.write_msgpack(data);
@@ -123,11 +123,11 @@ fn main() {
 ```aria
 use std::json;
 
-fn main() {
+func:main = NIL() {
     records = process_records().collect();
     till(records.length - 1, 1) {
         // Human progress
-        stdout << "Processing record " << records[$].id;
+        print("Processing record " + records[$].id);
         
         // Machine output (one JSON per line)
         stddato.write_json(records[$]);
@@ -163,7 +163,7 @@ fn main() {
 ### 1. Dual-Mode CLIs
 
 ```aria
-fn main() {
+func:main = NIL() {
     // Parse args
     args: Args = parse_args();
     
@@ -171,9 +171,9 @@ fn main() {
     Result: Result = execute_operation(args);
     
     // Human-friendly output (always shown)
-    stdout << "Operation successful";
-    stdout << "  Files processed: " << result.files_processed;
-    stdout << "  Errors: " << result.errors;
+    print("Operation successful");
+    print("  Files processed: " + result.files_processed);
+    print("  Errors: " + result.errors);
     
     // Machine-readable output (captured if redirected)
     stddato.write_json({
@@ -211,8 +211,8 @@ result=$(./tool 5>&1 1>/dev/null)  # Get JSON only
 ### 2. ETL Pipelines
 
 ```aria
-fn main() {
-    stddbg << "Starting ETL pipeline";
+func:main = NIL() {
+    stddbg_write("Starting ETL pipeline");
     
     // Read from stddati
     input_data: []Record = stddati.read_json()?;
@@ -224,13 +224,13 @@ fn main() {
         output_data.push(transformed);
         
         // Progress to stdout
-        stdout << "Processed record " << input_data[$].id;
+        print("Processed record " + input_data[$].id);
     }
     
     // Write to stddato
     stddato.write_json(output_data);
     
-    stddbg << "Pipeline complete: " << output_data.len() << " records";
+    stddbg_write("Pipeline complete: " + output_data.len() + " records");
 }
 ```
 
@@ -245,12 +245,12 @@ fn main() {
 ### 3. API Server Responses
 
 ```aria
-fn handle_request(req: HttpRequest) -> HttpResponse {
+func:handle_request = HttpResponse(HttpRequest:req) {
     // Log request (human-readable)
-    stdout << req.method << " " << req.path;
+    print(req.method + " " + req.path);
     
     // Debug trace
-    stddbg << "Headers: " << req.headers.len();
+    stddbg_write("Headers: " + req.headers.len());
     
     // Process request
     data: ResponseData = process_request(req);
@@ -262,14 +262,14 @@ fn handle_request(req: HttpRequest) -> HttpResponse {
         "timestamp": Time::now().unix()
     });
     
-    return HttpResponse::ok(data);
+    pass(HttpResponse::ok(data));
 }
 ```
 
 ### 4. Monitoring and Metrics
 
 ```aria
-fn main() {
+func:main = NIL() {
     start_time: Time = Time::now();
     
     Result: Result = run_job();
@@ -277,7 +277,7 @@ fn main() {
     elapsed: Duration = Time::now() - start_time;
     
     // Human output
-    stdout << "Job completed in " << elapsed.seconds() << "s";
+    print("Job completed in " + elapsed.seconds() + "s");
     
     // Metrics (for monitoring systems)
     stddato.write_json({
@@ -361,14 +361,14 @@ when stddato.is_redirected() then
     stddato.write_json(expensive_data)?;
 else
     // No, skip expensive serialization
-    stddbg << "stddato not redirected, skipping output";
+    stddbg_write("stddato not redirected, skipping output");
 end
 
 // Is stddato open and valid?
 when stddato.is_valid() then
     stddato.write_json(data)?;
 else
-    stderr << "stddato is broken";
+    stderr_write("stddato is broken");
 end
 ```
 
@@ -386,7 +386,7 @@ when stddato.is_redirected() then
     stddato.write_json(full_data)?;
 else
     // Free: stddato is /dev/null, skip work
-    stddbg << "Skipping stddato output (not redirected)";
+    stddbg_write("Skipping stddato output (not redirected)");
 end
 ```
 
@@ -418,11 +418,11 @@ Result: Result<(), IoError> = stddato.write_json(data);
 
 match result {
     Ok(()) => {
-        stddbg << "Data written successfully";
+        stddbg_write("Data written successfully");
     }
     Err(err) => {
-        stderr << "Failed to write data: " << err;
-        return ERR;
+        stderr_write("Failed to write data: " + err);
+        pass(ERR);
     }
 }
 ```
@@ -447,11 +447,11 @@ stddato.write_json(data3)?;
 
 ```aria
 // Correct: Serve both audiences
-fn main() {
+func:main = NIL() {
     Result: Result = process();
     
     // Humans
-    stdout << "Processing complete: " << result.count << " items";
+    print("Processing complete: " + result.count + " items");
     
     // Machines
     stddato.write_json({"count": result.count, "status": "ok"});
@@ -486,7 +486,7 @@ end
 stddato << "Processing item 5 of 100...";
 
 // RIGHT:
-stdout << "Processing item 5 of 100...";
+print("Processing item 5 of 100...");
 ```
 
 ### ❌ DON'T: Mix Formats
@@ -508,7 +508,7 @@ stddato.write_json({"id": 2});
 stddato << "ERROR: File not found";
 
 // RIGHT:
-stderr << "ERROR: File not found";
+stderr_write("ERROR: File not found");
 ```
 
 ---
@@ -548,7 +548,7 @@ if json_mode {
 ### Aria
 ```aria
 // Both outputs simultaneously
-stdout << "Result: " << data;
+print("Result: " + data);
 stddato.write_json({"result": data});
 // No conditionals, no conflicts
 ```
@@ -561,24 +561,24 @@ stddato.write_json({"result": data});
 use std::json;
 use std::sql;
 
-fn main() {
+func:main = NIL() {
     // Connect to database
     db: sql::Connection = sql::connect("postgres://...")?;
     
-    stdout << "Connected to database";
+    print("Connected to database");
     
     // Execute query
     query: string = "SELECT * FROM users WHERE active = true";
     rows: []sql::Row = db.query(query)?;
     
     // Human output (table format)
-    stdout << "\nActive Users:";
-    stdout << "ID    | Name          | Email";
-    stdout << "------|---------------|------------------";
+    print("\nActive Users:");
+    print("ID    | Name          | Email");
+    print("------|---------------|------------------");
     till(rows.length - 1, 1) {
-        stdout << rows[$]["id"] << " | " << rows[$]["name"] << " | " << rows[$]["email"];
+        print(rows[$]["id"] + " | " + rows[$]["name"] + " | " + rows[$]["email"]);
     }
-    stdout << "\nTotal: " << rows.len() << " users";
+    print("\nTotal: " + rows.len() + " users");
     
     // Machine output (JSON array)
     stddato.write_json(rows.map(|row| {
@@ -590,7 +590,7 @@ fn main() {
     }));
     
     // Debug info
-    stddbg << "Query executed in " << db.last_query_time() << "ms";
+    stddbg_write("Query executed in " + db.last_query_time() + "ms");
 }
 ```
 
@@ -649,7 +649,7 @@ You're writing a CLI tool. Your boss says:
 
 ```aria
 // Users see this
-stdout << "Processing files...";
+print("Processing files...");
 
 // CI sees this
 stddato.write_json({"status": "processing"});

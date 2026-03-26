@@ -705,7 +705,7 @@ read: i32 = *ptr;  // 42
 <pre><code>ptr: *void = NULL;
 <p>
 if ptr == NULL {
-stdout << "Null pointer!";
+print("Null pointer!");
 }</code></pre>
 </p>
 <p>
@@ -787,7 +787,7 @@ fn get_value(out: *mut i32) -> i32;
 value: i32;
 Result: i32 = extern.get_value(&value);
 if result == 0 {
-stdout << "Value: $value";
+print(`Value: &{value}`);
 }</code></pre>
 </p>
 <hr>
@@ -928,7 +928,7 @@ end: *i32 = &arr[10];
 </p>
 <p>
 while ptr < end {
-stdout << *ptr;
+print(*ptr);
 ptr = ptr + 1;
 }</code></pre>
 </p>

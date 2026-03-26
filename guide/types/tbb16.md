@@ -833,12 +833,12 @@ if (all_valid) {
 // Clamp int64 to tbb16 range (useful for external data/calculations)
 func:clamp_to_tbb16 = (value: int64) -> tbb16 {
     if (value > 32767) {
-        return 32767;
+        pass(32767);
     }
     if (value < -32767) {
-        return -32767;
+        pass(-32767);
     }
-    return value as tbb16;  // Safe conversion
+    pass(value as tbb16);  // Safe conversion
 }
 
 // Example: audio gain calculation might exceed range
@@ -903,7 +903,7 @@ int16_t safe_add_audio(int16_t a, int16_t b) {
 ```aria
 // After (Aria - automatic!):
 func:safe_add_audio = (a: tbb16, b: tbb16) -> tbb16 {
-    return a + b;  // Overflow automatically produces ERR!
+    pass(a + b);  // Overflow automatically produces ERR!
 }
 
 // If you want clipping instead of ERR:
@@ -912,12 +912,12 @@ func:clipping_add_audio = (a: tbb16, b: tbb16) -> tbb16 {
     if (sum == ERR) {
         // Overflow - determine direction and clip
         if ((a > 0 && b > 0) || (a > 0 && b > 16383) || (b > 0 && a > 16383)) {
-            return 32767;  // Clip high
+            pass(32767);  // Clip high
         } else {
-            return -32767;  // Clip low
+            pass(-32767);  // Clip low
         }
     }
-    return sum;
+    pass(sum);
 }
 ```
 

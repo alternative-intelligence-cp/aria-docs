@@ -50,10 +50,10 @@ Aria doesn't fight human nature - it redirects it. Instead of three streams, Ari
 
 ```aria
 // Debug output goes to stddbg - NEVER stdout
-stddbg << "Processing user: " << user.name;
+stddbg_write("Processing user: " + user.name);
 
 // Production output is clean
-stdout << result;
+print(result);
 ```
 
 **In Production**:
@@ -65,7 +65,7 @@ stdout << result;
 
 ```aria
 // Human-readable output
-stdout << "Balance: $" << balance;
+print("Balance: $" + balance);
 
 // Machine-readable JSON to stddato
 stddato << {"balance": balance, "currency": "USD"};
@@ -122,17 +122,17 @@ def process_data(items):
 
 ### With Aria
 ```aria
-fn process_data(items: []Item) -> []Result {
-    stddbg << "Processing " << items.len() << " items";
+func:process_data = []Result([]Item:items) {
+    stddbg_write("Processing " + items.len() + " items");
     
     results: []Result = [];
     till(items.length - 1, 1) {
-        stddbg << "Processing item: " << items[$];
+        stddbg_write("Processing item: " + items[$]);
         Result: Result = expensive_operation(items[$]);
         results.push(result);
     }
     
-    return results;
+    pass(results);
 }
 ```
 
@@ -202,4 +202,4 @@ fn process_data(items: []Item) -> []Result {
 
 ---
 
-**Remember**: Every time you write `stddbg << "..."`, you're using a feature **no other language** provides as a core primitive. This is Aria's "Uno reverse" on debugging culture.
+**Remember**: Every time you write `stddbg_write("...")`, you're using a feature **no other language** provides as a core primitive. This is Aria's "Uno reverse" on debugging culture.

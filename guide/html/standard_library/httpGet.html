@@ -673,10 +673,10 @@ Result: Result<HttpResponse> = httpGet("https://api.github.com/users/octocat");
 </p>
 <p>
 when result is Ok(response) then
-stdout << "Status: $(response.status)";
-stdout << "Body: $(response.body)";
+print("Status: $(response.status)");
+print("Body: $(response.body)");
 elsif result is Err(msg) then
-stderr << "Request failed: $msg";
+stderr_write(`Request failed: &{msg}`);
 end</code></pre>
 </p>
 <h3>Parse JSON Response</h3>
@@ -684,22 +684,22 @@ end</code></pre>
 <p>
 when response.status == 200 then
 user: obj = parse_json(response.body)?;
-stdout << "User: $(user.name)";
+print("User: $(user.name)");
 else
-stderr << "HTTP $(response.status): $(response.body)";
+stderr_write("HTTP $(response.status): $(response.body)");
 end</code></pre>
 </p>
 <h3>Check Status Codes</h3>
 <pre><code>response: HttpResponse = httpGet("https://example.com/api/data")?;
 <p>
 when response.status == 200 then
-stdout << "Success";
+print("Success");
 elsif response.status == 404 then
-stderr << "Not found";
+stderr_write("Not found");
 elsif response.status >= 500 then
-stderr << "Server error";
+stderr_write("Server error");
 else
-stderr << "Unexpected status: $(response.status)";
+stderr_write("Unexpected status: $(response.status)");
 end</code></pre>
 </p>
 <h3>Access Headers</h3>
@@ -713,7 +713,7 @@ content_type: ?string = response.headers.get("Content-Type");
 header_entries = response.headers.entries();
 till(header_entries.length - 1, 1) {
 (key, value) = header_entries[$];
-stdout << "$key: $value";
+print(`&{key}: &{value}`);
 end</code></pre>
 </p>
 <hr>
@@ -747,7 +747,7 @@ end</code></pre>
 <pre><code>Result: Result<HttpResponse> = httpGet("https://unreliable-api.com");
 <p>
 when result is Err(msg) then
-log_error("Network error: $msg");
+log_error(`Network error: &{msg}`);
 // Retry logic or fallback
 end</code></pre>
 </p>

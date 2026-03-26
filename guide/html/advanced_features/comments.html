@@ -786,7 +786,7 @@ return hash;
 <h3>Disabling Code</h3>
 <pre><code>fn debug_mode() {
 <p>
-stdout << "Running";
+print("Running");
 </p>
 <p>
 // Temporarily disabled
@@ -794,7 +794,7 @@ stdout << "Running";
 // validate_invariants();
 </p>
 <p>
-stdout << "Done";
+print("Done");
 }</code></pre>
 </p>
 <hr>
@@ -883,7 +883,7 @@ return count + 1;
 /// # Example
 /// </code>`<code>
 /// user: User = fetch_user(42)?;
-/// stdout << user.name;
+/// print(user.name);
 /// </code>``
 pub fn fetch_user(user_id: i32) -> Result<User> {
 // Implementation

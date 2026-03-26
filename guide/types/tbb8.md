@@ -711,12 +711,12 @@ if (valid) {
 // Clamp int64 to tbb8 range (useful for external data)
 func:clamp_to_tbb8 = (value: int64) -> tbb8 {
     if (value > 127) {
-        return 127;
+        pass(127);
     }
     if (value < -127) {
-        return -127;
+        pass(-127);
     }
-    return value as tbb8;  // Safe conversion
+    pass(value as tbb8);  // Safe conversion
 }
 
 // Example usage  
@@ -746,9 +746,9 @@ tbb8:final = result * 2;  // No longer risks ERR propagation
 // Widen tbb8 to tbb16, preserving ERR semantics
 func:widen_tbb8_to_tbb16 = (small: tbb8) -> tbb16 {
     if (small == ERR) {
-        return ERR;  // tbb16 ERR (-32768), not -128!
+        pass(ERR);  // tbb16 ERR (-32768), not -128!
     }
-    return small as tbb16;  // Valid value sign-extends normally
+    pass(small as tbb16);  // Valid value sign-extends normally
 }
 
 tbb8:small_err = ERR;  // -128 for tbb8
@@ -813,7 +813,7 @@ int8_t safe_add(int8_t a, int8_t b) {
 ```aria
 // After (Aria - automatic!):
 func:safe_add = (a: tbb8, b: tbb8) -> tbb8 {
-    return a + b;  // Overflow automatically produces ERR, no manual check needed!
+    pass(a + b);  // Overflow automatically produces ERR, no manual check needed!
 }
 ```
 

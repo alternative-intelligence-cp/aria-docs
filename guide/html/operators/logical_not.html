@@ -675,13 +675,13 @@ is_not_ready: bool = !is_ready;  // true</code></pre>
 <pre><code>is_valid: bool = check_input();
 <p>
 when !is_valid then
-stdout << "Invalid input";
+print("Invalid input");
 end
 </p>
 <p>
 // Equivalent to
 when is_valid == false then
-stdout << "Invalid input";
+print("Invalid input");
 end</code></pre>
 </p>
 <hr>
@@ -699,13 +699,13 @@ Result: bool = !!x;  // true
 <pre><code>// Negate comparison
 <p>
 when !(x > 10) then
-stdout << "x is 10 or less";
+print("x is 10 or less");
 end
 </p>
 <p>
 // Better: Use opposite operator
 when x <= 10 then
-stdout << "x is 10 or less";
+print("x is 10 or less");
 end</code></pre>
 </p>
 <hr>
@@ -720,7 +720,7 @@ end</code></pre>
 <pre><code>found: bool = search(item);
 <p>
 when !found then
-stdout << "Not found";
+print("Not found");
 end</code></pre>
 </p>
 <h3>❌ DON'T: Double Negate</h3>

@@ -39,7 +39,7 @@ a: i32 = 0b1100;  // 12
 b: i32 = 0b1010;  // 10
 Result: i32 = a | b;  // 0b1110 = 14
 
-stdout << result;  // 14
+print(result);  // 14
 ```
 
 ---
@@ -89,7 +89,7 @@ state: i32 = FLAG_A | FLAG_C;  // 0b0101
 
 // Check flag
 when (state & FLAG_A) != 0 then
-    stdout << "Flag A is set";
+    print("Flag A is set");
 end
 ```
 
@@ -129,7 +129,7 @@ flags: i32 = 0b0011;
 new_flags: i32 = 0b0100;
 
 flags |= new_flags;  // flags = flags | new_flags
-stdout << flags;  // 0b0111
+print(flags);  // 0b0111
 ```
 
 ---

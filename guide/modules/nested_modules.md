@@ -15,13 +15,13 @@ Modules can contain other modules, creating a **hierarchy** for better organizat
 
 ```aria
 mod outer {
-    pub fn outer_function() {
-        stdout << "Outer";
+    pub func:outer_function = NIL() {
+        print("Outer");
     }
     
     pub mod inner {
-        pub fn inner_function() {
-            stdout << "Inner";
+        pub func:inner_function = NIL() {
+            print("Inner");
         }
     }
 }
@@ -54,7 +54,7 @@ database/
 pub mod connection;
 pub mod models;
 
-pub fn init() {
+pub func:init = NIL() {
     connection.connect()?;
 }
 ```
@@ -71,13 +71,13 @@ pub mod post;
 
 ```aria
 // Import parent
-import database;
+use database;
 
 // Access nested
 user: database.models.user.User = database.models.user.create();
 
 // Or import nested directly
-import database.models.user;
+use database.models.user;
 
 user: user.User = user.create();
 ```
@@ -88,12 +88,12 @@ user: user.User = user.create();
 
 ```aria
 mod parent {
-    fn private_parent() { }      // Private to parent
-    pub fn public_parent() { }   // Public
+    func:private_parent = NIL() { }      // Private to parent
+    pub func:public_parent = NIL() { }   // Public
     
     pub mod child {
-        fn private_child() { }   // Private to child
-        pub fn public_child() {  // Public
+        func:private_child = NIL() { }   // Private to child
+        pub func:public_child = NIL() {  // Public
             // Can access parent's private items
             super.private_parent();
         }
@@ -231,13 +231,13 @@ mod parent {
     pub const CONFIG: string = "config";
     
     pub mod child {
-        pub fn use_parent_config() {
+        pub func:use_parent_config = NIL() {
             // Access parent's item
             config: string = super.CONFIG;
         }
         
         pub mod grandchild {
-            pub fn use_grandparent_config() {
+            pub func:use_grandparent_config = NIL() {
                 // Access grandparent's item
                 config: string = super.super.CONFIG;
             }

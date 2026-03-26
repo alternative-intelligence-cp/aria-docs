@@ -169,7 +169,7 @@ activations: tensor<flt32, batch, features> = forward(input);
 
 ```aria
 when a.shape() != b.shape() then
-    stderr << "Shape mismatch";
+    stderr_write("Shape mismatch");
     fail("Cannot add tensors");
 end
 ```

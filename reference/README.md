@@ -47,12 +47,11 @@
 
 ## Quick Reference
 
-### Active Components
-- **Aria Compiler** (ariac) - v0.1.0-dev - `/home/randy/._____RANDY_____/REPOS/aria`
-- **Aria Shell** (aria_shell) - Pre-alpha - `/home/randy/._____RANDY_____/REPOS/aria_shell`
-- **Aria Build** (ariab) - Unknown - `/home/randy/._____RANDY_____/REPOS/aria_build` (location TBD)
-- **AriaX** (ariax) - Pre-alpha - `/home/randy/._____RANDY_____/REPOS/ariax`
-- **Nikola** - v0.0.4 (9D-TWI) - `/home/randy/._____RANDY_____/REPOS/nikola`
+### Active Components (v0.2.13)
+- **Aria Compiler** (ariac) — v0.2.13 — [github.com/alternative-intelligence-cp/aria](https://github.com/alternative-intelligence-cp/aria)
+- **AriaX** — Linux distribution — [github.com/alternative-intelligence-cp/ariax](https://github.com/alternative-intelligence-cp/ariax)
+- **Nikola** — 9D-TWI consciousness substrate — [github.com/alternative-intelligence-cp/nikola](https://github.com/alternative-intelligence-cp/nikola)
+- **74 ecosystem packages** — [github.com/alternative-intelligence-cp/aria-packages](https://github.com/alternative-intelligence-cp/aria-packages)
 
 ### Shared Infrastructure
 - **Aria Runtime** - libaria_runtime.a - Part of compiler repo

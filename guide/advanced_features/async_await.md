@@ -14,10 +14,10 @@ Async/await provides **non-blocking concurrency** with **readable, sequential-lo
 ## Basic Pattern
 
 ```aria
-async fn fetch_user(id: i32) -> Result<User> {
-    response: Response = await http.get("/users/$id")?;
+async func:fetch_user = Result<User>(int32:id) {
+    response: Response = await http.get(`/users/&{id}`)?;
     user: User = await response.json()?;
-    return Ok(user);
+    pass(Ok(user));
 }
 ```
 
@@ -28,8 +28,8 @@ async fn fetch_user(id: i32) -> Result<User> {
 ### Without Async/Await (Callbacks)
 
 ```aria
-fn fetch_user_callback(id: i32, callback: fn(Result<User>)) {
-    http.get("/users/$id", fn(response) {
+func:fetch_user_callback = NIL(int32:id, fn(Result<User>:callback)) {
+    http.get(`/users/&{id}`, fn(response) {
         response.json(fn(user) {
             callback(Ok(user));
         });
@@ -43,10 +43,10 @@ fn fetch_user_callback(id: i32, callback: fn(Result<User>)) {
 ### With Async/Await
 
 ```aria
-async fn fetch_user(id: i32) -> Result<User> {
-    response: Response = await http.get("/users/$id")?;
+async func:fetch_user = Result<User>(int32:id) {
+    response: Response = await http.get(`/users/&{id}`)?;
     user: User = await response.json()?;
-    return Ok(user);
+    pass(Ok(user));
 }
 // Clean and readable!
 ```
@@ -56,14 +56,14 @@ async fn fetch_user(id: i32) -> Result<User> {
 ## Sequential Operations
 
 ```aria
-async fn process_user(id: i32) -> Result<void> {
+async func:process_user = Result<NIL>(int32:id) {
     // Execute one after another
     user: User = await fetch_user(id)?;
     posts: []Post = await fetch_posts(user.id)?;
     comments: []Comment = await fetch_comments(posts[0].id)?;
     
     await save_to_cache(user, posts, comments)?;
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -72,7 +72,7 @@ async fn process_user(id: i32) -> Result<void> {
 ## Concurrent Operations
 
 ```aria
-async fn fetch_dashboard(user_id: i32) -> Result<Dashboard> {
+async func:fetch_dashboard = Result<Dashboard>(int32:user_id) {
     // Start all requests concurrently
     user_future = fetch_user(user_id);
     posts_future = fetch_posts(user_id);
@@ -96,11 +96,11 @@ async fn fetch_dashboard(user_id: i32) -> Result<Dashboard> {
 ## Error Handling
 
 ```aria
-async fn fetch_with_fallback(id: i32) -> User {
+async func:fetch_with_fallback = User(int32:id) {
     match await fetch_user(id) {
         Ok(user) => return user,
         Err(e) => {
-            stdout << "Primary fetch failed: $e";
+            print(`Primary fetch failed: &{e}`);
             
             match await fetch_user_from_cache(id) {
                 Ok(cached) => return cached,
@@ -118,15 +118,15 @@ async fn fetch_with_fallback(id: i32) -> User {
 ### HTTP Request
 
 ```aria
-async fn api_request(endpoint: string) -> Result<Data> {
+async func:api_request = Result<Data>(string:endpoint) {
     response: Response = await http.get(endpoint)?;
     
     if !response.ok() {
-        return Err("HTTP $response.status");
+        pass(Err(`HTTP &{response.status}`));
     }
     
     data: Data = await response.json()?;
-    return Ok(data);
+    pass(Ok(data));
 }
 ```
 
@@ -135,7 +135,7 @@ async fn api_request(endpoint: string) -> Result<Data> {
 ### Database Query
 
 ```aria
-async fn fetch_user_with_posts(id: i32) -> Result<UserWithPosts> {
+async func:fetch_user_with_posts = Result<UserWithPosts>(int32:id) {
     user: User = await db.query("SELECT * FROM users WHERE id = ?", id)?;
     posts: []Post = await db.query("SELECT * FROM posts WHERE user_id = ?", id)?;
     
@@ -151,11 +151,11 @@ async fn fetch_user_with_posts(id: i32) -> Result<UserWithPosts> {
 ### File I/O
 
 ```aria
-async fn process_file(path: string) -> Result<void> {
+async func:process_file = Result<NIL>(string:path) {
     content: string = await readFile(path)?;
     processed: string = await process_content(content)?;
     await writeFile(path ++ ".processed", processed)?;
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -164,7 +164,7 @@ async fn process_file(path: string) -> Result<void> {
 ### WebSocket
 
 ```aria
-async fn handle_websocket(socket: WebSocket) {
+async func:handle_websocket = NIL(WebSocket:socket) {
     messages = await socket.collect();
     till(messages.length - 1, 1) {
         match messages[$] {
@@ -183,9 +183,9 @@ async fn handle_websocket(socket: WebSocket) {
 ## Joining Multiple Tasks
 
 ```aria
-import std.async.join_all;
+use std.async.join_all;
 
-async fn fetch_all_users(ids: []i32) -> Result<[]User> {
+async func:fetch_all_users = Result<[]User>([]i32:ids) {
     tasks: []Future<User> = [];
     
     till(ids.length - 1, 1) {
@@ -193,7 +193,7 @@ async fn fetch_all_users(ids: []i32) -> Result<[]User> {
     }
     
     users: []User = await join_all(tasks)?;
-    return Ok(users);
+    pass(Ok(users));
 }
 ```
 
@@ -202,15 +202,15 @@ async fn fetch_all_users(ids: []i32) -> Result<[]User> {
 ## Racing Tasks
 
 ```aria
-import std.async.race;
+use std.async.race;
 
-async fn fetch_fastest() -> Result<Data> {
+async func:fetch_fastest = Result<Data>() {
     primary = fetch_from_primary();
     backup = fetch_from_backup();
     
     // Return whichever completes first
     Result: Data = await race([primary, backup])?;
-    return Ok(result);
+    pass(Ok(result));
 }
 ```
 
@@ -219,9 +219,9 @@ async fn fetch_fastest() -> Result<Data> {
 ## Timeout Pattern
 
 ```aria
-import std.async.timeout;
+use std.async.timeout;
 
-async fn fetch_with_timeout(url: string) -> Result<Data> {
+async func:fetch_with_timeout = Result<Data>(string:url) {
     result = timeout(5000, fetch(url));  // 5 second timeout
     
     match await result {
@@ -236,7 +236,7 @@ async fn fetch_with_timeout(url: string) -> Result<Data> {
 ## Retry Pattern
 
 ```aria
-async fn fetch_with_retry(url: string, max_retries: i32) -> Result<Data> {
+async func:fetch_with_retry = Result<Data>(string:url, int32:max_retries) {
     retries: i32 = 0;
     
     loop {
@@ -245,7 +245,7 @@ async fn fetch_with_retry(url: string, max_retries: i32) -> Result<Data> {
             Err(e) => {
                 retries += 1;
                 if retries >= max_retries {
-                    return Err("Max retries exceeded");
+                    pass(Err("Max retries exceeded"));
                 }
                 
                 await sleep(1000 * retries);  // Exponential backoff
@@ -262,7 +262,7 @@ async fn fetch_with_retry(url: string, max_retries: i32) -> Result<Data> {
 ### ✅ DO: Use Async for I/O
 
 ```aria
-async fn io_operations() -> Result<void> {
+async func:io_operations = Result<NIL>() {
     // Network I/O
     data: Data = await fetch_from_api()?;
     
@@ -272,14 +272,14 @@ async fn io_operations() -> Result<void> {
     // Database I/O
     users: []User = await db.query("SELECT * FROM users")?;
     
-    return Ok();
+    pass(Ok());
 }
 ```
 
 ### ✅ DO: Run Independent Tasks Concurrently
 
 ```aria
-async fn concurrent_tasks() -> Result<void> {
+async func:concurrent_tasks = Result<NIL>() {
     // Start both
     task1 = expensive_operation1();
     task2 = expensive_operation2();
@@ -288,19 +288,19 @@ async fn concurrent_tasks() -> Result<void> {
     result1 = await task1?;
     result2 = await task2?;
     
-    return Ok();
+    pass(Ok());
 }
 ```
 
 ### ✅ DO: Handle Errors Gracefully
 
 ```aria
-async fn robust_fetch() -> Result<Data> {
+async func:robust_fetch = Result<Data>() {
     match await fetch_data() {
         Ok(data) => return Ok(data),
         Err(e) => {
             log_error(e);
-            return await fetch_from_cache();
+            pass(await fetch_from_cache());
         }
     }
 }
@@ -309,7 +309,7 @@ async fn robust_fetch() -> Result<Data> {
 ### ❌ DON'T: Block the Executor
 
 ```aria
-async fn blocking() {
+async func:blocking = NIL() {
     // ❌ Bad - blocks all async tasks
     till(999999, 1) {
         compute($);

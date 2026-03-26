@@ -30,9 +30,9 @@ enum LogLevel {
 **Use for**: Detailed development/debugging information
 
 ```aria
-logger.debug("Variable values: x=$x, y=$y, z=$z");
+logger.debug(`Variable values: x=&{x}, y=&{y}, z=&{z}`);
 logger.debug("Entering function process_data()");
-logger.debug("Cache hit for key: $key");
+logger.debug(`Cache hit for key: &{key}`);
 ```
 
 **Typically**: Disabled in production
@@ -75,9 +75,9 @@ logger.warn("Request took $(duration)ms (threshold: 1000ms)");
 
 ```aria
 logger.error("Failed to connect to database");
-logger.error("Invalid user input: $input");
+logger.error(`Invalid user input: &{input}`);
 logger.error("HTTP 500 error from external API");
-logger.error("File not found: $path");
+logger.error(`File not found: &{path}`);
 ```
 
 **Typically**: Always enabled, requires investigation
@@ -164,7 +164,7 @@ exit(1);  // Application exits
 ## Environment-Based Configuration
 
 ```aria
-fn setup_logging() -> Logger {
+func:setup_logging = Logger() {
     logger: Logger = createLogger("App");
     
     env: string = get_env("ENVIRONMENT");
@@ -177,7 +177,7 @@ fn setup_logging() -> Logger {
         logger.set_level(LogLevel.WARN);
     end
     
-    return logger;
+    pass(logger);
 }
 ```
 

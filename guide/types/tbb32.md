@@ -163,7 +163,7 @@ tbb32:final_decision = authorize_action(access_level);  // Still ERR
 
 if (final_decision == ERR) {
     log.write("Authorization failed - ERR propagated through entire chain\\n");
-    return HTTP_500_INTERNAL_SERVER_ERROR;
+    pass(HTTP_500_INTERNAL_SERVER_ERROR);
 }
 ```
 
@@ -530,7 +530,7 @@ func:process_insurance_claim = (patient_id: tbb32, session_cost_cents: tbb32) ->
         stderr.write("Database query failed for patient ID ");
         patient_id.write_to(stderr);
         stderr.write("\\n");
-        return ERR;  // Propagate error
+        pass(ERR);  // Propagate error
     }
     
     // Fetch current balance
@@ -539,7 +539,7 @@ func:process_insurance_claim = (patient_id: tbb32, session_cost_cents: tbb32) ->
         stderr.write("Failed to fetch balance for account ");
         account_id.write_to(stderr);
         stderr.write("\\n");
-        return ERR;
+        pass(ERR);
     }
     
     // Apply insurance payment
@@ -561,7 +561,7 @@ func:process_insurance_claim = (patient_id: tbb32, session_cost_cents: tbb32) ->
     database_update("UPDATE patient_accounts SET balance_cents = ? WHERE account_id = ?",
                    new_balance, account_id);
     
-    return new_balance;
+    pass(new_balance);
 }
 
 // Process 1 million insurance claims (stress test)
@@ -836,7 +836,7 @@ func:get_user_balance = (user_id: tbb32) -> tbb32 {
     
     // If query failed, account_id is ERR
     if (account_id == ERR) {
-        return ERR;  // Propagate
+        pass(ERR);  // Propagate
     }
     
     tbb32:balance = database_fetch_int32(
@@ -845,7 +845,7 @@ func:get_user_balance = (user_id: tbb32) -> tbb32 {
     );
     
     // balance is ERR if second query failed
-    return balance;  // Automatically propagates ERR or returns valid balance
+    pass(balance);  // Automatically propagates ERR or returns valid balance
 }
 
 // Usage
@@ -895,12 +895,12 @@ if (valid) {
 // Clamp int64 to tbb32 range (useful for external data/calculations)
 func:clamp_to_tbb32 = (value: int64) -> tbb32 {
     if (value > 2147483647) {
-        return 2147483647;
+        pass(2147483647);
     }
     if (value < -2147483647) {
-        return -2147483647;
+        pass(-2147483647);
     }
-    return value as tbb32;  // Safe conversion
+    pass(value as tbb32);  // Safe conversion
 }
 
 // Example: Calculate large values, clamp to tbb32
@@ -987,7 +987,7 @@ int32_t safe_add(int32_t a, int32_t b) {
 ```aria
 // After (Aria - automatic!):
 func:safe_add = (a: tbb32, b: tbb32) -> tbb32 {
-    return a + b;  // Overflow automatically produces ERR!
+    pass(a + b);  // Overflow automatically produces ERR!
 }
 ```
 

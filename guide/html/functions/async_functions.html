@@ -707,7 +707,7 @@ return results;
 data: Data = await fetch_data("https://api.example.com/data");
 </p>
 <p>
-stdout << "Received: " << data.size() << " bytes\n";
+print("Received: " << data.size() + " bytes\n");
 }</code></pre>
 </p>
 <h3>From Sync Context (blocking)</h3>
@@ -717,7 +717,7 @@ stdout << "Received: " << data.size() << " bytes\n";
 data: Data = run_async(fetch_data("https://api.example.com/data"));
 </p>
 <p>
-stdout << "Received: " << data.size() << " bytes\n";
+print("Received: " << data.size() + " bytes\n");
 }</code></pre>
 </p>
 <hr>
@@ -763,7 +763,7 @@ response: Response? = await http_get(url);
 </p>
 <p>
 when fail response then
-stderr << "ERROR: Failed to fetch " << url << "\n";
+stderr_write("ERROR: Failed to fetch " << url + "\n");
 return ERR;
 end
 </p>
@@ -797,7 +797,7 @@ timeout_future: Future<()> = sleep(timeout_ms);
 match await race(fetch_future, timeout_future) {
 Left(data) => return data,
 Right(()) => {
-stderr << "ERROR: Request timed out\n";
+stderr_write("ERROR: Request timed out\n");
 return ERR;
 }
 }
@@ -808,7 +808,7 @@ return ERR;
 <p>
 till(max_attempts - 1, 1) {
 attempt: i32 = $ + 1;
-stddbg << "Attempt " << attempt << "/" << max_attempts;
+stddbg_write("Attempt " << attempt << "/" + max_attempts);
 </p>
 <p>
 data: Data? = await fetch_data(url);
@@ -894,7 +894,7 @@ data: Data? = await fetch_data();
 </p>
 <p>
 when fail data then
-stderr << "ERROR: Fetch failed\n";
+stderr_write("ERROR: Fetch failed\n");
 return ERR;
 end
 </p>
@@ -944,7 +944,7 @@ response: Response = pass await http_get(url);
 </p>
 <p>
 when response.status != 200 then
-stderr << "ERROR: HTTP " << response.status << "\n";
+stderr_write("ERROR: HTTP " << response.status + "\n");
 return ERR;
 end
 </p>
@@ -981,7 +981,7 @@ message: Message? = await socket.receive();
 </p>
 <p>
 when fail message then
-stddbg << "Client disconnected";
+stddbg_write("Client disconnected");
 break;
 end
 </p>

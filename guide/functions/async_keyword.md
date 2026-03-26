@@ -15,10 +15,10 @@ The **`async`** keyword marks a function as **asynchronous** - it can use `await
 ## Basic Syntax
 
 ```aria
-async fn fetch_user(id: i32) -> User? {
+async func:fetch_user = User?(int32:id) {
     response: Response = await http_get("/api/user/" + format("{}", id));
     user: User = pass response.deserialize();
-    return user;
+    pass(user);
 }
 ```
 
@@ -30,9 +30,9 @@ async fn fetch_user(id: i32) -> User? {
 
 ```aria
 // Blocks the thread until complete
-fn fetch_user_sync(id: i32) -> User? {
+func:fetch_user_sync = User?(int32:id) {
     response: Response = http_get_blocking("/api/user/" + format("{}", id));
-    return response.deserialize();
+    pass(response.deserialize());
 }
 
 // Calling thread is blocked
@@ -43,9 +43,9 @@ user: User = fetch_user_sync(123);  // Waits here
 
 ```aria
 // Returns immediately, execution continues
-async fn fetch_user(id: i32) -> User? {
+async func:fetch_user = User?(int32:id) {
     response: Response = await http_get("/api/user/" + format("{}", id));
-    return response.deserialize();
+    pass(response.deserialize());
 }
 
 // Must await the result
@@ -59,8 +59,8 @@ user: User = await fetch_user(123);  // Thread can do other work
 ### Must Use `await`
 
 ```aria
-async fn get_data() -> string {
-    return "data";
+async func:get_data = string() {
+    pass("data");
 }
 
 // ❌ Wrong: Returns Future, not string
@@ -74,12 +74,12 @@ value: string = await get_data();
 
 ```aria
 // ❌ Wrong: Can't await in regular function
-fn process() {
+func:process = NIL() {
     data: string = await get_data();  // Error!
 }
 
 // ✅ Right: Function must be async
-async fn process() {
+async func:process = NIL() {
     data: string = await get_data();  // OK
 }
 ```
@@ -90,9 +90,9 @@ async fn process() {
 
 ```aria
 // Programs can have async main
-async fn main() {
+async func:main = NIL() {
     user: User = await fetch_user(123);
-    stdout << "User: " << user.name << "\n";
+    print("User: " + user.name + "\n");
 }
 ```
 
@@ -103,8 +103,8 @@ async fn main() {
 ### Explicit Return Type
 
 ```aria
-async fn get_number() -> i32 {
-    return 42;
+async func:get_number = int32() {
+    pass(42);
 }
 
 // Returns: Future<i32>
@@ -115,9 +115,9 @@ value: i32 = await get_number();
 ### Optional Returns
 
 ```aria
-async fn might_fail() -> Data? {
+async func:might_fail = Data?() {
     response: Response = pass await http_get("/api/data");
-    return response.data();
+    pass(response.data());
 }
 
 // Can return ERR
@@ -129,10 +129,10 @@ data: Data? = await might_fail();
 ## Async with Generics
 
 ```aria
-async fn fetch<T>(url: string) -> T? where T: Deserialize {
+async func:fetch = T?(string:url)where T: Deserialize {
     response: Response = pass await http_get(url);
     data: T = pass response.deserialize();
-    return data;
+    pass(data);
 }
 
 // Usage
@@ -150,14 +150,14 @@ struct ApiClient {
 }
 
 impl ApiClient {
-    async fn get(endpoint: string) -> Response? {
+    async func:get = Response?(string:endpoint) {
         url: string = self.base_url + endpoint;
-        return await http_get(url);
+        pass(await http_get(url));
     }
     
-    async fn post(endpoint: string, data: string) -> Response? {
+    async func:post = Response?(string:endpoint, string:data) {
         url: string = self.base_url + endpoint;
-        return await http_post(url, data);
+        pass(await http_post(url, data));
     }
 }
 
@@ -173,7 +173,7 @@ response: Response = await client.get("/users");
 ### Sequential (One After Another)
 
 ```aria
-async fn fetch_all_sequential() {
+async func:fetch_all_sequential = NIL() {
     user: User = await fetch_user(1);      // Wait
     product: Product = await fetch_product(1);  // Then wait
     order: Order = await fetch_order(1);    // Then wait
@@ -183,7 +183,7 @@ async fn fetch_all_sequential() {
 ### Concurrent (All at Once)
 
 ```aria
-async fn fetch_all_concurrent() {
+async func:fetch_all_concurrent = NIL() {
     // Start all requests immediately
     user_future: Future<User> = fetch_user(1);
     product_future: Future<Product> = fetch_product(1);
@@ -204,7 +204,7 @@ async fn fetch_all_concurrent() {
 // Async lambda
 callback: async fn() -> i32 = async || {
     data: i32 = await fetch_number();
-    return data * 2;
+    pass(data * 2);
 };
 
 // Call it
@@ -219,18 +219,18 @@ Result: i32 = await callback();
 
 ```aria
 // Good: Network calls
-async fn fetch_data() -> Data {
-    return await http_get("/api/data");
+async func:fetch_data = Data() {
+    pass(await http_get("/api/data"));
 }
 
 // Good: File operations
-async fn read_file(path: string) -> string {
-    return await fs::read_to_string(path);
+async func:read_file = string(string:path) {
+    pass(await fs::read_to_string(path));
 }
 
 // Good: Database queries
-async fn get_user(id: i32) -> User {
-    return await db.query("SELECT * FROM users WHERE id = ?", id);
+async func:get_user = User(int32:id) {
+    pass(await db.query("SELECT * FROM users WHERE id = ?", id));
 }
 ```
 
@@ -238,15 +238,15 @@ async fn get_user(id: i32) -> User {
 
 ```aria
 // Wrong: CPU-bound work doesn't benefit from async
-async fn calculate_fibonacci(n: i32) -> i32 {
+async func:calculate_fibonacci = int32(int32:n) {
     when n <= 1 then return n; end
-    return calculate_fibonacci(n - 1) + calculate_fibonacci(n - 2);
+    pass(calculate_fibonacci(n - 1) + calculate_fibonacci(n - 2));
 }
 
 // Right: Just use regular function
-fn calculate_fibonacci(n: i32) -> i32 {
+func:calculate_fibonacci = int32(int32:n) {
     when n <= 1 then return n; end
-    return calculate_fibonacci(n - 1) + calculate_fibonacci(n - 2);
+    pass(calculate_fibonacci(n - 1) + calculate_fibonacci(n - 2));
 }
 ```
 
@@ -270,8 +270,8 @@ fn calculate_fibonacci(n: i32) -> i32 {
 
 ```aria
 // Good: Async for network I/O
-async fn api_call() -> Result {
-    return await http_get("/api/data");
+async func:api_call = Result() {
+    pass(await http_get("/api/data"));
 }
 ```
 
@@ -279,7 +279,7 @@ async fn api_call() -> Result {
 
 ```aria
 // Good: Async functions call other async functions
-async fn process_user(id: i32) {
+async func:process_user = NIL(int32:id) {
     user: User = await fetch_user(id);
     orders: []Order = await fetch_orders(user.id);
     process_orders(orders);
@@ -289,10 +289,10 @@ async fn process_user(id: i32) {
 ### ✅ DO: Handle Errors with `pass`/`fail`
 
 ```aria
-async fn safe_fetch() -> Data? {
+async func:safe_fetch = Data?() {
     response: Response = pass await http_get("/api/data");
     data: Data = pass response.deserialize();
-    return data;
+    pass(data);
 }
 ```
 
@@ -300,15 +300,15 @@ async fn safe_fetch() -> Data? {
 
 ```aria
 // Wrong: Blocking call in async function
-async fn bad_example() {
+async func:bad_example = NIL() {
     data: string = blocking_io_call();  // Blocks the executor!
-    return data;
+    pass(data);
 }
 
 // Right: Use async version
-async fn good_example() {
+async func:good_example = NIL() {
     data: string = await async_io_call();  // Non-blocking
-    return data;
+    pass(data);
 }
 ```
 
@@ -316,13 +316,13 @@ async fn good_example() {
 
 ```aria
 // Wrong: No I/O, doesn't need to be async
-async fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+async func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 
 // Right: Simple computation
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 ```
 
@@ -333,9 +333,9 @@ fn add(a: i32, b: i32) -> i32 {
 ### Timeout
 
 ```aria
-async fn with_timeout<T>(fut: Future<T>, timeout_ms: i32) -> T? {
+async func:with_timeout = T?(Future<T>:fut, int32:timeout_ms) {
     Result: T? = await timeout(fut, timeout_ms);
-    return result;
+    pass(result);
 }
 
 // Usage
@@ -345,26 +345,26 @@ user: User? = await with_timeout(fetch_user(123), 5000);
 ### Retry
 
 ```aria
-async fn retry<T>(f: async fn() -> T?, max_attempts: i32) -> T? {
+async func:retry = T?,(async fn(:f)max_attempts: i32) -> T? {
     till(max_attempts - 1, 1) {
         attempt: i32 = $ + 1;
         Result: T? = await f();
         when result != ERR then
-            return result;
+            pass(result);
         end
         
-        stddbg << "Retry " << attempt << "/" << max_attempts << "\n";
+        stddbg_write("Retry " + attempt + "/" + max_attempts + "\n");
     }
-    return ERR;
+    pass(ERR);
 }
 ```
 
 ### Race
 
 ```aria
-async fn race<T>(futures: []Future<T>) -> T {
+async func:race = T([]Future<T>:futures) {
     // Returns first future to complete
-    return await select(futures);
+    pass(await select(futures));
 }
 ```
 

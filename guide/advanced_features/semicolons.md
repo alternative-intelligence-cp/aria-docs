@@ -34,18 +34,18 @@ z: i32 = x + y;
 
 ```aria
 // Last expression in block (return value)
-fn get_value() -> i32 {
+func:get_value = int32() {
     return 42  // No semicolon needed (but allowed)
 }
 
-fn calculate() -> i32 {
+func:calculate = int32() {
     x: i32 = 10;
     y: i32 = 20;
     x + y  // No semicolon - this is the return value
 }
 
 // With semicolon returns void
-fn no_return() {
+func:no_return = NIL() {
     x: i32 = 42;  // Semicolon required
 }
 ```
@@ -55,7 +55,7 @@ fn no_return() {
 ## Semicolons in Blocks
 
 ```aria
-fn example() {
+func:example = NIL() {
     x: i32 = 42;        // Semicolon required
     y: i32 = x * 2;     // Semicolon required
     
@@ -89,7 +89,7 @@ z: i32 = x + y;
 ```aria
 // For loop - semicolons separate parts
 for i: i32 = 0; i < 10; i += 1 {
-    stdout << i;  // Statement needs semicolon
+    print(i);  // Statement needs semicolon
 }
 
 // While loop
@@ -104,17 +104,17 @@ while condition {
 ## Return Statements
 
 ```aria
-fn explicit_return() -> i32 {
-    return 42;  // Semicolon required
+func:explicit_return = int32() {
+    pass(42);  // Semicolon required
 }
 
-fn implicit_return() -> i32 {
+func:implicit_return = int32() {
     42  // No semicolon - expression value returned
 }
 
-fn early_return() -> i32 {
+func:early_return = int32() {
     if error {
-        return 0;  // Semicolon required
+        pass(0);  // Semicolon required
     }
     42  // No semicolon - final expression
 }
@@ -159,7 +159,7 @@ if condition { 10 } else { 20 };  // Result ignored
 ### Block Returns
 
 ```aria
-fn calculate() -> i32 {
+func:calculate = int32() {
     x: i32 = 10;
     y: i32 = 20;
     
@@ -167,7 +167,7 @@ fn calculate() -> i32 {
     x + y
 }
 
-fn calculate_void() {
+func:calculate_void = NIL() {
     x: i32 = 10;
     y: i32 = 20;
     
@@ -183,7 +183,7 @@ fn calculate_void() {
 ### ✅ DO: Terminate Statements
 
 ```aria
-fn proper() {
+func:proper = NIL() {
     initialize();
     x: i32 = compute();
     process(x);
@@ -194,12 +194,12 @@ fn proper() {
 ### ✅ DO: Omit Trailing Semicolon for Returns
 
 ```aria
-fn get_value() -> i32 {
+func:get_value = int32() {
     x: i32 = 42;
     x  // No semicolon - this is returned
 }
 
-fn get_conditional() -> i32 {
+func:get_conditional = int32() {
     if condition {
         10  // No semicolon
     } else {
@@ -223,12 +223,12 @@ x: i32 = 10; y: i32 = 20; z: i32 = x + y;
 ### ⚠️ WARNING: Return Value vs Statement
 
 ```aria
-fn confusing() -> i32 {
+func:confusing = int32() {
     x: i32 = 42;
     x;  // ⚠️ Semicolon means no return! Returns void.
 }
 
-fn clear() -> i32 {
+func:clear = int32() {
     x: i32 = 42;
     x  // ✅ No semicolon - returns x
 }
@@ -238,14 +238,14 @@ fn clear() -> i32 {
 
 ```aria
 // ❌ Error - missing semicolons
-fn bad() {
+func:bad = NIL() {
     x: i32 = 10  // Error!
     y: i32 = 20  // Error!
     print(x)     // Error!
 }
 
 // ✅ Correct
-fn good() {
+func:good = NIL() {
     x: i32 = 10;
     y: i32 = 20;
     print(x);
@@ -259,7 +259,7 @@ fn good() {
 ### Empty Statement
 
 ```aria
-fn example() {
+func:example = NIL() {
     ;  // Empty statement (valid but useless)
     
     if condition {

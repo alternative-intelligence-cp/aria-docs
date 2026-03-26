@@ -15,7 +15,7 @@
 ## Syntax
 
 ```aria
-import std.log;
+use std.log;
 
 logger: Logger = createLogger("MyApp");
 ```
@@ -51,7 +51,7 @@ logger.fatal("Critical failure");
 ### Basic Logging
 
 ```aria
-import std.log;
+use std.log;
 
 logger: Logger = createLogger("App");
 
@@ -131,7 +131,7 @@ logger.set_output(stderr);  // or file handle
 ### ✅ DO: Use Appropriate Levels
 
 ```aria
-logger.debug("Variable value: $x");  // Development
+logger.debug(`Variable value: &{x}`);  // Development
 logger.info("Request processed");    // Normal operation
 logger.warn("Retry attempt 3/5");    // Potential issues
 logger.error("Database timeout");    // Errors

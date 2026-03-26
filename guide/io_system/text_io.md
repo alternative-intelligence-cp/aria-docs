@@ -44,27 +44,27 @@ till(lines.length - 1, 1) {
 
 ```aria
 // Write to stdout
-stdout << "Hello, world!\n";
+print("Hello, world!\n");
 
 // Formatted text
-stdout << format("Value: {:.2f}", value);
+print(format("Value: {:.2f}", value));
 
 // Multiple values
-stdout << "Count: " << count << ", Total: " << total << "\n";
+print("Count: " + count + ", Total: " + total + "\n");
 ```
 
 ### Error Messages (Text)
 
 ```aria
 // Error messages are human-readable text
-stderr << "ERROR: File not found: " << filename << "\n";
+stderr_write("ERROR: File not found: " + filename + "\n");
 ```
 
 ### Debug Traces (Text)
 
 ```aria
 // Debug output is also text
-stddbg << "Processing item " << item.id << ", status=" << item.status;
+stddbg_write("Processing item " + item.id + ", status=" + item.status);
 ```
 
 ---
@@ -97,23 +97,23 @@ Aria uses **UTF-8** encoding for all text by default:
 ## Example: Text-Based CLI
 
 ```aria
-fn main() {
-    stdout << "Welcome to MyApp\n";
-    stdout << "================\n\n";
+func:main = NIL() {
+    print("Welcome to MyApp\n");
+    print("================\n\n");
     
     loop {
-        stdout << "Command (help, run, quit): ";
+        print("Command (help, run, quit): ");
         command: string = stdin.read_line().trim();
         
         match command {
             "help" => show_help(),
             "run"  => run_task(),
             "quit" => break,
-            _      => stderr << "Unknown command: " << command << "\n",
+            _      => stderr_write("Unknown command: " + command + "\n"),
         }
     }
     
-    stdout << "Goodbye!\n";
+    print("Goodbye!\n");
 }
 ```
 

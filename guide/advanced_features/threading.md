@@ -14,13 +14,13 @@ Threads enable **true parallelism** by running code on multiple CPU cores simult
 ## Basic Thread
 
 ```aria
-import std.thread.Thread;
+use std.thread.Thread;
 
-fn worker() {
-    stdout << "Hello from thread!";
+func:worker = NIL() {
+    print("Hello from thread!");
 }
 
-fn main() {
+func:main = NIL() {
     thread: Thread = Thread.spawn(worker);
     thread.join();  // Wait for completion
 }
@@ -31,13 +31,13 @@ fn main() {
 ## Thread with Arguments
 
 ```aria
-import std.thread.Thread;
+use std.thread.Thread;
 
-fn worker(id: i32, message: string) {
-    stdout << "Thread $id: $message";
+func:worker = NIL(int32:id, string:message) {
+    print(`Thread &{id}: &{message}`);
 }
 
-fn main() {
+func:main = NIL() {
     thread: Thread = Thread.spawn(|| {
         worker(1, "Hello");
     });
@@ -50,14 +50,14 @@ fn main() {
 ## Multiple Threads
 
 ```aria
-import std.thread.Thread;
+use std.thread.Thread;
 
-fn main() {
+func:main = NIL() {
     threads: []Thread = [];
     
     till(3, 1) {
         thread: Thread = Thread.spawn(|| {
-            stdout << "Worker $($)";
+            print("Worker $($)");
         });
         threads.push(thread);
     }
@@ -74,19 +74,19 @@ fn main() {
 ## Thread Return Values
 
 ```aria
-import std.thread.Thread;
+use std.thread.Thread;
 
-fn compute(n: i32) -> i32 {
-    return n * n;
+func:compute = int32(int32:n) {
+    pass(n * n);
 }
 
-fn main() {
+func:main = NIL() {
     thread: Thread<i32> = Thread.spawn(|| {
-        return compute(10);
+        pass(compute(10));
     });
     
     Result: i32 = thread.join();
-    stdout << "Result: $result";  // Result: 100
+    print(`Result: &{result}`);  // Result: 100
 }
 ```
 
@@ -97,12 +97,12 @@ fn main() {
 ### Mutex
 
 ```aria
-import std.sync.Mutex;
-import std.thread.Thread;
+use std.sync.Mutex;
+use std.thread.Thread;
 
 counter: Mutex<i32> = Mutex.new(0);
 
-fn worker() {
+func:worker = NIL() {
     till(999, 1) {
         lock = counter.lock();
         *lock += 1;
@@ -110,7 +110,7 @@ fn worker() {
     }
 }
 
-fn main() {
+func:main = NIL() {
     threads: []Thread = [];
     till(3, 1) {
         threads.push(Thread.spawn(worker));
@@ -120,7 +120,7 @@ fn main() {
         threads[$].join();
     }
     
-    stdout << "Counter: ${counter.lock()}";  // Counter: 4000
+    print("Counter: &{counter.lock()}");  // Counter: 4000
 }
 ```
 
@@ -129,22 +129,22 @@ fn main() {
 ### Channels
 
 ```aria
-import std.sync.Channel;
-import std.thread.Thread;
+use std.sync.Channel;
+use std.thread.Thread;
 
-fn producer(tx: Sender<i32>) {
+func:producer = NIL(Sender<i32>:tx) {
     till(9, 1) {
         tx.send($);
     }
 }
 
-fn consumer(rx: Receiver<i32>) {
+func:consumer = NIL(Receiver<i32>:rx) {
     while value = rx.recv() {
-        stdout << "Received: $value";
+        print(`Received: &{value}`);
     }
 }
 
-fn main() {
+func:main = NIL() {
     channel: Channel<i32> = Channel.new();
     
     t1: Thread = Thread.spawn(|| producer(channel.sender()));
@@ -163,8 +163,8 @@ fn main() {
 ### Worker Pool
 
 ```aria
-import std.sync.Channel;
-import std.thread.Thread;
+use std.sync.Channel;
+use std.thread.Thread;
 
 struct WorkerPool<T, R> {
     workers: []Thread,
@@ -173,7 +173,7 @@ struct WorkerPool<T, R> {
 }
 
 impl<T, R> WorkerPool<T, R> {
-    pub fn new(num_workers: i32, work_fn: fn(T) -> R) -> WorkerPool {
+    pub func:new = R)(int32:num_workers, fn(T:work_fn)-> WorkerPool {
         task_queue: Channel<T> = Channel.new();
         result_queue: Channel<R> = Channel.new();
         workers: []Thread = [];
@@ -198,15 +198,15 @@ impl<T, R> WorkerPool<T, R> {
         };
     }
     
-    pub fn submit(task: T) {
+    pub func:submit = NIL(T:task) {
         self.task_queue.send(task);
     }
     
-    pub fn get_result() -> ?R {
-        return self.result_queue.recv();
+    pub func:get_result = ?R() {
+        pass(self.result_queue.recv());
     }
     
-    pub fn shutdown() {
+    pub func:shutdown = NIL() {
         self.task_queue.close();
         till(self.workers.length - 1, 1) {
             self.workers[$].join();
@@ -215,11 +215,11 @@ impl<T, R> WorkerPool<T, R> {
 }
 
 // Usage
-fn process_data(data: i32) -> i32 {
-    return data * 2;
+func:process_data = int32(int32:data) {
+    pass(data * 2);
 }
 
-fn main() {
+func:main = NIL() {
     pool: WorkerPool<i32, i32> = WorkerPool.new(4, process_data);
     
     // Submit tasks
@@ -230,7 +230,7 @@ fn main() {
     // Collect results
     till(99, 1) {
         Result: i32 = pool.get_result()?;
-        stdout << result;
+        print(result);
     }
     
     pool.shutdown();
@@ -242,10 +242,10 @@ fn main() {
 ### Producer-Consumer
 
 ```aria
-import std.sync.Channel;
-import std.thread.Thread;
+use std.sync.Channel;
+use std.thread.Thread;
 
-fn producer(tx: Sender<string>) {
+func:producer = NIL(Sender<string>:tx) {
     till(9, 1) {
         message: string = "Message $($)";
         tx.send(message);
@@ -253,14 +253,14 @@ fn producer(tx: Sender<string>) {
     }
 }
 
-fn consumer(id: i32, rx: Receiver<string>) {
+func:consumer = NIL(int32:id, Receiver<string>:rx) {
     while message = rx.recv() {
-        stdout << "Consumer $id got: $message";
+        print(`Consumer &{id} got: &{message}`);
         Thread.sleep(50);  // Simulate processing
     }
 }
 
-fn main() {
+func:main = NIL() {
     channel: Channel<string> = Channel.new();
     
     // One producer
@@ -288,9 +288,9 @@ fn main() {
 ### Parallel Map
 
 ```aria
-import std.thread.Thread;
+use std.thread.Thread;
 
-fn parallel_map<T, R>(items: []T, f: fn(T) -> R, num_threads: i32) -> []R {
+func:parallel_map = R,([]T:items, fn(T:f)num_threads: i32) -> []R {
     results: []R = [];
     chunk_size: i32 = items.len() / num_threads;
     threads: []Thread<[]R> = [];
@@ -311,7 +311,7 @@ fn parallel_map<T, R>(items: []T, f: fn(T) -> R, num_threads: i32) -> []R {
             till(chunk.length - 1, 1) {
                 chunk_results.push(f(chunk[$]));
             }
-            return chunk_results;
+            pass(chunk_results);
         });
         threads.push(thread);
     }
@@ -321,18 +321,18 @@ fn parallel_map<T, R>(items: []T, f: fn(T) -> R, num_threads: i32) -> []R {
         results.extend(chunk_results);
     }
     
-    return results;
+    pass(results);
 }
 
 // Usage
-fn square(x: i32) -> i32 {
-    return x * x;
+func:square = int32(int32:x) {
+    pass(x * x);
 }
 
-fn main() {
+func:main = NIL() {
     numbers: []i32 = [1, 2, 3, 4, 5, 6, 7, 8];
     squared: []i32 = parallel_map(numbers, square, 4);
-    stdout << squared;
+    print(squared);
 }
 ```
 
@@ -341,16 +341,16 @@ fn main() {
 ## Thread-Local Storage
 
 ```aria
-import std.thread.ThreadLocal;
+use std.thread.ThreadLocal;
 
 thread_id: ThreadLocal<i32> = ThreadLocal.new();
 
-fn worker(id: i32) {
+func:worker = NIL(int32:id) {
     thread_id.set(id);
     
     // Each thread has its own copy
     my_id: i32 = thread_id.get();
-    stdout << "Thread $my_id";
+    print(`Thread &{my_id}`);
 }
 ```
 
@@ -361,13 +361,13 @@ fn worker(id: i32) {
 ### ✅ DO: Use for CPU-Bound Work
 
 ```aria
-fn parallel_compute(data: []f64) -> f64 {
+func:parallel_compute = flt64([]f64:data) {
     threads: []Thread<f64> = [];
     chunks = data.chunks(1000);
     
     till(chunks.length - 1, 1) {
         thread: Thread<f64> = Thread.spawn(|| {
-            return expensive_computation(chunks[$]);
+            pass(expensive_computation(chunks[$]));
         });
         threads.push(thread);
     }
@@ -376,18 +376,18 @@ fn parallel_compute(data: []f64) -> f64 {
     till(threads.length - 1, 1) {
         sum += threads[$].join();
     }
-    return sum;
+    pass(sum);
 }
 ```
 
 ### ✅ DO: Use Synchronization Primitives
 
 ```aria
-import std.sync.Mutex;
+use std.sync.Mutex;
 
 shared_data: Mutex<HashMap<string, i32>> = Mutex.new(HashMap.new());
 
-fn update_shared() {
+func:update_shared = NIL() {
     lock = shared_data.lock();
     lock.insert("key", 42);
     // Automatically unlocked
@@ -400,15 +400,15 @@ fn update_shared() {
 // ❌ Bad - data race!
 counter: i32 = 0;
 
-fn increment() {
+func:increment = NIL() {
     counter += 1;  // Not thread-safe!
 }
 
 // ✅ Good - use atomics or mutex
-import std.sync.Atomic;
+use std.sync.Atomic;
 counter: Atomic<i32> = Atomic.new(0);
 
-fn increment() {
+func:increment = NIL() {
     counter.fetch_add(1);  // Thread-safe
 }
 ```

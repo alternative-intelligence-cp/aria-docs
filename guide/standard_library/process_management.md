@@ -34,7 +34,7 @@ Aria provides comprehensive process management through `std.process`:
 ```aria
 // Run command, get output
 Result: ProcessResult = exec("git", ["status"])?;
-stdout << result.stdout;
+print(result.stdout);
 ```
 
 **Use when**: Simple scripts, getting command output, synchronous execution
@@ -94,7 +94,7 @@ when result.exit_code == 0 then
     files: []string = result.stdout.split("\n");
     process_files(files);
 else
-    stderr << "Command failed: $(result.stderr)";
+    stderr_write("Command failed: $(result.stderr)");
 end
 ```
 
@@ -126,7 +126,7 @@ fork_Result: ForkResult = fork()?;
 
 when fork_result is Parent(child_pid) then
     Result: ProcessResult = wait(child_pid)?;
-    stdout << "Child finished";
+    print("Child finished");
     
 elsif fork_result is Child then
     // Replace child with different program
@@ -189,7 +189,7 @@ Result: ProcessResult = wc.wait()?;
 ProcessResult:Result = exec(command, args)?;
 
 when result.exit_code != 0 then
-    stderr << "Command failed: $(result.stderr)";
+    stderr_write("Command failed: $(result.stderr)");
     fail("Execution error");
 end
 ```
@@ -210,7 +210,7 @@ defer process.wait()?;
 Result: Result<ProcessResult> = exec("risky_command", args);
 
 when result is Err(msg) then
-    log_error("Process error: $msg");
+    log_error(`Process error: &{msg}`);
     // Fallback or recovery
 end
 ```
@@ -239,7 +239,7 @@ end
 ```aria
 // DANGEROUS
 user_input: string = get_user_input();
-exec("sh", ["-c", "rm $user_input"])?;  // ❌ UNSAFE!
+exec("sh", ["-c", `rm &{user_input}`])?;  // ❌ UNSAFE!
 
 // SAFE
 exec("rm", [user_input])?;  // ✅ Arguments properly escaped

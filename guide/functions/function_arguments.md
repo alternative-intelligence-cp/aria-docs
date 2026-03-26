@@ -10,8 +10,8 @@
 
 ```aria
 // Parameters: name and age
-fn greet(name: string, age: i32) {
-    stdout << "Hello, " << name << ", age " << age << "\n";
+func:greet = NIL(string:name, int32:age) {
+    print("Hello, " + name + ", age " + age + "\n");
 }
 
 // Arguments: "Alice" and 30
@@ -25,8 +25,8 @@ greet("Alice", 30);
 Arguments must match parameter order:
 
 ```aria
-fn divide(numerator: i32, denominator: i32) -> i32 {
-    return numerator / denominator;
+func:divide = int32(int32:numerator, int32:denominator) {
+    pass(numerator / denominator);
 }
 
 // Order matters!
@@ -41,8 +41,8 @@ Result: i32 = divide(2, 10);  // 0
 Arguments must match parameter types:
 
 ```aria
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 
 // ✅ Correct: Types match
@@ -60,8 +60,8 @@ Result: i32 = add(5, 10);
 Must match parameter count exactly:
 
 ```aria
-fn calculate(a: i32, b: i32, c: i32) -> i32 {
-    return a + b + c;
+func:calculate = int32(int32:a, int32:b, int32:c) {
+    pass(a + b + c);
 }
 
 // ✅ Correct: 3 arguments
@@ -77,7 +77,7 @@ Result: i32 = calculate(1, 2, 3);
 ## Literal Arguments
 
 ```aria
-fn process(id: i32, name: string, active: bool) {
+func:process = NIL(int32:id, string:name, bool:active) {
     // Implementation
 }
 
@@ -90,8 +90,8 @@ process(123, "Alice", true);
 ## Variable Arguments
 
 ```aria
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 
 x: i32 = 5;
@@ -106,8 +106,8 @@ Result: i32 = add(x, y);
 ## Expression Arguments
 
 ```aria
-fn multiply(a: i32, b: i32) -> i32 {
-    return a * b;
+func:multiply = int32(int32:a, int32:b) {
+    pass(a * b);
 }
 
 // Expressions as arguments
@@ -120,12 +120,12 @@ Result: i32 = multiply(get_x(), get_y());
 ## Array Arguments
 
 ```aria
-fn sum(numbers: []i32) -> i32 {
+func:sum = int32([]i32:numbers) {
     total: i32 = 0;
     till(numbers.length - 1, 1) {
         total = total + numbers[$];
     }
-    return total;
+    pass(total);
 }
 
 // Array literal
@@ -141,9 +141,9 @@ Result: i32 = sum(numbers);
 ## Tuple Arguments
 
 ```aria
-fn process(pair: (i32, string)) {
+func:process = NIL((i32, string:pair)) {
     (num, text) = pair;
-    stdout << num << ": " << text << "\n";
+    print(num + ": " + text + "\n");
 }
 
 // Tuple literal
@@ -164,8 +164,8 @@ struct Point {
     y: i32
 }
 
-fn print_point(p: Point) {
-    stdout << "(" << p.x << ", " << p.y << ")\n";
+func:print_point = NIL(Point:p) {
+    print("(" + p.x + ", " + p.y + ")\n");
 }
 
 // Struct literal
@@ -181,15 +181,15 @@ print_point(point);
 ## Function Arguments (Callbacks)
 
 ```aria
-fn apply(value: i32, f: fn(i32) -> i32) -> i32 {
-    return f(value);
+func:apply = i32)(int32:value, fn(i32:f)-> i32 {
+    pass(f(value));
 }
 
 // Lambda as argument
 Result: i32 = apply(5, |x| x * 2);
 
 // Named function as argument
-fn double(x: i32) -> i32 { return x * 2; }
+func:double = int32(int32:x) { return x * 2; }
 Result: i32 = apply(5, double);
 
 // Variable holding function
@@ -202,11 +202,11 @@ Result: i32 = apply(5, doubler);
 ## Optional Arguments (using Option)
 
 ```aria
-fn greet(name: string, title: string?) {
+func:greet = NIL(string:name, string?:title) {
     when title != nil then
-        stdout << title << " " << name << "\n";
+        print(title + " " + name + "\n");
     else
-        stdout << name << "\n";
+        print(name + "\n");
     end
 }
 
@@ -222,14 +222,14 @@ greet("Bob", nil);
 ## Mutable Arguments
 
 ```aria
-fn increment(count: $i32) {
+func:increment = NIL($i32:count) {
     $count = $count + 1;
 }
 
 // Must pass with $
 value: i32 = 10;
 increment($value);  // Pass by reference
-stdout << value;    // 11
+print(value);    // 11
 ```
 
 ---
@@ -237,8 +237,8 @@ stdout << value;    // 11
 ## Generic Arguments
 
 ```aria
-fn identity<T>(value: T) -> T {
-    return value;
+func:identity = T(T:value) {
+    pass(value);
 }
 
 // Type inferred from argument
@@ -256,15 +256,15 @@ num: i32 = identity::<i32>(42);
 Arguments are evaluated **left to right**:
 
 ```aria
-fn test(a: i32, b: i32, c: i32) {
-    stdout << a << ", " << b << ", " << c << "\n";
+func:test = NIL(int32:a, int32:b, int32:c) {
+    print(a + ", " + b + ", " + c + "\n");
 }
 
 count: i32 = 0;
 
-fn next() -> i32 {
+func:next = int32() {
     $count = $count + 1;
-    return $count;
+    pass($count);
 }
 
 // Evaluates: next(), next(), next()
@@ -278,21 +278,21 @@ test(next(), next(), next());  // "1, 2, 3"
 ### Copy Types (Pass by Value)
 
 ```aria
-fn modify(x: i32) {
+func:modify = NIL(int32:x) {
     x = x + 10;  // Modifies local copy
 }
 
 value: i32 = 5;
 modify(value);
-stdout << value;  // Still 5 (not modified)
+print(value);  // Still 5 (not modified)
 ```
 
 ### Move Types (Ownership Transfer)
 
 ```aria
-fn consume(data: Vec<i32>) {
+func:consume = NIL(Vec<i32>:data) {
     // data is now owned by this function
-    stdout << data.len() << "\n";
+    print(data.len() + "\n");
 }
 
 vec: Vec<i32> = vec![1, 2, 3];
@@ -303,13 +303,13 @@ consume(vec);
 ### Reference Types (Pass by Reference)
 
 ```aria
-fn modify(data: $Vec<i32>) {
+func:modify = NIL($Vec<i32>:data) {
     $data.push(4);  // Modifies original
 }
 
 vec: Vec<i32> = vec![1, 2, 3];
 modify($vec);  // Pass reference
-stdout << vec.len();  // 4 (modified)
+print(vec.len());  // 4 (modified)
 ```
 
 ---
@@ -324,7 +324,7 @@ stdout << vec.len();  // 4 (modified)
 // result = add(...numbers);
 
 // ✅ Right: Pass array directly
-fn sum(numbers: []i32) -> i32 { ... }
+func:sum = int32([]i32:numbers) { ... }
 result = sum([1, 2, 3]);
 ```
 
@@ -350,8 +350,8 @@ user = create_user(params);
 struct Calculator;
 
 impl Calculator {
-    fn add(a: i32, b: i32) -> i32 {
-        return a + b;
+    func:add = int32(int32:a, int32:b) {
+        pass(a + b);
     }
 }
 
@@ -385,7 +385,7 @@ struct Config {
     retry: bool
 }
 
-fn connect(config: Config) -> Connection {
+func:connect = Connection(Config:config) {
     // Use config.host, config.port, etc.
 }
 
@@ -432,7 +432,7 @@ age: i32 = parse_age(input);
 when age >= 0 and age <= 120 then
     set_user_age(user, age);
 else
-    stderr << "Invalid age\n";
+    stderr_write("Invalid age\n");
 end
 ```
 
@@ -452,7 +452,7 @@ process(data, MAX_RETRIES, VERBOSE);
 
 ```aria
 // Wrong: Easy to mix up
-fn create_rectangle(width: i32, height: i32) { }
+func:create_rectangle = NIL(int32:width, int32:height) { }
 create_rectangle(10, 20);  // Which is which?
 
 // Better: Use struct or named types
@@ -460,7 +460,7 @@ struct Dimensions {
     width: i32,
     height: i32
 }
-fn create_rectangle(dims: Dimensions) { }
+func:create_rectangle = NIL(Dimensions:dims) { }
 ```
 
 ---

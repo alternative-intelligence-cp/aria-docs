@@ -836,11 +836,11 @@ Stack variables live until the end of their scope:
 <p>
 {
 x: i32 = 42;
-stdout << x;  // OK
+print(x);  // OK
 }  // x freed here
 </p>
 <p>
-stdout << x;  // ❌ Error: x doesn't exist
+print(x);  // ❌ Error: x doesn't exist
 }</code></pre>
 </p>
 <hr>
@@ -957,12 +957,12 @@ outer: i32 = 1;
 <p>
 {
 inner: i32 = 2;
-stdout << outer + inner;  // 3
+print(outer + inner);  // 3
 }  // inner freed
 </p>
 <p>
-stdout << outer;  // OK
-stdout << inner;  // ❌ Error
+print(outer);  // OK
+print(inner);  // ❌ Error
 }</code></pre>
 </p>
 <hr>
@@ -973,7 +973,7 @@ When errors occur, stack frames are <strong>unwound</strong>:
 <pre><code>fn main() {
 <p>
 when process() == ERR then
-stderr << "Error occurred\n";
+stderr_write("Error occurred\n");
 end
 }
 </p>

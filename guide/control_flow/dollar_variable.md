@@ -17,7 +17,7 @@ The **dollar sign (`$`)** is the **automatic index variable** in `till` loops, r
 ```aria
 till(array.length - 1, 1) {
     // $ is the current index (0, 1, 2, ...)
-    stdout << $ << ": " << array[$] << "\n";
+    print($ + ": " + array[$] + "\n");
 }
 ```
 
@@ -55,7 +55,7 @@ numbers: []i32 = [10, 20, 30];
 
 till(numbers.length - 1, 1) {
     // $ is 0, then 1, then 2
-    stdout << "Index " << $ << " = " << numbers[$] << "\n";
+    print("Index " + $ + " = " + numbers[$] + "\n");
 }
 
 // Output:
@@ -75,7 +75,7 @@ users: []User = load_users();
 
 till(users.length - 1, 1) {
     user: auto = users[$];  // $ is the index
-    stdout << user.name << "\n";
+    print(user.name + "\n");
 }
 ```
 
@@ -93,7 +93,7 @@ till(scores.length - 1, 1) {
     scores[$] = scores[$] * 2;
 }
 
-stdout << scores;  // [170, 180, 156, 184]
+print(scores);  // [170, 180, 156, 184]
 ```
 
 ---
@@ -138,7 +138,7 @@ till(items.length - 1, 1) {
 till(items.length - 1, 1) {
     // $ can be used in any expression
     rank: i32 = $ + 1;  // 1-based ranking
-    stdout << rank << ". " << items[$] << "\n";
+    print(rank + ". " + items[$] + "\n");
 }
 ```
 
@@ -208,7 +208,7 @@ till(strings.length - 1, 1) {
 ```aria
 till(5, 1) {
     // $ is 0, 1, 2, 3, 4, 5
-    stdout << "Iteration: " << $ << "\n";
+    print("Iteration: " + $ + "\n");
 }
 ```
 
@@ -240,7 +240,7 @@ till(scores.length - 1, 1) {
 // Good: Store index for clarity (use int64, not int32)
 till(items.length - 1, 1) {
     idx: int64 = $;
-    stdout << idx << ": " << items[idx] << "\n";
+    print(idx + ": " + items[idx] + "\n");
 }
 ```
 

@@ -675,13 +675,13 @@ z: i32 = x << 2;  // 20 (5 * 4)</code></pre>
 <h2>Stream Output</h2>
 <pre><code>// Output to stdout
 <p>
-stdout << "Hello";
-stdout << 42;
-stdout << 3.14;
+print("Hello");
+print(42);
+print(3.14);
 </p>
 <p>
 // Chained output
-stdout << "Value: " << value << "\n";</code></pre>
+print("Value: " << value + "\n");</code></pre>
 </p>
 <hr>
 <h2>Multiply by Powers of 2</h2>
@@ -727,7 +727,7 @@ WRITE: i32 = 1 << 1;
 EXEC: i32 = 1 << 2;</code></pre>
 </p>
 <h3>✅ DO: Chain Stream Output</h3>
-<pre><code>stdout << "Name: " << name << ", Age: " << age << "\n";</code></pre>
+<pre><code>print("Name: " << name << ", Age: " << age + "\n");</code></pre>
 <h3>❌ DON'T: Shift by Negative</h3>
 <pre><code>// Undefined!
 <p>
@@ -772,7 +772,7 @@ value ^= (1 << position);</code></pre>
 <pre><code>value: i32 = 5;
 <p>
 value <<= 2;  // value = value << 2
-stdout << value;  // 20</code></pre>
+print(value);  // 20</code></pre>
 </p>
 <hr>
 <h2>Related</h2>

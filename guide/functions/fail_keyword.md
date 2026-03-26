@@ -31,15 +31,15 @@ end
 ### Simple Error Handling
 
 ```aria
-fn divide_safe(a: tbb32, b: tbb32) -> tbb32 {
+func:divide_safe = tbb32(tbb32:a, tbb32:b) {
     Result: tbb32 = divide(a, b);
     
     when fail result then
-        stderr << "ERROR: Division failed (divide by zero?)\n";
-        return 0;  // Fallback value
+        stderr_write("ERROR: Division failed (divide by zero?)\n");
+        pass(0);  // Fallback value
     end
     
-    return result;
+    pass(result);
 }
 ```
 
@@ -58,14 +58,14 @@ fn divide_safe(a: tbb32, b: tbb32) -> tbb32 {
 ## Inline Error Checking
 
 ```aria
-fn process_file(filename: string) -> bool {
+func:process_file = bool(string:filename) {
     when fail open_file(filename) then
-        stderr << "ERROR: Cannot open file: " << filename << "\n";
-        return false;
+        stderr_write("ERROR: Cannot open file: " + filename + "\n");
+        pass(false);
     end
     
     // File opened successfully, continue processing
-    return true;
+    pass(true);
 }
 ```
 
@@ -76,60 +76,60 @@ fn process_file(filename: string) -> bool {
 ### With Fallback Values
 
 ```aria
-fn parse_number_safe(s: string) -> tbb32 {
+func:parse_number_safe = tbb32(string:s) {
     num: tbb32 = parse(s);
     
     when fail num then
-        stddbg << "Parse failed, returning default";
-        return 0;  // Default value
+        stddbg_write("Parse failed, returning default");
+        pass(0);  // Default value
     end
     
-    return num;
+    pass(num);
 }
 ```
 
 ### With Error Messages
 
 ```aria
-fn load_config(path: string) -> Config? {
+func:load_config = Config?(string:path) {
     file: File? = open_file(path);
     
     when fail file then
-        stderr << "ERROR: Cannot load config from " << path << "\n";
-        stderr << "  Using default configuration\n";
-        return default_config();
+        stderr_write("ERROR: Cannot load config from " + path + "\n");
+        stderr_write("  Using default configuration\n");
+        pass(default_config());
     end
     
     content: string = pass file.read();
     config: Config = pass parse_json(content);
     
-    return config;
+    pass(config);
 }
 ```
 
 ### Chaining Error Checks
 
 ```aria
-fn process_pipeline(input: string) -> Data? {
+func:process_pipeline = Data?(string:input) {
     step1: Data? = parse(input);
     when fail step1 then
-        stderr << "ERROR: Parse failed\n";
-        return ERR;
+        stderr_write("ERROR: Parse failed\n");
+        pass(ERR);
     end
     
     step2: Data? = validate(step1);
     when fail step2 then
-        stderr << "ERROR: Validation failed\n";
-        return ERR;
+        stderr_write("ERROR: Validation failed\n");
+        pass(ERR);
     end
     
     step3: Data? = transform(step2);
     when fail step3 then
-        stderr << "ERROR: Transform failed\n";
-        return ERR;
+        stderr_write("ERROR: Transform failed\n");
+        pass(ERR);
     end
     
-    return step3;
+    pass(step3);
 }
 ```
 
@@ -138,15 +138,15 @@ fn process_pipeline(input: string) -> Data? {
 ## `fail` with `else`
 
 ```aria
-fn get_value(key: string) -> tbb32 {
+func:get_value = tbb32(string:key) {
     value: tbb32 = lookup(key);
     
     when fail value then
-        stderr << "Key not found: " << key << "\n";
-        return 0;
+        stderr_write("Key not found: " + key + "\n");
+        pass(0);
     else
-        stddbg << "Found value: " << value;
-        return value;
+        stddbg_write("Found value: " + value);
+        pass(value);
     end
 }
 ```
@@ -156,24 +156,24 @@ fn get_value(key: string) -> tbb32 {
 ## Combining `fail` and `pass`
 
 ```aria
-fn robust_process(data: string) -> Result {
+func:robust_process = Result(string:data) {
     // Try primary method
     Result: Result? = try_primary(data);
     
     when fail result then
-        stddbg << "Primary method failed, trying fallback";
+        stddbg_write("Primary method failed, trying fallback");
         
         // Try fallback method
         result = try_fallback(data);
         
         when fail result then
-            stderr << "ERROR: Both methods failed\n";
-            return ERR;
+            stderr_write("ERROR: Both methods failed\n");
+            pass(ERR);
         end
     end
     
     // At this point, result is guaranteed to be valid
-    return pass finalize(result);
+    pass(pass finalize(result));
 }
 ```
 
@@ -184,35 +184,35 @@ fn robust_process(data: string) -> Result {
 ### Retry Logic
 
 ```aria
-fn fetch_with_retry(url: string, max_attempts: i32) -> Data? {
+func:fetch_with_retry = Data?(string:url, int32:max_attempts) {
     till(max_attempts - 1, 1) {
         attempt: i32 = $ + 1;
-        stddbg << "Attempt " << attempt << "/" << max_attempts;
+        stddbg_write("Attempt " + attempt + "/" + max_attempts);
         
         data: Data? = fetch(url);
         
         when fail data then
             when attempt < max_attempts then
-                stddbg << "Retrying...";
+                stddbg_write("Retrying...");
                 continue;
             else
-                stderr << "ERROR: All retry attempts failed\n";
-                return ERR;
+                stderr_write("ERROR: All retry attempts failed\n");
+                pass(ERR);
             end
         end
         
         // Success!
-        return data;
+        pass(data);
     }
     
-    return ERR;  // Shouldn't reach here
+    pass(ERR);  // Shouldn't reach here
 }
 ```
 
 ### Graceful Degradation
 
 ```aria
-fn get_user_preference(user_id: i32, key: string) -> string {
+func:get_user_preference = string(int32:user_id, string:key) {
     // Try user-specific preference
     pref: string? = db.get_user_pref(user_id, key);
     
@@ -222,12 +222,12 @@ fn get_user_preference(user_id: i32, key: string) -> string {
         
         when fail pref then
             // Ultimate fallback: hardcoded default
-            stddbg << "Using hardcoded default for " << key;
-            return "default_value";
+            stddbg_write("Using hardcoded default for " + key);
+            pass("default_value");
         end
     end
     
-    return pref;
+    pass(pref);
 }
 ```
 
@@ -236,23 +236,23 @@ fn get_user_preference(user_id: i32, key: string) -> string {
 ## Error Logging
 
 ```aria
-fn process_with_logging(item: Item) -> Result? {
+func:process_with_logging = Result?(Item:item) {
     Result: Result? = process(item);
     
     when fail result then
         // Log error details
-        stderr << "ERROR: Processing failed\n";
-        stderr << "  Item ID: " << item.id << "\n";
-        stderr << "  Item type: " << item.type << "\n";
-        stderr << "  Timestamp: " << Time::now() << "\n";
+        stderr_write("ERROR: Processing failed\n");
+        stderr_write("  Item ID: " + item.id + "\n");
+        stderr_write("  Item type: " + item.type + "\n");
+        stderr_write("  Timestamp: " + Time::now() + "\n");
         
         // Also log to debug stream
-        stddbg << "Full item data: " << item.serialize();
+        stddbg_write("Full item data: " + item.serialize());
         
-        return ERR;
+        pass(ERR);
     end
     
-    return result;
+    pass(result);
 }
 ```
 
@@ -264,10 +264,10 @@ fn process_with_logging(item: Item) -> Result? {
 
 ```aria
 when fail parse_json(data) then
-    stderr << "ERROR: Failed to parse JSON\n";
-    stderr << "  Data length: " << data.len() << " bytes\n";
-    stderr << "  First 100 chars: " << data.substr(0, 100) << "\n";
-    return ERR;
+    stderr_write("ERROR: Failed to parse JSON\n");
+    stderr_write("  Data length: " + data.len() + " bytes\n");
+    stderr_write("  First 100 chars: " + data.substr(0, 100) + "\n");
+    pass(ERR);
 end
 ```
 
@@ -278,7 +278,7 @@ end
 timeout: tbb32 = load_timeout_config();
 
 when fail timeout then
-    stddbg << "Using default timeout";
+    stddbg_write("Using default timeout");
     timeout = 30;  // 30 seconds default
 end
 ```
@@ -287,9 +287,9 @@ end
 
 ```aria
 when fail critical_operation() then
-    stderr << "CRITICAL: Operation failed, aborting\n";
-    stddbg << "Stack trace: " << get_stack_trace();
-    return ERR;  // Propagate error upward
+    stderr_write("CRITICAL: Operation failed, aborting\n");
+    stddbg_write("Stack trace: " + get_stack_trace());
+    pass(ERR);  // Propagate error upward
 end
 ```
 
@@ -304,8 +304,8 @@ end
 
 // Right: At least log it
 when fail dangerous_operation() then
-    stderr << "ERROR: Operation failed\n";
-    return ERR;
+    stderr_write("ERROR: Operation failed\n");
+    pass(ERR);
 end
 ```
 
@@ -344,28 +344,28 @@ end
 
 ```aria
 // Using pass: Simple propagation
-fn simple_process(file: string) -> Data? {
+func:simple_process = Data?(string:file) {
     content: string = pass read_file(file);
     data: Data = pass parse(content);
-    return data;
+    pass(data);
     // Errors propagate automatically
 }
 
 // Using fail: Explicit handling
-fn robust_process(file: string) -> Data? {
+func:robust_process = Data?(string:file) {
     content: string? = read_file(file);
     
     when fail content then
-        stderr << "ERROR: Cannot read " << file << "\n";
+        stderr_write("ERROR: Cannot read " + file + "\n");
         content = try_backup_file(file + ".bak");
         
         when fail content then
-            return ERR;  // Both attempts failed
+            pass(ERR);  // Both attempts failed
         end
     end
     
     data: Data = pass parse(content);
-    return data;
+    pass(data);
 }
 ```
 
@@ -374,12 +374,12 @@ fn robust_process(file: string) -> Data? {
 ## Error State Introspection
 
 ```aria
-fn diagnose_error(value: tbb32) {
+func:diagnose_error = NIL(tbb32:value) {
     when fail value then
-        stdout << "Value is in error state (ERR)\n";
-        stddbg << "ERR value: " << value;  // Shows -128 for tbb8, etc.
+        print("Value is in error state (ERR)\n");
+        stddbg_write("ERR value: " + value);  // Shows -128 for tbb8, etc.
     else
-        stdout << "Value is valid: " << value << "\n";
+        print("Value is valid: " + value + "\n");
     end
 }
 ```
@@ -389,28 +389,28 @@ fn diagnose_error(value: tbb32) {
 ## Real-World Example: Database Query
 
 ```aria
-fn fetch_user_safely(user_id: i32) -> User? {
+func:fetch_user_safely = User?(int32:user_id) {
     // Try to fetch from cache first
     user: User? = cache.get_user(user_id);
     
     when fail user then
-        stddbg << "Cache miss for user " << user_id;
+        stddbg_write("Cache miss for user " + user_id);
         
         // Fetch from database
         user = db.query_user(user_id);
         
         when fail user then
-            stderr << "ERROR: User " << user_id << " not found in database\n";
-            stddbg << "Database connection status: " << db.status();
-            return ERR;
+            stderr_write("ERROR: User " + user_id + " not found in database\n");
+            stddbg_write("Database connection status: " + db.status());
+            pass(ERR);
         end
         
         // Cache the result for next time
         cache.set_user(user_id, user);
-        stddbg << "Cached user " << user_id;
+        stddbg_write("Cached user " + user_id);
     end
     
-    return user;
+    pass(user);
 }
 ```
 
@@ -419,34 +419,34 @@ fn fetch_user_safely(user_id: i32) -> User? {
 ## Error Context with Multiple Failures
 
 ```aria
-fn complex_operation(data: Data) -> Result? {
+func:complex_operation = Result?(Data:data) {
     // Try operation A
     result_a: Result? = try_method_a(data);
     
     when fail result_a then
-        stddbg << "Method A failed, trying B";
+        stddbg_write("Method A failed, trying B");
         
         // Try operation B
         result_b: Result? = try_method_b(data);
         
         when fail result_b then
-            stddbg << "Method B failed, trying C";
+            stddbg_write("Method B failed, trying C");
             
             // Try operation C
             result_c: Result? = try_method_c(data);
             
             when fail result_c then
-                stderr << "ERROR: All methods (A, B, C) failed\n";
-                return ERR;
+                stderr_write("ERROR: All methods (A, B, C) failed\n");
+                pass(ERR);
             end
             
-            return result_c;
+            pass(result_c);
         end
         
-        return result_b;
+        pass(result_b);
     end
     
-    return result_a;
+    pass(result_a);
 }
 ```
 

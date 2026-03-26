@@ -162,7 +162,7 @@ SocketAddress:web_server = {
 
 // Validate port range (though all uint16 values valid for ports)
 func:is_privileged_port = (port: uint16) -> bool {
-    return port < 1024u16;  // Ports 0-1023 are privileged
+    pass(port < 1024u16);  // Ports 0-1023 are privileged
 }
 
 if (is_privileged_port(web_server.port)) {
@@ -352,10 +352,10 @@ till 11u8 loop {
 ```aria
 func:safe_subtract_u8 = (a: uint8, b: uint8) -> ?uint8 {
     if (b > a) {
-        return NIL;  // Would underflow
+        pass(NIL);  // Would underflow
     }
     
-    return a - b;  // Safe
+    pass(a - b);  // Safe
 }
 
 // Usage
@@ -613,17 +613,17 @@ func:saturating_add_u8 = (a: uint8, b: uint8) -> uint8 {
     uint16:wide_sum = uint16(a) + uint16(b);
     
     if (wide_sum > 255u16) {
-        return 255u8;  // Saturate at max
+        pass(255u8);  // Saturate at max
     } else {
-        return uint8(wide_sum);
+        pass(uint8(wide_sum));
     }
 }
 
 func:saturating_sub_u8 = (a: uint8, b: uint8) -> uint8 {
     if (b > a) {
-        return 0u8;  // Saturate at min (prevent underflow wrap!)
+        pass(0u8);  // Saturate at min (prevent underflow wrap!)
     } else {
-        return a - b;
+        pass(a - b);
     }
 }
 
@@ -637,10 +637,10 @@ uint8:brighter = saturating_add_u8(pixel, 100u8);  // 255 (saturated, not wrappe
 ```aria
 func:narrow_to_u8 = (value: uint32) -> ?uint8 {
     if (value > 255u32) {
-        return NIL;  // Out of range
+        pass(NIL);  // Out of range
     }
     
-    return uint8(value);  // Safe cast
+    pass(uint8(value));  // Safe cast
 }
 
 // Usage
@@ -657,14 +657,14 @@ if (small == NIL) {
 ```aria
 // Pack two uint8 into uint16
 func:pack_u16 = (high: uint8, low: uint8) -> uint16 {
-    return (uint16(high) << 8u16) | uint16(low);
+    pass((uint16(high) << 8u16) | uint16(low));
 }
 
 // Unpack uint16 into two uint8
 func:unpack_u16 = (value: uint16) -> (uint8, uint8) {
     uint8:high = uint8((value >> 8u16) & 0xFFu16);
     uint8:low = uint8(value & 0xFFu16);
-    return (high, low);
+    pass((high, low));
 }
 
 // Network byte order (big-endian)

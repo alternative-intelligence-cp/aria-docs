@@ -1,422 +1,333 @@
-# Macros
+# Preprocessor Macros
 
 **Category**: Advanced Features → Macros  
-**Purpose**: Code generation and compile-time metaprogramming
+**Added**: v0.2.12  
+**Purpose**: Text-level code generation and conditional compilation  
+**Style**: NASM-inspired `%`-prefixed directives
 
 ---
 
 ## Overview
 
-Macros generate code at **compile time**, enabling powerful abstractions without runtime cost.
+Aria's preprocessor runs as Phase 0 of compilation, before lexing. It performs text substitution, macro expansion, conditional compilation, and file inclusion. All directives use the `%` prefix.
 
 ---
 
-## Basic Macro
+## Simple Constants (`%define` / `%undef`)
 
 ```aria
-macro square(x) {
-    return x * x;
-}
+%define MAX_SIZE 1024
+%define APP_NAME "MyApp"
+%define PI 3.14159265358979
 
-fn main() {
-    Result: i32 = square(5);  // Expands to: 5 * 5
-    stdout << result;  // 25
-}
+func:main = int32() {
+    int32:size = MAX_SIZE;
+    pass(size);
+};
+
+failsafe {
+    pass(1);
+};
+```
+
+`%define` creates a text substitution — every occurrence of the identifier is replaced with the value.
+
+```aria
+%define TEMP_FLAG 1
+// ... use TEMP_FLAG ...
+%undef TEMP_FLAG
+// TEMP_FLAG is no longer defined
+```
+
+**Note**: `%define` is value-only (no parameters). For parametric macros, use `%macro`.
+
+---
+
+## Numeric Assignment (`%assign`)
+
+```aria
+%assign COUNT 0
+%assign NEXT_ID COUNT + 1
+```
+
+`%assign` evaluates a numeric expression and assigns the result.
+
+---
+
+## Multi-Line Macros (`%macro` / `%endmacro`)
+
+```aria
+%macro DECLARE_GETTER 2
+func:get_%1 = %2() {
+    pass(self.%1);
+};
+%endmacro
+```
+
+The number after the macro name is the **parameter count**. Parameters are referenced by position: `%1`, `%2`, etc. (1-indexed).
+
+### Invocation
+
+Macros can be invoked with parenthesized arguments or NASM-style space-separated arguments:
+
+```aria
+// Parenthesized (recommended for Aria)
+DECLARE_GETTER(name, string)
+DECLARE_GETTER(age, int32)
+
+// NASM-style (also supported)
+DECLARE_GETTER name string
 ```
 
 ---
 
-## Macro Syntax
+## Parameter Substitution
+
+| Pattern | Meaning | Example |
+|---|---|---|
+| `%1`, `%2`, ... | Positional parameter (1-indexed) | First arg, second arg, ... |
+| `%0` | Argument count | `3` if called with 3 args |
+| `%*` | All arguments as comma-separated list | `a, b, c` |
+| `#%1` | Stringification — wraps param in quotes | `"hello"` if arg is `hello` |
+| `##` | Token pasting — concatenates adjacent tokens | `foo##bar` → `foobar` |
+
+### Example: Stringification and Token Pasting
 
 ```aria
-// Simple macro
-macro NAME(params) {
-    // Code to generate
-}
+%macro MAKE_TEST 2
+func:test_##%1 = int32() {
+    string:name = #%1;
+    print("Testing: " + name + "\n");
+    int32:result = %2;
+    pass(result);
+};
+%endmacro
 
-// Macro with type
-macro<T> NAME(params) {
-    // Generic macro
-}
+MAKE_TEST(addition, 2 + 3)
+// Expands to:
+// func:test_addition = int32() {
+//     string:name = "addition";
+//     print("Testing: " + name + "\n");
+//     int32:result = 2 + 3;
+//     pass(result);
+// };
 ```
 
 ---
 
-## Code Generation
+## Variadic Macros (`N+`)
+
+Add `+` after the parameter count to accept additional arguments:
 
 ```aria
-macro repeat(n, code) {
-    comptime {
-        till(n - 1, 1) {
-            @emit(code);
-        }
-    }
-}
+%macro LOG 1+
+print("[" + %1 + "] " + %* + "\n");
+%endmacro
 
-fn main() {
-    repeat(3, {
-        stdout << "Hello";
-    });
+LOG("INFO", "User logged in from ", "192.168.1.1")
+// %1 = "INFO", %* = "User logged in from ", "192.168.1.1"
+```
+
+The `+` means "at least N arguments, accept more." Extra arguments beyond N are accessible via `%*`.
+
+---
+
+## Conditional Compilation
+
+```aria
+%define DEBUG
+
+%ifdef DEBUG
+func:log = NIL(string:msg) {
+    print("[DEBUG] " + msg + "\n");
+};
+%endif
+
+%ifndef RELEASE
+// Include debug-only code
+%endif
+```
+
+### Full Conditional Directives
+
+| Directive | Purpose |
+|---|---|
+| `%ifdef NAME` | True if NAME is defined |
+| `%ifndef NAME` | True if NAME is NOT defined |
+| `%if expr` | True if expression is nonzero |
+| `%elif expr` | Else-if branch |
+| `%else` | Else branch |
+| `%endif` | End conditional block |
+
+### Example: Platform-Specific Code
+
+```aria
+%define PLATFORM_LINUX
+
+%ifdef PLATFORM_LINUX
+%define NEWLINE "\n"
+%elif defined(PLATFORM_WINDOWS)
+%define NEWLINE "\r\n"
+%else
+%define NEWLINE "\n"
+%endif
+```
+
+---
+
+## File Inclusion (`%include`)
+
+```aria
+%include "common_macros.aria"
+%include "config.aria"
+```
+
+The included file's contents are inserted at the directive site, then preprocessed.
+
+---
+
+## Repeat Blocks (`%rep` / `%endrep`)
+
+```aria
+%assign I 0
+%rep 5
+// This block is repeated 5 times
+%assign I I + 1
+%endrep
+```
+
+---
+
+## Context Stack (`%push` / `%pop`)
+
+For local labels and scoped definitions:
+
+```aria
+%push my_context
+%define %$local_var 42
+// %$local_var is only valid in this context
+%pop
+// %$local_var is no longer accessible
+```
+
+The `%$` prefix creates context-local names, useful for avoiding collisions in nested macro expansions.
+
+---
+
+## Magic Constants
+
+The preprocessor provides built-in constants:
+
+| Constant | Expansion | Type |
+|---|---|---|
+| `__FILE__` | Current source filename (quoted string) | `"filename.aria"` |
+| `__LINE__` | Current source line number (integer) | `42` |
+| `__COUNTER__` | Auto-incrementing counter (starts at 0) | `0`, `1`, `2`, ... |
+
+```aria
+func:main = int32() {
+    print("Running from " + __FILE__ + " line " + __LINE__ + "\n");
     
-    // Expands to:
-    // stdout << "Hello";
-    // stdout << "Hello";
-    // stdout << "Hello";
-}
+    // __COUNTER__ gives a unique integer each time it's referenced
+    int32:id1 = __COUNTER__;
+    int32:id2 = __COUNTER__;
+    // id1 == 0, id2 == 1
+
+    pass(0);
+};
+
+failsafe {
+    pass(1);
+};
 ```
 
----
-
-## Token Manipulation
-
-```aria
-macro make_getter(field) {
-    fn get_$field() -> auto {
-        return self.$field;
-    }
-}
-
-struct User {
-    name: string,
-    age: i32,
-    
-    make_getter(name);  // Generates get_name()
-    make_getter(age);   // Generates get_age()
-}
-
-fn main() {
-    user: User = User { name: "Alice", age: 30 };
-    stdout << user.get_name();  // "Alice"
-}
-```
-
----
-
-## Variadic Macros
-
-```aria
-macro log(level, ...args) {
-    stdout << "[$level] ";
-    comptime {
-        till(args.length - 1, 1) {
-            @emit(stdout << args[$] << " ");
-        }
-    }
-    stdout << "\n";
-}
-
-fn main() {
-    log("INFO", "User", "logged in", "from", "192.168.1.1");
-    // Expands to:
-    // stdout << "[INFO] " << "User" << " " << "logged in" << " " << "from" << " " << "192.168.1.1" << "\n";
-}
-```
-
----
-
-## Common Patterns
-
-### Debug Print Macro
-
-```aria
-macro debug_print(expr) {
-    stdout << "$expr = " << expr << "\n";
-}
-
-fn main() {
-    x: i32 = 42;
-    debug_print(x);        // x = 42
-    debug_print(x + 10);   // x + 10 = 52
-}
-```
-
----
-
-### Assert Macro
-
-```aria
-macro assert(condition, message) {
-    if !condition {
-        stderr << "Assertion failed: $message\n";
-        stderr << "  at $__FILE__:$__LINE__\n";
-        exit(1);
-    }
-}
-
-fn main() {
-    x: i32 = 5;
-    assert(x > 0, "x must be positive");
-    assert(x < 10, "x must be less than 10");
-}
-```
-
----
-
-### Min/Max Macros
-
-```aria
-macro min(a, b) {
-    return if a < b { a } else { b };
-}
-
-macro max(a, b) {
-    return if a > b { a } else { b };
-}
-
-fn main() {
-    x: i32 = min(5, 10);  // 5
-    y: i32 = max(5, 10);  // 10
-}
-```
-
----
-
-### Defer Macro
-
-```aria
-macro defer(code) {
-    @scope_exit {
-        @emit(code);
-    }
-}
-
-fn process_file(path: string) -> Result<void> {
-    file: File = open(path)?;
-    defer(file.close());
-    
-    // Work with file
-    data: string = file.read_all()?;
-    
-    return Ok();
-    // file.close() called automatically
-}
-```
-
----
-
-### Generic Builder Macro
-
-```aria
-macro make_builder(TypeName, ...fields) {
-    struct ${TypeName}Builder {
-        comptime {
-            till(fields.length - 1, 1) {
-                ${fields[$].name}: ?${fields[$].type},
-            }
-        }
-    }
-    
-    impl ${TypeName}Builder {
-        pub fn new() -> ${TypeName}Builder {
-            return ${TypeName}Builder {
-                comptime {
-                    till(fields.length - 1, 1) {
-                        ${fields[$].name}: None,
-                    }
-                }
-            };
-        }
-        
-        comptime {
-            till(fields.length - 1, 1) {
-                pub fn ${fields[$].name}(value: ${fields[$].type}) -> ${TypeName}Builder {
-                    self.${fields[$].name} = Some(value);
-                    return self;
-                }
-            }
-        }
-        
-        pub fn build() -> ${TypeName} {
-            return ${TypeName} {
-                comptime {
-                    till(fields.length - 1, 1) {
-                        ${fields[$].name}: self.${fields[$].name}?,
-                    }
-                }
-            };
-        }
-    }
-}
-
-// Usage
-struct User {
-    name: string,
-    age: i32,
-    email: string,
-}
-
-make_builder(User, 
-    { name: "string", type: string },
-    { name: "age", type: i32 },
-    { name: "email", type: string }
-);
-
-fn main() {
-    user: User = UserBuilder.new()
-        .name("Alice")
-        .age(30)
-        .email("alice@example.com")
-        .build();
-}
-```
-
----
-
-### Enum Variants Macro
-
-```aria
-macro enum_variants(EnumType) {
-    pub fn variants() -> []string {
-        comptime {
-            variants: []string = [];
-            till(EnumType.__variants.length - 1, 1) {
-                variants.push(EnumType.__variants[$].name);
-            }
-            return variants;
-        }
-    }
-}
-
-enum Color {
-    Red,
-    Green,
-    Blue,
-    
-    enum_variants(Color);
-}
-
-fn main() {
-    variant_list = Color.variants();
-    till(variant_list.length - 1, 1) {
-        stdout << variant_list[$];  // "Red", "Green", "Blue"
-    }
-}
-```
+**Note**: `__FILE__` expands to a quoted string. `__LINE__` and `__COUNTER__` expand to bare integers.
 
 ---
 
 ## Macro Hygiene
 
-```aria
-// Unhygienic - can capture variables
-macro bad_swap(a, b) {
-    temp = a;  // ⚠️ Might capture existing 'temp'
-    a = b;
-    b = temp;
-}
+Aria's preprocessor automatically applies **hygienic renaming** to prevent variable name collisions across multiple expansions of the same macro. When the preprocessor detects `Type:Name` declaration patterns inside a macro body, it appends a unique suffix (`_hNNN`) to the variable name.
 
-// Hygienic - uses unique names
-macro swap(a, b) {
-    temp_$__COUNTER__ = a;  // Unique name
-    a = b;
-    b = temp_$__COUNTER__;
-}
+```aria
+%macro GEN_ABS 1
+func:abs_%1 = %1(%1:val) {
+    %1:temp = val;
+    if(temp < 0) {
+        temp = 0 - temp;
+    }
+    pass(temp);
+};
+%endmacro
+
+GEN_ABS(int8)
+GEN_ABS(int32)
+// Both expansions get unique 'temp' variables:
+// int8:temp_h0 and int32:temp_h1 — no collision
 ```
+
+### Hygiene Rules
+- Only `Type:Name` patterns are renamed (not bare identifiers)
+- Reserved keywords and built-in types are excluded
+- Macro parameters (`%1`, `%2`, etc.) are not renamed
+- Each expansion gets a unique atomic counter suffix
 
 ---
 
-## Compile-Time Introspection
+## Recursion Protection
 
-```aria
-macro print_type_info(T) {
-    stdout << "Type: $T\n";
-    stdout << "Size: ${@sizeof(T)}\n";
-    stdout << "Align: ${@alignof(T)}\n";
-    
-    comptime {
-        if @has_field(T, "name") {
-            stdout << "Has field 'name'\n";
-        }
-    }
-}
-
-struct User {
-    name: string,
-    age: i32,
-}
-
-fn main() {
-    print_type_info(User);
-}
-```
+- Direct recursion is caught via an `expanding_macros` tracking set
+- Maximum expansion depth: 1000 levels
+- If recursion is detected, the macro name is emitted as literal text
 
 ---
 
-## Best Practices
+## Common Patterns
 
-### ✅ DO: Use for Code Generation
+### Type-Generic Function Generator
 
 ```aria
-macro make_accessors(struct_name, ...fields) {
-    impl struct_name {
-        comptime {
-            till(fields.length - 1, 1) {
-                field = fields[$];
-                pub fn get_${field}() -> auto {
-                    return self.${field};
-                }
-                
-                pub fn set_${field}(value: auto) {
-                    self.${field} = value;
-                }
-            }
-        }
-    }
-}
+%macro MAKE_ADD 1
+func:add_%1 = %1(%1:a, %1:b) {
+    pass(a + b);
+};
+%endmacro
+
+MAKE_ADD(int32)
+MAKE_ADD(int64)
+MAKE_ADD(flt64)
 ```
 
-### ✅ DO: Use for Compile-Time Assertions
+### Assertion Macro
 
 ```aria
-macro static_assert(condition, message) {
-    comptime {
-        if !condition {
-            @compile_error(message);
-        }
-    }
+%macro ASSERT 1
+if(!(%1)) {
+    stderr_write("Assertion failed: " + #%1 + " at " + __FILE__ + ":" + __LINE__ + "\n");
+    pass(1);
 }
-
-fn main() {
-    static_assert(@sizeof(i32) == 4, "i32 must be 4 bytes");
-}
+%endmacro
 ```
 
-### ⚠️ WARNING: Avoid Complex Macros
+### Feature Flags
 
 ```aria
-// ❌ Too complex - hard to debug
-macro complex_logic(x, y, z, ...args) {
-    // 100 lines of macro code
-}
+%define ENABLE_LOGGING
+%define ENABLE_METRICS
 
-// ✅ Better - use functions or templates
-fn complex_logic(x: auto, y: auto, z: auto) -> auto {
-    // Clear, debuggable code
-}
-```
-
-### ❌ DON'T: Overuse Macros
-
-```aria
-// ❌ Unnecessary macro
-macro add(a, b) {
-    return a + b;
-}
-
-// ✅ Just use a function
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
-}
+%ifdef ENABLE_LOGGING
+%macro LOG 1+
+print("[LOG] " + %* + "\n");
+%endmacro
+%else
+%macro LOG 1+
+%endmacro
+%endif
 ```
 
 ---
 
 ## Related
 
-- [comptime](comptime.md) - Compile-time execution
-- [metaprogramming](metaprogramming.md) - Metaprogramming
-- [nasm_macros](nasm_macros.md) - NASM-style macros
-
----
-
-**Remember**: Macros are powerful but should be used **judiciously** - prefer functions when possible!
+- [Compile-Time Evaluation](comptime.md) — `comptime(expr)` for semantic-level CTFE
+- [Inline Functions](inline.md) — `inline func:` / `noinline func:` hints

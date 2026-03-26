@@ -688,11 +688,11 @@ at main (example.aria:14)
 <pre><code>fn process_file(path: string) -> Result<Data> {
 <p>
 content: string = readFile(path)
-.context("Failed to read file: $path")?;
+.context(`Failed to read file: &{path}`)?;
 </p>
 <p>
 data: Data = parse(content)
-.context("Failed to parse content from $path")?;
+.context(`Failed to parse content from &{path}`)?;
 </p>
 <p>
 return Ok(data);
@@ -715,8 +715,8 @@ frames = stack.frames();
 </p>
 <p>
 till(frames.length - 1, 1) {
-stdout << "Function: ${frames[$].function}";
-stdout << "File: ${frames[$].file}:${frames[$].line}";
+print("Function: &{frames[$].function}");
+print("File: &{frames[$].file}:&{frames[$].line}");
 }
 }</code></pre>
 </p>
@@ -742,9 +742,9 @@ return Ok();
 <p>
 fn main() {
 match level1() {
-Ok(_) => stdout << "Success",
+Ok(_) => print("Success"),
 Err(e) => {
-stderr << "Error: $e";
+stderr_write(`Error: &{e}`);
 // Stack automatically unwound
 }
 }
@@ -760,7 +760,7 @@ name: string,
 <p>
 impl Resource {
 fn destroy() {
-stdout << "Cleaning up $self.name";
+print(`Cleaning up &{self.name}`);
 }
 }
 </p>
@@ -803,7 +803,7 @@ path: string = get_config_path()
 </p>
 <p>
 content: string = readFile(path)
-.context("Failed to read config from $path")?;
+.context(`Failed to read config from &{path}`)?;
 </p>
 <p>
 config: Config = parse_config(content)
@@ -845,11 +845,11 @@ backtrace: StackTrace.capture(),
 </p>
 <p>
 fn print() {
-stderr << "Error: $self.message\n";
-stderr << "Backtrace:\n";
+stderr_write(`Error: &{self.message}\n`);
+stderr_write("Backtrace:\n");
 frames = self.backtrace.frames();
 till(frames.length - 1, 1) {
-stderr << "  ${frames[$].file}:${frames[$].line} - ${frames[$].function}\n";
+stderr_write("  &{frames[$].file}:&{frames[$].line} - &{frames[$].function}\n");
 }
 }
 }</code></pre>
@@ -864,7 +864,7 @@ name: string,
 <p>
 impl Guard {
 fn new(name: string) -> Guard {
-stdout << "Entering $name";
+print(`Entering &{name}`);
 return Guard { name: name };
 }
 }
@@ -872,7 +872,7 @@ return Guard { name: name };
 <p>
 impl Drop for Guard {
 fn drop() {
-stdout << "Leaving $self.name";
+print(`Leaving &{self.name}`);
 }
 }
 </p>
@@ -926,10 +926,10 @@ return Ok();
 <h2>Debug Information</h2>
 <pre><code>fn trace_execution() {
 <p>
-stdout << "__FUNCTION__: ${__FUNCTION__}";  // Current function
-stdout << "__FILE__: ${__FILE__}";          // Current file
-stdout << "__LINE__: ${__LINE__}";          // Current line
-stdout << "__MODULE__: ${__MODULE__}";      // Current module
+print("__FUNCTION__: &{__FUNCTION__}");  // Current function
+print("__FILE__: &{__FILE__}");          // Current file
+print("__LINE__: &{__LINE__}");          // Current line
+print("__MODULE__: &{__MODULE__}");      // Current module
 }</code></pre>
 </p>
 <hr>
@@ -938,7 +938,7 @@ stdout << "__MODULE__: ${__MODULE__}";      // Current module
 <pre><code>fn load_user(id: i32) -> Result<User> {
 <p>
 user: User = database.find(id)
-.context("Failed to load user $id")?;
+.context(`Failed to load user &{id}`)?;
 </p>
 <p>
 return Ok(user);
@@ -972,7 +972,7 @@ timestamp: now(),
 <h3>⚠️ WARNING: Stack Overflow</h3>
 <pre><code>fn infinite_recursion(n: i32) {
 <p>
-stdout << n;
+print(n);
 infinite_recursion(n + 1);  // ⚠️ Will overflow stack
 }
 </p>
@@ -980,7 +980,7 @@ infinite_recursion(n + 1);  // ⚠️ Will overflow stack
 // ✅ Better - use iteration or tail recursion
 fn safe_iteration(max: i32) {
 till(max - 1, 1) {
-stdout << $;
+print($);
 }
 }</code></pre>
 </p>

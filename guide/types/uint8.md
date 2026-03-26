@@ -70,8 +70,8 @@ x -= 20;  // Wraps to 246 (10 - 20 = -10 → 256 - 10 = 246)
 // Perfect for raw bytes
 buffer: []u8 = aria_alloc([]u8, 1024);
 
-fn read_bytes(file: &File, count: i32) -> []u8 {
-    return file.read(count);
+func:read_bytes = []u8(File->:file, int32:count) {
+    pass(file.read(count));
 }
 ```
 
@@ -160,7 +160,7 @@ signed: i32 = -10;
 unsigned: u8 = signed as u8;  // Wraps! (246)
 
 // Better
-fn to_u8(value: i32) -> Result<u8> {
+func:to_u8 = Result<uint8>(int32:value) {
     when value < 0 or value > 255 then
         fail("Out of range");
     end
@@ -191,7 +191,7 @@ height: i32 = 600;
 pixels: []u8 = aria_alloc([]u8, width * height * 3);
 
 // Set pixel
-fn set_pixel(x: i32, y: i32, r: u8, g: u8, b: u8) {
+func:set_pixel = NIL(int32:x, int32:y, uint8:r, uint8:g, uint8:b) {
     offset: i32 = (y * width + x) * 3;
     pixels[offset] = r;
     pixels[offset + 1] = g;

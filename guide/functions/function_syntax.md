@@ -8,9 +8,9 @@
 ## Basic Function Declaration
 
 ```aria
-fn function_name(param1: Type1, param2: Type2) -> ReturnType {
+func:function_name = ReturnType(Type1:param1, Type2:param2) {
     // Function body
-    return value;
+    pass(value);
 }
 ```
 
@@ -22,7 +22,7 @@ fn function_name(param1: Type1, param2: Type2) -> ReturnType {
 
 ```aria
 // Short form (common)
-fn name() { }
+func:name = NIL() { }
 
 // Long form (rare)
 func name() { }
@@ -32,46 +32,46 @@ func name() { }
 
 ```aria
 // Convention: snake_case
-fn calculate_total() { }
-fn get_user_by_id() { }
+func:calculate_total = NIL() { }
+func:get_user_by_id = NIL() { }
 
 // Single word
-fn process() { }
-fn validate() { }
+func:process = NIL() { }
+func:validate = NIL() { }
 ```
 
 ### Parameters
 
 ```aria
 // No parameters
-fn greet() { }
+func:greet = NIL() { }
 
 // Single parameter
-fn double(x: i32) -> i32 { }
+func:double = int32(int32:x) { }
 
 // Multiple parameters
-fn add(a: i32, b: i32) -> i32 { }
+func:add = int32(int32:a, int32:b) { }
 
 // Different types
-fn format_user(id: i32, name: string, active: bool) -> string { }
+func:format_user = string(int32:id, string:name, bool:active) { }
 ```
 
 ### Return Type
 
 ```aria
 // No return (implicitly returns unit/void)
-fn print_message() {
-    stdout << "Message\n";
+func:print_message = NIL() {
+    print("Message\n");
 }
 
 // Explicit return type
-fn calculate() -> i32 {
-    return 42;
+func:calculate = int32() {
+    pass(42);
 }
 
 // Optional return
-fn might_fail() -> Data? {
-    return ERR;
+func:might_fail = Data?() {
+    pass(ERR);
 }
 ```
 
@@ -81,22 +81,22 @@ fn might_fail() -> Data? {
 
 ```aria
 // Single type parameter
-fn identity<T>(value: T) -> T {
-    return value;
+func:identity = T(T:value) {
+    pass(value);
 }
 
 // Multiple type parameters
-fn pair<T, U>(first: T, second: U) -> (T, U) {
-    return (first, second);
+func:pair = (T,(T:first, U:second)U) {
+    pass((first, second));
 }
 
 // With constraints
-fn max<T>(a: T, b: T) -> T where T: Comparable {
+func:max = T(T:a, T:b)where T: Comparable {
     when a > b then return a; else return b; end
 }
 
 // Multiple constraints
-fn process<T>(value: T) -> T 
+func:process = T(T:value)
     where T: Display, T: Clone {
     // Implementation
 }
@@ -108,19 +108,19 @@ fn process<T>(value: T) -> T
 
 ```aria
 // Basic async
-async fn fetch_data() -> Data {
-    return await http_get("/api/data");
+async func:fetch_data = Data() {
+    pass(await http_get("/api/data"));
 }
 
 // Async with parameters
-async fn fetch_user(id: i32) -> User? {
-    return await http_get("/api/user/" + format("{}", id));
+async func:fetch_user = User?(int32:id) {
+    pass(await http_get("/api/user/" + format("{}", id)));
 }
 
 // Async generic
-async fn fetch<T>(url: string) -> T? where T: Deserialize {
+async func:fetch = T?(string:url)where T: Deserialize {
     response: Response = await http_get(url);
-    return response.deserialize();
+    pass(response.deserialize());
 }
 ```
 
@@ -138,12 +138,12 @@ struct User {
 
 impl User {
     // Instance method (has self)
-    fn greet() {
-        stdout << "Hello, " << self.name << "\n";
+    func:greet = NIL() {
+        print("Hello, " + self.name + "\n");
     }
     
     // Mutable instance method
-    fn grow_older() {
+    func:grow_older = NIL() {
         self.age = self.age + 1;
     }
 }
@@ -154,8 +154,8 @@ impl User {
 ```aria
 impl User {
     // No self - associated function
-    fn new(name: string, age: i32) -> User {
-        return User{name: name, age: age};
+    func:new = User(string:name, int32:age) {
+        pass(User{name: name, age: age});
     }
 }
 
@@ -173,21 +173,21 @@ add: fn(i32, i32) -> i32 = |a, b| a + b;
 
 // With type annotations
 add: fn(i32, i32) -> i32 = |a: i32, b: i32| -> i32 {
-    return a + b;
+    pass(a + b);
 };
 
 // Multi-line body
 process: fn(i32) -> i32 = |x| {
     Result: i32 = x * 2;
     result = result + 1;
-    return result;
+    pass(result);
 };
 
 // Closure (captures variables)
 counter: fn() -> i32 = || {
     count: i32 = 0;
     $count = $count + 1;
-    return $count;
+    pass($count);
 };
 ```
 
@@ -211,11 +211,11 @@ processor: fn(i32, string, bool) -> Result = process_data;
 ### As Parameter Type
 
 ```aria
-fn apply(value: i32, f: fn(i32) -> i32) -> i32 {
-    return f(value);
+func:apply = i32)(int32:value, fn(i32:f)-> i32 {
+    pass(f(value));
 }
 
-fn for_each<T>(array: []T, action: fn(T)) {
+func:for_each = NIL([]T:array, fn(T:action)) {
     till(array.length - 1, 1) {
         action(array[$]);
     }
@@ -225,8 +225,8 @@ fn for_each<T>(array: []T, action: fn(T)) {
 ### As Return Type
 
 ```aria
-fn make_multiplier(factor: i32) -> fn(i32) -> i32 {
-    return |x| x * factor;
+func:make_multiplier = fn(i32)(int32:factor)-> i32 {
+    pass(|x| x * factor);
 }
 ```
 
@@ -236,10 +236,10 @@ fn make_multiplier(factor: i32) -> fn(i32) -> i32 {
 
 ```aria
 // Public (default in Aria for functions)
-pub fn public_function() { }
+pub func:public_function = NIL() { }
 
 // Private (only visible in current module)
-fn private_function() { }
+func:private_function = NIL() { }
 
 // Package-private
 pub(package) fn package_function() { }
@@ -252,26 +252,26 @@ pub(package) fn package_function() { }
 ### Simple Function
 
 ```aria
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 ```
 
 ### Generic Function
 
 ```aria
-fn swap<T>(a: T, b: T) -> (T, T) {
-    return (b, a);
+func:swap = (T,(T:a, T:b)T) {
+    pass((b, a));
 }
 ```
 
 ### Async Function
 
 ```aria
-async fn fetch_user(id: i32) -> User? {
+async func:fetch_user = User?(int32:id) {
     response: Response = pass await http_get("/api/user/" + format("{}", id));
     user: User = pass response.deserialize();
-    return user;
+    pass(user);
 }
 ```
 
@@ -281,8 +281,8 @@ async fn fetch_user(id: i32) -> User? {
 struct Calculator;
 
 impl Calculator {
-    fn add(a: i32, b: i32) -> i32 {
-        return a + b;
+    func:add = int32(int32:a, int32:b) {
+        pass(a + b);
     }
 }
 ```
@@ -290,12 +290,12 @@ impl Calculator {
 ### Higher-Order Function
 
 ```aria
-fn map<T, U>(array: []T, f: fn(T) -> U) -> []U {
+func:map = U)([]T:array, fn(T:f)-> []U {
     Result: []U = [];
     till(array.length - 1, 1) {
         result.push(f(array[$]));
     }
-    return result;
+    pass(result);
 }
 ```
 
@@ -312,7 +312,7 @@ async fn fetch_and_process<T, U>(
     response: Response = pass await http_get(url);
     data: T = pass response.deserialize();
     Result: U = transform(data);
-    return result;
+    pass(result);
 }
 ```
 
@@ -327,12 +327,12 @@ async fn fetch_and_process<T, U>(
 // fn greet(name: string = "World") { }
 
 // ✅ Right: Use function overloading or separate functions
-fn greet() {
+func:greet = NIL() {
     greet_name("World");
 }
 
-fn greet_name(name: string) {
-    stdout << "Hello, " << name << "\n";
+func:greet_name = NIL(string:name) {
+    print("Hello, " + name + "\n");
 }
 ```
 
@@ -343,12 +343,12 @@ fn greet_name(name: string) {
 // fn sum(numbers: ...i32) -> i32 { }
 
 // ✅ Right: Use array
-fn sum(numbers: []i32) -> i32 {
+func:sum = int32([]i32:numbers) {
     total: i32 = 0;
     till(numbers.length - 1, 1) {
         total = total + numbers[$];
     }
-    return total;
+    pass(total);
 }
 ```
 

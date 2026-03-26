@@ -15,7 +15,7 @@
 ## Syntax
 
 ```aria
-import std.json;
+use std.json;
 
 data: Result<obj> = readJSON("config.json");
 ```
@@ -39,7 +39,7 @@ data: Result<obj> = readJSON("config.json");
 ### Basic Usage
 
 ```aria
-import std.json;
+use std.json;
 
 // Read JSON file
 Result: Result<obj> = readJSON("config.json");
@@ -47,9 +47,9 @@ Result: Result<obj> = readJSON("config.json");
 when result is Ok(data) then
     host: string = data.server.host;
     port: i32 = data.server.port;
-    stdout << "Server: $host:$port";
+    print(`Server: &{host}:&{port}`);
 elsif result is Err(msg) then
-    stderr << "Failed to read JSON: $msg";
+    stderr_write(`Failed to read JSON: &{msg}`);
 end
 ```
 
@@ -82,7 +82,7 @@ data: obj = readJSON("data.json")?;
 items: []i32 = data.items;  // Array from JSON
 
 till(items.length - 1, 1) {
-    stdout << "Item: $(items[$])";
+    print("Item: $(items[$])");
 end
 ```
 
@@ -95,7 +95,7 @@ data: obj = readJSON("user.json")?;
 name: string = data.user.name;
 age: i32 = data.user.age;
 
-stdout << "$name is $age years old";
+print(`&{name} is &{age} years old`);
 ```
 
 ---
@@ -131,7 +131,7 @@ data: obj = readJSON("data.json")?;
 when data.port is i32(p) then
     port: i32 = p;
 else
-    stderr << "Port is not an integer";
+    stderr_write("Port is not an integer");
 end
 ```
 

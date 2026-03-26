@@ -839,7 +839,7 @@ fn get_dimensions(width: <em>mut i32, height: </em>mut i32);
 width: i32;
 height: i32;
 extern.get_dimensions(&width, &height);
-stdout << "Size: $width x $height";</code></pre>
+print(`Size: &{width} x &{height}`);</code></pre>
 </p>
 <hr>
 <h2>Memory Management</h2>
@@ -911,7 +911,7 @@ fn c_operation() -> i32;  // Returns 0 on success
 <p>
 Result: i32 = extern.c_operation();
 if result != 0 {
-return Err("Operation failed with code: $result");
+return Err(`Operation failed with code: &{result}`);
 }</code></pre>
 </p>
 <hr>
@@ -926,7 +926,7 @@ fn some_operation() -> i32;
 Result: i32 = extern.some_operation();
 if result == -1 {
 error_code: i32 = extern.errno;
-return Err("Error code: $error_code");
+return Err(`Error code: &{error_code}`);
 }</code></pre>
 </p>
 <hr>

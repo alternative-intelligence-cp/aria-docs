@@ -673,18 +673,18 @@ fork_Result: ForkResult = fork()?;
 </p>
 <p>
 when fork_result is Parent(child_pid) then
-stdout << "Parent waiting for child $child_pid";
+print(`Parent waiting for child &{child_pid}`);
 </p>
 <p>
 // Wait for child to finish
 Result: ProcessResult = wait(child_pid)?;
 </p>
 <p>
-stdout << "Child exited with code: $(result.exit_code)";
+print("Child exited with code: $(result.exit_code)");
 </p>
 <p>
 elsif fork_result is Child then
-stdout << "Child doing work...";
+print("Child doing work...");
 // Do work...
 exit(0);
 end</code></pre>
@@ -697,9 +697,9 @@ Result: ProcessResult = wait(child_pid)?;
 </p>
 <p>
 when result.exit_code == 0 then
-stdout << "Child succeeded";
+print("Child succeeded");
 else
-stderr << "Child failed with code $(result.exit_code)";
+stderr_write("Child failed with code $(result.exit_code)");
 end
 </p>
 <p>
@@ -728,11 +728,11 @@ end
 // Wait for all children
 till(children.length - 1, 1) {
 Result: ProcessResult = wait(children[$])?;
-stdout << "Child $(children[$]) exited: $(result.exit_code)";
+print("Child $(children[$]) exited: $(result.exit_code)");
 end
 </p>
 <p>
-stdout << "All children completed";</code></pre>
+print("All children completed");</code></pre>
 </p>
 <hr>
 <h2>Preventing Zombie Processes</h2>
@@ -768,7 +768,7 @@ Result: ?ProcessResult = wait_timeout(child_pid, 5)?;
 </p>
 <p>
 when result == nil then
-stderr << "Child didn't finish in 5 seconds";
+stderr_write("Child didn't finish in 5 seconds");
 kill(child_pid)?;  // Force kill
 end
 end</code></pre>
@@ -793,7 +793,7 @@ end</code></pre>
 <pre><code>ProcessResult:Result = wait(child_pid)?;
 <p>
 when result.exit_code != 0 then
-stderr << "Child process failed";
+stderr_write("Child process failed");
 fail("Child error");
 end</code></pre>
 </p>
@@ -819,7 +819,7 @@ end</code></pre>
 <pre><code>// Wait for any child (PID -1)
 <p>
 Result: ProcessResult = wait(-1)?;
-stdout << "A child exited: $(result.exit_code)";</code></pre>
+print("A child exited: $(result.exit_code)");</code></pre>
 </p>
 <hr>
 <h2>Related</h2>

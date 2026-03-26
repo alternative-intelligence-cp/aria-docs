@@ -15,14 +15,14 @@ Idioms are language-specific patterns that make code more **expressive** and **r
 
 ```aria
 // ✅ Idiomatic
-fn load_config() -> Result<Config> {
+func:load_config = Result<Config>() {
     content: string = readFile("config.toml")?;
     config: Config = parse(content)?;
-    return Ok(config);
+    pass(Ok(config));
 }
 
 // ❌ Not idiomatic
-fn load_config_verbose() -> Result<Config> {
+func:load_config_verbose = Result<Config>() {
     match readFile("config.toml") {
         Ok(content) => {
             match parse(content) {
@@ -42,12 +42,12 @@ fn load_config_verbose() -> Result<Config> {
 ```aria
 // ✅ Idiomatic
 if let Some(user) = find_user(id) {
-    stdout << user.name;
+    print(user.name);
 }
 
 // ❌ Verbose
 match find_user(id) {
-    Some(user) => stdout << user.name,
+    Some(user) => print(user.name),
     None => {},
 }
 ```
@@ -58,28 +58,28 @@ match find_user(id) {
 
 ```aria
 // ✅ Idiomatic
-fn validate(user: User) -> Result<void> {
+func:validate = Result<NIL>(User:user) {
     if user.name == "" {
-        return Err("Name required");
+        pass(Err("Name required"));
     }
     
     if user.age < 0 {
-        return Err("Invalid age");
+        pass(Err("Invalid age"));
     }
     
-    return Ok();
+    pass(Ok());
 }
 
 // ❌ Nested
-fn validate_nested(user: User) -> Result<void> {
+func:validate_nested = Result<NIL>(User:user) {
     if user.name != "" {
         if user.age >= 0 {
-            return Ok();
+            pass(Ok());
         } else {
-            return Err("Invalid age");
+            pass(Err("Invalid age"));
         }
     } else {
-        return Err("Name required");
+        pass(Err("Name required"));
     }
 }
 ```
@@ -90,13 +90,13 @@ fn validate_nested(user: User) -> Result<void> {
 
 ```aria
 // ✅ Idiomatic
-fn greet(User { name, age, .. }: User) {
-    stdout << "Hello $name, age $age";
+func:greet = NIL(User { name, age, .. }: User) {
+    print(`Hello &{name}, age &{age}`);
 }
 
 // ❌ Verbose
-fn greet_verbose(user: User) {
-    stdout << "Hello ${user.name}, age ${user.age}";
+func:greet_verbose = NIL(User:user) {
+    print("Hello &{user.name}, age &{user.age}");
 }
 ```
 
@@ -160,16 +160,16 @@ struct User {
 }
 
 impl User {
-    fn greet() {
-        stdout << "Hello, $self.name";
+    func:greet = NIL() {
+        print(`Hello, &{self.name}`);
     }
 }
 
 user.greet();
 
 // ❌ Less idiomatic
-fn greet_user(user: User) {
-    stdout << "Hello, ${user.name}";
+func:greet_user = NIL(User:user) {
+    print("Hello, &{user.name}");
 }
 
 greet_user(user);
@@ -181,7 +181,7 @@ greet_user(user);
 
 ```aria
 // ✅ Idiomatic
-fn process() -> Result<void> {
+func:process = Result<NIL>() {
     file: File = open("data.txt")?;
     defer file.close();
     
@@ -189,11 +189,11 @@ fn process() -> Result<void> {
     defer lock.unlock();
     
     // Work with resources
-    return Ok();
+    pass(Ok());
 }
 
 // ❌ Manual cleanup
-fn process_manual() -> Result<void> {
+func:process_manual = Result<NIL>() {
     file: File = open("data.txt")?;
     lock: Mutex = acquire_lock()?;
     
@@ -201,7 +201,7 @@ fn process_manual() -> Result<void> {
     
     lock.unlock();
     file.close();
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -211,14 +211,14 @@ fn process_manual() -> Result<void> {
 
 ```aria
 // ✅ Idiomatic
-fn divide(a: i32, b: i32) -> (i32, i32) {
-    return (a / b, a % b);
+func:divide = (i32,(int32:a, int32:b)i32) {
+    pass((a / b, a % b));
 }
 
 (quotient, remainder) = divide(17, 5);
 
 // ❌ Out parameters (C-style)
-fn divide_out(a: i32, b: i32, quotient: *i32, remainder: *i32) {
+func:divide_out = NIL(int32:a, int32:b, *i32:quotient, *i32:remainder) {
     *quotient = a / b;
     *remainder = a % b;
 }
@@ -231,23 +231,23 @@ fn divide_out(a: i32, b: i32, quotient: *i32, remainder: *i32) {
 ```aria
 // ✅ Idiomatic
 match value {
-    n if n < 0 => stdout << "negative",
-    n if n == 0 => stdout << "zero",
-    n if n % 2 == 0 => stdout << "positive even",
-    _ => stdout << "positive odd",
+    n if n < 0 => print("negative"),
+    n if n == 0 => print("zero"),
+    n if n % 2 == 0 => print("positive even"),
+    _ => print("positive odd"),
 }
 
 // ❌ Nested if
 match value {
     n => {
         if n < 0 {
-            stdout << "negative";
+            print("negative");
         } else if n == 0 {
-            stdout << "zero";
+            print("zero");
         } else if n % 2 == 0 {
-            stdout << "positive even";
+            print("positive even");
         } else {
-            stdout << "positive odd";
+            print("positive odd");
         }
     }
 }
@@ -282,12 +282,12 @@ numbers.map(|x| x * 2);
 numbers.filter(|x| x > 0);
 
 // ❌ Verbose (when function is simple)
-fn double(x: i32) -> i32 {
-    return x * 2;
+func:double = int32(int32:x) {
+    pass(x * 2);
 }
 
-fn is_positive(x: i32) -> bool {
-    return x > 0;
+func:is_positive = bool(int32:x) {
+    pass(x > 0);
 }
 
 numbers.map(double);
@@ -302,7 +302,7 @@ numbers.filter(is_positive);
 // ✅ Idiomatic
 name: string = "Alice";
 age: i32 = 30;
-message: string = "Hello, $name! You are $age years old.";
+message: string = `Hello, &{name}! You are &{age} years old.`;
 
 // ❌ Concatenation
 message: string = "Hello, " ++ name ++ "! You are " ++ age.to_string() ++ " years old.";
@@ -320,12 +320,12 @@ enum AppError {
     InvalidInput(string),
 }
 
-fn fetch_user(id: i32) -> Result<User, AppError> {
+func:fetch_user = Result<User,(int32:id)AppError> {
     // Implementation
 }
 
 // ❌ String errors
-fn fetch_user_bad(id: i32) -> Result<User, string> {
+func:fetch_user_bad = Result<User,(int32:id)string> {
     // Less type-safe
 }
 ```
@@ -337,12 +337,12 @@ fn fetch_user_bad(id: i32) -> Result<User, string> {
 ```aria
 // ✅ Idiomatic
 till(9, 1) {
-    stdout << $;
+    print($);
 }
 
 // ❌ C-style
 for i: i32 = 0; i < 10; i += 1 {
-    stdout << i;
+    print(i);
 }
 ```
 
@@ -370,21 +370,21 @@ timeout: i32 = if config.timeout is Some {
 ```aria
 // ✅ Idiomatic
 match items {
-    [] => stdout << "empty",
-    [x] => stdout << "one: $x",
-    [x, y] => stdout << "two: $x, $y",
-    [first, ...rest] => stdout << "many, first: $first",
+    [] => print("empty"),
+    [x] => print(`one: &{x}`),
+    [x, y] => print(`two: &{x}, &{y}`),
+    [first, ...rest] => print(`many, first: &{first}`),
 }
 
 // ❌ Manual indexing
 if items.len() == 0 {
-    stdout << "empty";
+    print("empty");
 } else if items.len() == 1 {
-    stdout << "one: ${items[0]}";
+    print("one: &{items[0]}");
 } else if items.len() == 2 {
-    stdout << "two: ${items[0]}, ${items[1]}";
+    print("two: &{items[0]}, &{items[1]}");
 } else {
-    stdout << "many, first: ${items[0]}";
+    print("many, first: &{items[0]}");
 }
 ```
 
@@ -407,7 +407,7 @@ outer: till(9, 1) {
 // Avoid when simple
 // ❌ Over-labeled
 simple: till(9, 1) {
-    stdout << $;
+    print($);
 }
 ```
 

@@ -33,9 +33,9 @@ value: dyn = 42;
 
 // Check type at runtime
 when value is i32 then
-    stdout << "Integer: $(value as i32)";
+    print("Integer: $(value as i32)");
 elsif value is string then
-    stdout << "String: $(value as string)";
+    print("String: $(value as string)");
 end
 ```
 
@@ -51,9 +51,9 @@ num: i32 = value as i32;
 
 // Safe cast with pattern matching
 when value is i32(n) then
-    stdout << "Number: $n";
+    print(`Number: &{n}`);
 else
-    stdout << "Not an integer";
+    print("Not an integer");
 end
 ```
 
@@ -70,9 +70,9 @@ items: []dyn = [42, "hello", 3.14, true];
 till(items.length - 1, 1) {
     item = items[$];
     when item is i32(n) then
-        stdout << "Integer: $n";
+        print(`Integer: &{n}`);
     elsif item is string(s) then
-        stdout << "String: $s";
+        print(`String: &{s}`);
     end
 }
 ```

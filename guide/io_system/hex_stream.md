@@ -71,19 +71,19 @@
 ## Example
 
 ```aria
-fn main() {
-    stddbg << "Program starting";  // Debug
+func:main = NIL() {
+    stddbg_write("Program starting");  // Debug
     
     config: Config = stddati.read_json()?;  // Data input
     
-    stdout << "Processing...";  // Human output
+    print("Processing...");  // Human output
     
     Result: Result = process(config);
     
-    stdout << "Done! Processed " << result.count << " items";  // Human
+    print("Done! Processed " + result.count + " items");  // Human
     stddato.write_json(result);  // Machine output
     
-    stddbg << "Completed in " << elapsed << "ms";  // Debug
+    stddbg_write("Completed in " + elapsed + "ms");  // Debug
 }
 ```
 

@@ -26,7 +26,7 @@ The decrement operator `--` decreases a variable's value by 1.
 ```aria
 x: i32 = 10;
 x--;
-stdout << x;  // 9
+print(x);  // 9
 ```
 
 ---
@@ -51,7 +51,7 @@ y: i32 = --x;  // y = 9, x = 9
 // Countdown
 i: i32 = 10;
 while i > 0 {
-    stdout << i;
+    print(i);
     i--;
 }
 // Prints: 10 9 8 7 6 5 4 3 2 1

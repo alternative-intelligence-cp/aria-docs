@@ -9,7 +9,7 @@
 ## Signature
 
 ```aria
-fn aria_alloc_string(text: string) -> string
+func:aria_alloc_string = string(string:text)
 ```
 
 ---
@@ -42,7 +42,7 @@ when str == nil then
     fail "Allocation failed";
 end
 
-stdout << str;
+print(str);
 
 // Must free
 aria_free(str);
@@ -58,7 +58,7 @@ str: string = aria_alloc_string("Hello");
 defer aria_free(str);
 
 str = str + " World";
-stdout << str;  // "Hello World"
+print(str);  // "Hello World"
 ```
 
 ---
@@ -76,7 +76,7 @@ defer aria_free(str);
 
 ```aria
 // Wrong: Memory leak
-fn bad() {
+func:bad = NIL() {
     str: string = aria_alloc_string("leak");
     // Never freed!
 }

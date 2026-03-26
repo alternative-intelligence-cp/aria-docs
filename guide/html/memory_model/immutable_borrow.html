@@ -659,7 +659,7 @@ An <strong>immutable borrow</strong> is a read-only reference created with <code
 ref: &i32 = &value;  // Immutable borrow
 </p>
 <p>
-stdout << ref;  // ✅ Can read
+print(ref);  // ✅ Can read
 ref = 100;      // ❌ Can't modify</code></pre>
 </p>
 <hr>
@@ -674,19 +674,19 @@ ref2: &i32 = &value;  // ✅
 ref3: &i32 = &value;  // ✅
 </p>
 <p>
-stdout << ref1 << ref2 << ref3;  // All valid</code></pre>
+print(ref1 << ref2 + ref3);  // All valid</code></pre>
 </p>
 <hr>
 <h2>In Functions</h2>
 <pre><code>fn print_value(v: &i32) {
 <p>
-stdout << v << "\n";
+print(v + "\n");
 }
 </p>
 <p>
 value: i32 = 42;
 print_value(&value);  // Borrow
-stdout << value;      // Still usable</code></pre>
+print(value);      // Still usable</code></pre>
 </p>
 <hr>
 <h2>Multiple Parameters</h2>
@@ -701,7 +701,7 @@ y: i32 = 20;
 </p>
 <p>
 Result: bool = compare(&x, &y);  // Both borrowed
-stdout << x << y;  // Both still usable</code></pre>
+print(x + y);  // Both still usable</code></pre>
 </p>
 <hr>
 <h2>With Collections</h2>
@@ -755,7 +755,7 @@ ref: &i32 = &value;
 </p>
 <p>
 // Automatic dereference
-stdout << ref;          // Works like ref is i32
+print(ref);          // Works like ref is i32
 Result: i32 = ref + 1;  // Works like ref is i32</code></pre>
 </p>
 <hr>
@@ -788,7 +788,7 @@ return user.name.length() > 0 && user.age >= 18;
 <pre><code>// Good: Just reading
 <p>
 fn display(data: &Data) {
-stdout << data.format();
+print(data.format());
 }</code></pre>
 </p>
 <h3>✅ DO: Default to Immutable</h3>

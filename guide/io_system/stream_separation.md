@@ -57,25 +57,25 @@ Need to read something?
 
 **WRONG**:
 ```aria
-fn process(data: Data) -> Result {
-    stdout << "DEBUG: Processing data\n";  // Pollutes output!
+func:process = Result(Data:data) {
+    print("DEBUG: Processing data\n");  // Pollutes output!
     
     Result: Result = transform(data);
-    stdout << result;  // Mixed with debug info
+    print(result);  // Mixed with debug info
     
-    return result;
+    pass(result);
 }
 ```
 
 **RIGHT**:
 ```aria
-fn process(data: Data) -> Result {
-    stddbg << "Processing data";  // Separate stream
+func:process = Result(Data:data) {
+    stddbg_write("Processing data");  // Separate stream
     
     Result: Result = transform(data);
-    stdout << result;  // Clean output
+    print(result);  // Clean output
     
-    return result;
+    pass(result);
 }
 ```
 
@@ -97,25 +97,25 @@ fn process(data: Data) -> Result {
 
 **WRONG**:
 ```aria
-fn main() {
+func:main = NIL() {
     Result: Result = compute();
     
     // Which format? Can't have both!
     when json_mode then
-        stdout << json_dumps(result);  // Machines
+        print(json_dumps(result));  // Machines
     else
-        stdout << "Result: " << result;  // Humans
+        print("Result: " + result);  // Humans
     end
 }
 ```
 
 **RIGHT**:
 ```aria
-fn main() {
+func:main = NIL() {
     Result: Result = compute();
     
     // Both formats, always!
-    stdout << "Result: " << result;      // Humans
+    print("Result: " + result);      // Humans
     stddato.write_json(result);          // Machines
 }
 ```
@@ -131,16 +131,16 @@ fn main() {
 **WRONG**:
 ```aria
 when file.open() == ERR then
-    stdout << "ERROR: Cannot open file\n";  // Wrong stream!
-    return ERR;
+    print("ERROR: Cannot open file\n");  // Wrong stream!
+    pass(ERR);
 end
 ```
 
 **RIGHT**:
 ```aria
 when file.open() == ERR then
-    stderr << "ERROR: Cannot open file\n";  // Correct stream
-    return ERR;
+    stderr_write("ERROR: Cannot open file\n");  // Correct stream
+    pass(ERR);
 end
 ```
 
@@ -183,42 +183,42 @@ Here's a well-designed Aria program using all six streams correctly:
 ```aria
 use std::json;
 
-fn main() -> i32 {
-    stddbg << "Program starting";
+func:main = int32() {
+    stddbg_write("Program starting");
     
     // Read configuration (structured data)
     config: Config? = stddati.read_json()?;
     
     when config == ERR then
-        stderr << "ERROR: Failed to read config\n";
-        stderr << "  Provide config on fd 4\n";
-        return 1;
+        stderr_write("ERROR: Failed to read config\n");
+        stderr_write("  Provide config on fd 4\n");
+        pass(1);
     end
     
-    stddbg << "Config loaded: " << config.mode;
+    stddbg_write("Config loaded: " + config.mode);
     
     // Interactive prompt for user (if needed)
     when config.mode == "interactive" then
-        stdout << "Enter filename: ";
+        print("Enter filename: ");
         filename: string = stdin.read_line();
         
-        stddbg << "User entered: " << filename;
+        stddbg_write("User entered: " + filename);
     end
     
     // Process data
-    stdout << "Processing...\n";
+    print("Processing...\n");
     
     Result: Result? = process(config);
     
     when result == ERR then
-        stderr << "ERROR: Processing failed\n";
-        stddbg << "Failure details: " << get_error_details();
-        return 1;
+        stderr_write("ERROR: Processing failed\n");
+        stddbg_write("Failure details: " + get_error_details());
+        pass(1);
     end
     
     // Output results
-    stdout << "Processing complete!\n";
-    stdout << "  Records processed: " << result.count << "\n";
+    print("Processing complete!\n");
+    print("  Records processed: " + result.count + "\n");
     
     // Structured output for downstream tools
     stddato.write_json({
@@ -227,9 +227,9 @@ fn main() -> i32 {
         "timestamp": Time::now().unix()
     });
     
-    stddbg << "Program exiting cleanly";
+    stddbg_write("Program exiting cleanly");
     
-    return 0;
+    pass(0);
 }
 ```
 
@@ -271,7 +271,7 @@ process(data)
 
 **Aria approach**:
 ```aria
-stddbg << "Processing foo";  // Always present, redirected in production
+stddbg_write("Processing foo");  // Always present, redirected in production
 process(data);
 ```
 
@@ -283,7 +283,7 @@ Always provide **both** human and machine output:
 
 ```aria
 // Don't make users choose
-stdout << "Balance: $" << balance;     // Humans
+print("Balance: $" + balance);     // Humans
 stddato.write_json({"balance": balance});  // Machines
 ```
 
@@ -292,13 +292,13 @@ stddato.write_json({"balance": balance});  // Machines
 **Bad** (traditional):
 ```aria
 when verbose_mode then
-    stdout << "Detailed info...";
+    print("Detailed info...");
 end
 ```
 
 **Good** (Aria):
 ```aria
-stddbg << "Detailed info...";  // Always written, redirect controls visibility
+stddbg_write("Detailed info...");  // Always written, redirect controls visibility
 ```
 
 **Why**: Configuration happens at **deployment time** (shell redirection), not **compile time** (flags and conditionals).
@@ -310,10 +310,10 @@ Errors go to **stderr**, not stdout or stddbg:
 ```aria
 // Clear error reporting
 when validation_failed then
-    stderr << "ERROR: Invalid input\n";
-    stderr << "  Field: " << field_name << "\n";
-    stderr << "  Reason: " << reason << "\n";
-    return ERR;
+    stderr_write("ERROR: Invalid input\n");
+    stderr_write("  Field: " + field_name + "\n");
+    stderr_write("  Reason: " + reason + "\n");
+    pass(ERR);
 end
 ```
 
@@ -325,7 +325,7 @@ end
 
 ```aria
 #[test]
-fn test_stream_separation() {
+func:test_stream_separation = NIL() {
     // Capture all streams
     capture_streams();
     
@@ -398,15 +398,15 @@ def process(data):
 ### After (Aria)
 
 ```aria
-fn process(data: Data) -> Result {
-    stddbg << "Processing " << data;  // Debug stream
+func:process = Result(Data:data) {
+    stddbg_write("Processing " + data);  // Debug stream
     
     Result: Result = transform(data);
     
-    stdout << "Result: " << result;   // Human output
+    print("Result: " + result);   // Human output
     stddato.write_json(result);       // Machine output
     
-    return result;
+    pass(result);
 }
 ```
 
@@ -448,8 +448,8 @@ If you're using a logging library that **only** supports stdout/stderr, you migh
 logger.debug("Message");  // Goes to stderr unfortunately
 
 // Better: Wrap it
-fn log_debug(msg: string) {
-    stddbg << msg;  // Also send to stddbg
+func:log_debug = NIL(string:msg) {
+    stddbg_write(msg);  // Also send to stddbg
     logger.debug(msg);  // And to logger for compatibility
 }
 ```
@@ -461,9 +461,9 @@ If integrating with a system that expects everything on stdout:
 ```aria
 // Compatibility mode
 when legacy_mode then
-    stdout << debug_info;  // Violation, but necessary
+    print(debug_info);  // Violation, but necessary
 else
-    stddbg << debug_info;  // Preferred
+    stddbg_write(debug_info);  // Preferred
 end
 ```
 

@@ -15,7 +15,7 @@
 ## Syntax
 
 ```aria
-import std.http;
+use std.http;
 
 response: Result<HttpResponse> = httpGet("https://api.example.com/data");
 ```
@@ -39,15 +39,15 @@ response: Result<HttpResponse> = httpGet("https://api.example.com/data");
 ### Basic GET Request
 
 ```aria
-import std.http;
+use std.http;
 
 Result: Result<HttpResponse> = httpGet("https://api.github.com/users/octocat");
 
 when result is Ok(response) then
-    stdout << "Status: $(response.status)";
-    stdout << "Body: $(response.body)";
+    print("Status: $(response.status)");
+    print("Body: $(response.body)");
 elsif result is Err(msg) then
-    stderr << "Request failed: $msg";
+    stderr_write(`Request failed: &{msg}`);
 end
 ```
 
@@ -58,9 +58,9 @@ response: HttpResponse = httpGet("https://api.example.com/users/1")?;
 
 when response.status == 200 then
     user: obj = parse_json(response.body)?;
-    stdout << "User: $(user.name)";
+    print("User: $(user.name)");
 else
-    stderr << "HTTP $(response.status): $(response.body)";
+    stderr_write("HTTP $(response.status): $(response.body)");
 end
 ```
 
@@ -70,13 +70,13 @@ end
 response: HttpResponse = httpGet("https://example.com/api/data")?;
 
 when response.status == 200 then
-    stdout << "Success";
+    print("Success");
 elsif response.status == 404 then
-    stderr << "Not found";
+    stderr_write("Not found");
 elsif response.status >= 500 then
-    stderr << "Server error";
+    stderr_write("Server error");
 else
-    stderr << "Unexpected status: $(response.status)";
+    stderr_write("Unexpected status: $(response.status)");
 end
 ```
 
@@ -92,7 +92,7 @@ content_type: ?string = response.headers.get("Content-Type");
 header_entries = response.headers.entries();
 till(header_entries.length - 1, 1) {
     (key, value) = header_entries[$];
-    stdout << "$key: $value";
+    print(`&{key}: &{value}`);
 end
 ```
 
@@ -139,7 +139,7 @@ end
 Result: Result<HttpResponse> = httpGet("https://unreliable-api.com");
 
 when result is Err(msg) then
-    log_error("Network error: $msg");
+    log_error(`Network error: &{msg}`);
     // Retry logic or fallback
 end
 ```
@@ -163,7 +163,7 @@ end
 ```aria
 // Build URL with parameters
 base: string = "https://api.example.com/search";
-query: string = "?q=aria&limit=10&offset=0";
+query: string = `?q=aria&{limit}=10&{offset}=0`;
 url: string = base + query;
 
 response: HttpResponse = httpGet(url)?;

@@ -9,7 +9,7 @@
 ## Signature
 
 ```aria
-fn aria_gc_alloc<T>() -> T
+func:aria_gc_alloc = T()
 ```
 
 ---
@@ -67,9 +67,9 @@ data: Data = aria_gc_alloc(Data);
 // Multiple references
 data: Data = aria_gc_alloc(Data);
 
-ref1: &Data = data;
-ref2: &Data = data;
-ref3: &Data = data;
+ref1: $Data = data;
+ref2: $Data = data;
+ref3: $Data = data;
 
 // Freed when ALL references gone
 ```
@@ -154,12 +154,12 @@ aria_free(data);  // ❌ Don't manually free GC data!
 
 ```aria
 // Wrong: Unnecessary overhead
-fn process() {
+func:process = NIL() {
     value: i32 = aria_gc_alloc(i32);  // Overkill!
 }
 
 // Right: Use stack
-fn process() {
+func:process = NIL() {
     value: i32 = 42;
 }
 ```

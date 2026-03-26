@@ -44,15 +44,15 @@ struct Container<T> {
     items: []T
 }
 
-fn add<T>(self: &Container<T>, item: T) {
+func:add = NIL(Container<T>->:self, T:item) {
     self.items.append(item);
 }
 
-fn get<T>(self: &Container<T>, index: i32) -> ?T {
+func:get = ?T(Container<T>->:self, int32:index) {
     when index >= 0 and index < self.items.length() then
-        return self.items[index];
+        pass(self.items[index]);
     end
-    return nil;
+    pass(nil);
 }
 ```
 

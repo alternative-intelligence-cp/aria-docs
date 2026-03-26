@@ -1005,7 +1005,7 @@ risky_operation()?;
 // ✅ Or explicitly handle
 match risky_operation() {
 Ok(_) => {},
-Err(e) => stderr << "Warning: $e",
+Err(e) => stderr_write(`Warning: &{e}`),
 }</code></pre>
 </p>
 <h3>❌ DON'T: Use unwrap() in Production</h3>

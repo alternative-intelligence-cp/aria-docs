@@ -56,7 +56,7 @@ f64 -> double
 ```aria
 // C has no bool (pre-C99), use int
 extern "C" {
-    fn c_bool_func() -> i32;  // 0 = false, 1 = true
+    func:c_bool_func = i32;()// 0 = false, 1 = true
 }
 ```
 
@@ -68,11 +68,11 @@ extern "C" {
 
 ```aria
 extern "C" {
-    fn printf(format: *u8, ...) -> i32;
-    fn malloc(size: usize) -> *void;
-    fn free(ptr: *void);
-    fn strlen(s: *u8) -> usize;
-    fn strcmp(s1: *u8, s2: *u8) -> i32;
+    func:printf = i32;(*u8:format, ...)
+    func:malloc = *void;(uint64:size)
+    func:free = NIL(*void:ptr);
+    func:strlen = usize;(*u8:s)
+    func:strcmp = i32;(*u8:s1, *u8:s2)
 }
 
 // Use them
@@ -92,12 +92,12 @@ len: usize = extern.strlen("Hello");
 ```aria
 #[link(name = "m")]
 extern "C" {
-    fn sqrt(x: f64) -> f64;
-    fn sin(x: f64) -> f64;
-    fn cos(x: f64) -> f64;
-    fn pow(base: f64, exp: f64) -> f64;
-    fn floor(x: f64) -> f64;
-    fn ceil(x: f64) -> f64;
+    func:sqrt = f64;(flt64:x)
+    func:sin = f64;(flt64:x)
+    func:cos = f64;(flt64:x)
+    func:pow = f64;(flt64:base, flt64:exp)
+    func:floor = f64;(flt64:x)
+    func:ceil = f64;(flt64:x)
 }
 
 root: f64 = extern.sqrt(16.0);     // 4.0
@@ -127,8 +127,8 @@ struct Point {
 }
 
 extern "C" {
-    fn create_point(x: i32, y: i32) -> Point;
-    fn distance(p1: Point, p2: Point) -> f64;
+    func:create_point = Point;(int32:x, int32:y)
+    func:distance = f64;(Point:p1, Point:p2)
 }
 ```
 
@@ -162,7 +162,7 @@ struct Data {
 
 ```aria
 extern "C" {
-    fn process(value: i32) -> i32;
+    func:process = i32;(int32:value)
 }
 
 Result: i32 = extern.process(42);
@@ -174,11 +174,11 @@ Result: i32 = extern.process(42);
 
 ```aria
 extern "C" {
-    fn modify(ptr: *mut i32);
+    func:modify = NIL(*mut i32:ptr);
 }
 
 value: i32 = 10;
-extern.modify(&value);  // C modifies value
+extern.modify($value);  // C modifies value
 ```
 
 ---
@@ -187,11 +187,11 @@ extern.modify(&value);  // C modifies value
 
 ```aria
 extern "C" {
-    fn process_array(arr: *i32, len: usize) -> i32;
+    func:process_array = i32;(*i32:arr, uint64:len)
 }
 
 arr: [i32; 10] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-Result: i32 = extern.process_array(&arr[0], 10);
+Result: i32 = extern.process_array($arr[0], 10);
 ```
 
 ---
@@ -200,7 +200,7 @@ Result: i32 = extern.process_array(&arr[0], 10);
 
 ```aria
 extern "C" {
-    fn process_string(s: *u8) -> i32;
+    func:process_string = i32;(*u8:s)
 }
 
 // Must be null-terminated for C!
@@ -216,8 +216,8 @@ Result: i32 = extern.process_string(c_str);
 
 ```aria
 extern "C" {
-    fn get_value() -> i32;
-    fn allocate_data() -> *void;
+    func:get_value = i32;()
+    func:allocate_data = *void;()
 }
 
 value: i32 = extern.get_value();
@@ -230,13 +230,13 @@ ptr: *void = extern.allocate_data();
 
 ```aria
 extern "C" {
-    fn get_dimensions(width: *mut i32, height: *mut i32);
+    func:get_dimensions = NIL(*mut i32:width, *mut i32:height);
 }
 
 width: i32;
 height: i32;
-extern.get_dimensions(&width, &height);
-stdout << "Size: $width x $height";
+extern.get_dimensions($width, $height);
+print(`Size: &{width} x &{height}`);
 ```
 
 ---
@@ -247,8 +247,8 @@ stdout << "Size: $width x $height";
 
 ```aria
 extern "C" {
-    fn c_create_object() -> *void;
-    fn c_destroy_object(obj: *void);
+    func:c_create_object = *void;()
+    func:c_destroy_object = NIL(*void:obj);
 }
 
 obj: *void = extern.c_create_object();
@@ -265,15 +265,15 @@ extern.c_destroy_object(obj);
 pub extern "C" fn aria_allocate(size: usize) -> *void {
     // Use C malloc so C can free it
     extern "C" {
-        fn malloc(size: usize) -> *void;
+        func:malloc = *void;(uint64:size)
     }
-    return extern.malloc(size);
+    pass(extern.malloc(size));
 }
 
 #[no_mangle]
 pub extern "C" fn aria_free(ptr: *void) {
     extern "C" {
-        fn free(ptr: *void);
+        func:free = NIL(*void:ptr);
     }
     extern.free(ptr);
 }
@@ -295,12 +295,12 @@ void register_callback(callback_t cb);
 // Aria callback
 #[no_mangle]
 extern "C" fn my_callback(value: i32) -> i32 {
-    return value * 2;
+    pass(value * 2);
 }
 
 // Register it
 extern "C" {
-    fn register_callback(cb: extern "C" fn(i32) -> i32);
+    func:register_callback = i32);(extern "C" fn(i32:cb)
 }
 
 extern.register_callback(my_callback);
@@ -314,12 +314,12 @@ extern.register_callback(my_callback);
 
 ```aria
 extern "C" {
-    fn c_operation() -> i32;  // Returns 0 on success
+    func:c_operation = i32;()// Returns 0 on success
 }
 
 Result: i32 = extern.c_operation();
 if result != 0 {
-    return Err("Operation failed with code: $result");
+    pass(Err(`Operation failed with code: &{result}`));
 }
 ```
 
@@ -330,13 +330,13 @@ if result != 0 {
 ```aria
 extern "C" {
     static errno: i32;
-    fn some_operation() -> i32;
+    func:some_operation = i32;()
 }
 
 Result: i32 = extern.some_operation();
 if result == -1 {
     error_code: i32 = extern.errno;
-    return Err("Error code: $error_code");
+    pass(Err(`Error code: &{error_code}`));
 }
 ```
 
@@ -347,17 +347,17 @@ if result == -1 {
 ```aria
 #[cfg(target_os = "linux")]
 extern "C" {
-    fn linux_function();
+    func:linux_function = NIL();
 }
 
 #[cfg(target_os = "windows")]
 extern "system" {  // Note: "system" ABI for Windows
-    fn windows_function();
+    func:windows_function = NIL();
 }
 
 #[cfg(target_os = "macos")]
 extern "C" {
-    fn macos_function();
+    func:macos_function = NIL();
 }
 ```
 
@@ -369,19 +369,19 @@ extern "C" {
 
 ```aria
 extern "C" {
-    fn fopen(path: *u8, mode: *u8) -> *void;
-    fn fclose(file: *void) -> i32;
-    fn fread(ptr: *void, size: usize, count: usize, file: *void) -> usize;
-    fn fwrite(ptr: *void, size: usize, count: usize, file: *void) -> usize;
+    func:fopen = *void;(*u8:path, *u8:mode)
+    func:fclose = i32;(*void:file)
+    func:fread = usize;(*void:ptr, uint64:size, uint64:count, *void:file)
+    func:fwrite = usize;(*void:ptr, uint64:size, uint64:count, *void:file)
 }
 
 file: *void = extern.fopen("data.txt\0", "r\0");
 if file == NULL {
-    return Err("Failed to open file");
+    pass(Err("Failed to open file"));
 }
 
 buffer: [u8; 1024];
-bytes_read: usize = extern.fread(&buffer[0], 1, 1024, file);
+bytes_read: usize = extern.fread($buffer[0], 1, 1024, file);
 extern.fclose(file);
 ```
 
@@ -391,9 +391,9 @@ extern.fclose(file);
 
 ```aria
 extern "C" {
-    fn dlopen(filename: *u8, flag: i32) -> *void;
-    fn dlsym(handle: *void, symbol: *u8) -> *void;
-    fn dlclose(handle: *void) -> i32;
+    func:dlopen = *void;(*u8:filename, int32:flag)
+    func:dlsym = *void;(*void:handle, *u8:symbol)
+    func:dlclose = i32;(*void:handle)
 }
 
 // Load library
@@ -432,7 +432,7 @@ c_string: *u8 = "Hello\0";  // ✅ Null terminator
 
 ```aria
 if ptr == NULL {
-    return Err("Null pointer from C");
+    pass(Err("Null pointer from C"));
 }
 ```
 
@@ -451,7 +451,7 @@ extern.c_free(ptr);
 pub extern "C" fn aria_func() {
     // ❌ Never panic! Return error code instead
     if error {
-        return -1;  // ✅ Error code
+        pass(-1);  // ✅ Error code
     }
 }
 ```

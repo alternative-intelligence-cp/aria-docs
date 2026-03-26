@@ -49,14 +49,14 @@ const NAME = "Aria";     // Inferred as string
 
 ```aria
 const IMMUTABLE: i32 = 42;  // Compile-time constant
-let runtime: i32 = 42;       // Runtime variable
+int32:runtime = 42;       // Runtime variable
 ```
 
 ```aria
 const SIZE: i32 = 100;
 let array: [i32; SIZE];  // ✅ OK - SIZE is compile-time constant
 
-let size: i32 = 100;
+int32:size = 100;
 let array: [i32; size];  // ❌ Error - size is runtime value
 ```
 
@@ -79,7 +79,7 @@ const ASPECT_RATIO: flt64 = WIDTH as flt64 / HEIGHT as flt64;
 
 ```aria
 const fn square(x: i32) -> i32 {
-    return x * x;
+    pass(x * x);
 }
 
 const SQUARED: i32 = square(10);  // 100 - evaluated at compile time
@@ -134,7 +134,7 @@ pub const CACHE_SIZE: i32 = 1000;
 pub const TIMEOUT_MS: i32 = 5000;
 
 // In main.aria
-import config;
+use config;
 
 db: Database = connect(config.DATABASE_URL);
 ```

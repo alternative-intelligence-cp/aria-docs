@@ -37,9 +37,9 @@ const DOUBLE: i32 = SIZE * 2;  // Computed at compile time
 ```aria
 const fn factorial(n: i32) -> i32 {
     if n <= 1 {
-        return 1;
+        pass(1);
     }
-    return n * factorial(n - 1);
+    pass(n * factorial(n - 1));
 }
 
 const FACT_5: i32 = factorial(5);  // 120 - computed at compile time
@@ -51,7 +51,7 @@ const FACT_5: i32 = factorial(5);  // 120 - computed at compile time
 
 ```aria
 const fn pow2(exp: i32) -> i32 {
-    return 1 << exp;
+    pass(1 << exp);
 }
 
 const KB: i32 = pow2(10);   // 1024
@@ -66,7 +66,7 @@ const GB: i32 = pow2(30);   // 1073741824
 ```aria
 comptime {
     // This code runs at compile time
-    stdout << "Compiling...";
+    print("Compiling...");
     
     const value: i32 = expensive_computation();
 }
@@ -78,7 +78,7 @@ comptime {
 
 ```aria
 const fn array_size<T>() -> usize {
-    return sizeof(T) * 100;
+    pass(sizeof(T) * 100);
 }
 
 const BUFFER_SIZE: usize = array_size<i32>();  // 400
@@ -123,7 +123,7 @@ const fn generate_primes(count: i32) -> [i32; count] {
     // Compute primes at compile time
     Result: [i32; count];
     // ... implementation ...
-    return result;
+    pass(result);
 }
 ```
 
@@ -166,7 +166,7 @@ const fn sum_array<const N: usize>(arr: [i32; N]) -> i32 {
         sum += arr[$];
     }
     
-    return sum;
+    pass(sum);
 }
 
 const VALUES: [i32; 5] = [1, 2, 3, 4, 5];
@@ -185,14 +185,14 @@ const fn build_sin_table() -> [flt64; 360] {
     till(359, 1) {
         table[$] = sin($ * PI / 180.0);
     }
-    return table;
+    pass(table);
 }
 
 const SIN_TABLE: [flt64; 360] = build_sin_table();
 
 // Runtime - just table lookup!
-fn fast_sin(degrees: i32) -> flt64 {
-    return SIN_TABLE[degrees];
+func:fast_sin = flt64(int32:degrees) {
+    pass(SIN_TABLE[degrees]);
 }
 ```
 
@@ -232,8 +232,8 @@ comptime {
 ### Before (Runtime)
 
 ```aria
-fn calculate_offset(index: i32) -> i32 {
-    return index * sizeof(Data);  // Runtime multiplication
+func:calculate_offset = int32(int32:index) {
+    pass(index * sizeof(Data));  // Runtime multiplication
 }
 ```
 
@@ -242,8 +242,8 @@ fn calculate_offset(index: i32) -> i32 {
 ```aria
 const ELEMENT_SIZE: i32 = sizeof(Data);
 
-fn calculate_offset(index: i32) -> i32 {
-    return index * ELEMENT_SIZE;  // Optimized - const known
+func:calculate_offset = int32(int32:index) {
+    pass(index * ELEMENT_SIZE);  // Optimized - const known
 }
 ```
 
@@ -251,7 +251,7 @@ Even better:
 
 ```aria
 const fn calculate_offset(index: i32) -> i32 {
-    return index * sizeof(Data);
+    pass(index * sizeof(Data));
 }
 
 // If index is const, entire calculation is compile-time!

@@ -15,9 +15,9 @@ Extern blocks group **foreign function declarations** with a specific ABI.
 
 ```aria
 extern "C" {
-    fn function1() -> i32;
-    fn function2(x: i32) -> i32;
-    fn function3(x: i32, y: i32) -> i32;
+    func:function1 = i32;()
+    func:function2 = i32;(int32:x)
+    func:function3 = i32;(int32:x, int32:y)
 }
 ```
 
@@ -28,21 +28,21 @@ extern "C" {
 ```aria
 // C standard library
 extern "C" {
-    fn malloc(size: usize) -> *void;
-    fn free(ptr: *void);
+    func:malloc = *void;(uint64:size)
+    func:free = NIL(*void:ptr);
 }
 
 // Math library
 #[link(name = "m")]
 extern "C" {
-    fn sqrt(x: f64) -> f64;
-    fn sin(x: f64) -> f64;
+    func:sqrt = f64;(flt64:x)
+    func:sin = f64;(flt64:x)
 }
 
 // Custom library
 #[link(name = "mylib")]
 extern "C" {
-    fn custom_function() -> i32;
+    func:custom_function = i32;()
 }
 ```
 
@@ -55,23 +55,23 @@ extern "C" {
 ```aria
 // libc
 extern "C" {
-    fn malloc(size: usize) -> *void;
-    fn free(ptr: *void);
-    fn strlen(s: *u8) -> usize;
+    func:malloc = *void;(uint64:size)
+    func:free = NIL(*void:ptr);
+    func:strlen = usize;(*u8:s)
 }
 
 // libm (math)
 #[link(name = "m")]
 extern "C" {
-    fn sqrt(x: f64) -> f64;
-    fn pow(base: f64, exp: f64) -> f64;
+    func:sqrt = f64;(flt64:x)
+    func:pow = f64;(flt64:base, flt64:exp)
 }
 
 // libcrypto
 #[link(name = "crypto")]
 extern "C" {
-    fn encrypt(data: *void) -> i32;
-    fn decrypt(data: *void) -> i32;
+    func:encrypt = i32;(*void:data)
+    func:decrypt = i32;(*void:data)
 }
 ```
 
@@ -82,23 +82,23 @@ extern "C" {
 ```aria
 // Memory management
 extern "C" {
-    fn malloc(size: usize) -> *void;
-    fn free(ptr: *void);
-    fn realloc(ptr: *void, size: usize) -> *void;
+    func:malloc = *void;(uint64:size)
+    func:free = NIL(*void:ptr);
+    func:realloc = *void;(*void:ptr, uint64:size)
 }
 
 // String operations
 extern "C" {
-    fn strlen(s: *u8) -> usize;
-    fn strcmp(s1: *u8, s2: *u8) -> i32;
-    fn strcpy(dest: *u8, src: *u8) -> *u8;
+    func:strlen = usize;(*u8:s)
+    func:strcmp = i32;(*u8:s1, *u8:s2)
+    func:strcpy = *u8;(*u8:dest, *u8:src)
 }
 
 // File I/O
 extern "C" {
-    fn fopen(path: *u8, mode: *u8) -> *void;
-    fn fclose(file: *void) -> i32;
-    fn fread(ptr: *void, size: usize, count: usize, file: *void) -> usize;
+    func:fopen = *void;(*u8:path, *u8:mode)
+    func:fclose = i32;(*void:file)
+    func:fread = usize;(*void:ptr, uint64:size, uint64:count, *void:file)
 }
 ```
 
@@ -123,7 +123,7 @@ extern "C" {
 #[link(name = "mylib")]
 #[link(kind = "static")]
 extern "C" {
-    fn library_function();
+    func:library_function = NIL();
 }
 ```
 
@@ -134,17 +134,17 @@ extern "C" {
 ```aria
 #[cfg(target_os = "linux")]
 extern "C" {
-    fn linux_function();
+    func:linux_function = NIL();
 }
 
 #[cfg(target_os = "windows")]
 extern "system" {
-    fn windows_function();
+    func:windows_function = NIL();
 }
 
 #[cfg(target_os = "macos")]
 extern "C" {
-    fn macos_function();
+    func:macos_function = NIL();
 }
 ```
 
@@ -157,21 +157,21 @@ extern "C" {
 ```aria
 extern "C" {
     // Memory
-    fn malloc(size: usize) -> *void;
-    fn free(ptr: *void);
-    fn calloc(num: usize, size: usize) -> *void;
-    fn realloc(ptr: *void, size: usize) -> *void;
+    func:malloc = *void;(uint64:size)
+    func:free = NIL(*void:ptr);
+    func:calloc = *void;(uint64:num, uint64:size)
+    func:realloc = *void;(*void:ptr, uint64:size)
     
     // Strings
-    fn strlen(s: *u8) -> usize;
-    fn strcmp(s1: *u8, s2: *u8) -> i32;
-    fn strcpy(dest: *u8, src: *u8) -> *u8;
-    fn strcat(dest: *u8, src: *u8) -> *u8;
+    func:strlen = usize;(*u8:s)
+    func:strcmp = i32;(*u8:s1, *u8:s2)
+    func:strcpy = *u8;(*u8:dest, *u8:src)
+    func:strcat = *u8;(*u8:dest, *u8:src)
     
     // I/O
-    fn printf(format: *u8, ...) -> i32;
-    fn scanf(format: *u8, ...) -> i32;
-    fn puts(s: *u8) -> i32;
+    func:printf = i32;(*u8:format, ...)
+    func:scanf = i32;(*u8:format, ...)
+    func:puts = i32;(*u8:s)
 }
 ```
 
@@ -183,22 +183,22 @@ extern "C" {
 #[link(name = "m")]
 extern "C" {
     // Trigonometry
-    fn sin(x: f64) -> f64;
-    fn cos(x: f64) -> f64;
-    fn tan(x: f64) -> f64;
+    func:sin = f64;(flt64:x)
+    func:cos = f64;(flt64:x)
+    func:tan = f64;(flt64:x)
     
     // Powers and roots
-    fn sqrt(x: f64) -> f64;
-    fn pow(base: f64, exp: f64) -> f64;
+    func:sqrt = f64;(flt64:x)
+    func:pow = f64;(flt64:base, flt64:exp)
     
     // Logarithms
-    fn log(x: f64) -> f64;
-    fn log10(x: f64) -> f64;
+    func:log = f64;(flt64:x)
+    func:log10 = f64;(flt64:x)
     
     // Rounding
-    fn floor(x: f64) -> f64;
-    fn ceil(x: f64) -> f64;
-    fn round(x: f64) -> f64;
+    func:floor = f64;(flt64:x)
+    func:ceil = f64;(flt64:x)
+    func:round = f64;(flt64:x)
 }
 ```
 
@@ -210,15 +210,15 @@ extern "C" {
 #[link(name = "c")]
 extern "C" {
     // File operations
-    fn open(path: *u8, flags: i32) -> i32;
-    fn close(fd: i32) -> i32;
-    fn read(fd: i32, buf: *void, count: usize) -> isize;
-    fn write(fd: i32, buf: *void, count: usize) -> isize;
+    func:open = i32;(*u8:path, int32:flags)
+    func:close = i32;(int32:fd)
+    func:read = isize;(int32:fd, *void:buf, uint64:count)
+    func:write = isize;(int32:fd, *void:buf, uint64:count)
     
     // Process operations
-    fn fork() -> i32;
-    fn exec(path: *u8, argv: **u8) -> i32;
-    fn wait(status: *i32) -> i32;
+    func:fork = i32;()
+    func:exec = i32;(*u8:path, **u8:argv)
+    func:wait = i32;(*i32:status)
 }
 ```
 
@@ -231,9 +231,9 @@ extern "C" {
 ```aria
 // Group memory functions together
 extern "C" {
-    fn malloc(size: usize) -> *void;
+    func:malloc = *void;(uint64:size)
     fn free(ptr: *void;
-    fn realloc(ptr: *void, size: usize) -> *void;
+    func:realloc = *void;(*void:ptr, uint64:size)
 }
 ```
 
@@ -243,9 +243,9 @@ extern "C" {
 // SQLite3 database functions
 #[link(name = "sqlite3")]
 extern "C" {
-    fn sqlite3_open(filename: *u8, db: **void) -> i32;
-    fn sqlite3_close(db: *void) -> i32;
-    fn sqlite3_exec(db: *void, sql: *u8) -> i32;
+    func:sqlite3_open = i32;(*u8:filename, **void:db)
+    func:sqlite3_close = i32;(*void:db)
+    func:sqlite3_exec = i32;(*void:db, *u8:sql)
 }
 ```
 
@@ -255,8 +255,8 @@ extern "C" {
 #[link(name = "ssl")]
 #[link(name = "crypto")]
 extern "C" {
-    fn SSL_library_init() -> i32;
-    fn SSL_load_error_strings();
+    func:SSL_library_init = i32;()
+    func:SSL_load_error_strings = NIL();
 }
 ```
 
@@ -265,10 +265,10 @@ extern "C" {
 ```aria
 // Bad - different ABIs
 extern "C" {
-    fn c_function();
+    func:c_function = NIL();
 }
 extern "system" {  // ✅ Separate block
-    fn system_function();
+    func:system_function = NIL();
 }
 ```
 
@@ -280,8 +280,8 @@ extern "system" {  // ✅ Separate block
 // In ffi/libc.aria
 pub mod libc {
     extern "C" {
-        pub fn malloc(size: usize) -> *void;
-        pub fn free(ptr: *void);
+        pub func:malloc = *void;(uint64:size)
+        pub func:free = NIL(*void:ptr);
     }
 }
 
@@ -289,8 +289,8 @@ pub mod libc {
 pub mod math {
     #[link(name = "m")]
     extern "C" {
-        pub fn sqrt(x: f64) -> f64;
-        pub fn sin(x: f64) -> f64;
+        pub func:sqrt = f64;(flt64:x)
+        pub func:sin = f64;(flt64:x)
     }
 }
 

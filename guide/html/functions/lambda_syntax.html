@@ -855,7 +855,7 @@ Result: i32 = process(999, 5);  // 10 (first arg ignored)</code></pre>
 <h3>As Callback</h3>
 <pre><code>button.on_click(|| {
 <p>
-stdout << "Button clicked!\n";
+print("Button clicked!\n");
 });</code></pre>
 </p>
 <h3>In Array Methods</h3>
@@ -955,7 +955,7 @@ doubled = filtered.map(|z| z * 2);</code></pre>
 <h3>Simple Callback</h3>
 <pre><code>on_success: fn(string) = |msg| {
 <p>
-stdout << "Success: " << msg << "\n";
+print("Success: " << msg + "\n");
 };
 </p>
 <p>
@@ -970,8 +970,8 @@ return $counter;
 };
 </p>
 <p>
-stdout << increment();  // 1
-stdout << increment();  // 2</code></pre>
+print(increment());  // 1
+print(increment());  // 2</code></pre>
 </p>
 <h3>Data Pipeline</h3>
 <pre><code>numbers: []i32 = [1, 2, 3, 4, 5];

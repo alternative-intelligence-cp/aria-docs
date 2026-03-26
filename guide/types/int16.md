@@ -76,8 +76,8 @@ y: int16 = 8000;
 
 ```aria
 // 16-bit audio sample
-fn read_audio_sample(stream: &AudioStream) -> int16 {
-    return stream.read_int16();
+func:read_audio_sample = int16(AudioStream->:stream) {
+    pass(stream.read_int16());
 }
 ```
 
@@ -103,7 +103,7 @@ screen_y: int16 = 1080;
 ### ✅ DO: Consider Overflow
 
 ```aria
-fn safe_add(a: int16, b: int16) -> Result<int16> {
+func:safe_add = Result<int16>(int16:a, int16:b) {
     Result: i32 = (a as i32) + (b as i32);
     when result < -32768 or result > 32767 then
         fail("Overflow");
@@ -163,7 +163,7 @@ medium: int16 = large as int16;  // Truncates!
 
 ```aria
 // Process 16-bit audio
-fn process_audio(samples: []int16) {
+func:process_audio = NIL([]int16:samples) {
     till(samples.length - 1, 1) {
         // Normalize to -1.0 to 1.0
         normalized: flt32 = (samples[$] as flt32) / 32768.0;
@@ -180,10 +180,10 @@ struct Point2D {
     y: int16
 }
 
-fn distance(p1: Point2D, p2: Point2D) -> flt32 {
+func:distance = flt32(Point2D:p1, Point2D:p2) {
     dx: int16 = p1.x - p2.x;
     dy: int16 = p1.y - p2.y;
-    return sqrt((dx * dx + dy * dy) as flt32);
+    pass(sqrt((dx * dx + dy * dy) as flt32));
 }
 ```
 

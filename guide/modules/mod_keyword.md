@@ -16,12 +16,12 @@
 
 ```aria
 mod math {
-    pub fn add(a: i32, b: i32) -> i32 {
-        return a + b;
+    pub func:add = int32(int32:a, int32:b) {
+        pass(a + b);
     }
     
-    fn helper() -> i32 {  // Private to module
-        return 42;
+    func:helper = int32() {  // Private to module
+        pass(42);
     }
 }
 
@@ -67,12 +67,12 @@ utils.string.reverse("hello");
 ```aria
 mod outer {
     pub mod inner {
-        pub fn function() {
-            stdout << "Inner function";
+        pub func:function = NIL() {
+            print("Inner function");
         }
     }
     
-    pub fn outer_fn() {
+    pub func:outer_fn = NIL() {
         inner.function();  // Access nested
     }
 }
@@ -88,12 +88,12 @@ outer.outer_fn();
 
 ```aria
 mod private_mod {  // Module itself is private
-    pub fn public_fn() { }  // Function is public within module
+    pub func:public_fn = NIL() { }  // Function is public within module
 }
 
 pub mod public_mod {  // Module is public
-    pub fn public_fn() { }  // Accessible from outside
-    fn private_fn() { }     // Not accessible
+    pub func:public_fn = NIL() { }  // Accessible from outside
+    func:private_fn = NIL() { }     // Not accessible
 }
 ```
 
@@ -105,8 +105,8 @@ pub mod public_mod {  // Module is public
 
 ```aria
 // math.aria
-pub fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+pub func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 
 // main.aria

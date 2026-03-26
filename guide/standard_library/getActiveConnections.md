@@ -15,7 +15,7 @@
 ## Syntax
 
 ```aria
-import std.system;
+use std.system;
 
 connections: []ConnectionInfo = getActiveConnections();
 ```
@@ -48,13 +48,13 @@ struct ConnectionInfo {
 ### List Connections
 
 ```aria
-import std.system;
+use std.system;
 
 connections: []ConnectionInfo = getActiveConnections();
 
 till(connections.length - 1, 1) {
     conn = connections[$];
-    stdout << "$(conn.protocol) $(conn.local_addr):$(conn.local_port) -> $(conn.remote_addr):$(conn.remote_port) [$(conn.state)]";
+    print("$(conn.protocol) $(conn.local_addr):$(conn.local_port) -> $(conn.remote_addr):$(conn.remote_port) [$(conn.state)]");
 end
 ```
 
@@ -75,7 +75,7 @@ till(connections.length - 1, 1) {
     end
 end
 
-stdout << "Established: $established, Listening: $listening";
+print(`Established: &{established}, Listening: &{listening}`);
 ```
 
 ### Find Connections to Specific Host
@@ -86,10 +86,10 @@ target_host: string = "192.168.1.100";
 connections: []ConnectionInfo = getActiveConnections();
 
 matching: []ConnectionInfo = connections.filter(fn(conn) -> bool {
-    return conn.remote_addr == target_host;
+    pass(conn.remote_addr == target_host);
 });
 
-stdout << "Connections to $target_host: $(matching.length())";
+print(`Connections to &{target_host}: $(matching.length())`);
 ```
 
 ---
@@ -99,7 +99,7 @@ stdout << "Connections to $target_host: $(matching.length())";
 ### ✅ DO: Monitor Connection Leaks
 
 ```aria
-fn check_connection_leak() {
+func:check_connection_leak = NIL() {
     connections: []ConnectionInfo = getActiveConnections();
     
     when connections.length() > MAX_CONNECTIONS then

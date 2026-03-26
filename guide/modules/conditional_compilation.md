@@ -27,18 +27,18 @@ Conditional compilation allows **one codebase** to support multiple platforms, a
 
 ```aria
 #[cfg(os = "linux")]
-fn get_home_dir() -> string {
-    return "/home/user";
+func:get_home_dir = string() {
+    pass("/home/user");
 }
 
 #[cfg(os = "windows")]
-fn get_home_dir() -> string {
-    return "C:\\Users\\user";
+func:get_home_dir = string() {
+    pass("C:\\Users\\user");
 }
 
 #[cfg(os = "macos")]
-fn get_home_dir() -> string {
-    return "/Users/user";
+func:get_home_dir = string() {
+    pass("/Users/user");
 }
 ```
 
@@ -48,17 +48,17 @@ fn get_home_dir() -> string {
 
 ```aria
 #[cfg(arch = "x86_64")]
-fn optimized_function() {
+func:optimized_function = NIL() {
     // x86_64 SIMD instructions
 }
 
 #[cfg(arch = "aarch64")]
-fn optimized_function() {
+func:optimized_function = NIL() {
     // ARM NEON instructions
 }
 
 #[cfg(not(any(arch = "x86_64", arch = "aarch64")))]
-fn optimized_function() {
+func:optimized_function = NIL() {
     // Generic fallback
 }
 ```
@@ -83,20 +83,20 @@ full = ["logging", "database", "cache"]
 
 ```aria
 #[cfg(feature = "logging")]
-pub fn log(msg: string) {
-    stdout << "[LOG] $msg";
+pub func:log = NIL(string:msg) {
+    print(`[LOG] &{msg}`);
 }
 
 #[cfg(feature = "database")]
 pub mod database {
-    pub fn connect() -> Connection {
+    pub func:connect = Connection() {
         // Database connection
     }
 }
 
 #[cfg(feature = "cache")]
 pub mod cache {
-    pub fn get(key: string) -> ?Data {
+    pub func:get = ?Data(string:key) {
         // Cache lookup
     }
 }
@@ -108,13 +108,13 @@ pub mod cache {
 
 ```aria
 #[cfg(debug)]
-pub fn debug_info() {
-    stdout << "Debug build";
-    stdout << "Extra checks enabled";
+pub func:debug_info = NIL() {
+    print("Debug build");
+    print("Extra checks enabled");
 }
 
 #[cfg(release)]
-pub fn debug_info() {
+pub func:debug_info = NIL() {
     // Optimized - no debug output
 }
 
@@ -133,7 +133,7 @@ const LOG_LEVEL: string = "INFO";
 
 ```aria
 #[cfg(all(os = "linux", arch = "x86_64"))]
-fn linux_x86_64_specific() {
+func:linux_x86_64_specific = NIL() {
     // Only on 64-bit Linux
 }
 ```
@@ -144,7 +144,7 @@ fn linux_x86_64_specific() {
 
 ```aria
 #[cfg(any(os = "linux", os = "macos", os = "freebsd"))]
-fn unix_like() {
+func:unix_like = NIL() {
     // Any Unix-like system
 }
 ```
@@ -155,7 +155,7 @@ fn unix_like() {
 
 ```aria
 #[cfg(not(os = "windows"))]
-fn non_windows() {
+func:non_windows = NIL() {
     // Everything except Windows
 }
 ```
@@ -170,7 +170,7 @@ fn non_windows() {
     arch = "x86_64",
     not(feature = "minimal")
 ))]
-fn advanced_unix_feature() {
+func:advanced_unix_feature = NIL() {
     // 64-bit Unix with full features
 }
 ```
@@ -185,9 +185,9 @@ fn advanced_unix_feature() {
 // Platform-specific implementations
 #[cfg(os = "linux")]
 mod platform {
-    pub fn sleep(ms: i32) {
+    pub func:sleep = NIL(int32:ms) {
         extern "C" {
-            fn usleep(usec: i32);
+            func:usleep = NIL(int32:usec);
         }
         extern.usleep(ms * 1000);
     }
@@ -195,16 +195,16 @@ mod platform {
 
 #[cfg(os = "windows")]
 mod platform {
-    pub fn sleep(ms: i32) {
+    pub func:sleep = NIL(int32:ms) {
         extern "system" {
-            fn Sleep(ms: i32);
+            func:Sleep = NIL(int32:ms);
         }
         extern.Sleep(ms);
     }
 }
 
 // Common interface
-pub fn sleep(ms: i32) {
+pub func:sleep = NIL(int32:ms) {
     platform.sleep(ms);
 }
 ```
@@ -216,18 +216,18 @@ pub fn sleep(ms: i32) {
 ```aria
 // Main module
 pub mod core {
-    pub fn basic_function() { }
+    pub func:basic_function = NIL() { }
 }
 
 // Optional modules
 #[cfg(feature = "advanced")]
 pub mod advanced {
-    pub fn advanced_function() { }
+    pub func:advanced_function = NIL() { }
 }
 
 #[cfg(feature = "experimental")]
 pub mod experimental {
-    pub fn experimental_function() { }
+    pub func:experimental_function = NIL() { }
 }
 ```
 
@@ -238,13 +238,13 @@ pub mod experimental {
 ```aria
 // Optimized version for x86_64
 #[cfg(arch = "x86_64")]
-fn fast_checksum(data: []u8) -> u32 {
+func:fast_checksum = uint32([]u8:data) {
     // SIMD implementation
 }
 
 // Generic fallback
 #[cfg(not(arch = "x86_64"))]
-fn fast_checksum(data: []u8) -> u32 {
+func:fast_checksum = uint32([]u8:data) {
     // Portable implementation
 }
 ```
@@ -255,16 +255,16 @@ fn fast_checksum(data: []u8) -> u32 {
 
 ```aria
 #[cfg(feature = "json")]
-import serde_json;
+use serde_json;
 
 #[cfg(feature = "yaml")]
-import serde_yaml;
+use serde_yaml;
 
 #[cfg(feature = "database")]
-import database.{connect, query};
+use database.{connect, query};
 
 #[cfg(all(os = "linux", feature = "epoll"))]
-import linux.epoll;
+use linux.epoll;
 ```
 
 ---
@@ -302,13 +302,13 @@ pub struct Config {
 mod tests {
     #[cfg(os = "linux")]
     #[test]
-    fn test_linux_specific() {
+    func:test_linux_specific = NIL() {
         // Only runs on Linux
     }
     
     #[cfg(feature = "database")]
     #[test]
-    fn test_database() {
+    func:test_database = NIL() {
         // Only runs when database feature enabled
     }
 }
@@ -320,14 +320,14 @@ mod tests {
 
 ```aria
 #[cfg(debug)]
-pub fn assert_valid(data: Data) {
+pub func:assert_valid = NIL(Data:data) {
     if !data.is_valid() {
         panic("Invalid data in debug mode");
     }
 }
 
 #[cfg(release)]
-pub fn assert_valid(data: Data) {
+pub func:assert_valid = NIL(Data:data) {
     // No-op in release
 }
 ```
@@ -359,12 +359,12 @@ const IS_LITTLE_ENDIAN: bool = false;
 
 ```aria
 #[cfg(feature = "optimized")]
-fn process() {
+func:process = NIL() {
     // Optimized version
 }
 
 #[cfg(not(feature = "optimized"))]
-fn process() {
+func:process = NIL() {
     // Standard version
 }
 ```
@@ -391,7 +391,7 @@ pub use platform_impl::*;
 ```aria
 /// Available on Unix-like systems only
 #[cfg(any(os = "linux", os = "macos", os = "freebsd"))]
-pub fn unix_socket_connect(path: string) -> Socket {
+pub func:unix_socket_connect = Socket(string:path) {
     // Implementation
 }
 ```
@@ -401,19 +401,19 @@ pub fn unix_socket_connect(path: string) -> Socket {
 ```aria
 // Bad
 #[cfg(os = "linux")]
-fn process() {
+func:process = NIL() {
     common_logic();  // Duplicated
     linux_specific();
 }
 
 #[cfg(os = "windows")]
-fn process() {
+func:process = NIL() {
     common_logic();  // Duplicated
     windows_specific();
 }
 
 // Better
-fn process() {
+func:process = NIL() {
     common_logic();
     
     #[cfg(os = "linux")]
@@ -444,12 +444,12 @@ const PATH_SEPARATOR: u8 = '/';
 #[cfg(os = "windows")]
 #[link(name = "ws2_32")]
 extern "system" {
-    fn WSAStartup(version: i32, data: *void) -> i32;
+    func:WSAStartup = i32;(int32:version, *void:data)
 }
 
 #[cfg(any(os = "linux", os = "macos"))]
 extern "C" {
-    fn socket(domain: i32, type: i32, protocol: i32) -> i32;
+    func:socket = i32;(int32:domain, int32:type, int32:protocol)
 }
 ```
 

@@ -32,8 +32,8 @@ struct Point {
 point: Point = Point { x: 10, y: 20 };
 
 // Access fields
-stdout << point.x;  // 10
-stdout << point.y;  // 20
+print(point.x);  // 10
+print(point.y);  // 20
 
 // Modify fields
 point.x = 30;
@@ -48,8 +48,8 @@ struct Rectangle {
     width: i32,
     height: i32
     
-    fn area(self: &Rectangle) -> i32 {
-        return self.width * self.height;
+    func:area = int32(Rectangle->:self) {
+        pass(self.width * self.height);
     }
 }
 
@@ -57,7 +57,7 @@ rect: Rectangle = Rectangle { width: 5, height: 10 };
 
 // Call method
 area: i32 = rect.area();
-stdout << area;  // 50
+print(area);  // 50
 ```
 
 ---
@@ -94,7 +94,7 @@ Result: string = Network.HTTP.get("url");
 
 ```aria
 // Works with references
-point_ref: &Point = get_point();
+point_ref: $Point = get_point();
 x: i32 = point_ref.x;  // Automatically dereferences
 
 // Also works with pointers

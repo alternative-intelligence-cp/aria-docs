@@ -698,14 +698,14 @@ pub fn reverse(s: string) -> string {
 <p>
 mod helpers {
 pub fn format_output(value: i32) -> string {
-return "Value: $value";
+return `Value: &{value}`;
 }
 }
 </p>
 <p>
 fn main() {
 output: string = helpers.format_output(42);
-stdout << output;
+print(output);
 }</code></pre>
 </p>
 <hr>

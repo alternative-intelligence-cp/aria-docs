@@ -703,13 +703,13 @@ ptr: *Data = nil;  // ✅ Preferred</code></pre>
 <pre><code>// Function with no return
 <p>
 fn print_hello() -> void {
-stdout << "Hello";
+print("Hello");
 }
 </p>
 <p>
 // Can omit -> void
 fn print_hello() {
-stdout << "Hello";
+print("Hello");
 }</code></pre>
 </p>
 <hr>
@@ -727,7 +727,7 @@ stdout << "Hello";
 <pre><code>// void - no return value
 <p>
 fn log(msg: string) -> void {
-stdout << msg;
+print(msg);
 }
 </p>
 <p>
@@ -776,7 +776,7 @@ middle_name = nil
 <p>
 // Check optional
 when person.middle_name != nil then
-stdout << person.middle_name;
+print(person.middle_name);
 end</code></pre>
 </p>
 <hr>

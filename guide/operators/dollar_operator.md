@@ -29,7 +29,7 @@ mutable_ref: $i32 = $value;
 // Modify through reference
 *mutable_ref = 100;
 
-stdout << value;  // 100
+print(value);  // 100
 ```
 
 ---
@@ -37,13 +37,13 @@ stdout << value;  // 100
 ## Function Parameters
 
 ```aria
-fn increment(x: $i32) {
+func:increment = NIL($i32:x) {
     *x += 1;
 }
 
 count: i32 = 5;
 increment($count);
-stdout << count;  // 6
+print(count);  // 6
 ```
 
 ---
@@ -60,7 +60,7 @@ mutable: $i32 = $data;
 another: $i32 = $data;  // ❌ Error!
 
 // Error: Can't mix with immutable borrows
-immutable: &i32 = &data;  // ❌ Error!
+immutable: $i32 = $data;  // ❌ Error!
 ```
 
 ---
@@ -73,14 +73,14 @@ struct Point {
     y: i32
 }
 
-fn move_point(p: $Point, dx: i32, dy: i32) {
+func:move_point = NIL($Point:p, int32:dx, int32:dy) {
     p.x += dx;
     p.y += dy;
 }
 
 point: Point = Point { x: 10, y: 20 };
 move_point($point, 5, -3);
-stdout << point.x << ", " << point.y;  // 15, 17
+print(point.x + ", " + point.y);  // 15, 17
 ```
 
 ---
@@ -88,7 +88,7 @@ stdout << point.x << ", " << point.y;  // 15, 17
 ## In-Place Modification
 
 ```aria
-fn double_all(arr: $[]i32) {
+func:double_all = NIL($[]i32:arr) {
     till(arr.length() - 1, 1) {
         arr[$] *= 2;
     }
@@ -115,7 +115,7 @@ m2: $i32 = $x;  // ❌ Error: Already borrowed mutably
 
 ```aria
 x: i32 = 42;
-r: &i32 = &x;
+r: $i32 = $x;
 m: $i32 = $x;  // ❌ Error: Already borrowed immutably
 ```
 
@@ -126,7 +126,7 @@ m: $i32 = $x;  // ❌ Error: Already borrowed immutably
 ### ✅ DO: Use for In-Place Updates
 
 ```aria
-fn normalize(vec: $Vector) {
+func:normalize = NIL($Vector:vec) {
     len: f64 = vec.length();
     vec.x /= len;
     vec.y /= len;
@@ -145,7 +145,7 @@ data: i32 = 42;
 }  // Borrow ends
 
 // Can borrow again
-immutable: &i32 = &data;
+immutable: $i32 = $data;
 ```
 
 ### ❌ DON'T: Hold Mutable Borrow Longer Than Needed
@@ -155,7 +155,7 @@ immutable: &i32 = &data;
 global_ref: $Data = $global_data;
 
 // Better: Borrow briefly
-fn modify() {
+func:modify = NIL() {
     temp: $Data = $global_data;
     temp.update();
 }  // Borrow released
@@ -171,7 +171,7 @@ ref: $i32 = $value;
 *ref = 42;  // Safe
 
 // Raw pointer: Unsafe
-ptr: *i32 = &value;
+ptr: *i32 = $value;
 *ptr = 42;  // Can be unsafe
 ```
 

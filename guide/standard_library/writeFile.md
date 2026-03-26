@@ -15,7 +15,7 @@
 ## Syntax
 
 ```aria
-import std.io;
+use std.io;
 
 Result: Result<void> = writeFile("output.txt", "Hello, World!");
 ```
@@ -40,15 +40,15 @@ Result: Result<void> = writeFile("output.txt", "Hello, World!");
 ### Basic Usage
 
 ```aria
-import std.io;
+use std.io;
 
 // Write to file
 Result: Result<void> = writeFile("greeting.txt", "Hello!");
 
 when result is Ok() then
-    stdout << "File written successfully";
+    print("File written successfully");
 elsif result is Err(msg) then
-    stderr << "Write failed: $msg";
+    stderr_write(`Write failed: &{msg}`);
 end
 ```
 
@@ -68,7 +68,7 @@ func:save_config = Result<nil, string>(Config:config) {
 report: string = "System Report\n";
 report += "=============\n";
 report += "Status: OK\n";
-report += "Uptime: $uptime seconds\n";
+report += `Uptime: &{uptime} seconds\n`;
 
 writeFile("report.txt", report)?;
 ```
@@ -105,7 +105,7 @@ writeFile("data.txt", "New content")?;
 ```aria
 Result<nil>:Result = writeFile("output.txt", data);
 when result is Err(msg) then
-    log_error("Failed to write: $msg");
+    log_error(`Failed to write: &{msg}`);
     fail("Save failed");
 end
 ```

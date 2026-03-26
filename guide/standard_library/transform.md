@@ -15,10 +15,10 @@
 ## Syntax
 
 ```aria
-import std.functional;
+use std.functional;
 
 doubled: []i32 = transform(numbers, fn(x: i32) -> i32 {
-    return x * 2;
+    pass(x * 2);
 });
 ```
 
@@ -45,7 +45,7 @@ doubled: []i32 = transform(numbers, fn(x: i32) -> i32 {
 numbers: []i32 = [1, 2, 3, 4, 5];
 
 doubled: []i32 = transform(numbers, fn(x: i32) -> i32 {
-    return x * 2;
+    pass(x * 2);
 });
 // [2, 4, 6, 8, 10]
 ```
@@ -56,7 +56,7 @@ doubled: []i32 = transform(numbers, fn(x: i32) -> i32 {
 numbers: []i32 = [1, 2, 3, 4, 5];
 
 strings: []string = transform(numbers, fn(x: i32) -> string {
-    return to_string(x);
+    pass(to_string(x));
 });
 // ["1", "2", "3", "4", "5"]
 ```
@@ -72,7 +72,7 @@ struct User {
 users: []User = [...];
 
 names: []string = transform(users, fn(u: User) -> string {
-    return u.name;
+    pass(u.name);
 });
 ```
 
@@ -87,7 +87,7 @@ struct Point {
 points: []Point = [{x=1, y=2}, {x=3, y=4}];
 
 x_coords: []i32 = transform(points, fn(p: Point) -> i32 {
-    return p.x;
+    pass(p.x);
 });
 // [1, 3]
 ```

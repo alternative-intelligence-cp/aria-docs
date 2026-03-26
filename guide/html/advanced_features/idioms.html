@@ -680,13 +680,13 @@ Err(e) => return Err(e),
 <pre><code>// ✅ Idiomatic
 <p>
 if let Some(user) = find_user(id) {
-stdout << user.name;
+print(user.name);
 }
 </p>
 <p>
 // ❌ Verbose
 match find_user(id) {
-Some(user) => stdout << user.name,
+Some(user) => print(user.name),
 None => {},
 }</code></pre>
 </p>
@@ -727,13 +727,13 @@ return Err("Name required");
 <pre><code>// ✅ Idiomatic
 <p>
 fn greet(User { name, age, .. }: User) {
-stdout << "Hello $name, age $age";
+print(`Hello &{name}, age &{age}`);
 }
 </p>
 <p>
 // ❌ Verbose
 fn greet_verbose(user: User) {
-stdout << "Hello ${user.name}, age ${user.age}";
+print("Hello &{user.name}, age &{user.age}");
 }</code></pre>
 </p>
 <hr>
@@ -790,7 +790,7 @@ name: string,
 <p>
 impl User {
 fn greet() {
-stdout << "Hello, $self.name";
+print(`Hello, &{self.name}`);
 }
 }
 </p>
@@ -800,7 +800,7 @@ user.greet();
 <p>
 // ❌ Less idiomatic
 fn greet_user(user: User) {
-stdout << "Hello, ${user.name}";
+print("Hello, &{user.name}");
 }
 </p>
 <p>
@@ -861,10 +861,10 @@ fn divide_out(a: i32, b: i32, quotient: <em>i32, remainder: </em>i32) {
 <pre><code>// ✅ Idiomatic
 <p>
 match value {
-n if n < 0 => stdout << "negative",
-n if n == 0 => stdout << "zero",
-n if n % 2 == 0 => stdout << "positive even",
-_ => stdout << "positive odd",
+n if n < 0 => print("negative"),
+n if n == 0 => print("zero"),
+n if n % 2 == 0 => print("positive even"),
+_ => print("positive odd"),
 }
 </p>
 <p>
@@ -872,13 +872,13 @@ _ => stdout << "positive odd",
 match value {
 n => {
 if n < 0 {
-stdout << "negative";
+print("negative");
 } else if n == 0 {
-stdout << "zero";
+print("zero");
 } else if n % 2 == 0 {
-stdout << "positive even";
+print("positive even");
 } else {
-stdout << "positive odd";
+print("positive odd");
 }
 }
 }</code></pre>
@@ -928,7 +928,7 @@ numbers.filter(is_positive);</code></pre>
 <p>
 name: string = "Alice";
 age: i32 = 30;
-message: string = "Hello, $name! You are $age years old.";
+message: string = `Hello, &{name}! You are &{age} years old.`;
 </p>
 <p>
 // ❌ Concatenation
@@ -960,13 +960,13 @@ fn fetch_user_bad(id: i32) -> Result<User, string> {
 <pre><code>// ✅ Idiomatic
 <p>
 till(9, 1) {
-stdout << $;
+print($);
 }
 </p>
 <p>
 // ❌ C-style
 for i: i32 = 0; i < 10; i += 1 {
-stdout << i;
+print(i);
 }</code></pre>
 </p>
 <hr>
@@ -989,22 +989,22 @@ config.timeout?
 <pre><code>// ✅ Idiomatic
 <p>
 match items {
-[] => stdout << "empty",
-[x] => stdout << "one: $x",
-[x, y] => stdout << "two: $x, $y",
-[first, ...rest] => stdout << "many, first: $first",
+[] => print("empty"),
+[x] => print(`one: &{x}`),
+[x, y] => print(`two: &{x}), &{y}`,
+[first, ...rest] => print(`many), first: &{first}`,
 }
 </p>
 <p>
 // ❌ Manual indexing
 if items.len() == 0 {
-stdout << "empty";
+print("empty");
 } else if items.len() == 1 {
-stdout << "one: ${items[0]}";
+print("one: &{items[0]}");
 } else if items.len() == 2 {
-stdout << "two: ${items[0]}, ${items[1]}";
+print("two: &{items[0]}, &{items[1]}");
 } else {
-stdout << "many, first: ${items[0]}";
+print("many, first: &{items[0]}");
 }</code></pre>
 </p>
 <hr>
@@ -1025,7 +1025,7 @@ break outer;
 // Avoid when simple
 // ❌ Over-labeled
 simple: till(9, 1) {
-stdout << $;
+print($);
 }</code></pre>
 </p>
 <hr>

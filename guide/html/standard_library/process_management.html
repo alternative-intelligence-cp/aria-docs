@@ -672,7 +672,7 @@ Aria provides comprehensive process management through <code>std.process</code>:
 <pre><code>// Run command, get output
 <p>
 Result: ProcessResult = exec("git", ["status"])?;
-stdout << result.stdout;</code></pre>
+print(result.stdout);</code></pre>
 </p>
 <strong>Use when</strong>: Simple scripts, getting command output, synchronous execution
 <hr>
@@ -715,7 +715,7 @@ when result.exit_code == 0 then
 files: []string = result.stdout.split("\n");
 process_files(files);
 else
-stderr << "Command failed: $(result.stderr)";
+stderr_write("Command failed: $(result.stderr)");
 end</code></pre>
 </p>
 <hr>
@@ -742,7 +742,7 @@ end</code></pre>
 <p>
 when fork_result is Parent(child_pid) then
 Result: ProcessResult = wait(child_pid)?;
-stdout << "Child finished";
+print("Child finished");
 </p>
 <p>
 elsif fork_result is Child then
@@ -797,7 +797,7 @@ Result: ProcessResult = wc.wait()?;</code></pre>
 <pre><code>ProcessResult:Result = exec(command, args)?;
 <p>
 when result.exit_code != 0 then
-stderr << "Command failed: $(result.stderr)";
+stderr_write("Command failed: $(result.stderr)");
 fail("Execution error");
 end</code></pre>
 </p>
@@ -814,7 +814,7 @@ defer process.wait()?;</code></pre>
 <pre><code>Result: Result<ProcessResult> = exec("risky_command", args);
 <p>
 when result is Err(msg) then
-log_error("Process error: $msg");
+log_error(`Process error: &{msg}`);
 // Fallback or recovery
 end</code></pre>
 </p>
@@ -838,7 +838,7 @@ end</code></pre>
 <pre><code>// DANGEROUS
 <p>
 user_input: string = get_user_input();
-exec("sh", ["-c", "rm $user_input"])?;  // ❌ UNSAFE!
+exec("sh", ["-c", `rm &{user_input}`])?;  // ❌ UNSAFE!
 </p>
 <p>
 // SAFE

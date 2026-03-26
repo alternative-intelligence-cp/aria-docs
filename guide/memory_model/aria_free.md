@@ -9,7 +9,7 @@
 ## Signature
 
 ```aria
-fn aria_free(ptr: *byte)
+func:aria_free = NIL(*byte:ptr)
 ```
 
 ---
@@ -43,7 +43,7 @@ aria_free(ptr);
 ## With defer
 
 ```aria
-fn process() {
+func:process = NIL() {
     ptr: *byte = aria_alloc(1024);
     defer aria_free(ptr);  // Guaranteed to run
     

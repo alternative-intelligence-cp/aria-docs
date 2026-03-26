@@ -682,40 +682,40 @@ stderr: string      // Standard error
 Result: ProcessResult = exec("echo", ["Hello, World!"])?;
 </p>
 <p>
-stdout << "Output: $(result.stdout)";
-stdout << "Exit code: $(result.exit_code)";</code></pre>
+print("Output: $(result.stdout)");
+print("Exit code: $(result.exit_code)");</code></pre>
 </p>
 <h3>Check Exit Code</h3>
 <pre><code>Result<ProcessResult>:Result = exec("grep", ["pattern", "file.txt"])?;
 <p>
 when result.exit_code == 0 then
-stdout << "Found:\n$(result.stdout)";
+print("Found:\n$(result.stdout)");
 else
-stderr << "Not found or error";
+stderr_write("Not found or error");
 end</code></pre>
 </p>
 <h3>Capture Errors</h3>
 <pre><code>ProcessResult:Result = exec("git", ["status"])?;
 <p>
 when result.exit_code != 0 then
-stderr << "Git error: $(result.stderr)";
+stderr_write("Git error: $(result.stderr)");
 fail("Git command failed");
 end
 </p>
 <p>
-stdout << result.stdout;</code></pre>
+print(result.stdout);</code></pre>
 </p>
 <h3>Run Script</h3>
 <pre><code>Result: ProcessResult = exec("python3", ["script.py", "arg1", "arg2"])?;
 <p>
-stdout << "Script output: $(result.stdout)";</code></pre>
+print("Script output: $(result.stdout)");</code></pre>
 </p>
 <hr>
 <h2>Common Commands</h2>
 <h3>List Files</h3>
 <pre><code>Result: ProcessResult = exec("ls", ["-la"])?;
 <p>
-stdout << result.stdout;</code></pre>
+print(result.stdout);</code></pre>
 </p>
 <h3>Git Operations</h3>
 <pre><code>// Git status
@@ -733,7 +733,7 @@ build: ProcessResult = exec("gcc", ["main.c", "-o", "program"])?;
 </p>
 <p>
 when build.exit_code != 0 then
-stderr << "Build failed:\n$(build.stderr)";
+stderr_write("Build failed:\n$(build.stderr)");
 end</code></pre>
 </p>
 <hr>
@@ -749,19 +749,19 @@ end</code></pre>
 <pre><code>ProcessResult:Result = exec(command, args)?;
 <p>
 when result.exit_code != 0 then
-stderr << "Command failed with code $(result.exit_code)";
-stderr << "Error: $(result.stderr)";
+stderr_write("Command failed with code $(result.exit_code)");
+stderr_write("Error: $(result.stderr)");
 fail("Execution failed");
 end</code></pre>
 </p>
 <h3>✅ DO: Handle Both Stdout and Stderr</h3>
 <pre><code>Result: ProcessResult = exec("make", ["build"])?;
 <p>
-stdout << result.stdout;
+print(result.stdout);
 </p>
 <p>
 when result.stderr.length() > 0 then
-stderr << "Warnings:\n$(result.stderr)";
+stderr_write("Warnings:\n$(result.stderr)");
 end</code></pre>
 </p>
 <h3>❌ DON'T: Ignore Errors</h3>
@@ -779,7 +779,7 @@ end</code></pre>
 <pre><code>// DANGEROUS - user input could contain malicious commands!
 <p>
 user_input: string = get_user_input();
-exec("sh", ["-c", "rm $user_input"])?;  // ❌ UNSAFE
+exec("sh", ["-c", `rm &{user_input}`])?;  // ❌ UNSAFE
 </p>
 <p>
 // Safe - args are properly escaped
@@ -790,12 +790,12 @@ exec("rm", [user_input])?;  // ✅ Safe</code></pre>
 <pre><code>// exec() - WAITS for completion
 <p>
 Result: ProcessResult = exec("sleep", ["5"])?;  // Blocks for 5 seconds
-stdout << "Done sleeping";
+print("Done sleeping");
 </p>
 <p>
 // spawn() - Runs in background
 process: Process = spawn("sleep", ["5"])?;  // Returns immediately
-stdout << "Still running...";
+print("Still running...");
 process.wait()?;  // Wait when needed</code></pre>
 </p>
 <hr>

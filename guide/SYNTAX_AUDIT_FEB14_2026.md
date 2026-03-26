@@ -42,7 +42,7 @@
 **Example (from error_handling.md:21)**:
 ```aria
 // ❌ WRONG (current):
-return Ok(config);
+pass(Ok(config));
 
 // ✅ CORRECT (Aria syntax):
 pass(config);
@@ -156,7 +156,7 @@ Result<int64, ERR_TYPE>
 **Example**:
 ```aria
 // ❌ WRONG (Rust/TypeScript style):
-fn function_name(param_name: Type) { }
+func:function_name = NIL(Type:param_name) { }
 
 // ✅ CORRECT (Aria):
 func:function_name = (Type:param_name) { }

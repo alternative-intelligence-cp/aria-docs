@@ -19,16 +19,16 @@
 
 ```aria
 // Simple output
-stdout << "Hello, world!\n";
+print("Hello, world!\n");
 
 // Multiple values
-stdout << "Result: " << result << "\n";
+print("Result: " + result + "\n");
 
 // Expressions
-stdout << "Array has " << items.len() << " elements\n";
+print("Array has " + items.len() + " elements\n");
 
 // Formatted output
-stdout << format("Balance: ${:.2f}", balance);
+print(format("Balance: &{:.2f}", balance));
 ```
 
 ---
@@ -41,8 +41,8 @@ stdout << format("Balance: ${:.2f}", balance);
 
 ```aria
 // User-facing messages
-stdout << "Processing complete\n";
-stdout << "Files processed: " << count << "\n";
+print("Processing complete\n");
+print("Files processed: " + count + "\n");
 ```
 
 **Purpose**: Messages that humans read in terminals
@@ -60,7 +60,7 @@ stddato.write_json({"count": count, "status": "ok"});
 
 ```aria
 // Humans see progress
-stdout << "Processing batch...\n";
+print("Processing batch...\n");
 
 // Machines get structured results
 stddato.write_json({"batch": batch_id, "status": "done"});
@@ -75,33 +75,33 @@ stddato.write_json({"batch": batch_id, "status": "done"});
 ### Progress Messages
 
 ```aria
-fn process_batch(items: []Item) {
+func:process_batch = NIL([]Item:items) {
     total: usize = items.len();
     
     till(total - 1, 1) {
         // Human progress on stdout
-        stdout << "Processing " << ($ + 1) << "/" << total << "...\r";
+        print("Processing " + ($ + 1) + "/" + total + "...\r");
         stdout.flush();  // Update immediately
         
         process_item(items[$]);
     }
     
-    stdout << "\n";  // Newline after progress
+    print("\n");  // Newline after progress
 }
 ```
 
 ### Results Display
 
 ```aria
-fn display_results(results: []Result) {
-    stdout << "\nResults:\n";
-    stdout << "========\n";
+func:display_results = NIL([]Result:results) {
+    print("\nResults:\n");
+    print("========\n");
     
     till(results.length - 1, 1) {
-        stdout << "  " << results[$].name << ": " << results[$].value << "\n";
+        print("  " + results[$].name + ": " + results[$].value + "\n");
     }
     
-    stdout << "\nTotal: " << results.len() << " items\n";
+    print("\nTotal: " + results.len() + " items\n");
 }
 ```
 
@@ -112,15 +112,15 @@ fn display_results(results: []Result) {
 ### ✅ DO: Use for User Messages
 
 ```aria
-stdout << "Welcome to MyApp!\n";
-stdout << "Operation completed successfully.\n";
+print("Welcome to MyApp!\n");
+print("Operation completed successfully.\n");
 ```
 
 ### ✅ DO: Provide Both Human and Machine Output
 
 ```aria
 // Humans
-stdout << "Processed " << count << " records\n";
+print("Processed " + count + " records\n");
 
 // Machines
 stddato.write_json({"records_processed": count});
@@ -130,17 +130,17 @@ stddato.write_json({"records_processed": count});
 
 ```aria
 // WRONG: Debug output pollutes stdout
-stdout << "DEBUG: Entering function\n";
+print("DEBUG: Entering function\n");
 
 // RIGHT: Use stddbg
-stddbg << "Entering function";
+stddbg_write("Entering function");
 ```
 
 ### ❌ DON'T: Use for Structured Data
 
 ```aria
 // WRONG: JSON on stdout breaks human output
-stdout << json_dumps(data);
+print(json_dumps(data));
 
 // RIGHT: Use stddato
 stddato.write_json(data);

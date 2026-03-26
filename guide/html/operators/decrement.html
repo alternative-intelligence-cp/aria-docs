@@ -663,7 +663,7 @@ The decrement operator <code>--</code> decreases a variable's value by 1.
 <pre><code>x: i32 = 10;
 <p>
 x--;
-stdout << x;  // 9</code></pre>
+print(x);  // 9</code></pre>
 </p>
 <hr>
 <h2>Postfix vs Prefix</h2>
@@ -683,7 +683,7 @@ y: i32 = --x;  // y = 9, x = 9</code></pre>
 <p>
 i: i32 = 10;
 while i > 0 {
-stdout << i;
+print(i);
 i--;
 }
 // Prints: 10 9 8 7 6 5 4 3 2 1</code></pre>

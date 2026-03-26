@@ -318,7 +318,7 @@ if (user == NIL) {
 // NIL: When "not found" is the only failure mode
 func:get_cache = (key: string) -> ?string {
     if (!cache_contains(key)) return NIL;
-    return cache_fetch(key);
+    pass(cache_fetch(key));
 }
 
 // Result: When multiple failure modes exist
@@ -353,7 +353,7 @@ func:create_user = (
         address: address ?? default_address
     };
     
-    return user;
+    pass(user);
 }
 
 // Usage - any optional parameter can be NIL
@@ -379,7 +379,7 @@ struct:TherapySession = {
 
 if (session == NIL) {
     stderr.write("Session not found\n");
-    return HTTP_404_NOT_FOUND;
+    pass(HTTP_404_NOT_FOUND);
 }
 
 // Session exists - check optional fields
@@ -442,7 +442,7 @@ if (sensors.posture_emotion != NIL) {
 
 if (sensor_count == 0) {
     stderr.write("No emotional sensors available\n");
-    return ERR;  // Can't compute emotion
+    pass(ERR);  // Can't compute emotion
 }
 
 tbb16:average_emotion = combined_emotion / sensor_count;
@@ -650,7 +650,7 @@ if (all_users != NIL) {
 // WRONG: NIL should not represent errors
 func:divide = (a: int32, b: int32) -> ?int32 {
     if (b == 0) return NIL;  // ❌ Division by zero is ERROR, not absence!
-    return a / b;
+    pass(a / b);
 }
 
 // RIGHT: Use Result or ERR
@@ -676,7 +676,7 @@ User:valid_user = user!;  // ❌ Panics if user is NIL!
 // RIGHT: Check before unwrapping
 if (user == NIL) {
     stderr.write("User not found\n");
-    return;
+    pass(NIL);
 }
 
 User:valid_user = user!;  // ✅ Safe (already checked)
@@ -828,7 +828,7 @@ val city = user?.address?.city ?: "Unknown"
 
 if (user == NIL) {
     stderr.write("User not found\n");
-    return;
+    pass(NIL);
 }
 
 // Safe navigation + null coalescing

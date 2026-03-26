@@ -735,7 +735,7 @@ users
 .filter(|u| u.age >= 18)
 .map(|u| u.name)
 .forEach(|name| {
-stdout << name;
+print(name);
 });
 }
 </p>
@@ -801,7 +801,7 @@ return Logger.instance?;
 </p>
 <p>
 pub fn log(message: string) {
-stdout << "[LOG] $message";
+print(`[LOG] &{message}`);
 }
 }
 </p>
@@ -873,7 +873,7 @@ return Ok(File { handle: handle });
 impl Drop for File {
 fn drop() {
 close_file(self.handle);
-stdout << "File closed automatically";
+print("File closed automatically");
 }
 }
 </p>
@@ -919,7 +919,7 @@ state: State,
 <p>
 impl Door<Locked> {
 pub fn unlock() -> Door<Unlocked> {
-stdout << "Door unlocked";
+print("Door unlocked");
 return Door { state: Unlocked };
 }
 }
@@ -927,12 +927,12 @@ return Door { state: Unlocked };
 <p>
 impl Door<Unlocked> {
 pub fn open() {
-stdout << "Door opened";
+print("Door opened");
 }
 </p>
 <p>
 pub fn lock() -> Door<Locked> {
-stdout << "Door locked";
+print("Door locked");
 return Door { state: Locked };
 }
 }
@@ -1073,7 +1073,7 @@ return &self.value?;
 <p>
 // Usage
 expensive_data: LazyValue<Vec<i32>> = LazyValue.new(|| {
-stdout << "Computing expensive data...";
+print("Computing expensive data...");
 return compute_large_dataset();
 });
 </p>

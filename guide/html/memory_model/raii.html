@@ -908,7 +908,7 @@ self.cleanup();
 fn example() {
 guard: ScopeGuard = ScopeGuard{
 cleanup: || {
-stdout << "Cleaning up\n";
+print("Cleaning up\n");
 }
 };
 </p>

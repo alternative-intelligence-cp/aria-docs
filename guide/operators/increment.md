@@ -26,7 +26,7 @@ The increment operator `++` increases a variable's value by 1.
 ```aria
 x: i32 = 5;
 x++;
-stdout << x;  // 6
+print(x);  // 6
 ```
 
 ---
@@ -51,7 +51,7 @@ y: i32 = ++x;  // y = 6, x = 6
 // Common in loops
 i: i32 = 0;
 while i < 10 {
-    stdout << i;
+    print(i);
     i++;
 }
 ```

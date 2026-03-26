@@ -75,8 +75,8 @@ enum ASTNode {
 
 ```aria
 // Source code:
-fn add(x: i32, y: i32) -> i32 {
-    return x + y;
+func:add = int32(int32:x, int32:y) {
+    pass(x + y);
 }
 
 // AST representation:
@@ -150,7 +150,7 @@ struct BinaryExpr {
 
 ```aria
 impl Parser {
-    fn parse_function() -> Result<*FunctionDecl> {
+    func:parse_function = Result<*FunctionDecl>() {
         // Parse syntax
         name: string = self.parse_identifier()?;
         params: []Parameter = self.parse_parameters()?;
@@ -170,7 +170,7 @@ impl Parser {
             body: body,
         });
         
-        return Ok(node);
+        pass(Ok(node));
     }
 }
 ```
@@ -182,14 +182,14 @@ impl Parser {
 ```aria
 // Visitor pattern
 trait ASTVisitor {
-    fn visit_program(node: *Program) -> Result<void>;
-    fn visit_function_decl(node: *FunctionDecl) -> Result<void>;
-    fn visit_binary_expr(node: *BinaryExpr) -> Result<void>;
+    func:visit_program = Result<NIL>(*Program:node)
+    func:visit_function_decl = Result<NIL>(*FunctionDecl:node)
+    func:visit_binary_expr = Result<NIL>(*BinaryExpr:node)
     // ... other visit methods
 }
 
 impl ASTVisitor for TypeChecker {
-    fn visit_binary_expr(node: *BinaryExpr) -> Result<void> {
+    func:visit_binary_expr = Result<NIL>(*BinaryExpr:node) {
         // Visit children first
         self.visit_expression(node.left)?;
         self.visit_expression(node.right)?;
@@ -199,13 +199,13 @@ impl ASTVisitor for TypeChecker {
         right_type: Type = node.right.type?;
         
         if left_type != right_type {
-            return Err("Type mismatch in binary expression");
+            pass(Err("Type mismatch in binary expression"));
         }
         
         // Set node type
         node.base.type = Some(left_type);
         
-        return Ok();
+        pass(Ok());
     }
 }
 ```
@@ -216,13 +216,13 @@ impl ASTVisitor for TypeChecker {
 
 ```aria
 // AST → AST transformation
-fn optimize_ast(ast: *Program) -> *Program {
+func:optimize_ast = *Program(*Program:ast) {
     optimizer: ASTOptimizer = ASTOptimizer.new();
-    return optimizer.transform(ast);
+    pass(optimizer.transform(ast));
 }
 
 impl ASTOptimizer {
-    fn transform_binary_expr(node: *BinaryExpr) -> *Expression {
+    func:transform_binary_expr = *Expression(*BinaryExpr:node) {
         // Constant folding: 2 + 3 → 5
         if node.left is Literal && node.right is Literal {
             left_val: i64 = node.left.value;
@@ -235,10 +235,10 @@ impl ASTOptimizer {
                 BinaryOp.Div => left_val / right_val,
             };
             
-            return alloc(Literal { value: result });
+            pass(alloc(Literal { value: result }));
         }
         
-        return node;
+        pass(node);
     }
 }
 ```
@@ -249,20 +249,20 @@ impl ASTOptimizer {
 
 ```aria
 impl FunctionDecl {
-    fn pretty_print(indent: i32) -> string {
+    func:pretty_print = string(int32:indent) {
         output: string = "";
-        output += " " * indent ++ "FunctionDecl '$self.name'\n";
+        output += " " * indent ++ `FunctionDecl '&{self.name}'\n`;
         
         output += " " * (indent + 2) ++ "Parameters:\n";
         till(self.parameters.length - 1, 1) {
             param = self.parameters[$];
-            output += " " * (indent + 4) ++ "${param.name}: ${param.type}\n";
+            output += " " * (indent + 4) ++ "&{param.name}: &{param.type}\n";
         }
         
         output += " " * (indent + 2) ++ "Body:\n";
         output += self.body.pretty_print(indent + 4);
         
-        return output;
+        pass(output);
     }
 }
 
@@ -285,14 +285,14 @@ impl FunctionDecl {
 ### Type Checking
 
 ```aria
-fn type_check(ast: *Program) -> Result<void> {
+func:type_check = Result<NIL>(*Program:ast) {
     checker: TypeChecker = TypeChecker.new();
     
     till(ast.declarations.length - 1, 1) {
         checker.visit_declaration(ast.declarations[$])?;
     }
     
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -301,14 +301,14 @@ fn type_check(ast: *Program) -> Result<void> {
 ### Code Generation
 
 ```aria
-fn generate_code(ast: *Program) -> string {
+func:generate_code = string(*Program:ast) {
     generator: CodeGenerator = CodeGenerator.new();
     
     till(ast.declarations.length - 1, 1) {
         generator.visit_declaration(ast.declarations[$]);
     }
     
-    return generator.get_output();
+    pass(generator.get_output());
 }
 ```
 
@@ -317,7 +317,7 @@ fn generate_code(ast: *Program) -> string {
 ### Optimization
 
 ```aria
-fn optimize(ast: *Program) -> *Program {
+func:optimize = *Program(*Program:ast) {
     // Dead code elimination
     ast = eliminate_dead_code(ast);
     
@@ -327,7 +327,7 @@ fn optimize(ast: *Program) -> *Program {
     // Inline small functions
     ast = inline_functions(ast);
     
-    return ast;
+    pass(ast);
 }
 ```
 
@@ -351,7 +351,7 @@ struct ASTNode {
 
 ```aria
 trait ASTVisitor {
-    fn visit_node(node: *ASTNode) -> Result<void> {
+    func:visit_node = Result<NIL>(*ASTNode:node) {
         match node.kind {
             NodeKind.FunctionDecl => self.visit_function_decl(node),
             NodeKind.BinaryExpr => self.visit_binary_expr(node),
@@ -364,10 +364,10 @@ trait ASTVisitor {
 ### ✅ DO: Validate AST After Construction
 
 ```aria
-fn validate_ast(ast: *Program) -> Result<void> {
+func:validate_ast = Result<NIL>(*Program:ast) {
     validator: ASTValidator = ASTValidator.new();
     validator.check(ast)?;
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -376,7 +376,7 @@ fn validate_ast(ast: *Program) -> Result<void> {
 ```aria
 // AST can get very deep
 // Use iteration or trampolining to avoid stack overflow
-fn visit_deep_ast(node: *ASTNode) {
+func:visit_deep_ast = NIL(*ASTNode:node) {
     stack: []*ASTNode = [node];
     
     while !stack.is_empty() {

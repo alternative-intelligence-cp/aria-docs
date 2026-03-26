@@ -69,11 +69,11 @@ end
 error_value: tbb32 = ERR;
 
 // Use in functions
-fn divide(a: tbb32, b: tbb32) -> tbb32 {
+func:divide = tbb32(tbb32:a, tbb32:b) {
     when b == 0 then
-        return ERR;
+        pass(ERR);
     end
-    return a / b;
+    pass(a / b);
 }
 ```
 

@@ -659,11 +659,11 @@ A <strong>mutable borrow</strong> is a mutable reference created with <code>$</c
 ref: &i32 = $value;  // Mutable borrow
 </p>
 <p>
-stdout << ref;  // ✅ Can read
+print(ref);  // ✅ Can read
 ref = 100;      // ✅ Can modify
 </p>
 <p>
-stdout << value;  // 100</code></pre>
+print(value);  // 100</code></pre>
 </p>
 <hr>
 <h2>Exclusive Access</h2>
@@ -685,7 +685,7 @@ value = value * 2;
 <p>
 x: i32 = 21;
 double($x);  // Mutable borrow
-stdout << x;  // 42</code></pre>
+print(x);  // 42</code></pre>
 </p>
 <hr>
 <h2>Modifying Structs</h2>
@@ -704,7 +704,7 @@ p.y = p.y + dy;
 <p>
 point: Point = Point{x: 10, y: 20};
 move_point($point, 5, 5);
-stdout << point.x << ", " << point.y;  // 15, 25</code></pre>
+print(point.x << ", " + point.y);  // 15, 25</code></pre>
 </p>
 <hr>
 <h2>Rules</h2>
@@ -769,7 +769,7 @@ Borrow lasts until last use:
 {
 ref: &i32 = $value;
 ref = 100;
-stdout << ref;  // Last use
+print(ref);  // Last use
 }  // Borrow ends
 </p>
 <p>
@@ -788,7 +788,7 @@ counter = counter + 1;
 count: i32 = 0;
 increment($count);
 increment($count);
-stdout << count;  // 2</code></pre>
+print(count);  // 2</code></pre>
 </p>
 <h3>Update Fields</h3>
 <pre><code>fn update_user(user: &User, name: string) {
@@ -813,7 +813,7 @@ b = temp;
 x: i32 = 10;
 y: i32 = 20;
 swap($x, $y);
-stdout << x << ", " << y;  // 20, 10</code></pre>
+print(x << ", " + y);  // 20, 10</code></pre>
 </p>
 <hr>
 <h2>With Collections</h2>

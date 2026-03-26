@@ -21,7 +21,7 @@ Debug I/O in Aria centers on the **stddbg stream** - a dedicated channel for dia
 
 **Aria approach**:
 ```aria
-stddbg << "Debug information";  // Always present, redirected in production
+stddbg_write("Debug information");  // Always present, redirected in production
 ```
 
 **Result**: Debug code **stays in** the codebase forever, always available when needed.
@@ -32,20 +32,20 @@ stddbg << "Debug information";  // Always present, redirected in production
 
 ```aria
 // Function entry/exit
-stddbg << "Entering process_batch()";
+stddbg_write("Entering process_batch()");
 Result: Result = process_batch(items);
-stddbg << "Exiting process_batch, result=" << result.status;
+stddbg_write("Exiting process_batch, result=" + result.status);
 
 // State transitions
-stddbg << "State: " << old_state << " -> " << new_state;
+stddbg_write("State: " + old_state + " -> " + new_state);
 
 // Performance timing
 start: Time = Time::now();
 expensive_operation();
-stddbg << "Operation took " << (Time::now() - start).milliseconds() << "ms";
+stddbg_write("Operation took " + (Time::now() - start).milliseconds() + "ms");
 
 // Variable dumps
-stddbg << "balance=" << balance << ", limit=" << limit;
+stddbg_write("balance=" + balance + ", limit=" + limit);
 ```
 
 ---
@@ -79,13 +79,13 @@ stddbg << "balance=" << balance << ", limit=" << limit;
 ### ✅ DO: Leave Debug Statements In
 
 ```aria
-fn calculate_tax(income: f64) -> f64 {
-    stddbg << "calculate_tax: income=" << income;
+func:calculate_tax = flt64(flt64:income) {
+    stddbg_write("calculate_tax: income=" + income);
     
     tax: f64 = income * TAX_RATE;
     
-    stddbg << "  -> tax=" << tax;
-    return tax;
+    stddbg_write("  -> tax=" + tax);
+    pass(tax);
 }
 ```
 
@@ -93,10 +93,10 @@ fn calculate_tax(income: f64) -> f64 {
 
 ```aria
 // WRONG: Pollutes production output
-stdout << "DEBUG: Entering function\n";
+print("DEBUG: Entering function\n");
 
 // RIGHT: Dedicated stream
-stddbg << "Entering function";
+stddbg_write("Entering function");
 ```
 
 ---

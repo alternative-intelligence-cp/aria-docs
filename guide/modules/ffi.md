@@ -27,7 +27,7 @@ FFI allows Aria to **call foreign code** (C, C++, system libraries) and be **cal
 
 ```aria
 extern "C" {
-    fn c_function(x: i32) -> i32;
+    func:c_function = i32;(int32:x)
 }
 ```
 
@@ -36,7 +36,7 @@ extern "C" {
 ```aria
 #[link(name = "mylib")]
 extern "C" {
-    fn library_function();
+    func:library_function = NIL();
 }
 ```
 
@@ -53,9 +53,9 @@ Result: i32 = extern.c_function(42);
 ```aria
 // Declare C functions
 extern "C" {
-    fn strlen(s: *u8) -> usize;
-    fn malloc(size: usize) -> *void;
-    fn free(ptr: *void);
+    func:strlen = usize;(*u8:s)
+    func:malloc = *void;(uint64:size)
+    func:free = NIL(*void:ptr);
 }
 
 // Use them
@@ -73,7 +73,7 @@ extern.free(ptr);
 // Export Aria function to C
 #[no_mangle]
 pub extern "C" fn aria_add(a: i32, b: i32) -> i32 {
-    return a + b;
+    pass(a + b);
 }
 ```
 
@@ -127,10 +127,10 @@ int result = aria_add(5, 3);  // 8
 
 ```aria
 extern "C" {
-    fn malloc(size: usize) -> *void;
-    fn free(ptr: *void);
-    fn memcpy(dest: *void, src: *void, n: usize) -> *void;
-    fn strlen(s: *u8) -> usize;
+    func:malloc = *void;(uint64:size)
+    func:free = NIL(*void:ptr);
+    func:memcpy = *void;(*void:dest, *void:src, uint64:n)
+    func:strlen = usize;(*u8:s)
 }
 ```
 
@@ -141,10 +141,10 @@ extern "C" {
 ```aria
 #[link(name = "m")]
 extern "C" {
-    fn sqrt(x: f64) -> f64;
-    fn sin(x: f64) -> f64;
-    fn cos(x: f64) -> f64;
-    fn pow(base: f64, exp: f64) -> f64;
+    func:sqrt = f64;(flt64:x)
+    func:sin = f64;(flt64:x)
+    func:cos = f64;(flt64:x)
+    func:pow = f64;(flt64:base, flt64:exp)
 }
 
 Result: f64 = extern.sqrt(16.0);  // 4.0
@@ -157,22 +157,22 @@ Result: f64 = extern.sqrt(16.0);  // 4.0
 ```aria
 // Unsafe extern
 extern "C" {
-    fn unsafe_c_function(data: *void, size: usize) -> i32;
+    func:unsafe_c_function = i32;(*void:data, uint64:size)
 }
 
 // Safe Aria wrapper
-pub fn safe_wrapper(data: []u8) -> Result<void> {
+pub func:safe_wrapper = Result<NIL>([]u8:data) {
     if data.len() == 0 {
-        return Err("Empty data");
+        pass(Err("Empty data"));
     }
     
-    Result: i32 = extern.unsafe_c_function(&data[0], data.len());
+    Result: i32 = extern.unsafe_c_function($data[0], data.len());
     
     if result != 0 {
-        return Err("Operation failed");
+        pass(Err("Operation failed"));
     }
     
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -185,8 +185,8 @@ pub fn safe_wrapper(data: []u8) -> Result<void> {
 ```aria
 // If C allocates, C must free
 extern "C" {
-    fn c_allocate() -> *void;
-    fn c_free(ptr: *void);
+    func:c_allocate = *void;()
+    func:c_free = NIL(*void:ptr);
 }
 
 ptr: *void = extern.c_allocate();
@@ -200,9 +200,9 @@ extern.c_free(ptr);  // ✅ C frees what C allocated
 pub extern "C" fn aria_allocate() -> *void {
     // Use C allocator so C can free
     extern "C" {
-        fn malloc(size: usize) -> *void;
+        func:malloc = *void;(uint64:size)
     }
-    return extern.malloc(1024);
+    pass(extern.malloc(1024));
 }
 ```
 
@@ -214,7 +214,7 @@ pub extern "C" fn aria_allocate() -> *void {
 
 ```aria
 extern "C" {
-    fn get_c_string() -> *u8;  // Returns null-terminated string
+    func:get_c_string = *u8;()// Returns null-terminated string
 }
 
 c_str: *u8 = extern.get_c_string();
@@ -231,7 +231,7 @@ aria_str: string = string.from_c_str(c_str);
 #[no_mangle]
 pub extern "C" fn aria_get_string() -> *u8 {
     // Must be static or heap-allocated and null-terminated
-    return "Hello from Aria\0";
+    pass("Hello from Aria\0");
 }
 ```
 
@@ -243,12 +243,12 @@ pub extern "C" fn aria_get_string() -> *u8 {
 
 ```aria
 extern "C" {
-    fn c_function() -> i32;  // 0 = success, -1 = error
+    func:c_function = i32;()// 0 = success, -1 = error
 }
 
 Result: i32 = extern.c_function();
 if result != 0 {
-    return Err("C function failed");
+    pass(Err("C function failed"));
 }
 ```
 
@@ -260,11 +260,11 @@ if result != 0 {
 #[no_mangle]
 pub extern "C" fn aria_function(out: *mut i32) -> i32 {
     if out == NULL {
-        return -1;  // Error: null pointer
+        pass(-1);  // Error: null pointer
     }
     
     *out = 42;
-    return 0;  // Success
+    pass(0);  // Success
 }
 ```
 
@@ -275,17 +275,17 @@ pub extern "C" fn aria_function(out: *mut i32) -> i32 {
 ```aria
 #[cfg(target_os = "linux")]
 extern "C" {
-    fn linux_specific_function();
+    func:linux_specific_function = NIL();
 }
 
 #[cfg(target_os = "windows")]
 extern "system" {
-    fn windows_specific_function();
+    func:windows_specific_function = NIL();
 }
 
 #[cfg(target_os = "macos")]
 extern "C" {
-    fn macos_specific_function();
+    func:macos_specific_function = NIL();
 }
 ```
 
@@ -296,13 +296,13 @@ extern "C" {
 ```aria
 // C library expects a callback
 extern "C" {
-    fn register_callback(cb: extern "C" fn(i32) -> i32);
+    func:register_callback = i32);(extern "C" fn(i32:cb)
 }
 
 // Define Aria callback
 #[no_mangle]
 extern "C" fn my_callback(value: i32) -> i32 {
-    return value * 2;
+    pass(value * 2);
 }
 
 // Register
@@ -317,7 +317,7 @@ extern.register_callback(my_callback);
 
 ```aria
 // Hide unsafe extern behind safe API
-pub fn safe_api() -> Result<Data> {
+pub func:safe_api = Result<Data>() {
     // Validate inputs
     // Call unsafe extern
     // Check results
@@ -329,7 +329,7 @@ pub fn safe_api() -> Result<Data> {
 
 ```aria
 if ptr == NULL {
-    return Err("Null pointer");
+    pass(Err("Null pointer"));
 }
 ```
 
@@ -370,9 +370,9 @@ extern "system" { } // ✅ For Windows system functions
 ```aria
 #[link(name = "sqlite3")]
 extern "C" {
-    fn sqlite3_open(filename: *u8, db: **void) -> i32;
-    fn sqlite3_close(db: *void) -> i32;
-    fn sqlite3_exec(db: *void, sql: *u8) -> i32;
+    func:sqlite3_open = i32;(*u8:filename, **void:db)
+    func:sqlite3_close = i32;(*void:db)
+    func:sqlite3_exec = i32;(*void:db, *u8:sql)
 }
 ```
 
@@ -382,8 +382,8 @@ extern "C" {
 #[link(name = "ssl")]
 #[link(name = "crypto")]
 extern "C" {
-    fn SSL_library_init() -> i32;
-    fn SSL_CTX_new() -> *void;
+    func:SSL_library_init = i32;()
+    func:SSL_CTX_new = *void;()
 }
 ```
 

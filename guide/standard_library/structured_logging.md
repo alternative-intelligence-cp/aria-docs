@@ -16,7 +16,7 @@
 ### ❌ Unstructured (Text)
 
 ```aria
-stdout << "User alice logged in from 192.168.1.1 at 2025-12-27T10:30:00";
+print("User alice logged in from 192.168.1.1 at 2025-12-27T10:30:00");
 ```
 
 **Problems**:
@@ -44,7 +44,7 @@ logger.info("User logged in", {
 ## Basic Structured Logging
 
 ```aria
-import std.log;
+use std.log;
 
 logger: Logger = createLogger("API");
 

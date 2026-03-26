@@ -663,24 +663,24 @@
 <h2>Basic Usage</h2>
 <pre><code>// Simple debug output
 <p>
-stddbg << "Entering calculate_balance()";
+stddbg_write("Entering calculate_balance()");
 </p>
 <p>
 // Debug with values
-stddbg << "Processing account: " << account_id;
+stddbg_write("Processing account: " + account_id);
 </p>
 <p>
 // Multiple values
-stddbg << "Balance: " << balance << ", Limit: " << credit_limit;
+stddbg_write("Balance: " << balance << ", Limit: " + credit_limit);
 </p>
 <p>
 // Expressions
-stddbg << "Array length: " << items.len();
+stddbg_write("Array length: " + items.len());
 </p>
 <p>
 // Conditional debugging (rare - usually just leave it in!)
 when debug_mode then
-stddbg << "Detailed trace: " << trace_data;
+stddbg_write("Detailed trace: " + trace_data);
 end</code></pre>
 </p>
 <hr>
@@ -705,13 +705,13 @@ return result</code></pre>
 <h3>Aria's Solution: Separate Stream</h3>
 <pre><code>fn process_transaction(txn: Transaction) -> Result {
 <p>
-stddbg << "Processing transaction: " << txn.id;
+stddbg_write("Processing transaction: " + txn.id);
 </p>
 <p>
 Result: Result = apply_transaction(txn);
 </p>
 <p>
-stdout << result;  // Clean production output
+print(result);  // Clean production output
 </p>
 <p>
 return result;
@@ -755,20 +755,20 @@ return result;
 <li>This prevents interleaved output from multiple threads</li>
 </ul>
 <strong>Force immediate flush</strong>:
-<pre><code>stddbg << "Critical debug point" << flush;</code></pre>
+<pre><code>stddbg_write("Critical debug point" + flush);</code></pre>
 <hr>
 <h2>Typical Use Cases</h2>
 <h3>1. Function Entry/Exit Tracing</h3>
 <pre><code>fn calculate_taxes(income: f64, deductions: f64) -> f64 {
 <p>
-stddbg << "calculate_taxes(" << income << ", " << deductions << ")";
+stddbg_write("calculate_taxes(" << income << ", " << deductions + ")");
 </p>
 <p>
 taxable: f64 = income - deductions;
 tax: f64 = taxable * TAX_RATE;
 </p>
 <p>
-stddbg << "  -> tax = " << tax;
+stddbg_write("  -> tax = " + tax);
 return tax;
 }</code></pre>
 </p>
@@ -777,13 +777,13 @@ return tax;
 <h3>2. Loop Progress Monitoring</h3>
 <pre><code>fn process_batch(items: []Item) -> []Result {
 <p>
-stddbg << "Processing batch of " << items.len() << " items";
+stddbg_write("Processing batch of " << items.len() + " items");
 </p>
 <p>
 results: []Result = [];
 till(items.len() - 1, 1) {
 when $ % 1000 == 0 then
-stddbg << "  Progress: " << $ << "/" << items.len();
+stddbg_write("  Progress: " << $ << "/" + items.len());
 end
 </p>
 <p>
@@ -791,7 +791,7 @@ results.push(process_item(items[$]));
 }
 </p>
 <p>
-stddbg << "Batch complete";
+stddbg_write("Batch complete");
 return results;
 }</code></pre>
 </p>
@@ -808,7 +808,7 @@ Event::Stop  => State::Stopped,
 };
 </p>
 <p>
-stddbg << "State: " << old_state << " -> " << current_state;
+stddbg_write("State: " << old_state << " -> " + current_state);
 </p>
 <p>
 return current_state;
@@ -818,14 +818,14 @@ return current_state;
 <pre><code>fn expensive_operation(data: []u8) -> Result {
 <p>
 start: Time = Time::now();
-stddbg << "Starting expensive_operation, size=" << data.len();
+stddbg_write("Starting expensive_operation, size=" + data.len());
 </p>
 <p>
 Result: Result = do_work(data);
 </p>
 <p>
 elapsed: Duration = Time::now() - start;
-stddbg << "Completed in " << elapsed.milliseconds() << "ms";
+stddbg_write("Completed in " << elapsed.milliseconds() + "ms");
 </p>
 <p>
 return result;
@@ -834,11 +834,11 @@ return result;
 <h3>5. Error Context (Pre-Panic)</h3>
 <pre><code>fn critical_section(id: u32) {
 <p>
-stddbg << "Entering critical section, id=" << id;
+stddbg_write("Entering critical section, id=" + id);
 </p>
 <p>
 when !validate(id) then
-stddbg << "VALIDATION FAILED for id=" << id;
+stddbg_write("VALIDATION FAILED for id=" + id);
 panic("Invalid ID");
 end
 </p>
@@ -846,7 +846,7 @@ end
 perform_critical_work(id);
 </p>
 <p>
-stddbg << "Exiting critical section successfully";
+stddbg_write("Exiting critical section successfully");
 }</code></pre>
 </p>
 <strong>Advantage</strong>: If the panic occurs, the last <code>stddbg</code> message before the crash is in the log (if redirected).
@@ -884,13 +884,13 @@ FileDescriptorName=debug</code></pre>
 <h3>✅ DO: Leave Debug Statements In Code</h3>
 <pre><code>fn calculate_balance(account: Account) -> Balance {
 <p>
-stddbg << "calculate_balance: account=" << account.id;
+stddbg_write("calculate_balance: account=" + account.id);
 </p>
 <p>
 balance: Balance = account.transactions.sum();
 </p>
 <p>
-stddbg << "  balance=" << balance;
+stddbg_write("  balance=" + balance);
 return balance;
 }</code></pre>
 </p>
@@ -905,7 +905,7 @@ list.push(item);
 </p>
 <p>
 after_len: usize = list.len();
-stddbg << "add_item: len " << before_len << " -> " << after_len;
+stddbg_write("add_item: len " << before_len << " -> " + after_len);
 </p>
 <p>
 assert(after_len == before_len + 1);  // This should always hold
@@ -914,16 +914,16 @@ assert(after_len == before_len + 1);  // This should always hold
 <h3>✅ DO: Trace Complex Logic</h3>
 <pre><code>fn resolve_dependency(pkg: Package) -> Maybe<Package> {
 <p>
-stddbg << "Resolving " << pkg.name << "@" << pkg.version;
+stddbg_write("Resolving " << pkg.name << "@" + pkg.version);
 </p>
 <p>
 match registry.find(pkg) {
 Some(found) => {
-stddbg << "  Found: " << found.name << "@" << found.version;
+stddbg_write("  Found: " << found.name << "@" + found.version);
 return Some(found);
 }
 None => {
-stddbg << "  Not found, trying alternatives";
+stddbg_write("  Not found, trying alternatives");
 return try_alternatives(pkg);
 }
 }
@@ -932,39 +932,39 @@ return try_alternatives(pkg);
 <h3>❌ DON'T: Use for User-Facing Messages</h3>
 <pre><code>// WRONG: This should go to stdout, not stddbg
 <p>
-stddbg << "Welcome to MyApp!";
+stddbg_write("Welcome to MyApp!");
 </p>
 <p>
 // RIGHT:
-stdout << "Welcome to MyApp!";</code></pre>
+print("Welcome to MyApp!");</code></pre>
 </p>
 <strong>Rationale</strong>: <code>stddbg</code> is for <strong>developers</strong>, not users.
 <h3>❌ DON'T: Use for Error Messages</h3>
 <pre><code>// WRONG: Errors should go to stderr
 <p>
-stddbg << "ERROR: File not found";
+stddbg_write("ERROR: File not found");
 </p>
 <p>
 // RIGHT:
-stderr << "ERROR: File not found";</code></pre>
+stderr_write("ERROR: File not found");</code></pre>
 </p>
 <strong>Rationale</strong>: <code>stderr</code> is for errors, <code>stddbg</code> is for diagnostics.
 <h3>❌ DON'T: Wrap in Conditional Checks (Usually)</h3>
 <pre><code>// WRONG: Unnecessary - just leave it in!
 <p>
 when DEBUG_MODE then
-stddbg << "Debug info";
+stddbg_write("Debug info");
 end
 </p>
 <p>
 // RIGHT: Just write it!
-stddbg << "Debug info";</code></pre>
+stddbg_write("Debug info");</code></pre>
 </p>
 <strong>Rationale</strong>: The runtime environment controls whether <code>stddbg</code> is visible. No need for conditional logic in most cases.
 <strong>Exception</strong>: For <strong>expensive</strong> debug output (e.g., serializing large structures), you might use a conditional:
 <pre><code>when debug_enabled then
 <p>
-stddbg << "Full state: " << serialize_full_state();  // Expensive
+stddbg_write("Full state: " + serialize_full_state());  // Expensive
 end</code></pre>
 </p>
 <hr>
@@ -983,12 +983,12 @@ If computing the debug message is expensive:
 </p>
 <pre><code>// Expensive: Always serializes, even if stddbg is /dev/null
 <p>
-stddbg << "State: " << expensive_serialize(state);
+stddbg_write("State: " + expensive_serialize(state));
 </p>
 <p>
 // Better: Only compute if debug is enabled
 when stddbg.is_redirected() then
-stddbg << "State: " << expensive_serialize(state);
+stddbg_write("State: " + expensive_serialize(state));
 end</code></pre>
 </p>
 <strong>Note</strong>: <code>.is_redirected()</code> returns <code>true</code> if <code>stddbg</code> points to something other than <code>/dev/null</code>.
@@ -1016,9 +1016,9 @@ return result</code></pre>
 <h3>Aria stddbg</h3>
 <pre><code>fn process_data(data: []Item) -> Result {
 <p>
-stddbg << "Processing " << data.len() << " items";
+stddbg_write("Processing " << data.len() + " items");
 Result: Result = crunch(data);
-stddbg << "Result: " << result;
+stddbg_write("Result: " + result);
 return result;
 }</code></pre>
 </p>
@@ -1065,8 +1065,8 @@ Here's production code from an Aria HTTP server:
 </p>
 <pre><code>fn handle_request(req: HttpRequest) -> HttpResponse {
 <p>
-stddbg << "Request: " << req.method << " " << req.path;
-stddbg << "  Headers: " << req.headers.len();
+stddbg_write("Request: " << req.method << " " + req.path);
+stddbg_write("  Headers: " + req.headers.len());
 </p>
 <p>
 response: HttpResponse = match req.path {
@@ -1076,7 +1076,7 @@ _ => HttpResponse::not_found(),
 };
 </p>
 <p>
-stddbg << "Response: " << response.status << " (" << response.body.len() << " bytes)";
+stddbg_write("Response: " << response.status << " (" << response.body.len() + " bytes)");
 </p>
 <p>
 return response;

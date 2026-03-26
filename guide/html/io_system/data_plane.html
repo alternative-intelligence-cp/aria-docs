@@ -684,7 +684,7 @@ print(result)  # Could be for terminal OR next program in pipeline</code></pre>
 <h3>Aria's Solution: Dedicated Data Streams</h3>
 <pre><code>// Humans use control plane
 <p>
-stdout << "Processing...";
+print("Processing...");
 </p>
 <p>
 // Machines use data plane
@@ -751,14 +751,14 @@ Or using Aria's pipeline operator:
 <h2>Example: Data Plane ETL Pipeline</h2>
 <pre><code>fn main() {
 <p>
-stddbg << "ETL pipeline starting";
+stddbg_write("ETL pipeline starting");
 </p>
 <p>
 // Read structured data from stddati
 records: []Record = stddati.read_ndjson()?;
 </p>
 <p>
-stdout << "Processing " << records.len() << " records\n";
+print("Processing " << records.len() + " records\n");
 </p>
 <p>
 // Transform
@@ -766,12 +766,12 @@ transformed: []Record = [];
 till(records.len() - 1, 1) {
 // Progress on control plane
 when $ % 1000 == 0 then
-stdout << "  Progress: " << $ << "/" << records.len() << "\n";
+print("  Progress: " << $ << "/" << records.len() + "\n");
 end
 </p>
 <p>
 // Debug trace
-stddbg << "Transforming record " << records[$].id;
+stddbg_write("Transforming record " + records[$].id);
 </p>
 <p>
 transformed.push(transform(records[$]));
@@ -782,8 +782,8 @@ transformed.push(transform(records[$]));
 stddato.write_json(transformed);
 </p>
 <p>
-stdout << "Pipeline complete!\n";
-stddbg << "Pipeline finished in " << elapsed << "ms";
+print("Pipeline complete!\n");
+stddbg_write("Pipeline finished in " << elapsed + "ms");
 }</code></pre>
 </p>
 <strong>Usage</strong>:
@@ -801,9 +801,9 @@ Result: Result = process();
 </p>
 <p>
 // Human output (control plane)
-stdout << "Processing complete\n";
-stdout << "  Records: " << result.count << "\n";
-stdout << "  Errors: " << result.errors << "\n";
+print("Processing complete\n");
+print("  Records: " << result.count + "\n");
+print("  Errors: " << result.errors + "\n");
 </p>
 <p>
 // API output (data plane)
@@ -869,7 +869,7 @@ stddato.write_json({"key": "value"});</code></pre>
 <h3>✅ DO: Keep Control and Data Separate</h3>
 <pre><code>// Humans see progress
 <p>
-stdout << "Processing batch " << batch_id << "\n";
+print("Processing batch " << batch_id + "\n");
 </p>
 <p>
 // Machines get data
@@ -894,7 +894,7 @@ stddato.write_json(result);
 </p>
 <p>
 // RIGHT: Separate streams
-stdout << "Processing...\n";   // Human
+print("Processing...\n");   // Human
 stddato.write_json(result);    // Machine</code></pre>
 </p>
 <hr>

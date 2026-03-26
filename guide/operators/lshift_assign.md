@@ -25,7 +25,7 @@ The left shift assignment operator `<<=` shifts bits left and assigns the result
 ```aria
 x: i32 = 5;
 x <<= 2;  // x = x << 2
-stdout << x;  // 20 (5 * 4)
+print(x);  // 20 (5 * 4)
 ```
 
 ---

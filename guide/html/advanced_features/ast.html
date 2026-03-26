@@ -893,13 +893,13 @@ return node;
 <p>
 fn pretty_print(indent: i32) -> string {
 output: string = "";
-output += " " * indent ++ "FunctionDecl '$self.name'\n";
+output += " " * indent ++ `FunctionDecl '&{self.name}'\n`;
 </p>
 <p>
 output += " " * (indent + 2) ++ "Parameters:\n";
 till(self.parameters.length - 1, 1) {
 param = self.parameters[$];
-output += " " * (indent + 4) ++ "${param.name}: ${param.type}\n";
+output += " " * (indent + 4) ++ "&{param.name}: &{param.type}\n";
 }
 </p>
 <p>

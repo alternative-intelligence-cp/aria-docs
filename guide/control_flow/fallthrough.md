@@ -17,12 +17,12 @@
 ```aria
 pick value {
     case 1:
-        stdout << "One\n";
+        print("One\n");
         fall;  // Continue to next case
     case 2:
-        stdout << "Two\n";
+        print("Two\n");
     else:
-        stdout << "Other\n";
+        print("Other\n");
 }
 ```
 
@@ -35,12 +35,12 @@ value: i32 = 1;
 
 pick value {
     case 1:
-        stdout << "Matched 1\n";
+        print("Matched 1\n");
         fall;  // Fall through to case 2
     case 2:
-        stdout << "Matched 2\n";  // This also runs!
+        print("Matched 2\n");  // This also runs!
     else:
-        stdout << "Other\n";
+        print("Other\n");
 }
 
 // Output:
@@ -59,10 +59,10 @@ value: i32 = 1;
 
 pick value {
     case 1:
-        stdout << "One\n";
+        print("One\n");
         // No fall - stops here
     case 2:
-        stdout << "Two\n";  // Doesn't run
+        print("Two\n");  // Doesn't run
 }
 
 // Output: One
@@ -77,12 +77,12 @@ day: string = "Saturday";
 
 pick day {
     case "Saturday":
-        stdout << "It's the weekend!\n";
+        print("It's the weekend!\n");
         fall;  // Continue to Sunday
     case "Sunday":
-        stdout << "No work today!\n";
+        print("No work today!\n");
     else:
-        stdout << "Workday\n";
+        print("Workday\n");
 }
 
 // Output when day is Saturday:
@@ -99,15 +99,15 @@ grade: string = "A";
 
 pick grade {
     case "A":
-        stdout << "Excellent\n";
+        print("Excellent\n");
         fall;
     case "B":
-        stdout << "Good\n";
+        print("Good\n");
         fall;
     case "C":
-        stdout << "Passing\n";
+        print("Passing\n");
     else:
-        stdout << "Needs improvement\n";
+        print("Needs improvement\n");
 }
 
 // Output when grade is "A":
@@ -125,12 +125,12 @@ value: i32 = 5;
 
 pick value {
     case 1:
-        stdout << "One\n";
+        print("One\n");
     case 5:
-        stdout << "Five\n";
+        print("Five\n");
         fall;  // Falls to else
     else:
-        stdout << "Done\n";
+        print("Done\n");
 }
 
 // Output:
@@ -157,9 +157,9 @@ pick char {
     case "o":
         fall;
     case "u":
-        stdout << "Vowel\n";
+        print("Vowel\n");
     else:
-        stdout << "Consonant\n";
+        print("Consonant\n");
 }
 ```
 
@@ -272,7 +272,7 @@ pick value {
 }
 
 // Right: Refactor
-fn handle_value(value: i32) {
+func:handle_value = NIL(int32:value) {
     if value >= 1 { a(); }
     if value >= 2 { b(); }
     if value >= 3 { c(); }
@@ -331,10 +331,10 @@ match value {
 ```aria
 pick value {
     case 1:
-        stdout << "One\n";
+        print("One\n");
         fall;  // Explicit fall needed
     case 2:
-        stdout << "Two\n";
+        print("Two\n");
 }
 ```
 
@@ -345,7 +345,7 @@ pick value {
 ### Permission Levels
 
 ```aria
-fn check_permission(level: i32) {
+func:check_permission = NIL(int32:level) {
     pick level {
         case 3:  // Admin
             grant_admin_access();

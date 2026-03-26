@@ -27,7 +27,7 @@ extern "<abi>" {
 
 ```aria
 extern "C" {
-    fn function_name();
+    func:function_name = NIL();
 }
 ```
 
@@ -35,7 +35,7 @@ extern "C" {
 
 ```aria
 extern "system" {
-    fn system_function();
+    func:system_function = NIL();
 }
 ```
 
@@ -43,11 +43,11 @@ extern "system" {
 
 ```aria
 extern "stdcall" {  // Windows
-    fn windows_function();
+    func:windows_function = NIL();
 }
 
 extern "fastcall" {  // Windows
-    fn fast_function();
+    func:fast_function = NIL();
 }
 ```
 
@@ -59,7 +59,7 @@ extern "fastcall" {  // Windows
 
 ```aria
 extern "C" {
-    fn simple_func() -> i32;
+    func:simple_func = i32;()
 }
 ```
 
@@ -67,8 +67,8 @@ extern "C" {
 
 ```aria
 extern "C" {
-    fn add(a: i32, b: i32) -> i32;
-    fn multiply(x: f64, y: f64) -> f64;
+    func:add = i32;(int32:a, int32:b)
+    func:multiply = f64;(flt64:x, flt64:y)
 }
 ```
 
@@ -76,8 +76,8 @@ extern "C" {
 
 ```aria
 extern "C" {
-    fn process_data(data: *void, size: usize) -> i32;
-    fn get_string() -> *u8;
+    func:process_data = i32;(*void:data, uint64:size)
+    func:get_string = *u8;()
 }
 ```
 
@@ -87,8 +87,8 @@ extern "C" {
 
 ```aria
 extern "C" {
-    fn printf(format: *u8, ...) -> i32;
-    fn sprintf(buffer: *u8, format: *u8, ...) -> i32;
+    func:printf = i32;(*u8:format, ...)
+    func:sprintf = i32;(*u8:buffer, *u8:format, ...)
 }
 ```
 
@@ -98,10 +98,10 @@ extern "C" {
 
 ```aria
 extern "C" {
-    fn malloc(size: usize) -> *void;
-    fn free(ptr: *void);
-    fn realloc(ptr: *void, new_size: usize) -> *void;
-    fn calloc(num: usize, size: usize) -> *void;
+    func:malloc = *void;(uint64:size)
+    func:free = NIL(*void:ptr);
+    func:realloc = *void;(*void:ptr, uint64:new_size)
+    func:calloc = *void;(uint64:num, uint64:size)
 }
 ```
 
@@ -112,14 +112,14 @@ extern "C" {
 ```aria
 #[link(name = "m")]
 extern "C" {
-    fn sin(x: f64) -> f64;
-    fn cos(x: f64) -> f64;
+    func:sin = f64;(flt64:x)
+    func:cos = f64;(flt64:x)
 }
 
 #[link(name = "crypto")]
 extern "C" {
-    fn encrypt(data: *void) -> i32;
-    fn decrypt(data: *void) -> i32;
+    func:encrypt = i32;(*void:data)
+    func:decrypt = i32;(*void:data)
 }
 ```
 
@@ -143,7 +143,7 @@ extern "C" {
 ```aria
 #[no_mangle]
 pub extern "C" fn aria_function(x: i32) -> i32 {
-    return x * 2;
+    pass(x * 2);
 }
 ```
 
@@ -153,7 +153,7 @@ pub extern "C" fn aria_function(x: i32) -> i32 {
 #[no_mangle]
 #[export_name = "custom_name"]
 pub extern "C" fn aria_func() -> i32 {
-    return 42;
+    pass(42);
 }
 ```
 
@@ -165,10 +165,10 @@ pub extern "C" fn aria_func() -> i32 {
 
 ```aria
 extern "C" {
-    fn int8_func(x: i8) -> i8;
-    fn int16_func(x: i16) -> i16;
-    fn int32_func(x: i32) -> i32;
-    fn int64_func(x: i64) -> i64;
+    func:int8_func = i8;(int8:x)
+    func:int16_func = i16;(int16:x)
+    func:int32_func = i32;(int32:x)
+    func:int64_func = i64;(int64:x)
 }
 ```
 
@@ -176,8 +176,8 @@ extern "C" {
 
 ```aria
 extern "C" {
-    fn float_func(x: f32) -> f32;
-    fn double_func(x: f64) -> f64;
+    func:float_func = f32;(flt32:x)
+    func:double_func = f64;(flt64:x)
 }
 ```
 
@@ -185,10 +185,10 @@ extern "C" {
 
 ```aria
 extern "C" {
-    fn void_ptr_func(ptr: *void) -> *void;
-    fn u8_ptr_func(ptr: *u8) -> *u8;
-    fn const_ptr_func(ptr: *const void) -> *const void;
-    fn mut_ptr_func(ptr: *mut void) -> *mut void;
+    func:void_ptr_func = *void;(*void:ptr)
+    func:u8_ptr_func = *u8;(*u8:ptr)
+    func:const_ptr_func = *const(*const void:ptr)void;
+    func:mut_ptr_func = *mut(*mut void:ptr)void;
 }
 ```
 
@@ -201,17 +201,17 @@ extern "C" {
 ```aria
 #[cfg(target_os = "linux")]
 extern "C" {
-    fn linux_specific();
+    func:linux_specific = NIL();
 }
 
 #[cfg(target_os = "windows")]
 extern "system" {
-    fn windows_specific();
+    func:windows_specific = NIL();
 }
 
 #[cfg(target_os = "macos")]
 extern "C" {
-    fn macos_specific();
+    func:macos_specific = NIL();
 }
 ```
 
@@ -223,12 +223,12 @@ extern "C" {
 
 ```aria
 extern "C" {
-    fn malloc(size: usize) -> *void;
-    fn free(ptr: *void);
-    fn memcpy(dest: *void, src: *void, n: usize) -> *void;
-    fn strlen(s: *u8) -> usize;
-    fn strcmp(s1: *u8, s2: *u8) -> i32;
-    fn printf(format: *u8, ...) -> i32;
+    func:malloc = *void;(uint64:size)
+    func:free = NIL(*void:ptr);
+    func:memcpy = *void;(*void:dest, *void:src, uint64:n)
+    func:strlen = usize;(*u8:s)
+    func:strcmp = i32;(*u8:s1, *u8:s2)
+    func:printf = i32;(*u8:format, ...)
 }
 ```
 
@@ -237,10 +237,10 @@ extern "C" {
 ```aria
 #[link(name = "c")]
 extern "C" {
-    fn open(path: *u8, flags: i32) -> i32;
-    fn close(fd: i32) -> i32;
-    fn read(fd: i32, buf: *void, count: usize) -> isize;
-    fn write(fd: i32, buf: *void, count: usize) -> isize;
+    func:open = i32;(*u8:path, int32:flags)
+    func:close = i32;(int32:fd)
+    func:read = isize;(int32:fd, *void:buf, uint64:count)
+    func:write = isize;(int32:fd, *void:buf, uint64:count)
 }
 ```
 
@@ -249,11 +249,11 @@ extern "C" {
 ```aria
 #[link(name = "m")]
 extern "C" {
-    fn sqrt(x: f64) -> f64;
-    fn pow(base: f64, exp: f64) -> f64;
-    fn sin(x: f64) -> f64;
-    fn cos(x: f64) -> f64;
-    fn log(x: f64) -> f64;
+    func:sqrt = f64;(flt64:x)
+    func:pow = f64;(flt64:base, flt64:exp)
+    func:sin = f64;(flt64:x)
+    func:cos = f64;(flt64:x)
+    func:log = f64;(flt64:x)
 }
 ```
 
@@ -265,7 +265,7 @@ extern "C" {
 
 ```aria
 extern "C" {  // ✅ Clear ABI
-    fn c_function();
+    func:c_function = NIL();
 }
 ```
 
@@ -275,7 +275,7 @@ extern "C" {  // ✅ Clear ABI
 // Allocates memory using C malloc
 // Caller must free using free()
 extern "C" {
-    fn malloc(size: usize) -> *void;
+    func:malloc = *void;(uint64:size)
 }
 ```
 
@@ -284,16 +284,16 @@ extern "C" {
 ```aria
 // String functions
 extern "C" {
-    fn strlen(s: *u8) -> usize;
-    fn strcmp(s1: *u8, s2: *u8) -> i32;
-    fn strcpy(dest: *u8, src: *u8) -> *u8;
+    func:strlen = usize;(*u8:s)
+    func:strcmp = i32;(*u8:s1, *u8:s2)
+    func:strcpy = *u8;(*u8:dest, *u8:src)
 }
 
 // Memory functions
 extern "C" {
-    fn malloc(size: usize) -> *void;
-    fn free(ptr: *void);
-    fn memcpy(dest: *void, src: *void, n: usize) -> *void;
+    func:malloc = *void;(uint64:size)
+    func:free = NIL(*void:ptr);
+    func:memcpy = *void;(*void:dest, *void:src, uint64:n)
 }
 ```
 
@@ -301,7 +301,7 @@ extern "C" {
 
 ```aria
 extern "C" {
-    fn dangerous(ptr: *void);  // No null checks!
+    func:dangerous = NIL(*void:ptr);  // No null checks!
 }
 ```
 

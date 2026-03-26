@@ -655,14 +655,14 @@
 <pre><code>// Function that returns nothing
 <p>
 fn print_message(msg: string) -> void {
-stdout << msg;
+print(msg);
 // No return statement needed
 }
 </p>
 <p>
 // Explicit return
 fn log_error(err: string) -> void {
-stderr << err;
+stderr_write(err);
 return;  // Optional
 }</code></pre>
 </p>
@@ -671,13 +671,13 @@ return;  // Optional
 <pre><code>// void can be omitted
 <p>
 fn greet(name: string) {
-stdout << "Hello, $name!";
+print(`Hello, &{name}!`);
 }
 </p>
 <p>
 // Equivalent to
 fn greet(name: string) -> void {
-stdout << "Hello, $name!";
+print(`Hello, &{name}!`);
 }</code></pre>
 </p>
 <hr>

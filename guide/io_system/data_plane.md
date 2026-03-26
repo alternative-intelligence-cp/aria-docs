@@ -47,7 +47,7 @@ print(result)  # Could be for terminal OR next program in pipeline
 
 ```aria
 // Humans use control plane
-stdout << "Processing...";
+print("Processing...");
 
 // Machines use data plane
 data: JsonValue = stddati.read_json()?;
@@ -131,24 +131,24 @@ Or using Aria's pipeline operator:
 ## Example: Data Plane ETL Pipeline
 
 ```aria
-fn main() {
-    stddbg << "ETL pipeline starting";
+func:main = NIL() {
+    stddbg_write("ETL pipeline starting");
     
     // Read structured data from stddati
     records: []Record = stddati.read_ndjson()?;
     
-    stdout << "Processing " << records.len() << " records\n";
+    print("Processing " + records.len() + " records\n");
     
     // Transform
     transformed: []Record = [];
     till(records.len() - 1, 1) {
         // Progress on control plane
         when $ % 1000 == 0 then
-            stdout << "  Progress: " << $ << "/" << records.len() << "\n";
+            print("  Progress: " + $ + "/" + records.len() + "\n");
         end
         
         // Debug trace
-        stddbg << "Transforming record " << records[$].id;
+        stddbg_write("Transforming record " + records[$].id);
         
         transformed.push(transform(records[$]));
     }
@@ -156,8 +156,8 @@ fn main() {
     // Write transformed data to stddato
     stddato.write_json(transformed);
     
-    stdout << "Pipeline complete!\n";
-    stddbg << "Pipeline finished in " << elapsed << "ms";
+    print("Pipeline complete!\n");
+    stddbg_write("Pipeline finished in " + elapsed + "ms");
 }
 ```
 
@@ -175,13 +175,13 @@ cat input.ndjson | ./pipeline 4>&0 5>output.json
 The same program can serve **both** APIs and humans:
 
 ```aria
-fn main() {
+func:main = NIL() {
     Result: Result = process();
     
     // Human output (control plane)
-    stdout << "Processing complete\n";
-    stdout << "  Records: " << result.count << "\n";
-    stdout << "  Errors: " << result.errors << "\n";
+    print("Processing complete\n");
+    print("  Records: " + result.count + "\n");
+    print("  Errors: " + result.errors + "\n");
     
     // API output (data plane)
     stddato.write_json({
@@ -261,7 +261,7 @@ stddato.write_json({"key": "value"});
 
 ```aria
 // Humans see progress
-stdout << "Processing batch " << batch_id << "\n";
+print("Processing batch " + batch_id + "\n");
 
 // Machines get data
 stddato.write_json(batch_result);
@@ -288,7 +288,7 @@ stddato << "Processing...\n";  // Breaks JSON parser!
 stddato.write_json(result);
 
 // RIGHT: Separate streams
-stdout << "Processing...\n";   // Human
+print("Processing...\n");   // Human
 stddato.write_json(result);    // Machine
 ```
 

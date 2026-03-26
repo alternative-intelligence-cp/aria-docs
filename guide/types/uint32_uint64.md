@@ -101,7 +101,7 @@ FileInfo:document = {
 
 // Check if file fits in memory
 func:can_load_in_memory = (file_size: uint32, available_memory: uint64) -> bool {
-    return uint64(file_size) <= available_memory;
+    pass(uint64(file_size) <= available_memory);
 }
 
 if (can_load_in_memory(document.size_bytes, 8589934592u64)) {  // 8GB RAM
@@ -201,7 +201,7 @@ LargeFileInfo:backup = {
 // Calculate blocks needed (4KB blocks)
 func:calculate_blocks = (file_size: uint64) -> uint64 {
     const:uint64:BLOCK_SIZE = 4096u64;
-    return (file_size + BLOCK_SIZE - 1u64) / BLOCK_SIZE;  // Round up
+    pass((file_size + BLOCK_SIZE - 1u64) / BLOCK_SIZE);  // Round up
 }
 
 uint64:blocks = calculate_blocks(backup.size_bytes);
@@ -400,10 +400,10 @@ if (bytes_sent > bytes_received) {
 ```aria
 func:safe_subtract_u32 = (a: uint32, b: uint32) -> ?uint32 {
     if (b > a) {
-        return NIL;  // Would underflow
+        pass(NIL);  // Would underflow
     }
     
-    return a - b;  // Safe
+    pass(a - b);  // Safe
 }
 
 // Usage
@@ -453,10 +453,10 @@ if (new_balance == NIL) {
 func:checked_add_u32 = (a: uint32, b: uint32) -> ?uint32 {
     // Check if a + b would overflow
     if (b > (4294967295u32 - a)) {
-        return NIL;  // Would overflow
+        pass(NIL);  // Would overflow
     }
     
-    return a + b;  // Safe
+    pass(a + b);  // Safe
 }
 
 // Usage
@@ -628,17 +628,17 @@ add eax, 2000000    ; Add
 ```aria
 func:saturating_add_u32 = (a: uint32, b: uint32) -> uint32 {
     if (b > (4294967295u32 - a)) {
-        return 4294967295u32;  // Saturate at max
+        pass(4294967295u32);  // Saturate at max
     } else {
-        return a + b;
+        pass(a + b);
     }
 }
 
 func:saturating_sub_u32 = (a: uint32, b: uint32) -> uint32 {
     if (b > a) {
-        return 0u32;  // Saturate at min
+        pass(0u32);  // Saturate at min
     } else {
-        return a - b;
+        pass(a - b);
     }
 }
 ```
@@ -648,10 +648,10 @@ func:saturating_sub_u32 = (a: uint32, b: uint32) -> uint32 {
 ```aria
 func:narrow_to_u32 = (value: uint64) -> ?uint32 {
     if (value > 4294967295u64) {
-        return NIL;  // Out of range
+        pass(NIL);  // Out of range
     }
     
-    return uint32(value);  // Safe cast
+    pass(uint32(value));  // Safe cast
 }
 ```
 

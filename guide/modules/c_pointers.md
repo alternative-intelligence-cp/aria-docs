@@ -39,7 +39,7 @@ C pointers are **raw memory addresses** - unsafe but necessary for C interop.
 
 ```aria
 value: i32 = 42;
-ptr: *i32 = &value;  // Get address of value
+ptr: *i32 = $value;  // Get address of value
 ```
 
 ---
@@ -48,7 +48,7 @@ ptr: *i32 = &value;  // Get address of value
 
 ```aria
 arr: [i32; 10];
-ptr: *i32 = &arr[0];  // Pointer to first element
+ptr: *i32 = $arr[0];  // Pointer to first element
 ```
 
 ---
@@ -57,7 +57,7 @@ ptr: *i32 = &arr[0];  // Pointer to first element
 
 ```aria
 extern "C" {
-    fn malloc(size: usize) -> *void;
+    func:malloc = *void;(uint64:size)
 }
 
 ptr: *void = extern.malloc(1024);
@@ -69,7 +69,7 @@ ptr: *void = extern.malloc(1024);
 
 ```aria
 value: i32 = 42;
-ptr: *i32 = &value;
+ptr: *i32 = $value;
 
 // Read through pointer
 read: i32 = *ptr;  // 42
@@ -87,7 +87,7 @@ read: i32 = *ptr;  // 42
 ptr: *void = NULL;
 
 if ptr == NULL {
-    stdout << "Null pointer!";
+    print("Null pointer!");
 }
 ```
 
@@ -99,7 +99,7 @@ if ptr == NULL {
 
 ```aria
 arr: [i32; 10] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-ptr: *i32 = &arr[0];
+ptr: *i32 = $arr[0];
 
 // Access elements
 first: i32 = *ptr;           // arr[0] = 1
@@ -119,11 +119,11 @@ value: i32 = *ptr;  // arr[5] = 6
 
 ```aria
 extern "C" {
-    fn process(ptr: *i32);
+    func:process = NIL(*i32:ptr);
 }
 
 value: i32 = 42;
-extern.process(&value);
+extern.process($value);
 ```
 
 ---
@@ -132,11 +132,11 @@ extern.process(&value);
 
 ```aria
 extern "C" {
-    fn process_array(arr: *i32, len: usize);
+    func:process_array = NIL(*i32:arr, uint64:len);
 }
 
 arr: [i32; 10] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-extern.process_array(&arr[0], 10);
+extern.process_array($arr[0], 10);
 ```
 
 ---
@@ -145,11 +145,11 @@ extern.process_array(&arr[0], 10);
 
 ```aria
 extern "C" {
-    fn read_data(buffer: *mut u8, size: usize) -> i32;
+    func:read_data = i32;(*mut u8:buffer, uint64:size)
 }
 
 buffer: [u8; 1024];
-bytes_read: i32 = extern.read_data(&buffer[0], 1024);
+bytes_read: i32 = extern.read_data($buffer[0], 1024);
 ```
 
 ---
@@ -160,7 +160,7 @@ bytes_read: i32 = extern.read_data(&buffer[0], 1024);
 
 ```aria
 extern "C" {
-    fn get_data() -> *i32;
+    func:get_data = *i32;()
 }
 
 ptr: *i32 = extern.get_data();
@@ -175,13 +175,13 @@ if ptr != NULL {
 
 ```aria
 extern "C" {
-    fn get_value(out: *mut i32) -> i32;
+    func:get_value = i32;(*mut i32:out)
 }
 
 value: i32;
-Result: i32 = extern.get_value(&value);
+Result: i32 = extern.get_value($value);
 if result == 0 {
-    stdout << "Value: $value";
+    print(`Value: &{value}`);
 }
 ```
 
@@ -193,8 +193,8 @@ if result == 0 {
 
 ```aria
 extern "C" {
-    fn strlen(s: *u8) -> usize;
-    fn strcmp(s1: *u8, s2: *u8) -> i32;
+    func:strlen = usize;(*u8:s)
+    func:strcmp = i32;(*u8:s1, *u8:s2)
 }
 
 // Null-terminated string
@@ -208,12 +208,12 @@ len: usize = extern.strlen(c_str);  // 5
 
 ```aria
 extern "C" {
-    fn strcpy(dest: *mut u8, src: *u8) -> *u8;
+    func:strcpy = *u8;(*mut u8:dest, *u8:src)
 }
 
 src: *u8 = "Hello\0";
 dest: [u8; 100];
-extern.strcpy(&dest[0], src);
+extern.strcpy($dest[0], src);
 ```
 
 ---
@@ -224,14 +224,14 @@ extern.strcpy(&dest[0], src);
 
 ```aria
 extern "C" {
-    fn malloc(size: usize) -> *void;
-    fn free(ptr: *void);
+    func:malloc = *void;(uint64:size)
+    func:free = NIL(*void:ptr);
 }
 
 // Allocate
 ptr: *void = extern.malloc(1024);
 if ptr == NULL {
-    return Err("Allocation failed");
+    pass(Err("Allocation failed"));
 }
 
 // Use ptr...
@@ -246,8 +246,8 @@ extern.free(ptr);
 
 ```aria
 extern "C" {
-    fn malloc(size: usize) -> *void;
-    fn free(ptr: *void);
+    func:malloc = *void;(uint64:size)
+    func:free = NIL(*void:ptr);
 }
 
 // Allocate array of 10 i32s
@@ -272,11 +272,11 @@ void_ptr: *void = extern.malloc(100);
 int_ptr: *i32 = void_ptr as *i32;
 
 // Typed pointer to void*
-int_ptr: *i32 = &value;
+int_ptr: *i32 = $value;
 void_ptr: *void = int_ptr as *void;
 
 // Const to mut (unsafe!)
-const_ptr: *const i32 = &value;
+const_ptr: *const i32 = $value;
 mut_ptr: *mut i32 = const_ptr as *mut i32;
 ```
 
@@ -289,7 +289,7 @@ mut_ptr: *mut i32 = const_ptr as *mut i32;
 ```aria
 ptr: *void = extern.c_function();
 if ptr == NULL {
-    return Err("Null pointer");  // ✅
+    pass(Err("Null pointer"));  // ✅
 }
 ```
 
@@ -312,7 +312,7 @@ ptr: *i32;  // ⚠️ Uninitialized!
 value: i32 = *ptr;  // ❌ CRASH
 
 // Initialize first
-ptr: *i32 = &some_value;  // ✅
+ptr: *i32 = $some_value;  // ✅
 ```
 
 ---
@@ -331,7 +331,7 @@ value: i32 = *ptr;  // ❌ Use after free!
 
 ```aria
 arr: [i32; 10];
-ptr: *i32 = &arr[0];
+ptr: *i32 = $arr[0];
 value: i32 = *(ptr + 100);  // ❌ Out of bounds!
 ```
 
@@ -343,11 +343,11 @@ value: i32 = *(ptr + 100);  // ❌ Out of bounds!
 
 ```aria
 arr: [i32; 10] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-ptr: *i32 = &arr[0];
-end: *i32 = &arr[10];
+ptr: *i32 = $arr[0];
+end: *i32 = $arr[10];
 
 while ptr < end {
-    stdout << *ptr;
+    print(*ptr);
     ptr = ptr + 1;
 }
 ```
@@ -358,12 +358,12 @@ while ptr < end {
 
 ```aria
 extern "C" {
-    fn get_buffer(out: **u8, size: *mut usize) -> i32;
+    func:get_buffer = i32;(**u8:out, *mut usize:size)
 }
 
 buffer: *u8;
 size: usize;
-Result: i32 = extern.get_buffer(&buffer, &size);
+Result: i32 = extern.get_buffer($buffer, $size);
 
 if result == 0 && buffer != NULL {
     // Use buffer...
@@ -379,12 +379,12 @@ if result == 0 && buffer != NULL {
 callback_t = extern "C" fn(i32) -> i32;
 
 extern "C" {
-    fn register_callback(cb: callback_t);
+    func:register_callback = NIL(callback_t:cb);
 }
 
 #[no_mangle]
 extern "C" fn my_callback(x: i32) -> i32 {
-    return x * 2;
+    pass(x * 2);
 }
 
 extern.register_callback(my_callback);
@@ -397,14 +397,14 @@ extern.register_callback(my_callback);
 ### ✅ DO: Wrap Unsafe Pointer Operations
 
 ```aria
-pub fn safe_read(ptr: *i32) -> Result<i32> {
+pub func:safe_read = Result<int32>(*i32:ptr) {
     if ptr == NULL {
-        return Err("Null pointer");
+        pass(Err("Null pointer"));
     }
     
     // Additional validation...
     
-    return Ok(*ptr);
+    pass(Ok(*ptr));
 }
 ```
 
@@ -413,8 +413,8 @@ pub fn safe_read(ptr: *i32) -> Result<i32> {
 ```aria
 // Document who owns the pointer
 // Caller must free this pointer
-fn allocate() -> *void {
-    return extern.malloc(1024);
+func:allocate = *void() {
+    pass(extern.malloc(1024));
 }
 ```
 

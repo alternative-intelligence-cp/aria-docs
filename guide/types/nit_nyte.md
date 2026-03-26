@@ -327,7 +327,7 @@ func:saturating_add_nit = (a: nit, evidence: nit) -> nit {
     if (result > 4i32) return 4;   // Saturate at max
     if (result < -4i32) return -4; // Saturate at min
     
-    return nit(result);
+    pass(nit(result));
 }
 ```
 
@@ -344,7 +344,7 @@ nit:confidence_b = -confidence_a;  // +3 (DEFINITELY B)
 func:more_confident = (a: nit, b: nit) -> nit {
     if (abs(a) > abs(b)) return 1;   // A more confident
     if (abs(a) < abs(b)) return -1;  // B more confident
-    return 0;  // Equal confidence
+    pass(0);  // Equal confidence
 }
 ```
 
@@ -510,7 +510,7 @@ func:deep_sentiment = (text: string) -> nit {
     if (score <= 10i32) return 1;   // Slightly positive
     if (score <= 20i32) return 2;   // Positive
     if (score <= 30i32) return 3;   // Very positive
-    return 4;  // Extremely positive
+    pass(4);  // Extremely positive
 }
 ```
 
@@ -596,7 +596,7 @@ func:add_evidence = (current: nit, new_evidence: int32) -> nit {
     if (result > 4i32) return 4;
     if (result < -4i32) return -4;
     
-    return nit(result);
+    pass(nit(result));
 }
 ```
 
@@ -604,7 +604,7 @@ func:add_evidence = (current: nit, new_evidence: int32) -> nit {
 
 ```aria
 func:confident_enough = (c: nit, threshold: int32) -> bool {
-    return abs(int32(c)) >= threshold;
+    pass(abs(int32(c)) >= threshold);
 }
 
 if (confident_enough(decision.c, 3i32)) {

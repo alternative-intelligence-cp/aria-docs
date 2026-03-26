@@ -657,7 +657,7 @@ The <strong>dollar sign (<code>$</code>)</strong> is the <strong>automatic index
 <pre><code>till(array.length - 1, 1) {
 <p>
 // $ is the current index (0, 1, 2, ...)
-stdout << $ << ": " << array[$] << "\n";
+print($ << ": " << array[$] + "\n");
 }</code></pre>
 </p>
 <hr>
@@ -688,7 +688,7 @@ In <code>till</code> loops, <code>$</code> automatically holds the current index
 <p>
 till(numbers.length - 1, 1) {
 // $ is 0, then 1, then 2
-stdout << "Index " << $ << " = " << numbers[$] << "\n";
+print("Index " << $ << " = " << numbers[$] + "\n");
 }
 </p>
 <p>
@@ -706,7 +706,7 @@ Use <code>$</code> to index into arrays:
 <p>
 till(users.length - 1, 1) {
 user: auto = users[$];  // $ is the index
-stdout << user.name << "\n";
+print(user.name + "\n");
 }</code></pre>
 </p>
 <hr>
@@ -722,7 +722,7 @@ scores[$] = scores[$] * 2;
 }
 </p>
 <p>
-stdout << scores;  // [170, 180, 156, 184]</code></pre>
+print(scores);  // [170, 180, 156, 184]</code></pre>
 </p>
 <hr>
 <h2>Modifying Struct Fields</h2>
@@ -760,7 +760,7 @@ items[$] = format("{}. {}", $ + 1, item);
 <p>
 // $ can be used in any expression
 rank: i32 = $ + 1;  // 1-based ranking
-stdout << rank << ". " << items[$] << "\n";
+print(rank << ". " << items[$] + "\n");
 }</code></pre>
 </p>
 <hr>
@@ -815,7 +815,7 @@ strings[$] = strings[$].to_uppercase();
 <pre><code>till(5, 1) {
 <p>
 // $ is 0, 1, 2, 3, 4, 5
-stdout << "Iteration: " << $ << "\n";
+print("Iteration: " << $ + "\n");
 }</code></pre>
 </p>
 <hr>
@@ -839,7 +839,7 @@ scores[$] = scores[$] + bonus;
 <p>
 till(items.length - 1, 1) {
 idx: int64 = $;
-stdout << idx << ": " << items[idx] << "\n";
+print(idx << ": " << items[idx] + "\n");
 }</code></pre>
 </p>
 <h3>❌ DON'T: Modify $ (It's Read-Only)</h3>

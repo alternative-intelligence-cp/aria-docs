@@ -16,13 +16,13 @@
 
 ```aria
 // Single parameter
-fn identity<T>(value: T) -> T {
-    return value;
+func:identity = T(T:value) {
+    pass(value);
 }
 
 // Multiple parameters
-fn pair<T, U>(first: T, second: U) -> (T, U) {
-    return (first, second);
+func:pair = (T,(T:first, U:second)U) {
+    pass((first, second));
 }
 ```
 
@@ -34,30 +34,30 @@ fn pair<T, U>(first: T, second: U) -> (T, U) {
 
 ```aria
 // T - Generic Type
-fn wrap<T>(value: T) -> Box<T> { }
+func:wrap = Box<T>(T:value) { }
 
 // T, U - Two types
-fn convert<T, U>(input: T) -> U { }
+func:convert = U(T:input) { }
 
 // K, V - Key, Value
-fn insert<K, V>(key: K, value: V) { }
+func:insert = NIL(K:key, V:value) { }
 
 // E - Error type
-fn try_parse<E>(input: string) -> Result<i32, E> { }
+func:try_parse = Result<i32,(string:input)E> { }
 
 // R - Result type
-fn execute<R>(query: string) -> R { }
+func:execute = R(string:query) { }
 ```
 
 ### Descriptive Names
 
 ```aria
 // Longer names when helpful
-fn transform<Input, Output>(data: Input) -> Output { }
+func:transform = Output(Input:data) { }
 
-fn cache<Key, Value>(k: Key, v: Value) { }
+func:cache = NIL(Key:k, Value:v) { }
 
-fn convert<Source, Target>(s: Source) -> Target { }
+func:convert = Target(Source:s) { }
 ```
 
 ---
@@ -67,7 +67,7 @@ fn convert<Source, Target>(s: Source) -> Target { }
 ### On Functions
 
 ```aria
-fn function<T>(param: T) -> T {
+func:function = T(T:param) {
     // T available in this function
 }
 ```
@@ -96,8 +96,8 @@ enum Result<T, E> {
 ```aria
 impl<T> Container<T> {
     // T available for all methods
-    fn new() -> Container<T> { }
-    fn add(item: T) { }
+    func:new = Container<T>() { }
+    func:add = NIL(T:item) { }
 }
 ```
 
@@ -105,7 +105,7 @@ impl<T> Container<T> {
 
 ```aria
 trait Convert<T> {
-    fn convert(value: T) -> Self;
+    func:convert = Self;(T:value)
 }
 // T available for all trait methods
 ```
@@ -123,13 +123,13 @@ struct Box<T> {
 impl<T> Box<T> {
     // T from struct is in scope
     
-    fn get() -> T {
-        return self.value;
+    func:get = T() {
+        pass(self.value);
     }
     
     // U is NEW parameter, separate from T
-    fn map<U>(f: fn(T) -> U) -> Box<U> {
-        return Box{value: f(self.value)};
+    func:map = U)(fn(T:f)-> Box<U> {
+        pass(Box{value: f(self.value)});
     }
 }
 ```
@@ -142,13 +142,13 @@ impl<T> Box<T> {
 
 ```aria
 // T must implement Display
-fn print<T>(value: T) where T: Display {
-    stdout << value << "\n";
+func:print = NIL(T:value)where T: Display {
+    print(value + "\n");
 }
 
 // Inline syntax
-fn print<T: Display>(value: T) {
-    stdout << value << "\n";
+func:print = NIL(T:value) {
+    print(value + "\n");
 }
 ```
 
@@ -156,7 +156,7 @@ fn print<T: Display>(value: T) {
 
 ```aria
 // T must implement multiple traits
-fn process<T>(value: T) 
+func:process = NIL(T:value)
     where T: Display, 
           T: Clone,
           T: Debug {
@@ -164,7 +164,7 @@ fn process<T>(value: T)
 }
 
 // Inline with +
-fn process<T: Display + Clone + Debug>(value: T) {
+func:process = NIL(T:value) {
     // Implementation
 }
 ```
@@ -172,11 +172,11 @@ fn process<T: Display + Clone + Debug>(value: T) {
 ### Different Parameters, Different Constraints
 
 ```aria
-fn transform<T, U>(input: T) -> U
+func:transform = U(T:input)
     where T: Serialize,
           U: Deserialize {
     data: []u8 = input.serialize();
-    return U::deserialize(data);
+    pass(U::deserialize(data));
 }
 ```
 
@@ -217,11 +217,11 @@ arr: Array<i32, 10>;  // Array of exactly 10 i32s
 
 ```aria
 // Lifetime parameter
-fn longest<'a>(s1: &'a string, s2: &'a string) -> &'a string {
+func:longest = 'a->('a string->:s1, 'a string->:s2)string {
     when s1.len() > s2.len() then
-        return s1;
+        pass(s1);
     else
-        return s2;
+        pass(s2);
     end
 }
 
@@ -285,8 +285,8 @@ type ProductId = Marker<Product>;
 ### From Arguments
 
 ```aria
-fn identity<T>(value: T) -> T {
-    return value;
+func:identity = T(T:value) {
+    pass(value);
 }
 
 // T inferred as i32
@@ -296,8 +296,8 @@ Result: i32 = identity(42);
 ### From Return Type
 
 ```aria
-fn default<T>() -> T {
-    return T::default();
+func:default = T() {
+    pass(T::default());
 }
 
 // T inferred as string
@@ -307,7 +307,7 @@ text: string = default();
 ### Partial Inference
 
 ```aria
-fn convert<From, To>(value: From) -> To {
+func:convert = To(From:value) {
     // Implementation
 }
 
@@ -323,8 +323,8 @@ Result: string = convert::<_, string>(42);
 
 ```aria
 // T and U are unrelated
-fn pair<T, U>(first: T, second: U) -> (T, U) {
-    return (first, second);
+func:pair = (T,(T:first, U:second)U) {
+    pass((first, second));
 }
 ```
 
@@ -332,13 +332,13 @@ fn pair<T, U>(first: T, second: U) -> (T, U) {
 
 ```aria
 // U depends on T through constraint
-fn map<T, U>(array: []T, f: fn(T) -> U) -> []U {
+func:map = U)([]T:array, fn(T:f)-> []U {
     Result: []U = [];
     till(array.length - 1, 1) {
         item: T = array[$];
         result.push(f(item));
     }
-    return result;
+    pass(result);
 }
 ```
 
@@ -346,8 +346,8 @@ fn map<T, U>(array: []T, f: fn(T) -> U) -> []U {
 
 ```aria
 // T used in multiple positions
-fn swap<T>(a: T, b: T) -> (T, T) {
-    return (b, a);
+func:swap = (T,(T:a, T:b)T) {
+    pass((b, a));
 }
 ```
 
@@ -359,8 +359,8 @@ fn swap<T>(a: T, b: T) -> (T, T) {
 
 ```aria
 // Good: Standard and clear
-fn identity<T>(value: T) -> T { }
-fn pair<T, U>(a: T, b: U) -> (T, U) { }
+func:identity = T(T:value) { }
+func:pair = (T,(T:a, U:b)U) { }
 ```
 
 ### ✅ DO: Use Descriptive Names for Complex Generics
@@ -376,7 +376,7 @@ fn transform<InputData, OutputFormat>(
 
 ```aria
 // Good: Clear requirements
-fn max<T>(a: T, b: T) -> T where T: Comparable {
+func:max = T(T:a, T:b)where T: Comparable {
     when a > b then return a; else return b; end
 }
 ```
@@ -385,34 +385,34 @@ fn max<T>(a: T, b: T) -> T where T: Comparable {
 
 ```aria
 // Good: 2-3 parameters
-fn convert<From, To>(value: From) -> To { }
+func:convert = To(From:value) { }
 
 // OK: 4 parameters if needed
-fn process<Input, Output, Error, Config>(...) { }
+func:process = NIL(...) { }
 ```
 
 ### ❌ DON'T: Use Too Many Parameters
 
 ```aria
 // Wrong: Too many
-fn complex<T, U, V, W, X, Y, Z>(...) { }
+func:complex = NIL(...) { }
 
 // Right: Simplify or use structs
 struct Config<T, U> { }
-fn complex<V, W>(config: Config<V, W>) { }
+func:complex = NIL(Config<V, W>:config) { }
 ```
 
 ### ❌ DON'T: Use Generic When Specific Works
 
 ```aria
 // Wrong: Always i32 anyway
-fn add<T>(a: T, b: T) -> T {
-    return a + b;
+func:add = T(T:a, T:b) {
+    pass(a + b);
 }
 
 // Right: Be specific
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 ```
 
@@ -439,7 +439,7 @@ struct Map<K, V> {
 ### Input-Output Transform
 
 ```aria
-fn map<T, U>(array: []T, f: fn(T) -> U) -> []U { }
+func:map = U)([]T:array, fn(T:f)-> []U { }
 ```
 
 ### Error Type Parameter

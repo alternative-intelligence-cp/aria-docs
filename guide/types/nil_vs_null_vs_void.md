@@ -35,9 +35,9 @@ end
 node: *TreeNode = nil;
 
 // Optional return
-fn find_user(id: i32) -> ?User {
+func:find_user = ?User(int32:id) {
     // Not found
-    return nil;
+    pass(nil);
 }
 
 // Nullable struct field
@@ -68,13 +68,13 @@ ptr: *Data = nil;  // ✅ Preferred
 
 ```aria
 // Function with no return
-fn print_hello() -> void {
-    stdout << "Hello";
+func:print_hello = NIL() {
+    print("Hello");
 }
 
 // Can omit -> void
-fn print_hello() {
-    stdout << "Hello";
+func:print_hello = NIL() {
+    print("Hello");
 }
 ```
 
@@ -96,13 +96,13 @@ fn print_hello() {
 
 ```aria
 // void - no return value
-fn log(msg: string) -> void {
-    stdout << msg;
+func:log = NIL(string:msg) {
+    print(msg);
 }
 
 // Returns optional - can be nil
-fn find(id: i32) -> ?User {
-    return nil;  // Not found
+func:find = ?User(int32:id) {
+    pass(nil);  // Not found
 }
 
 // Call void function
@@ -144,7 +144,7 @@ person: Person = {
 
 // Check optional
 when person.middle_name != nil then
-    stdout << person.middle_name;
+    print(person.middle_name);
 end
 ```
 
@@ -168,11 +168,11 @@ end
 
 ```aria
 // Optional return type
-fn get_config() -> ?Config {
+func:get_config = ?Config() {
     when not file_exists("config.toml") then
-        return nil;
+        pass(nil);
     end
-    return load_config();
+    pass(load_config());
 }
 ```
 
@@ -190,13 +190,13 @@ ptr: *Data = NULL;  // ✅ but less common
 
 ```aria
 // Wrong - void is not a value
-fn process() -> void {
-    return nil;  // ❌ Error!
+func:process = NIL() {
+    pass(nil);  // ❌ Error!
 }
 
 // Right
-fn find() -> ?Data {
-    return nil;  // ✅ Optional
+func:find = ?Data() {
+    pass(nil);  // ✅ Optional
 }
 ```
 
@@ -252,7 +252,7 @@ struct Node {
     next: *Node  // Can be nil
 }
 
-fn traverse(head: *Node) {
+func:traverse = NIL(*Node:head) {
     current: *Node = head;
     
     while current != nil {
@@ -267,11 +267,11 @@ fn traverse(head: *Node) {
 ```aria
 cache: map<string, Data>;
 
-fn get_cached(key: string) -> ?Data {
+func:get_cached = ?Data(string:key) {
     when cache.contains(key) then
-        return cache[key];
+        pass(cache[key]);
     end
-    return nil;
+    pass(nil);
 }
 
 // Use with default

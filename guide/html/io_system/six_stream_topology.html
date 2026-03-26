@@ -760,7 +760,7 @@ print(json.dumps(results))  # Mixed with debug output!</code></pre>
 <strong>Aria</strong>:
 <pre><code>// Debug output never interferes
 <p>
-stddbg << "Processing " << item;
+stddbg_write("Processing " + item);
 Result: Result = process(item);
 stddato << result;  // Clean structured output</code></pre>
 </p>
@@ -771,14 +771,14 @@ The same program can serve <strong>both humans and machines</strong>:
 <pre><code>fn calculate_balance(account: Account) -> Balance {
 <p>
 // Debug logging (for developers)
-stddbg << "Calculating balance for account " << account.id;
+stddbg_write("Calculating balance for account " + account.id);
 </p>
 <p>
 balance: Balance = account.compute_balance();
 </p>
 <p>
 // Human-readable output
-stdout << "Account " << account.id << ": $" << balance;
+print("Account " << account.id << ": $" + balance);
 </p>
 <p>
 // Machine-readable output
@@ -948,7 +948,7 @@ Here's when you realize why this matters:
 </p>
 <strong>Aria debugging</strong>:
 <p>
-1. Add <code>stddbg << "..."</code> to find bug
+1. Add <code>stddbg_write("...")</code> to find bug
 2. Debug output goes to stddbg (separate from stdout)
 3. <strong>Leave debug statements in code</strong>
 4. Commit and deploy

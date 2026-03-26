@@ -15,20 +15,20 @@ A **closure** is a function that **captures** (remembers) variables from the sco
 ## Basic Example
 
 ```aria
-fn make_counter() -> fn() -> i32 {
+func:make_counter = fn()()-> i32 {
     count: i32 = 0;
     
     // This lambda captures 'count'
     return || {
         $count = $count + 1;  // Modifies captured count
-        return $count;
+        pass($count);
     };
 }
 
 counter: fn() -> i32 = make_counter();
-stdout << counter();  // 1
-stdout << counter();  // 2
-stdout << counter();  // 3
+print(counter());  // 1
+print(counter());  // 2
+print(counter());  // 3
 ```
 
 **What happened**:
@@ -44,9 +44,9 @@ stdout << counter();  // 3
 ### Capture by Value (Copy)
 
 ```aria
-fn make_adder(x: i32) -> fn(i32) -> i32 {
+func:make_adder = fn(i32)(int32:x)-> i32 {
     // x is captured by value (copied)
-    return |y: i32| x + y;
+    pass(|y: i32| x + y);
 }
 
 add_5: fn(i32) -> i32 = make_adder(5);
@@ -58,13 +58,13 @@ Result: i32 = add_5(3);  // 8 (5 + 3)
 ### Capture by Reference (with $)
 
 ```aria
-fn make_accumulator() -> fn(i32) {
+func:make_accumulator = fn(i32)() {
     total: i32 = 0;
     
     // total is captured by reference
     return |value: i32| {
         $total = $total + value;  // Modifies original total
-        stdout << "Total: " << $total << "\n";
+        print("Total: " + $total + "\n");
     };
 }
 
@@ -79,16 +79,16 @@ accumulate(3);   // Total: 18
 ## Multiple Captures
 
 ```aria
-fn make_greeter(greeting: string, name: string) -> fn() -> string {
+func:make_greeter = fn()(string:greeting, string:name)-> string {
     // Captures both greeting and name
-    return || greeting + ", " + name + "!";
+    pass(|| greeting + ", " + name + "!");
 }
 
 say_hello: fn() -> string = make_greeter("Hello", "Alice");
-stdout << say_hello();  // "Hello, Alice!"
+print(say_hello());  // "Hello, Alice!"
 
 say_hi: fn() -> string = make_greeter("Hi", "Bob");
-stdout << say_hi();  // "Hi, Bob!"
+print(say_hi());  // "Hi, Bob!"
 ```
 
 ---
@@ -98,7 +98,7 @@ stdout << say_hi();  // "Hi, Bob!"
 ### Array of Closures
 
 ```aria
-fn create_multipliers() -> []fn(i32) -> i32 {
+func:create_multipliers = []fn(i32)()-> i32 {
     multipliers: []fn(i32) -> i32 = [];
     
     till(4, 1) {
@@ -107,13 +107,13 @@ fn create_multipliers() -> []fn(i32) -> i32 {
         multipliers.push(|x: i32| x * i);
     }
     
-    return multipliers;
+    pass(multipliers);
 }
 
 funcs: []fn(i32) -> i32 = create_multipliers();
-stdout << funcs[0](10);  // 10 (10 * 1)
-stdout << funcs[2](10);  // 30 (10 * 3)
-stdout << funcs[4](10);  // 50 (10 * 5)
+print(funcs[0](10));  // 10 (10 * 1)
+print(funcs[2](10));  // 30 (10 * 3)
+print(funcs[4](10));  // 50 (10 * 5)
 ```
 
 ### Closure in Struct
@@ -124,12 +124,12 @@ struct Button {
     on_click: fn()
 }
 
-fn create_button(label: string, counter: $i32) -> Button {
+func:create_button = Button(string:label, $i32:counter) {
     return Button{
         label: label,
         on_click: || {
             $counter = $counter + 1;
-            stdout << label << " clicked " << $counter << " times\n";
+            print(label + " clicked " + $counter + " times\n");
         }
     };
 }
@@ -139,7 +139,7 @@ btn: Button = create_button("Submit", $clicks);
 
 btn.on_click();  // "Submit clicked 1 times"
 btn.on_click();  // "Submit clicked 2 times"
-stdout << clicks;  // 2
+print(clicks);  // 2
 ```
 
 ---
@@ -149,11 +149,11 @@ stdout << clicks;  // 2
 ### Event Handlers
 
 ```aria
-fn setup_ui() {
+func:setup_ui = NIL() {
     user_name: string = "Alice";
     
     button.on_click(|| {
-        stdout << "Hello, " << user_name << "!\n";
+        print("Hello, " + user_name + "!\n");
     });
     
     // user_name is captured, available when button is clicked
@@ -163,9 +163,9 @@ fn setup_ui() {
 ### Configuration Builder
 
 ```aria
-fn create_validator(min: i32, max: i32) -> fn(i32) -> bool {
+func:create_validator = fn(i32)(int32:min, int32:max)-> bool {
     return |value: i32| {
-        return value >= min and value <= max;
+        pass(value >= min and value <= max);
     };
 }
 
@@ -177,12 +177,12 @@ is_invalid: bool = age_validator(150);  // false
 ### Partial Application
 
 ```aria
-fn multiply(a: i32, b: i32) -> i32 {
-    return a * b;
+func:multiply = int32(int32:a, int32:b) {
+    pass(a * b);
 }
 
-fn partial_multiply(a: i32) -> fn(i32) -> i32 {
-    return |b: i32| a * b;
+func:partial_multiply = fn(i32)(int32:a)-> i32 {
+    pass(|b: i32| a * b);
 }
 
 times_5: fn(i32) -> i32 = partial_multiply(5);
@@ -194,11 +194,11 @@ Result: i32 = times_5(3);  // 15
 ## Closure Lifetime
 
 ```aria
-fn create_closure() -> fn() -> i32 {
+func:create_closure = fn()()-> i32 {
     value: i32 = 42;
     
     // value is captured and lives as long as the closure
-    return || value;
+    pass(|| value);
     
     // Even though this function returns,
     // 'value' is kept alive by the closure
@@ -215,25 +215,25 @@ Result: i32 = get_value();  // 42 - still accessible!
 ### Single Mutable Capture
 
 ```aria
-fn make_toggle() -> fn() -> bool {
+func:make_toggle = fn()()-> bool {
     state: bool = false;
     
     return || {
         $state = !$state;  // Toggle state
-        return $state;
+        pass($state);
     };
 }
 
 toggle: fn() -> bool = make_toggle();
-stdout << toggle();  // true
-stdout << toggle();  // false
-stdout << toggle();  // true
+print(toggle());  // true
+print(toggle());  // false
+print(toggle());  // true
 ```
 
 ### Multiple Mutable Captures
 
 ```aria
-fn make_stats_tracker() -> fn(i32) {
+func:make_stats_tracker = fn(i32)() {
     count: i32 = 0;
     sum: i32 = 0;
     
@@ -242,7 +242,7 @@ fn make_stats_tracker() -> fn(i32) {
         $sum = $sum + value;
         
         avg: f64 = ($sum as f64) / ($count as f64);
-        stdout << "Count: " << $count << ", Average: " << avg << "\n";
+        print("Count: " + $count + ", Average: " + avg + "\n");
     };
 }
 
@@ -271,12 +271,12 @@ track(30);  // Count: 3, Average: 20.0
 
 ```aria
 // Good: Closure captures context
-fn process_async(callback: fn(Result)) {
+func:process_async = NIL(fn(Result:callback)) {
     user_id: i32 = 123;
     
     fetch_data(|| {
         // Closure has access to user_id
-        stddbg << "Fetching for user " << user_id;
+        stddbg_write("Fetching for user " + user_id);
     });
 }
 ```
@@ -285,9 +285,9 @@ fn process_async(callback: fn(Result)) {
 
 ```aria
 // Good: Only capture what you need
-fn make_printer(prefix: string) -> fn(string) {
+func:make_printer = fn(string)(string:prefix) {
     return |msg: string| {
-        stdout << prefix << ": " << msg << "\n";
+        print(prefix + ": " + msg + "\n");
     };
 }
 ```
@@ -296,11 +296,11 @@ fn make_printer(prefix: string) -> fn(string) {
 
 ```aria
 // Good: Clear which variables are modified
-fn make_counter() -> fn() -> i32 {
+func:make_counter = fn()()-> i32 {
     count: i32 = 0;
     return || {
         $count = $count + 1;  // Explicit mutable capture
-        return $count;
+        pass($count);
     };
 }
 ```
@@ -309,18 +309,18 @@ fn make_counter() -> fn() -> i32 {
 
 ```aria
 // Wrong: Captures entire large struct
-fn make_handler(data: LargeStruct) -> fn() {
+func:make_handler = fn()(LargeStruct:data) {
     return || {
         // Uses only one field!
-        stdout << data.id << "\n";
+        print(data.id + "\n");
     };
 }
 
 // Right: Capture only what you need
-fn make_handler(data: LargeStruct) -> fn() {
+func:make_handler = fn()(LargeStruct:data) {
     id: i32 = data.id;
     return || {
-        stdout << id << "\n";
+        print(id + "\n");
     };
 }
 ```
@@ -329,7 +329,7 @@ fn make_handler(data: LargeStruct) -> fn() {
 
 ```aria
 // Wrong: Can cause memory leaks
-fn create_cycle() {
+func:create_cycle = NIL() {
     closure1: fn() = || {
         // Captures closure2
     };
@@ -347,7 +347,7 @@ fn create_cycle() {
 ### Debounced Function
 
 ```aria
-fn debounce(f: fn(), delay_ms: i32) -> fn() {
+func:debounce = NIL(fn(:f), delay_ms: i32) -> fn() {
     last_call: Time? = nil;
     
     return || {
@@ -355,7 +355,7 @@ fn debounce(f: fn(), delay_ms: i32) -> fn() {
         
         when last_call != nil and (now - last_call) < delay_ms then
             // Too soon, ignore call
-            return;
+            pass(NIL);
         end
         
         $last_call = now;
@@ -365,7 +365,7 @@ fn debounce(f: fn(), delay_ms: i32) -> fn() {
 
 // Usage
 save_config: fn() = debounce(|| {
-    stdout << "Saving configuration...\n";
+    print("Saving configuration...\n");
 }, 1000);
 
 // Multiple rapid calls only execute once
@@ -377,24 +377,24 @@ save_config();  // Ignored (too soon)
 ### Memoization
 
 ```aria
-fn memoize<T, U>(f: fn(T) -> U) -> fn(T) -> U {
+func:memoize = U)(fn(T:f)-> fn(T) -> U {
     cache: Map<T, U> = Map::new();
     
     return |arg: T| -> U {
         when cache.contains_key(arg) then
-            return cache.get(arg);
+            pass(cache.get(arg));
         end
         
         Result: U = f(arg);
         cache.insert(arg, result);
-        return result;
+        pass(result);
     };
 }
 
 // Expensive calculation
 fibonacci: fn(i32) -> i32 = |n: i32| -> i32 {
     when n <= 1 then return n; end
-    return fibonacci(n - 1) + fibonacci(n - 2);
+    pass(fibonacci(n - 1) + fibonacci(n - 2));
 };
 
 // Memoized version
@@ -405,7 +405,7 @@ Result: i32 = fast_fib(40);  // Calculated only once per n
 ### Rate Limiter
 
 ```aria
-fn rate_limit(max_calls: i32, window_ms: i32) -> fn() -> bool {
+func:rate_limit = fn()(int32:max_calls, int32:window_ms)-> bool {
     calls: []Time = [];
     
     return || -> bool {
@@ -415,11 +415,11 @@ fn rate_limit(max_calls: i32, window_ms: i32) -> fn() -> bool {
         $calls = calls.filter(|t| (now - t) < window_ms);
         
         when calls.len() >= max_calls then
-            return false;  // Rate limit exceeded
+            pass(false);  // Rate limit exceeded
         end
         
         $calls.push(now);
-        return true;  // Allow call
+        pass(true);  // Allow call
     };
 }
 
@@ -429,9 +429,9 @@ can_call: fn() -> bool = rate_limit(5, 1000);
 till(9, 1) {
     i: i32 = $ + 1;
     when can_call() then
-        stdout << "API call " << i << "\n";
+        print("API call " + i + "\n");
     else
-        stdout << "Rate limited!\n";
+        print("Rate limited!\n");
     end
 }
 ```

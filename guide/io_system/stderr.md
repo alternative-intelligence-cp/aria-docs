@@ -37,13 +37,13 @@ The Unix tradition gave us **three streams** for a reason:
 
 ```aria
 // Simple error message
-stderr << "ERROR: File not found\n";
+stderr_write("ERROR: File not found\n");
 
 // Error with details
-stderr << "ERROR: Cannot open '" << filename << "': " << error_msg << "\n";
+stderr_write("ERROR: Cannot open '" + filename + "': " + error_msg + "\n");
 
 // Warning message
-stderr << "WARNING: Deprecated feature used\n";
+stderr_write("WARNING: Deprecated feature used\n");
 ```
 
 ---
@@ -54,24 +54,24 @@ stderr << "WARNING: Deprecated feature used\n";
 
 | Stream | Purpose | Example |
 |--------|---------|---------|
-| **stdout** | Normal output for humans | `stdout << "Processing complete\n";` |
-| **stderr** | Error messages | `stderr << "ERROR: Invalid input\n";` |
-| **stddbg** | Debug/diagnostic info | `stddbg << "Entering function foo()";` |
+| **stdout** | Normal output for humans | `print("Processing complete\n");` |
+| **stderr** | Error messages | `stderr_write("ERROR: Invalid input\n");` |
+| **stddbg** | Debug/diagnostic info | `stddbg_write("Entering function foo()");` |
 
 **Why three?**
 
 ```aria
-fn main() {
-    stddbg << "Program starting";  // Debug trace
+func:main = NIL() {
+    stddbg_write("Program starting");  // Debug trace
     
     Result: Result = process();
     
     match result {
         Ok(data) => {
-            stdout << "Success: " << data;  // Normal output
+            print("Success: " + data);  // Normal output
         }
         Err(err) => {
-            stderr << "ERROR: " << err;  // Error message
+            stderr_write("ERROR: " + err);  // Error message
         }
     }
 }
@@ -97,8 +97,8 @@ fn main() {
 
 ```aria
 when !file.exists() then
-    stderr << "ERROR: File not found: " << filename << "\n";
-    return ERR;
+    stderr_write("ERROR: File not found: " + filename + "\n");
+    pass(ERR);
 end
 ```
 
@@ -106,10 +106,10 @@ end
 
 ```aria
 when balance < amount then
-    stderr << "ERROR: Insufficient funds\n";
-    stderr << "  Balance: $" << balance << "\n";
-    stderr << "  Required: $" << amount << "\n";
-    return ERR;
+    stderr_write("ERROR: Insufficient funds\n");
+    stderr_write("  Balance: $" + balance + "\n");
+    stderr_write("  Required: $" + amount + "\n");
+    pass(ERR);
 end
 ```
 
@@ -132,8 +132,8 @@ panic("Critical error occurred");
 ```aria
 // Error: Stop execution
 when !validate(data) then
-    stderr << "ERROR: Invalid data format\n";
-    return ERR;  // Stop
+    stderr_write("ERROR: Invalid data format\n");
+    pass(ERR);  // Stop
 end
 ```
 
@@ -142,7 +142,7 @@ end
 ```aria
 // Warning: Continue execution
 when version < MIN_VERSION then
-    stderr << "WARNING: Old version detected, please upgrade\n";
+    stderr_write("WARNING: Old version detected, please upgrade\n");
     // But continue anyway
 end
 ```
@@ -154,55 +154,55 @@ end
 ### ✅ DO: Use for Actual Errors
 
 ```aria
-stderr << "ERROR: Cannot connect to database\n";
-stderr << "FATAL: Out of memory\n";
+stderr_write("ERROR: Cannot connect to database\n");
+stderr_write("FATAL: Out of memory\n");
 ```
 
 ### ✅ DO: Prefix with Severity
 
 ```aria
-stderr << "ERROR: " << message << "\n";
-stderr << "WARNING: " << message << "\n";
-stderr << "FATAL: " << message << "\n";
+stderr_write("ERROR: " + message + "\n");
+stderr_write("WARNING: " + message + "\n");
+stderr_write("FATAL: " + message + "\n");
 ```
 
 ### ✅ DO: Include Context
 
 ```aria
-stderr << "ERROR: Failed to parse JSON\n";
-stderr << "  File: " << filename << "\n";
-stderr << "  Line: " << line_num << "\n";
-stderr << "  Reason: " << err.message << "\n";
+stderr_write("ERROR: Failed to parse JSON\n");
+stderr_write("  File: " + filename + "\n");
+stderr_write("  Line: " + line_num + "\n");
+stderr_write("  Reason: " + err.message + "\n");
 ```
 
 ### ❌ DON'T: Use for Debug Output
 
 ```aria
 // WRONG: Debug info should go to stddbg
-stderr << "DEBUG: Entering function\n";
+stderr_write("DEBUG: Entering function\n");
 
 // RIGHT:
-stddbg << "Entering function";
+stddbg_write("Entering function");
 ```
 
 ### ❌ DON'T: Use for Normal Output
 
 ```aria
 // WRONG: Normal output goes to stdout
-stderr << "Processing complete\n";
+stderr_write("Processing complete\n");
 
 // RIGHT:
-stdout << "Processing complete\n";
+print("Processing complete\n");
 ```
 
 ### ❌ DON'T: Mix Errors with Data
 
 ```aria
 // WRONG: JSON on stderr is weird
-stderr << json_dumps(error_object);
+stderr_write(json_dumps(error_object));
 
 // RIGHT: Errors are human-readable
-stderr << "ERROR: " << error_object.message << "\n";
+stderr_write("ERROR: " + error_object.message + "\n");
 ```
 
 ---
@@ -212,17 +212,17 @@ stderr << "ERROR: " << error_object.message << "\n";
 Combine `stderr` with proper exit codes:
 
 ```aria
-fn main() -> i32 {
+func:main = int32() {
     Result: Result = process();
     
     match result {
         Ok(data) => {
-            stdout << "Success\n";
-            return 0;  // Success exit code
+            print("Success\n");
+            pass(0);  // Success exit code
         }
         Err(err) => {
-            stderr << "ERROR: " << err << "\n";
-            return 1;  // Error exit code
+            stderr_write("ERROR: " + err + "\n");
+            pass(1);  // Error exit code
         }
     }
 }

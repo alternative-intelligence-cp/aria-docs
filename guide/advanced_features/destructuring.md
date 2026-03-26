@@ -19,7 +19,7 @@ point: (i32, i32) = (10, 20);
 // Destructure into variables
 (x, y): (i32, i32) = point;
 
-stdout << "$x, $y";  // 10, 20
+print(`&{x}, &{y}`);  // 10, 20
 ```
 
 ---
@@ -37,7 +37,7 @@ p: Point = Point { x: 10, y: 20 };
 // Destructure fields
 Point { x, y } = p;
 
-stdout << "$x, $y";  // 10, 20
+print(`&{x}, &{y}`);  // 10, 20
 ```
 
 ---
@@ -60,7 +60,7 @@ user: User = User {
 // Extract only needed fields
 User { name, .. } = user;
 
-stdout << name;  // "Alice"
+print(name);  // "Alice"
 ```
 
 ---
@@ -78,7 +78,7 @@ config: Config = Config { host: "localhost", port: 8080 };
 // Rename during destructuring
 Config { host: server, port: server_port } = config;
 
-stdout << "$server:$server_port";  // localhost:8080
+print(`&{server}:&{server_port}`);  // localhost:8080
 ```
 
 ---
@@ -91,9 +91,9 @@ numbers: []i32 = [1, 2, 3, 4, 5];
 // First two elements
 [first, second, ...rest] = numbers;
 
-stdout << "First: $first";   // First: 1
-stdout << "Second: $second"; // Second: 2
-stdout << "Rest: $rest";     // Rest: [3, 4, 5]
+print(`First: &{first}`);   // First: 1
+print(`Second: &{second}`); // Second: 2
+print(`Rest: &{rest}`);     // Rest: [3, 4, 5]
 ```
 
 ---
@@ -122,7 +122,7 @@ person: Person = Person {
 // Nested destructuring
 Person { name, address: Address { city, .. } } = person;
 
-stdout << "$name from $city";  // Alice from Springfield
+print(`&{name} from &{city}`);  // Alice from Springfield
 ```
 
 ---
@@ -130,15 +130,15 @@ stdout << "$name from $city";  // Alice from Springfield
 ## Function Parameters
 
 ```aria
-fn print_point((x, y): (i32, i32)) {
-    stdout << "Point at ($x, $y)";
+func:print_point = NIL((x, y): (i32, i32)) {
+    print(`Point at (&{x}, &{y})`);
 }
 
-fn greet(User { name, age, .. }: User) {
-    stdout << "Hello $name, age $age";
+func:greet = NIL(User { name, age, .. }: User) {
+    print(`Hello &{name}, age &{age}`);
 }
 
-fn main() {
+func:main = NIL() {
     print_point((10, 20));
     
     user: User = User { name: "Bob", age: 25, email: "bob@example.com" };
@@ -158,19 +158,19 @@ enum Message {
     ChangeColor(i32, i32, i32),
 }
 
-fn process(msg: Message) {
+func:process = NIL(Message:msg) {
     match msg {
         Message.Quit => {
-            stdout << "Quitting";
+            print("Quitting");
         }
         Message.Move(x, y) => {
-            stdout << "Moving to ($x, $y)";
+            print(`Moving to (&{x}, &{y})`);
         }
         Message.Write(text) => {
-            stdout << "Writing: $text";
+            print(`Writing: &{text}`);
         }
         Message.ChangeColor(r, g, b) => {
-            stdout << "Color: RGB($r, $g, $b)";
+            print(`Color: RGB(&{r}, &{g}, &{b})`);
         }
     }
 }
@@ -181,19 +181,19 @@ fn process(msg: Message) {
 ## If-Let Destructuring
 
 ```aria
-fn process_optional(opt: ?Point) {
+func:process_optional = NIL(?Point:opt) {
     if let Some(Point { x, y }) = opt {
-        stdout << "Point at ($x, $y)";
+        print(`Point at (&{x}, &{y})`);
     } else {
-        stdout << "No point";
+        print("No point");
     }
 }
 
-fn handle_result(Result: Result<User>) {
+func:handle_result = NIL(Result<User>:Result) {
     if let Ok(User { name, age, .. }) = result {
-        stdout << "$name is $age years old";
+        print(`&{name} is &{age} years old`);
     } else {
-        stderr << "Failed to get user";
+        stderr_write("Failed to get user");
     }
 }
 ```
@@ -203,13 +203,13 @@ fn handle_result(Result: Result<User>) {
 ## While-Let Destructuring
 
 ```aria
-fn process_iter(iter: Iterator<(string, i32)>) {
+func:process_iter = NIL(Iterator<(string, i32:iter)>) {
     while let Some((key, value)) = iter.next() {
-        stdout << "$key = $value";
+        print(`&{key} = &{value}`);
     }
 }
 
-fn process_results(results: []Result<Data>) {
+func:process_results = NIL([]Result<Data>:results) {
     i: i32 = 0;
     while let Some(Ok(data)) = results[i] {
         process(data);
@@ -231,7 +231,7 @@ b: i32 = 10;
 // Swap using tuple destructuring
 (a, b) = (b, a);
 
-stdout << "$a, $b";  // 10, 5
+print(`&{a}, &{b}`);  // 10, 5
 ```
 
 ---
@@ -239,15 +239,15 @@ stdout << "$a, $b";  // 10, 5
 ### Multiple Return Values
 
 ```aria
-fn divide_with_remainder(a: i32, b: i32) -> (i32, i32) {
+func:divide_with_remainder = (i32,(int32:a, int32:b)i32) {
     quotient: i32 = a / b;
     remainder: i32 = a % b;
-    return (quotient, remainder);
+    pass((quotient, remainder));
 }
 
-fn main() {
+func:main = NIL() {
     (quot, rem) = divide_with_remainder(17, 5);
-    stdout << "17 / 5 = $quot remainder $rem";  // 17 / 5 = 3 remainder 2
+    print(`17 / 5 = &{quot} remainder &{rem}`);  // 17 / 5 = 3 remainder 2
 }
 ```
 
@@ -262,14 +262,14 @@ struct Response {
     headers: HashMap<string, string>,
 }
 
-fn process_response(resp: Response) {
+func:process_response = NIL(Response:resp) {
     // Extract only what we need
     Response { status, body, .. } = resp;
     
     if status == 200 {
-        stdout << body;
+        print(body);
     } else {
-        stderr << "Error: status $status";
+        stderr_write(`Error: status &{status}`);
     }
 }
 ```
@@ -284,7 +284,7 @@ users: []User = get_users();
 till(users.length - 1, 1) {
     User { name, age, .. } = users[$];
     if age >= 18 {
-        stdout << "$name is an adult";
+        print(`&{name} is an adult`);
     }
 }
 
@@ -293,7 +293,7 @@ points: [](i32, i32) = [(0, 0), (1, 1), (2, 4)];
 
 till(points.length - 1, 1) {
     (x, y) = points[$];
-    stdout << "Point at ($x, $y)";
+    print(`Point at (&{x}, &{y})`);
 }
 ```
 
@@ -306,7 +306,7 @@ pairs: [](string, i32) = [("a", 1), ("b", 2), ("c", 3)];
 
 // Destructure parameters
 pairs.forEach(|(key, value)| {
-    stdout << "$key = $value";
+    print(`&{key} = &{value}`);
 });
 
 results: []Result<Data> = fetch_all();
@@ -314,9 +314,9 @@ results: []Result<Data> = fetch_all();
 valid_data: []Data = results
     .filterMap(|result| {
         if let Ok(data) = result {
-            return Some(data);
+            pass(Some(data));
         }
-        return None;
+        pass(None);
     });
 ```
 
@@ -328,17 +328,17 @@ valid_data: []Data = results
 
 ```aria
 // ❌ Repetitive
-fn process(user: User) {
-    stdout << user.name;
-    stdout << user.email;
-    stdout << user.age;
+func:process = NIL(User:user) {
+    print(user.name);
+    print(user.email);
+    print(user.age);
 }
 
 // ✅ Clean with destructuring
-fn process(User { name, email, age, .. }: User) {
-    stdout << name;
-    stdout << email;
-    stdout << age;
+func:process = NIL(User { name, email, age, .. }: User) {
+    print(name);
+    print(email);
+    print(age);
 }
 ```
 
@@ -353,7 +353,7 @@ struct Config {
     debug: bool,
 }
 
-fn connect(Config { host, port, .. }: Config) {
+func:connect = NIL(Config { host, port, .. }: Config) {
     // Only need host and port
     establish_connection(host, port);
 }
@@ -362,7 +362,7 @@ fn connect(Config { host, port, .. }: Config) {
 ### ✅ DO: Rename to Avoid Conflicts
 
 ```aria
-fn merge_configs(config1: Config, config2: Config) {
+func:merge_configs = NIL(Config:config1, Config:config2) {
     Config { host: host1, port: port1, .. } = config1;
     Config { host: host2, port: port2, .. } = config2;
     
@@ -399,18 +399,18 @@ City { name: city_name, .. } = city;
 
 ```aria
 // ❌ Bad - extracts nothing useful
-fn process(User { .. }: User) {
+func:process = NIL(User { .. }: User) {
     // Just use the whole user
 }
 
 // ✅ Good - extract what you need
-fn process(User { name, age, .. }: User) {
-    stdout << "$name is $age";
+func:process = NIL(User { name, age, .. }: User) {
+    print(`&{name} is &{age}`);
 }
 
 // ✅ Or don't destructure at all
-fn process(user: User) {
-    stdout << "${user.name} is ${user.age}";
+func:process = NIL(User:user) {
+    print("&{user.name} is &{user.age}");
 }
 ```
 

@@ -684,13 +684,13 @@ fn is_alive() -> bool              // Check if running
 process: Process = spawn("sleep", ["10"])?;
 </p>
 <p>
-stdout << "Process started with PID: $(process.pid)";
-stdout << "Doing other work...";
+print("Process started with PID: $(process.pid)");
+print("Doing other work...");
 </p>
 <p>
 // Wait for it to finish
 Result: ProcessResult = process.wait()?;
-stdout << "Process completed with exit code: $(result.exit_code)";</code></pre>
+print("Process completed with exit code: $(result.exit_code)");</code></pre>
 </p>
 <h3>Run Server</h3>
 <pre><code>// Start server in background
@@ -698,7 +698,7 @@ stdout << "Process completed with exit code: $(result.exit_code)";</code></pre>
 server: Process = spawn("python3", ["-m", "http.server", "8000"])?;
 </p>
 <p>
-stdout << "Server started on port 8000";
+print("Server started on port 8000");
 </p>
 <p>
 // Do other work...
@@ -715,7 +715,7 @@ task2: Process = spawn("./process_file2.sh")?;
 task3: Process = spawn("./process_file3.sh")?;
 </p>
 <p>
-stdout << "All tasks running in parallel...";
+print("All tasks running in parallel...");
 </p>
 <p>
 // Wait for all to complete
@@ -724,7 +724,7 @@ result2: ProcessResult = task2.wait()?;
 result3: ProcessResult = task3.wait()?;
 </p>
 <p>
-stdout << "All tasks completed";</code></pre>
+print("All tasks completed");</code></pre>
 </p>
 <h3>Check if Running</h3>
 <pre><code>process: Process = spawn("long_task")?;
@@ -735,7 +735,7 @@ break;
 end
 </p>
 <p>
-stdout << "Still running...";
+print("Still running...");
 sleep(1);
 end
 </p>
@@ -755,7 +755,7 @@ Result: ProcessResult = process.wait()?;
 </p>
 <p>
 when result.exit_code != 0 then
-stderr << "Build failed: $(result.stderr)";
+stderr_write("Build failed: $(result.stderr)");
 end</code></pre>
 </p>
 <h3>Kill Process</h3>
@@ -764,7 +764,7 @@ end</code></pre>
 // After some time...
 when timeout_occurred then
 process.kill()?;
-stdout << "Process terminated";
+print("Process terminated");
 end</code></pre>
 </p>
 <h3>Non-Blocking Check</h3>
@@ -772,10 +772,10 @@ end</code></pre>
 <p>
 // Check without waiting
 when process.is_alive() then
-stdout << "Task is still running";
+print("Task is still running");
 else
 Result: ProcessResult = process.wait()?;
-stdout << "Task finished";
+print("Task finished");
 end</code></pre>
 </p>
 <hr>
@@ -831,12 +831,12 @@ defer process.wait()?;  // ✅ Ensures completion</code></pre>
 <pre><code>// exec() - Blocks until complete
 <p>
 Result: ProcessResult = exec("task", args)?;  // Waits here
-stdout << "Task done";
+print("Task done");
 </p>
 <p>
 // spawn() - Returns immediately
 process: Process = spawn("task", args)?;  // Continues immediately
-stdout << "Task running in background";
+print("Task running in background");
 process.wait()?;  // Wait when ready</code></pre>
 </p>
 <hr>

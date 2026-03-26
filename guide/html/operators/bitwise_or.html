@@ -672,7 +672,7 @@ b: i32 = 0b1010;  // 10
 Result: i32 = a | b;  // 0b1110 = 14
 </p>
 <p>
-stdout << result;  // 14</code></pre>
+print(result);  // 14</code></pre>
 </p>
 <hr>
 <h2>Common Uses</h2>
@@ -714,7 +714,7 @@ state: i32 = FLAG_A | FLAG_C;  // 0b0101
 <p>
 // Check flag
 when (state & FLAG_A) != 0 then
-stdout << "Flag A is set";
+print("Flag A is set");
 end</code></pre>
 </p>
 <hr>
@@ -743,7 +743,7 @@ new_flags: i32 = 0b0100;
 </p>
 <p>
 flags |= new_flags;  // flags = flags | new_flags
-stdout << flags;  // 0b0111</code></pre>
+print(flags);  // 0b0111</code></pre>
 </p>
 <hr>
 <h2>Related</h2>

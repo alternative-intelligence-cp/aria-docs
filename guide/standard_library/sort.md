@@ -15,14 +15,14 @@
 ## Syntax
 
 ```aria
-import std.functional;
+use std.functional;
 
 // Natural sort
 sorted: []i32 = sort(numbers);
 
 // Custom sort
 sorted: []i32 = sort(numbers, fn(a: i32, b: i32) -> i32 {
-    return a - b;  // Ascending
+    pass(a - b);  // Ascending
 });
 ```
 
@@ -61,7 +61,7 @@ sorted: []i32 = sort(numbers);
 numbers: []i32 = [5, 2, 8, 1, 9, 3];
 
 sorted: []i32 = sort(numbers, fn(a: i32, b: i32) -> i32 {
-    return b - a;  // Descending
+    pass(b - a);  // Descending
 });
 // [9, 8, 5, 3, 2, 1]
 ```
@@ -81,7 +81,7 @@ sorted: []string = sort(words);
 words: []string = ["elephant", "cat", "dog", "butterfly"];
 
 by_length: []string = sort(words, fn(a: string, b: string) -> i32 {
-    return a.length() - b.length();
+    pass(a.length() - b.length());
 });
 // ["cat", "dog", "elephant", "butterfly"]
 ```
@@ -102,7 +102,7 @@ people: []Person = [
 
 // Sort by age
 by_age: []Person = sort(people, fn(a: Person, b: Person) -> i32 {
-    return a.age - b.age;
+    pass(a.age - b.age);
 });
 // [Bob(25), Alice(30), Charlie(35)]
 
@@ -110,7 +110,7 @@ by_age: []Person = sort(people, fn(a: Person, b: Person) -> i32 {
 by_name: []Person = sort(people, fn(a: Person, b: Person) -> i32 {
     when a.name < b.name then return -1;
     when a.name > b.name then return 1;
-    return 0;
+    pass(0);
 });
 // [Alice, Bob, Charlie]
 ```
@@ -137,7 +137,7 @@ sorted: []i32 = numbers.sort(fn(a, b) { return b - a; });
 // Sort in-place (modifies original)
 numbers: []i32 = [5, 2, 8, 1, 9];
 numbers.sort_in_place();
-stdout << numbers;  // [1, 2, 5, 8, 9]
+print(numbers);  // [1, 2, 5, 8, 9]
 ```
 
 ---
@@ -157,10 +157,10 @@ users: []User = [...];
 sorted: []User = sort(users, fn(a: User, b: User) -> i32 {
     // First compare scores (descending)
     when a.score != b.score then
-        return b.score - a.score;
+        pass(b.score - a.score);
     end
     // If scores equal, compare ages (ascending)
-    return a.age - b.age;
+    pass(a.age - b.age);
 });
 ```
 
@@ -179,7 +179,7 @@ sorted: []i32 = sort(numbers);  // ✅ Simple
 
 ```aria
 sorted: []Person = sort(people, fn(a, b) {
-    return a.last_name.compare(b.last_name);
+    pass(a.last_name.compare(b.last_name));
 });
 ```
 
@@ -189,7 +189,7 @@ sorted: []Person = sort(people, fn(a, b) {
 // Dangerous!
 sorted: []Item = sort(items, fn(a, b) {
     a.accessed = true;  // ❌ Side effects!
-    return a.value - b.value;
+    pass(a.value - b.value);
 });
 ```
 

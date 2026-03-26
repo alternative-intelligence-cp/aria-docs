@@ -662,7 +662,7 @@ The <strong>borrow operator</strong> creates references to values:
 ref: &i32 = &value;  // Immutable reference
 </p>
 <p>
-stdout << ref;  // ✅ Can read
+print(ref);  // ✅ Can read
 ref = 100;      // ❌ Can't modify</code></pre>
 </p>
 <hr>
@@ -672,14 +672,14 @@ ref = 100;      // ❌ Can't modify</code></pre>
 ref: &i32 = $value;  // Mutable reference
 </p>
 <p>
-stdout << ref;  // ✅ Can read
+print(ref);  // ✅ Can read
 ref = 100;      // ✅ Can modify</code></pre>
 </p>
 <hr>
 <h2>In Function Calls</h2>
 <pre><code>fn read(v: &i32) {
 <p>
-stdout << v;
+print(v);
 }
 </p>
 <p>

@@ -68,11 +68,11 @@ regex: string = `\d+\.\d+`;
 ```aria
 // Embed variables
 name: string = "Alice";
-greeting: string = "Hello, $name!";
+greeting: string = `Hello, &{name}!`;
 
 // Expressions
 x: i32 = 10;
-msg: string = "The value is ${x + 5}";
+msg: string = "The value is &{x + 5}";
 ```
 
 ---
@@ -89,7 +89,7 @@ second: string = "World";
 combined: string = first + " " + second;  // "Hello World"
 
 // Using interpolation (better)
-combined: string = "$first $second";
+combined: string = `&{first} &{second}`;
 ```
 
 ### Comparison
@@ -176,7 +176,7 @@ ends: bool = text.ends_with("World");    // true
 ### Text Processing
 
 ```aria
-fn process_log(line: string) {
+func:process_log = NIL(string:line) {
     when line.starts_with("ERROR") then
         handle_error(line);
     elsif line.starts_with("WARN") then
@@ -188,8 +188,8 @@ fn process_log(line: string) {
 ### Building Messages
 
 ```aria
-fn format_user(name: string, age: i32) -> string {
-    return "User: $name (age $age)";
+func:format_user = string(string:name, int32:age) {
+    pass(`User: &{name} (age &{age})`);
 }
 
 msg: string = format_user("Alice", 30);
@@ -199,7 +199,7 @@ msg: string = format_user("Alice", 30);
 ### Parsing
 
 ```aria
-fn parse_config(line: string) -> Result<(string, string)> {
+func:parse_config = Result<(string,(string:line)string)> {
     parts: []string = line.split("=");
     
     when parts.length() != 2 then
@@ -223,7 +223,7 @@ fn parse_config(line: string) -> Result<(string, string)> {
 // Clear and efficient
 name: string = "Alice";
 age: i32 = 30;
-msg: string = "Name: $name, Age: $age";
+msg: string = `Name: &{name}, Age: &{age}`;
 ```
 
 ### ✅ DO: Use Raw Strings for Paths
@@ -295,9 +295,9 @@ text = text.to_lowercase();  // ✅ New string
 
 ```aria
 // Reference-counted - no manual free needed
-fn create_message() -> string {
+func:create_message = string() {
     msg: string = "Hello";
-    return msg;  // Ref count incremented
+    pass(msg);  // Ref count incremented
 }  // Original ref count decremented
 
 Result: string = create_message();
@@ -311,8 +311,8 @@ Result: string = create_message();
 ### Template Formatting
 
 ```aria
-fn format_email(user: string, domain: string) -> string {
-    return "${user}@${domain}";
+func:format_email = string(string:user, string:domain) {
+    pass("&{user}@&{domain}");
 }
 
 email: string = format_email("alice", "example.com");
@@ -322,16 +322,16 @@ email: string = format_email("alice", "example.com");
 ### Validation
 
 ```aria
-fn is_valid_username(name: string) -> bool {
+func:is_valid_username = bool(string:name) {
     when name.is_empty() or name.length() < 3 then
-        return false;
+        pass(false);
     end
     
     when not name.chars().all(is_alphanumeric) then
-        return false;
+        pass(false);
     end
     
-    return true;
+    pass(true);
 }
 ```
 
@@ -348,7 +348,7 @@ Result: string = names.join(", ");
 
 ## Related
 
-- [String Interpolation (${})](../operators/interpolation.md)
+- [String Interpolation (&{})](../operators/interpolation.md)
 - [Raw Strings (`)](../operators/backtick.md)
 - [Arrays ([])](array.md)
 

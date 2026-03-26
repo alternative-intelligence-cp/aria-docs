@@ -674,9 +674,9 @@ Result: Result<string> = readFile("config.txt");
 </p>
 <p>
 when result is Ok(content) then
-stdout << "File contents:\n$content";
+print(`File contents:\n&{content}`);
 elsif result is Err(msg) then
-stderr << "Error reading file: $msg";
+stderr_write(`Error reading file: &{msg}`);
 end</code></pre>
 </p>
 <h3>With Error Propagation</h3>
@@ -695,7 +695,7 @@ till(files.length - 1, 1) {
 when readFile(files[$]) is Ok(content) then
 process(content);
 elsif is Err(msg) then
-stderr << "Failed to read $(files[$]): $msg";
+stderr_write(`Failed to read $(files[$]): &{msg}`);
 end
 end</code></pre>
 </p>
@@ -712,7 +712,7 @@ end</code></pre>
 <pre><code>Result<string>:Result = readFile("important.txt");
 <p>
 when result is Err(msg) then
-log_error("Failed to read: $msg");
+log_error(`Failed to read: &{msg}`);
 fail("Cannot proceed");
 end</code></pre>
 </p>

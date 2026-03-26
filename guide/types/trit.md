@@ -39,7 +39,7 @@ pos: trit = 1;    // 1
 
 ```aria
 // Ternary logic
-fn ternary_add(a: trit, b: trit) -> (trit, trit) {
+func:ternary_add = (trit,(trit:a, trit:b)trit) {
     // Returns (sum, carry)
     ...
 }

@@ -493,17 +493,17 @@ func:absolute_genomic_position = (genome_id: tbb64, chr_position: tbb64) -> tbb6
         stderr.write("Genome ID: ");
         genome_id.write_to(stderr);
         stderr.write("\\n");
-        return ERR;
+        pass(ERR);
     }
     
     tbb64:absolute_pos = genome_offset + chr_position;
     
     if (absolute_pos == ERR) {
         stderr.write("CRITICAL: Absolute genomic position overflowed\\n");
-        return ERR;
+        pass(ERR);
     }
     
-    return absolute_pos;
+    pass(absolute_pos);
 }
 
 // Example: Find variant in genome #2,500,000,000 at position 1,500,000,000
@@ -581,7 +581,7 @@ func:audit_global_finance = () -> tbb64 {
             stderr.write("Overflow at transaction ID: ");
             i.write_to(stderr);
             stderr.write("\\n");
-            return ERR;
+            pass(ERR);
         }
     end
     
@@ -598,7 +598,7 @@ func:audit_global_finance = () -> tbb64 {
     error_count.write_to(log);
     log.write("\\n");
     
-    return total_volume_cents;
+    pass(total_volume_cents);
 }
 
 tbb64:global_volume = audit_global_finance();
@@ -763,12 +763,12 @@ func:calculate_absolute_genomic_position = (genome_id: tbb64, chr_position: tbb6
     tbb64:genome_offset = genome_id * genome_size;
     
     if (genome_offset == ERR) {
-        return ERR;  // Propagate overflow
+        pass(ERR);  // Propagate overflow
     }
     
     tbb64:absolute_pos = genome_offset + chr_position;
     
-    return absolute_pos;  // ERR if addition overflowed, valid position otherwise
+    pass(absolute_pos);  // ERR if addition overflowed, valid position otherwise
 }
 
 // Usage
@@ -844,10 +844,10 @@ log.write(" seconds since epoch\\n");
 // Clamp arbitrary int64 to tbb64 range (useful for legacy C interop)
 func:clamp_to_tbb64 = (value: int64) -> tbb64 {
     if (value == INT64_MIN) {
-        return ERR;  // Map INT64_MIN → tbb64 ERR
+        pass(ERR);  // Map INT64_MIN → tbb64 ERR
     }
     // Value is already within tbb64 range (symmetric ±9.223 quintillion)
-    return value as tbb64;
+    pass(value as tbb64);
 }
 ```
 
@@ -905,7 +905,7 @@ int64_t safe_add_64(int64_t a, int64_t b) {
 ```aria
 // After (Aria - automatic!):
 func:safe_add_64 = (a: tbb64, b: tbb64) -> tbb64 {
-    return a + b;  // Overflow automatically produces ERR!
+    pass(a + b);  // Overflow automatically produces ERR!
 }
 ```
 

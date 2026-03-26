@@ -25,18 +25,18 @@ The not equal operator `!=` tests if two values are **not** equal, returning `tr
 ```aria
 // Different values
 when 5 != 3 then
-    stdout << "Not equal";  // Prints
+    print("Not equal");  // Prints
 end
 
 // Same values
 when 5 != 5 then
-    stdout << "Won't print";
+    print("Won't print");
 end
 
 // Variables
 status: string = "pending";
 when status != "complete" then
-    stdout << "Still processing";
+    print("Still processing");
 end
 ```
 
@@ -48,9 +48,9 @@ end
 value: i32? = get_optional();
 
 when value != nil then
-    stdout << "Has value: " << value;
+    print("Has value: " + value);
 else
-    stdout << "No value";
+    print("No value");
 end
 ```
 
@@ -81,7 +81,7 @@ x: i32 = 42;
 y: i32 = 100;
 
 when x != y then  // OK
-    stdout << "Different";
+    print("Different");
 end
 
 // Must cast different types

@@ -36,9 +36,9 @@ func:validate_user = Result<User, string>(string:id) {
 
 ```aria
 // WRONG - don't use these patterns:
-return Ok(value);        // ❌
-return Err(error);       // ❌
-return Error(message);   // ❌
+pass(Ok(value));        // ❌
+pass(Err(error));       // ❌
+pass(Error(message));   // ❌
 Ok(value)               // ❌
 Err(error)              // ❌
 ```
@@ -114,7 +114,7 @@ func:identity = T(T:value) {
 
 ```aria
 // WRONG - don't use these patterns:
-fn add(a: int64, b: int64) -> int64 { }           // ❌
+func:add = int64(int64:a, int64:b) { }           // ❌
 function add(int64 a, int64 b): int64 { }         // ❌
 func add(a: int64, b: int64) -> int64 { }         // ❌
 ```
@@ -337,7 +337,7 @@ async:process_all = void() {
 
 ```aria
 // WRONG - don't use these:
-async fn fetch_data() -> Result<Data> { }         // ❌
+async func:fetch_data = Result<Data>() { }         // ❌
 async function fetch_data(): Promise<Data> { }    // ❌
 ```
 

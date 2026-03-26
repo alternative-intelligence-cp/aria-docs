@@ -16,7 +16,7 @@ Visibility controls which items can be accessed from outside their defining modu
 ### Private (Default)
 
 ```aria
-fn function() { }           // Private to module
+func:function = NIL() { }           // Private to module
 struct Data { }             // Private to module
 const VALUE: i32 = 42;      // Private to module
 ```
@@ -24,7 +24,7 @@ const VALUE: i32 = 42;      // Private to module
 ### Public
 
 ```aria
-pub fn function() { }       // Public everywhere
+pub func:function = NIL() { }       // Public everywhere
 pub struct Data { }         // Public everywhere
 pub const VALUE: i32 = 42;  // Public everywhere
 ```
@@ -41,8 +41,8 @@ pub(crate) fn function() { }  // Public within crate only
 
 ```aria
 mod database {
-    fn private_helper() { }    // Only in 'database'
-    pub fn connect() { }       // Available outside 'database'
+    func:private_helper = NIL() { }    // Only in 'database'
+    pub func:connect = NIL() { }       // Available outside 'database'
 }
 
 // From outside
@@ -79,12 +79,12 @@ pub struct User {
 }
 
 impl User {
-    pub fn new(name: string, age: i32) -> User {
-        return User { name: name, age: age };
+    pub func:new = User(string:name, int32:age) {
+        pass(User { name: name, age: age });
     }
     
-    pub fn get_name() -> string {
-        return self.name;
+    pub func:get_name = string() {
+        pass(self.name);
     }
 }
 
@@ -103,7 +103,7 @@ struct InternalData {  // Private struct
     value: i32
 }
 
-pub fn create() -> InternalData {  // ❌ Error - can't expose private type
+pub func:create = InternalData() {  // ❌ Error - can't expose private type
 }
 ```
 
@@ -113,14 +113,14 @@ pub fn create() -> InternalData {  // ❌ Error - can't expose private type
 
 ```aria
 pub mod outer {
-    pub fn outer_public() { }
-    fn outer_private() { }
+    pub func:outer_public = NIL() { }
+    func:outer_private = NIL() { }
     
     pub mod inner {
-        pub fn inner_public() { }
-        fn inner_private() { }
+        pub func:inner_public = NIL() { }
+        func:inner_private = NIL() { }
         
-        pub fn use_outer() {
+        pub func:use_outer = NIL() {
             super.outer_public();   // ✅ OK
             super.outer_private();  // ✅ OK - same parent module
         }
@@ -140,7 +140,7 @@ outer.inner.inner_private(); // ❌ Error
 
 ```aria
 // internal.aria
-pub fn helper() { }
+pub func:helper = NIL() { }
 
 // lib.aria
 mod internal;
@@ -174,12 +174,12 @@ pub(crate) struct InternalType { }
 mod database {
     struct Connection { }  // Private
     
-    fn connect_internal() -> Connection { }  // Private
+    func:connect_internal = Connection() { }  // Private
 }
 
-pub fn connect_to_database() -> Result<void> {
+pub func:connect_to_database = Result<NIL>() {
     database.connect_internal()?;  // Use private items
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -193,16 +193,16 @@ pub struct Account {
 }
 
 impl Account {
-    pub fn new() -> Account {
-        return Account { balance: 0 };
+    pub func:new = Account() {
+        pass(Account { balance: 0 });
     }
     
-    pub fn deposit(amount: i32) {
+    pub func:deposit = NIL(int32:amount) {
         self.balance += amount;
     }
     
-    pub fn get_balance() -> i32 {
-        return self.balance;
+    pub func:get_balance = int32() {
+        pass(self.balance);
     }
 }
 
@@ -219,9 +219,9 @@ account.balance = 1000;         // ❌ Error - private field
 
 ```aria
 mod utils {
-    pub fn public_util() { }    // Public
-    fn internal_util() { }      // Private
-    fn helper() { }             // Private
+    pub func:public_util = NIL() { }    // Public
+    func:internal_util = NIL() { }      // Private
+    func:helper = NIL() { }             // Private
 }
 
 // Only expose specific items
@@ -235,8 +235,8 @@ pub use utils.public_util;
 ### Functions
 
 ```aria
-fn private_fn() { }      // Private to module
-pub fn public_fn() { }   // Public everywhere
+func:private_fn = NIL() { }      // Private to module
+pub func:public_fn = NIL() { }   // Public everywhere
 ```
 
 ### Structs
@@ -273,12 +273,12 @@ pub const PUBLIC: i32 = 42;     // Public constant
 
 ```aria
 // Expose only what's needed
-pub fn api_function() { }
+pub func:api_function = NIL() { }
 
 // Keep helpers private
-fn helper1() { }
-fn helper2() { }
-fn validate() { }
+func:helper1 = NIL() { }
+func:helper2 = NIL() { }
+func:validate = NIL() { }
 ```
 
 ### ✅ DO: Encapsulate State
@@ -290,9 +290,9 @@ pub struct Server {
 }
 
 impl Server {
-    pub fn start() { }  // Public interface
-    pub fn stop() { }   // Public interface
-    fn cleanup() { }    // Private helper
+    pub func:start = NIL() { }  // Public interface
+    pub func:stop = NIL() { }   // Public interface
+    func:cleanup = NIL() { }    // Private helper
 }
 ```
 
@@ -301,7 +301,7 @@ impl Server {
 ```aria
 // lib.aria
 mod internal {
-    pub fn important_function() { }
+    pub func:important_function = NIL() { }
 }
 
 // Clean public API
@@ -311,13 +311,13 @@ pub use internal.important_function;
 ### ❌ DON'T: Expose Implementation Details
 
 ```aria
-pub fn process_user(user: User) {
+pub func:process_user = NIL(User:user) {
     internal_validate(user);  // ❌ Don't expose this
     internal_save(user);      // ❌ Or this
 }
 
-pub fn internal_validate(user: User) { }  // ❌ Should be private
-pub fn internal_save(user: User) { }      // ❌ Should be private
+pub func:internal_validate = NIL(User:user) { }  // ❌ Should be private
+pub func:internal_save = NIL(User:user) { }      // ❌ Should be private
 ```
 
 ---

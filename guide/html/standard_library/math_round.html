@@ -720,7 +720,7 @@ math.trunc(value);  // 4  - Toward zero</code></pre>
 <pre><code>Result: flt64 = 12.3456789;
 <p>
 display: flt64 = round_to_places(result, 2);
-stdout << "$display";  // "12.35"</code></pre>
+print(`&{display}`);  // "12.35"</code></pre>
 </p>
 <h3>❌ DON'T: Use for Precise Calculations</h3>
 <pre><code>// Not accurate for money

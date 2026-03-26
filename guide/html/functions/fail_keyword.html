@@ -670,7 +670,7 @@ Result: tbb32 = divide(a, b);
 </p>
 <p>
 when fail result then
-stderr << "ERROR: Division failed (divide by zero?)\n";
+stderr_write("ERROR: Division failed (divide by zero?)\n");
 return 0;  // Fallback value
 end
 </p>
@@ -693,7 +693,7 @@ return result;
 <pre><code>fn process_file(filename: string) -> bool {
 <p>
 when fail open_file(filename) then
-stderr << "ERROR: Cannot open file: " << filename << "\n";
+stderr_write("ERROR: Cannot open file: " << filename + "\n");
 return false;
 end
 </p>
@@ -711,7 +711,7 @@ num: tbb32 = parse(s);
 </p>
 <p>
 when fail num then
-stddbg << "Parse failed, returning default";
+stddbg_write("Parse failed, returning default");
 return 0;  // Default value
 end
 </p>
@@ -726,8 +726,8 @@ file: File? = open_file(path);
 </p>
 <p>
 when fail file then
-stderr << "ERROR: Cannot load config from " << path << "\n";
-stderr << "  Using default configuration\n";
+stderr_write("ERROR: Cannot load config from " << path + "\n");
+stderr_write("  Using default configuration\n");
 return default_config();
 end
 </p>
@@ -744,21 +744,21 @@ return config;
 <p>
 step1: Data? = parse(input);
 when fail step1 then
-stderr << "ERROR: Parse failed\n";
+stderr_write("ERROR: Parse failed\n");
 return ERR;
 end
 </p>
 <p>
 step2: Data? = validate(step1);
 when fail step2 then
-stderr << "ERROR: Validation failed\n";
+stderr_write("ERROR: Validation failed\n");
 return ERR;
 end
 </p>
 <p>
 step3: Data? = transform(step2);
 when fail step3 then
-stderr << "ERROR: Transform failed\n";
+stderr_write("ERROR: Transform failed\n");
 return ERR;
 end
 </p>
@@ -774,10 +774,10 @@ value: tbb32 = lookup(key);
 </p>
 <p>
 when fail value then
-stderr << "Key not found: " << key << "\n";
+stderr_write("Key not found: " << key + "\n");
 return 0;
 else
-stddbg << "Found value: " << value;
+stddbg_write("Found value: " + value);
 return value;
 end
 }</code></pre>
@@ -791,7 +791,7 @@ Result: Result? = try_primary(data);
 </p>
 <p>
 when fail result then
-stddbg << "Primary method failed, trying fallback";
+stddbg_write("Primary method failed, trying fallback");
 </p>
 <p>
 // Try fallback method
@@ -799,7 +799,7 @@ result = try_fallback(data);
 </p>
 <p>
 when fail result then
-stderr << "ERROR: Both methods failed\n";
+stderr_write("ERROR: Both methods failed\n");
 return ERR;
 end
 end
@@ -816,7 +816,7 @@ return pass finalize(result);
 <p>
 till(max_attempts - 1, 1) {
 attempt: i32 = $ + 1;
-stddbg << "Attempt " << attempt << "/" << max_attempts;
+stddbg_write("Attempt " << attempt << "/" + max_attempts);
 </p>
 <p>
 data: Data? = fetch(url);
@@ -824,10 +824,10 @@ data: Data? = fetch(url);
 <p>
 when fail data then
 when attempt < max_attempts then
-stddbg << "Retrying...";
+stddbg_write("Retrying...");
 continue;
 else
-stderr << "ERROR: All retry attempts failed\n";
+stderr_write("ERROR: All retry attempts failed\n");
 return ERR;
 end
 end
@@ -855,7 +855,7 @@ pref = db.get_default_pref(key);
 <p>
 when fail pref then
 // Ultimate fallback: hardcoded default
-stddbg << "Using hardcoded default for " << key;
+stddbg_write("Using hardcoded default for " + key);
 return "default_value";
 end
 end
@@ -873,14 +873,14 @@ Result: Result? = process(item);
 <p>
 when fail result then
 // Log error details
-stderr << "ERROR: Processing failed\n";
-stderr << "  Item ID: " << item.id << "\n";
-stderr << "  Item type: " << item.type << "\n";
-stderr << "  Timestamp: " << Time::now() << "\n";
+stderr_write("ERROR: Processing failed\n");
+stderr_write("  Item ID: " << item.id + "\n");
+stderr_write("  Item type: " << item.type + "\n");
+stderr_write("  Timestamp: " << Time::now() + "\n");
 </p>
 <p>
 // Also log to debug stream
-stddbg << "Full item data: " << item.serialize();
+stddbg_write("Full item data: " + item.serialize());
 </p>
 <p>
 return ERR;
@@ -895,9 +895,9 @@ return result;
 <h3>✅ DO: Provide Context in Error Messages</h3>
 <pre><code>when fail parse_json(data) then
 <p>
-stderr << "ERROR: Failed to parse JSON\n";
-stderr << "  Data length: " << data.len() << " bytes\n";
-stderr << "  First 100 chars: " << data.substr(0, 100) << "\n";
+stderr_write("ERROR: Failed to parse JSON\n");
+stderr_write("  Data length: " << data.len() + " bytes\n");
+stderr_write("  First 100 chars: " << data.substr(0, 100) + "\n");
 return ERR;
 end</code></pre>
 </p>
@@ -908,15 +908,15 @@ timeout: tbb32 = load_timeout_config();
 </p>
 <p>
 when fail timeout then
-stddbg << "Using default timeout";
+stddbg_write("Using default timeout");
 timeout = 30;  // 30 seconds default
 end</code></pre>
 </p>
 <h3>✅ DO: Log Before Propagating Errors</h3>
 <pre><code>when fail critical_operation() then
 <p>
-stderr << "CRITICAL: Operation failed, aborting\n";
-stddbg << "Stack trace: " << get_stack_trace();
+stderr_write("CRITICAL: Operation failed, aborting\n");
+stddbg_write("Stack trace: " + get_stack_trace());
 return ERR;  // Propagate error upward
 end</code></pre>
 </p>
@@ -931,7 +931,7 @@ end
 <p>
 // Right: At least log it
 when fail dangerous_operation() then
-stderr << "ERROR: Operation failed\n";
+stderr_write("ERROR: Operation failed\n");
 return ERR;
 end</code></pre>
 </p>
@@ -980,7 +980,7 @@ content: string? = read_file(file);
 </p>
 <p>
 when fail content then
-stderr << "ERROR: Cannot read " << file << "\n";
+stderr_write("ERROR: Cannot read " << file + "\n");
 content = try_backup_file(file + ".bak");
 </p>
 <p>
@@ -999,10 +999,10 @@ return data;
 <pre><code>fn diagnose_error(value: tbb32) {
 <p>
 when fail value then
-stdout << "Value is in error state (ERR)\n";
-stddbg << "ERR value: " << value;  // Shows -128 for tbb8, etc.
+print("Value is in error state (ERR)\n");
+stddbg_write("ERR value: " + value);  // Shows -128 for tbb8, etc.
 else
-stdout << "Value is valid: " << value << "\n";
+print("Value is valid: " << value + "\n");
 end
 }</code></pre>
 </p>
@@ -1015,7 +1015,7 @@ user: User? = cache.get_user(user_id);
 </p>
 <p>
 when fail user then
-stddbg << "Cache miss for user " << user_id;
+stddbg_write("Cache miss for user " + user_id);
 </p>
 <p>
 // Fetch from database
@@ -1023,15 +1023,15 @@ user = db.query_user(user_id);
 </p>
 <p>
 when fail user then
-stderr << "ERROR: User " << user_id << " not found in database\n";
-stddbg << "Database connection status: " << db.status();
+stderr_write("ERROR: User " << user_id + " not found in database\n");
+stddbg_write("Database connection status: " + db.status());
 return ERR;
 end
 </p>
 <p>
 // Cache the result for next time
 cache.set_user(user_id, user);
-stddbg << "Cached user " << user_id;
+stddbg_write("Cached user " + user_id);
 end
 </p>
 <p>
@@ -1047,7 +1047,7 @@ result_a: Result? = try_method_a(data);
 </p>
 <p>
 when fail result_a then
-stddbg << "Method A failed, trying B";
+stddbg_write("Method A failed, trying B");
 </p>
 <p>
 // Try operation B
@@ -1055,7 +1055,7 @@ result_b: Result? = try_method_b(data);
 </p>
 <p>
 when fail result_b then
-stddbg << "Method B failed, trying C";
+stddbg_write("Method B failed, trying C");
 </p>
 <p>
 // Try operation C
@@ -1063,7 +1063,7 @@ result_c: Result? = try_method_c(data);
 </p>
 <p>
 when fail result_c then
-stderr << "ERROR: All methods (A, B, C) failed\n";
+stderr_write("ERROR: All methods (A, B, C) failed\n");
 return ERR;
 end
 </p>

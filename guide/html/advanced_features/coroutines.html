@@ -667,9 +667,9 @@ fn main() {
 coro = counter();
 </p>
 <p>
-stdout << coro.next();  // 0
-stdout << coro.next();  // 1
-stdout << coro.next();  // 2
+print(coro.next());  // 0
+print(coro.next());  // 1
+print(coro.next());  // 2
 }</code></pre>
 </p>
 <hr>
@@ -695,7 +695,7 @@ fib = fibonacci();
 </p>
 <p>
 till(9, 1) {
-stdout << fib.next();
+print(fib.next());
 }
 // Output: 0 1 1 2 3 5 8 13 21 34
 }</code></pre>
@@ -715,7 +715,7 @@ i += 1;
 fn main() {
 values = range(0, 5);
 till(values.length - 1, 1) {
-stdout << values[$];  // 0 1 2 3 4
+print(values[$]);  // 0 1 2 3 4
 }
 }</code></pre>
 </p>
@@ -725,7 +725,7 @@ stdout << values[$];  // 0 1 2 3 4
 <p>
 loop {
 message: string = yield "Ready";
-yield "Received: $message";
+yield `Received: &{message}`;
 }
 }
 </p>
@@ -734,9 +734,9 @@ fn main() {
 coro = echo();
 </p>
 <p>
-stdout << coro.next();        // "Ready"
-stdout << coro.send("Hello"); // "Received: Hello"
-stdout << coro.next();        // "Ready"
+print(coro.next());        // "Ready"
+print(coro.send("Hello")); // "Received: Hello"
+print(coro.next());        // "Ready"
 }</code></pre>
 </p>
 <hr>
@@ -755,7 +755,7 @@ i += 1;
 async fn main() {
 values = await async_range(0, 5).collect();
 till(values.length - 1, 1) {
-stdout << values[$];
+print(values[$]);
 }
 }</code></pre>
 </p>
@@ -786,7 +786,7 @@ squared = lazy_map(numbers, expensive);
 <p>
 // Only compute first 3
 till(2, 1) {
-stdout << squared.next();
+print(squared.next());
 }
 // Computed: 1, 4, 9 (not 16, 25 - saved computation!)
 }</code></pre>
@@ -870,7 +870,7 @@ prime_gen = primes();
 <p>
 // Get first 10 primes
 till(9, 1) {
-stdout << prime_gen.next();
+print(prime_gen.next());
 }
 // Output: 2 3 5 7 11 13 17 19 23 29
 }</code></pre>
@@ -901,11 +901,11 @@ machine = state_machine();
 <p>
 while state = machine.next() {
 match state {
-State.Start => stdout << "Starting...",
-State.Running => stdout << "Running...",
-State.Paused => stdout << "Paused",
+State.Start => print("Starting..."),
+State.Running => print("Running..."),
+State.Paused => print("Paused"),
 State.Done => {
-stdout << "Done!";
+print("Done!");
 break;
 }
 }
@@ -917,7 +917,7 @@ break;
 <pre><code>async fn* fetch_pages(base_url: string, num_pages: i32) -> Page {
 <p>
 till(num_pages - 1, 1) {
-url: string = "$base_url/page/$($)";
+url: string = `&{base_url}/page/$($)`;
 page: Page = await http.get(url)?;
 yield page;
 }
@@ -931,11 +931,11 @@ pages = await fetch_pages("https://api.example.com", 10).collect();
 <p>
 till(pages.length - 1, 1) {
 total_size += pages[$].size;
-stdout << "Downloaded page ${pages[$].id}";
+print("Downloaded page &{pages[$].id}");
 }
 </p>
 <p>
-stdout << "Total: $total_size bytes";
+print(`Total: &{total_size} bytes`);
 }</code></pre>
 </p>
 <hr>
@@ -1039,7 +1039,7 @@ squared_five = squared.take(5);
 </p>
 <p>
 till(squared_five.length - 1, 1) {
-stdout << squared_five[$];  // 0 4 16 36 64
+print(squared_five[$]);  // 0 4 16 36 64
 }
 }</code></pre>
 </p>

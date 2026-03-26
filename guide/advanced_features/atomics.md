@@ -14,7 +14,7 @@ Atomics provide **lock-free** thread-safe operations on shared data.
 ## Basic Atomic
 
 ```aria
-import std.sync.Atomic;
+use std.sync.Atomic;
 
 counter: Atomic<i32> = Atomic.new(0);
 
@@ -27,7 +27,7 @@ counter.fetch_add(1);
 ## Atomic Types
 
 ```aria
-import std.sync.Atomic;
+use std.sync.Atomic;
 
 atomic_int: Atomic<i32> = Atomic.new(0);
 atomic_uint: Atomic<u32> = Atomic.new(0);
@@ -79,9 +79,9 @@ success: bool = atomic.compare_and_swap(
 );
 
 if success {
-    stdout << "Swapped!";  // atomic is now 20
+    print("Swapped!");  // atomic is now 20
 } else {
-    stdout << "Failed - value was not 10";
+    print("Failed - value was not 10");
 }
 ```
 
@@ -121,32 +121,32 @@ value = atomic.load_seq_cst();
 ### Thread-Safe Counter
 
 ```aria
-import std.sync.Atomic;
+use std.sync.Atomic;
 
 struct Counter {
     value: Atomic<i32>,
 }
 
 impl Counter {
-    pub fn new() -> Counter {
+    pub func:new = Counter() {
         return Counter {
             value: Atomic.new(0),
         };
     }
     
-    pub fn increment() {
+    pub func:increment = NIL() {
         self.value.fetch_add(1);
     }
     
-    pub fn get() -> i32 {
-        return self.value.load();
+    pub func:get = int32() {
+        pass(self.value.load());
     }
 }
 
 // Use from multiple threads
 counter: Counter = Counter.new();
 
-fn worker() {
+func:worker = NIL() {
     till(999, 1) {
         counter.increment();  // Thread-safe!
     }
@@ -158,17 +158,17 @@ fn worker() {
 ### Atomic Flag
 
 ```aria
-import std.sync.Atomic;
+use std.sync.Atomic;
 
 running: Atomic<bool> = Atomic.new(true);
 
-fn worker() {
+func:worker = NIL() {
     while running.load() {
         // Do work
     }
 }
 
-fn stop() {
+func:stop = NIL() {
     running.store(false);  // Signal all workers to stop
 }
 ```
@@ -178,7 +178,7 @@ fn stop() {
 ### Lock-Free Stack
 
 ```aria
-import std.sync.Atomic;
+use std.sync.Atomic;
 
 struct Node<T> {
     value: T,
@@ -190,7 +190,7 @@ struct Stack<T> {
 }
 
 impl<T> Stack<T> {
-    pub fn push(value: T) {
+    pub func:push = NIL(T:value) {
         node: *Node<T> = alloc(Node {
             value: value,
             next: NULL,
@@ -207,11 +207,11 @@ impl<T> Stack<T> {
         }
     }
     
-    pub fn pop() -> ?T {
+    pub func:pop = ?T() {
         loop {
             old_head: *Node<T> = self.head.load();
             if old_head == NULL {
-                return None;
+                pass(None);
             }
             
             new_head: *Node<T> = old_head.next;
@@ -219,7 +219,7 @@ impl<T> Stack<T> {
             if self.head.compare_and_swap(old_head, new_head) {
                 value: T = old_head.value;
                 free(old_head);
-                return Some(value);
+                pass(Some(value));
             }
             // Retry if another thread modified head
         }
@@ -232,27 +232,27 @@ impl<T> Stack<T> {
 ### Spin Lock
 
 ```aria
-import std.sync.Atomic;
+use std.sync.Atomic;
 
 struct SpinLock {
     locked: Atomic<bool>,
 }
 
 impl SpinLock {
-    pub fn new() -> SpinLock {
+    pub func:new = SpinLock() {
         return SpinLock {
             locked: Atomic.new(false),
         };
     }
     
-    pub fn lock() {
+    pub func:lock = NIL() {
         while !self.locked.compare_and_swap(false, true) {
             // Spin until we acquire the lock
             yield_cpu();
         }
     }
     
-    pub fn unlock() {
+    pub func:unlock = NIL() {
         self.locked.store(false);
     }
 }
@@ -267,7 +267,7 @@ impl SpinLock {
 ```aria
 hits: Atomic<i32> = Atomic.new(0);
 
-fn record_hit() {
+func:record_hit = NIL() {
     hits.fetch_add(1);  // ✅ Thread-safe, lock-free
 }
 ```
@@ -277,8 +277,8 @@ fn record_hit() {
 ```aria
 shutdown: Atomic<bool> = Atomic.new(false);
 
-fn check_shutdown() -> bool {
-    return shutdown.load();
+func:check_shutdown = bool() {
+    pass(shutdown.load());
 }
 ```
 

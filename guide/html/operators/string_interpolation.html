@@ -656,19 +656,19 @@ See <a href="interpolation.md">String Interpolation</a> for complete documentati
 <pre><code>// Simple variable
 <p>
 name: string = "Alice";
-msg: string = "Hello, $name!";
+msg: string = `Hello, &{name}!`;
 </p>
 <p>
 // Expression
 x: i32 = 10;
-text: string = "Value: ${x + 5}";
+text: string = "Value: &{x + 5}";
 </p>
 <p>
 // Method calls
-info: string = "Status: ${user.status()}";</code></pre>
+info: string = "Status: &{user.status()}";</code></pre>
 </p>
 <hr>
-<strong>Remember</strong>: <code>$variable</code> or <code>${expression}</code> in strings!
+<strong>Remember</strong>: <code>$variable</code> or <code>&{expression}</code> in strings!
     </main>
 </body>
 </html>

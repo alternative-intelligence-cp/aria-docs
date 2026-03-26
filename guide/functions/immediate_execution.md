@@ -17,10 +17,10 @@
 ```aria
 // Define and call immediately
 Result: i32 = (|| {
-    return 42;
+    pass(42);
 })();  // Parentheses invoke the function
 
-stdout << result;  // 42
+print(result);  // 42
 ```
 
 ---
@@ -34,11 +34,11 @@ stdout << result;  // 42
 value: i32 = (|| {
     temp: i32 = 42;
     other: i32 = temp * 2;
-    return other;
+    pass(other);
 })();
 
 // 'temp' and 'other' don't exist here
-stdout << value;  // 84
+print(value);  // 84
 ```
 
 ### 2. Complex Initialization
@@ -55,7 +55,7 @@ config: Config = (|| {
         base.retry = false;
     end
     
-    return base;
+    pass(base);
 })();
 ```
 
@@ -66,7 +66,7 @@ initialized: bool = (|| {
     setup_logging();
     connect_database();
     load_plugins();
-    return true;
+    pass(true);
 })();
 ```
 
@@ -78,7 +78,7 @@ You can pass parameters to immediately executed functions:
 
 ```aria
 Result: i32 = (|x, y| {
-    return x * y;
+    pass(x * y);
 })(5, 10);  // 50
 ```
 
@@ -92,13 +92,13 @@ data: Data = (|| {
     raw: string = fetch_from_source();
     
     when raw == ERR then
-        return Data::default();
+        pass(Data::default());
     end
     
     parsed: Data = pass parse(raw);
     validated: Data = pass validate(parsed);
     
-    return validated;
+    pass(validated);
 })();
 ```
 
@@ -111,7 +111,7 @@ data: Data = (|| {
 data: Data = await (async || {
     user: User = await fetch_user();
     orders: []Order = await fetch_orders(user.id);
-    return process(user, orders);
+    pass(process(user, orders));
 })();
 ```
 
@@ -124,11 +124,11 @@ Result: i32? = (|| -> i32? {
     file: File = pass open_file("data.txt");
     content: string = pass file.read();
     number: i32 = pass content.parse();
-    return number;
+    pass(number);
 })();
 
 when result == ERR then
-    stderr << "Failed to load number\n";
+    stderr_write("Failed to load number\n");
 end
 ```
 
@@ -139,9 +139,9 @@ end
 ### Named Function
 
 ```aria
-fn calculate_tax(price: f64) -> f64 {
+func:calculate_tax = flt64(flt64:price) {
     rate: f64 = 0.08;
-    return price * rate;
+    pass(price * rate);
 }
 
 tax: f64 = calculate_tax(100.0);
@@ -153,7 +153,7 @@ tax: f64 = calculate_tax(100.0);
 // Don't need to name it - used once
 tax: f64 = (|price: f64| {
     rate: f64 = 0.08;
-    return price * rate;
+    pass(price * rate);
 })(100.0);
 ```
 
@@ -168,9 +168,9 @@ port: i32 = (|| {
     env_port: string? = get_env("PORT");
     
     when env_port != nil then
-        return parse(env_port) ?? 8080;
+        pass(parse(env_port) ?? 8080);
     else
-        return 8080;
+        pass(8080);
     end
 })();
 ```
@@ -183,7 +183,7 @@ Result: Data = (|| {
     defer file.close();  // Cleanup on exit
     
     content: string = file.read();
-    return parse(content);
+    pass(parse(content));
 })();
 ```
 
@@ -193,10 +193,10 @@ Result: Data = (|| {
 // Only calculate if needed
 expensive_value: i32 = (|| {
     when cheap_check() then
-        return 0;
+        pass(0);
     end
     
-    return expensive_calculation();
+    pass(expensive_calculation());
 })();
 ```
 
@@ -220,7 +220,7 @@ const result = (function() {
 // Aria
 Result: i32 = (|| {
     temp: i32 = 42;
-    return temp * 2;
+    pass(temp * 2);
 })();
 ```
 
@@ -237,7 +237,7 @@ config: Config = (|| {
     
     // 10 lines of setup logic
     
-    return base;
+    pass(base);
 })();
 ```
 
@@ -247,7 +247,7 @@ config: Config = (|| {
 // Good: Setup runs once, result stored
 logger: Logger = (|| {
     init_logging_system();
-    return Logger::new();
+    pass(Logger::new());
 })();
 ```
 
@@ -258,7 +258,7 @@ logger: Logger = (|| {
 user_count: i32 = (|| {
     users: []User = load_users();
     active: []User = users.filter(|u| u.active);
-    return active.len();
+    pass(active.len());
 })();
 ```
 
@@ -267,7 +267,7 @@ user_count: i32 = (|| {
 ```aria
 // Wrong: Too complex for simple value
 x: i32 = (|| {
-    return 42;
+    pass(42);
 })();
 
 // Right: Just assign directly
@@ -283,7 +283,7 @@ data: Data = (|| {
 })();
 
 // Right: Extract to named function
-fn initialize_data() -> Data {
+func:initialize_data = Data() {
     // 100 lines of complex logic...
 }
 
@@ -311,7 +311,7 @@ app_config: Config = (|| {
         defaults = defaults.merge(file_config);
     end
     
-    return defaults;
+    pass(defaults);
 })();
 ```
 
@@ -325,7 +325,7 @@ struct Database {
 static DB: Database = (|| {
     conn: Connection = Connection::new("localhost:5432");
     conn.connect();
-    return Database{connection: conn};
+    pass(Database{connection: conn});
 })();
 ```
 
@@ -334,14 +334,14 @@ static DB: Database = (|| {
 ```aria
 has_feature: bool = (|| {
     when !check_basic_support() then
-        return false;
+        pass(false);
     end
     
     when !check_advanced_support() then
-        return false;
+        pass(false);
     end
     
-    return true;
+    pass(true);
 })();
 ```
 
@@ -358,7 +358,7 @@ final_data: []User = (|| {
     sorted: []User = filtered
         .sort(|a, b| a.name.compare(b.name));
     
-    return sorted.take(100);
+    pass(sorted.take(100));
 })();
 ```
 
@@ -398,7 +398,7 @@ value: i32 = {
 // Otherwise use IIFE
 value: i32 = (|| {
     temp: i32 = 42;
-    return temp * 2;
+    pass(temp * 2);
 })();
 ```
 

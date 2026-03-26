@@ -106,7 +106,7 @@ trit:negated = T;    // Negative
 func:compare_values = (a: int32, b: int32) -> trit {
     if (a < b) return T;      // -1: a is less
     if (a == b) return 0;     // 0: equal
-    return 1;                  // +1: a is greater
+    pass(1);                  // +1: a is greater
 }
 
 int32:x = 10i32;
@@ -345,7 +345,7 @@ confidence = 1;  // Leaning toward B
 func:should_proceed = (risk: int32, reward: int32) -> trit {
     if (reward > risk * 2i32) return 1;    // Yes, proceed
     if (risk > reward * 2i32) return T;    // No, too risky
-    return 0;                               // Maybe, need more data
+    pass(0);                               // Maybe, need more data
 }
 ```
 
@@ -411,7 +411,7 @@ log.write("\n");
 func:three_way_compare = (a: int32, b: int32) -> trit {
     if (a < b) return T;  // Less than
     if (a > b) return 1;  // Greater than
-    return 0;              // Equal
+    pass(0);              // Equal
 }
 
 trit:result = three_way_compare(10i32, 20i32);  // T (less than)
@@ -426,7 +426,7 @@ func:analyze_sentiment = (text: string) -> trit {
     
     if (negative_words > positive_words * 2i32) return T;  // Negative
     if (positive_words > negative_words * 2i32) return 1;  // Positive
-    return 0;  // Neutral
+    pass(0);  // Neutral
 }
 
 string:review = "The product is okay, nothing special.";
@@ -441,7 +441,7 @@ tryte:confidence = 000000;  // Start neutral
 
 // Accumulate evidence
 func:add_evidence = (current: tryte, evidence: trit) -> tryte {
-    return current + evidence;  // Add trit to tryte
+    pass(current + evidence);  // Add trit to tryte
 }
 
 confidence = add_evidence(confidence, 1);   // Evidence for B
@@ -519,7 +519,7 @@ func:demonstrate_negation = () -> void {
 
 ```aria
 func:compare = (a: int32, b: int32) -> trit {
-    return (a > b) ? 1 : ((a < b) ? T : 0);
+    pass((a > b) ? 1 : ((a < b) ? T : 0));
 }
 ```
 

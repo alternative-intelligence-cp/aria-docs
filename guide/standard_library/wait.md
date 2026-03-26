@@ -15,7 +15,7 @@
 ## Syntax
 
 ```aria
-import std.process;
+use std.process;
 
 Result: Result<ProcessResult> = wait(child_pid);
 ```
@@ -39,20 +39,20 @@ Result: Result<ProcessResult> = wait(child_pid);
 ### Wait for Forked Child
 
 ```aria
-import std.process;
+use std.process;
 
 fork_Result: ForkResult = fork()?;
 
 when fork_result is Parent(child_pid) then
-    stdout << "Parent waiting for child $child_pid";
+    print(`Parent waiting for child &{child_pid}`);
     
     // Wait for child to finish
     Result: ProcessResult = wait(child_pid)?;
     
-    stdout << "Child exited with code: $(result.exit_code)";
+    print("Child exited with code: $(result.exit_code)");
     
 elsif fork_result is Child then
-    stdout << "Child doing work...";
+    print("Child doing work...");
     // Do work...
     exit(0);
 end
@@ -67,9 +67,9 @@ when fork_result is Parent(child_pid) then
     Result: ProcessResult = wait(child_pid)?;
     
     when result.exit_code == 0 then
-        stdout << "Child succeeded";
+        print("Child succeeded");
     else
-        stderr << "Child failed with code $(result.exit_code)";
+        stderr_write("Child failed with code $(result.exit_code)");
     end
     
 elsif fork_result is Child then
@@ -98,10 +98,10 @@ end
 // Wait for all children
 till(children.length - 1, 1) {
     Result: ProcessResult = wait(children[$])?;
-    stdout << "Child $(children[$]) exited: $(result.exit_code)";
+    print("Child $(children[$]) exited: $(result.exit_code)");
 end
 
-stdout << "All children completed";
+print("All children completed");
 ```
 
 ---
@@ -114,7 +114,7 @@ fork_Result: ForkResult = fork()?;
 
 when fork_result is Parent(child_pid) then
     // Parent continues without waiting
-    return;  // ❌ Zombie process created!
+    pass(NIL);  // ❌ Zombie process created!
 elsif fork_result is Child then
     work();
     exit(0);
@@ -139,7 +139,7 @@ when fork_result is Parent(child_pid) then
     Result: ?ProcessResult = wait_timeout(child_pid, 5)?;
     
     when result == nil then
-        stderr << "Child didn't finish in 5 seconds";
+        stderr_write("Child didn't finish in 5 seconds");
         kill(child_pid)?;  // Force kill
     end
 end
@@ -174,7 +174,7 @@ end
 ProcessResult:Result = wait(child_pid)?;
 
 when result.exit_code != 0 then
-    stderr << "Child process failed";
+    stderr_write("Child process failed");
     fail("Child error");
 end
 ```
@@ -208,7 +208,7 @@ end
 ```aria
 // Wait for any child (PID -1)
 Result: ProcessResult = wait(-1)?;
-stdout << "A child exited: $(result.exit_code)";
+print("A child exited: $(result.exit_code)");
 ```
 
 ---

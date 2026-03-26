@@ -659,7 +659,7 @@ Destructuring <strong>unpacks</strong> data structures into individual variables
 (x, y): (i32, i32) = point;
 </p>
 <p>
-stdout << "$x, $y";  // 10, 20</code></pre>
+print(`&{x}, &{y}`);  // 10, 20</code></pre>
 </p>
 <hr>
 <h2>Struct Destructuring</h2>
@@ -677,7 +677,7 @@ p: Point = Point { x: 10, y: 20 };
 Point { x, y } = p;
 </p>
 <p>
-stdout << "$x, $y";  // 10, 20</code></pre>
+print(`&{x}, &{y}`);  // 10, 20</code></pre>
 </p>
 <hr>
 <h2>Partial Destructuring</h2>
@@ -700,7 +700,7 @@ email: "alice@example.com",
 User { name, .. } = user;
 </p>
 <p>
-stdout << name;  // "Alice"</code></pre>
+print(name);  // "Alice"</code></pre>
 </p>
 <hr>
 <h2>Renaming Fields</h2>
@@ -718,7 +718,7 @@ config: Config = Config { host: "localhost", port: 8080 };
 Config { host: server, port: server_port } = config;
 </p>
 <p>
-stdout << "$server:$server_port";  // localhost:8080</code></pre>
+print(`&{server}:&{server_port}`);  // localhost:8080</code></pre>
 </p>
 <hr>
 <h2>Array Destructuring</h2>
@@ -728,9 +728,9 @@ stdout << "$server:$server_port";  // localhost:8080</code></pre>
 [first, second, ...rest] = numbers;
 </p>
 <p>
-stdout << "First: $first";   // First: 1
-stdout << "Second: $second"; // Second: 2
-stdout << "Rest: $rest";     // Rest: [3, 4, 5]</code></pre>
+print(`First: &{first}`);   // First: 1
+print(`Second: &{second}`); // Second: 2
+print(`Rest: &{rest}`);     // Rest: [3, 4, 5]</code></pre>
 </p>
 <hr>
 <h2>Nested Destructuring</h2>
@@ -760,18 +760,18 @@ city: "Springfield",
 Person { name, address: Address { city, .. } } = person;
 </p>
 <p>
-stdout << "$name from $city";  // Alice from Springfield</code></pre>
+print(`&{name} from &{city}`);  // Alice from Springfield</code></pre>
 </p>
 <hr>
 <h2>Function Parameters</h2>
 <pre><code>fn print_point((x, y): (i32, i32)) {
 <p>
-stdout << "Point at ($x, $y)";
+print(`Point at (&{x}, &{y})`);
 }
 </p>
 <p>
 fn greet(User { name, age, .. }: User) {
-stdout << "Hello $name, age $age";
+print(`Hello &{name}, age &{age}`);
 }
 </p>
 <p>
@@ -797,16 +797,16 @@ ChangeColor(i32, i32, i32),
 fn process(msg: Message) {
 match msg {
 Message.Quit => {
-stdout << "Quitting";
+print("Quitting");
 }
 Message.Move(x, y) => {
-stdout << "Moving to ($x, $y)";
+print(`Moving to (&{x}, &{y})`);
 }
 Message.Write(text) => {
-stdout << "Writing: $text";
+print(`Writing: &{text}`);
 }
 Message.ChangeColor(r, g, b) => {
-stdout << "Color: RGB($r, $g, $b)";
+print(`Color: RGB(&{r}, &{g}, &{b})`);
 }
 }
 }</code></pre>
@@ -816,18 +816,18 @@ stdout << "Color: RGB($r, $g, $b)";
 <pre><code>fn process_optional(opt: ?Point) {
 <p>
 if let Some(Point { x, y }) = opt {
-stdout << "Point at ($x, $y)";
+print(`Point at (&{x}, &{y})`);
 } else {
-stdout << "No point";
+print("No point");
 }
 }
 </p>
 <p>
 fn handle_result(Result: Result<User>) {
 if let Ok(User { name, age, .. }) = result {
-stdout << "$name is $age years old";
+print(`&{name} is &{age} years old`);
 } else {
-stderr << "Failed to get user";
+stderr_write("Failed to get user");
 }
 }</code></pre>
 </p>
@@ -836,7 +836,7 @@ stderr << "Failed to get user";
 <pre><code>fn process_iter(iter: Iterator<(string, i32)>) {
 <p>
 while let Some((key, value)) = iter.next() {
-stdout << "$key = $value";
+print(`&{key} = &{value}`);
 }
 }
 </p>
@@ -861,7 +861,7 @@ b: i32 = 10;
 (a, b) = (b, a);
 </p>
 <p>
-stdout << "$a, $b";  // 10, 5</code></pre>
+print(`&{a}, &{b}`);  // 10, 5</code></pre>
 </p>
 <hr>
 <h3>Multiple Return Values</h3>
@@ -875,7 +875,7 @@ return (quotient, remainder);
 <p>
 fn main() {
 (quot, rem) = divide_with_remainder(17, 5);
-stdout << "17 / 5 = $quot remainder $rem";  // 17 / 5 = 3 remainder 2
+print(`17 / 5 = &{quot} remainder &{rem}`);  // 17 / 5 = 3 remainder 2
 }</code></pre>
 </p>
 <hr>
@@ -894,9 +894,9 @@ Response { status, body, .. } = resp;
 </p>
 <p>
 if status == 200 {
-stdout << body;
+print(body);
 } else {
-stderr << "Error: status $status";
+stderr_write(`Error: status &{status}`);
 }
 }</code></pre>
 </p>
@@ -907,7 +907,7 @@ stderr << "Error: status $status";
 till(users.length - 1, 1) {
 User { name, age, .. } = users[$];
 if age >= 18 {
-stdout << "$name is an adult";
+print(`&{name} is an adult`);
 }
 }
 </p>
@@ -918,7 +918,7 @@ points: [](i32, i32) = [(0, 0), (1, 1), (2, 4)];
 <p>
 till(points.length - 1, 1) {
 (x, y) = points[$];
-stdout << "Point at ($x, $y)";
+print(`Point at (&{x}, &{y})`);
 }</code></pre>
 </p>
 <hr>
@@ -927,7 +927,7 @@ stdout << "Point at ($x, $y)";
 <p>
 // Destructure parameters
 pairs.forEach(|(key, value)| {
-stdout << "$key = $value";
+print(`&{key} = &{value}`);
 });
 </p>
 <p>
@@ -948,17 +948,17 @@ return None;
 <pre><code>// ❌ Repetitive
 <p>
 fn process(user: User) {
-stdout << user.name;
-stdout << user.email;
-stdout << user.age;
+print(user.name);
+print(user.email);
+print(user.age);
 }
 </p>
 <p>
 // ✅ Clean with destructuring
 fn process(User { name, email, age, .. }: User) {
-stdout << name;
-stdout << email;
-stdout << age;
+print(name);
+print(email);
+print(age);
 }</code></pre>
 </p>
 <h3>✅ DO: Use .. for Partial Extraction</h3>
@@ -1021,13 +1021,13 @@ fn process(User { .. }: User) {
 <p>
 // ✅ Good - extract what you need
 fn process(User { name, age, .. }: User) {
-stdout << "$name is $age";
+print(`&{name} is &{age}`);
 }
 </p>
 <p>
 // ✅ Or don't destructure at all
 fn process(user: User) {
-stdout << "${user.name} is ${user.age}";
+print("&{user.name} is &{user.age}");
 }</code></pre>
 </p>
 <hr>

@@ -181,7 +181,7 @@ use std.math.*;     // ❌ Everything
 mod database {
     use std.io.openFile;
     
-    pub fn connect() -> Result<Connection> {
+    pub func:connect = Result<Connection>() {
         // Can use openFile directly
         file: File = openFile("config.db")?;
     }

@@ -46,7 +46,7 @@ positive_five: tryte = parse_bt("1TT");   // 5
 negative_five: tryte = parse_bt("T11");   // -5
 
 // Negation just flips digits
-fn negate_bt(value: tryte) -> tryte {
+func:negate_bt = tryte(tryte:value) {
     // T→1, 0→0, 1→T
     ...
 }
@@ -102,8 +102,8 @@ UNKNOWN: trit = 0;
 FALSE: trit = -1;
 
 // Ternary AND
-fn tand(a: trit, b: trit) -> trit {
-    return when (a < b) then a else b end;
+func:tand = trit(trit:a, trit:b) {
+    pass(when (a < b) then a else b end);
 }
 ```
 
@@ -121,7 +121,7 @@ fn tand(a: trit, b: trit) -> trit {
 ### To Decimal
 
 ```aria
-fn bt_to_decimal(bt: tryte) -> i32 {
+func:bt_to_decimal = int32(tryte:bt) {
     // Convert balanced ternary to decimal
     Result: i32 = 0;
     power: i32 = 1;
@@ -131,14 +131,14 @@ fn bt_to_decimal(bt: tryte) -> i32 {
         power *= 3;
     }
     
-    return result;
+    pass(result);
 }
 ```
 
 ### From Decimal
 
 ```aria
-fn decimal_to_bt(n: i32) -> tryte {
+func:decimal_to_bt = tryte(int32:n) {
     // Convert decimal to balanced ternary
     // Algorithm handles negative numbers naturally
     ...

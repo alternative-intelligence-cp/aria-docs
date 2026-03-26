@@ -25,20 +25,20 @@
 
 ```aria
 // Simple debug output
-stddbg << "Entering calculate_balance()";
+stddbg_write("Entering calculate_balance()");
 
 // Debug with values
-stddbg << "Processing account: " << account_id;
+stddbg_write("Processing account: " + account_id);
 
 // Multiple values
-stddbg << "Balance: " << balance << ", Limit: " << credit_limit;
+stddbg_write("Balance: " + balance + ", Limit: " + credit_limit);
 
 // Expressions
-stddbg << "Array length: " << items.len();
+stddbg_write("Array length: " + items.len());
 
 // Conditional debugging (rare - usually just leave it in!)
 when debug_mode then
-    stddbg << "Detailed trace: " << trace_data;
+    stddbg_write("Detailed trace: " + trace_data);
 end
 ```
 
@@ -69,14 +69,14 @@ def process_transaction(txn):
 ### Aria's Solution: Separate Stream
 
 ```aria
-fn process_transaction(txn: Transaction) -> Result {
-    stddbg << "Processing transaction: " << txn.id;
+func:process_transaction = Result(Transaction:txn) {
+    stddbg_write("Processing transaction: " + txn.id);
     
     Result: Result = apply_transaction(txn);
     
-    stdout << result;  // Clean production output
+    print(result);  // Clean production output
     
-    return result;
+    pass(result);
 }
 ```
 
@@ -121,7 +121,7 @@ fn process_transaction(txn: Transaction) -> Result {
 
 **Force immediate flush**:
 ```aria
-stddbg << "Critical debug point" << flush;
+stddbg_write("Critical debug point" + flush);
 ```
 
 ---
@@ -131,14 +131,14 @@ stddbg << "Critical debug point" << flush;
 ### 1. Function Entry/Exit Tracing
 
 ```aria
-fn calculate_taxes(income: f64, deductions: f64) -> f64 {
-    stddbg << "calculate_taxes(" << income << ", " << deductions << ")";
+func:calculate_taxes = flt64(flt64:income, flt64:deductions) {
+    stddbg_write("calculate_taxes(" + income + ", " + deductions + ")");
     
     taxable: f64 = income - deductions;
     tax: f64 = taxable * TAX_RATE;
     
-    stddbg << "  -> tax = " << tax;
-    return tax;
+    stddbg_write("  -> tax = " + tax);
+    pass(tax);
 }
 ```
 
@@ -148,27 +148,27 @@ fn calculate_taxes(income: f64, deductions: f64) -> f64 {
 ### 2. Loop Progress Monitoring
 
 ```aria
-fn process_batch(items: []Item) -> []Result {
-    stddbg << "Processing batch of " << items.len() << " items";
+func:process_batch = []Result([]Item:items) {
+    stddbg_write("Processing batch of " + items.len() + " items");
     
     results: []Result = [];
     till(items.len() - 1, 1) {
         when $ % 1000 == 0 then
-            stddbg << "  Progress: " << $ << "/" << items.len();
+            stddbg_write("  Progress: " + $ + "/" + items.len());
         end
         
         results.push(process_item(items[$]));
     }
     
-    stddbg << "Batch complete";
-    return results;
+    stddbg_write("Batch complete");
+    pass(results);
 }
 ```
 
 ### 3. State Transitions
 
 ```aria
-fn state_machine(event: Event) -> State {
+func:state_machine = State(Event:event) {
     old_state: State = current_state;
     
     current_state = match event {
@@ -177,42 +177,42 @@ fn state_machine(event: Event) -> State {
         Event::Stop  => State::Stopped,
     };
     
-    stddbg << "State: " << old_state << " -> " << current_state;
+    stddbg_write("State: " + old_state + " -> " + current_state);
     
-    return current_state;
+    pass(current_state);
 }
 ```
 
 ### 4. Performance Timing
 
 ```aria
-fn expensive_operation(data: []u8) -> Result {
+func:expensive_operation = Result([]u8:data) {
     start: Time = Time::now();
-    stddbg << "Starting expensive_operation, size=" << data.len();
+    stddbg_write("Starting expensive_operation, size=" + data.len());
     
     Result: Result = do_work(data);
     
     elapsed: Duration = Time::now() - start;
-    stddbg << "Completed in " << elapsed.milliseconds() << "ms";
+    stddbg_write("Completed in " + elapsed.milliseconds() + "ms");
     
-    return result;
+    pass(result);
 }
 ```
 
 ### 5. Error Context (Pre-Panic)
 
 ```aria
-fn critical_section(id: u32) {
-    stddbg << "Entering critical section, id=" << id;
+func:critical_section = NIL(uint32:id) {
+    stddbg_write("Entering critical section, id=" + id);
     
     when !validate(id) then
-        stddbg << "VALIDATION FAILED for id=" << id;
+        stddbg_write("VALIDATION FAILED for id=" + id);
         panic("Invalid ID");
     end
     
     perform_critical_work(id);
     
-    stddbg << "Exiting critical section successfully";
+    stddbg_write("Exiting critical section successfully");
 }
 ```
 
@@ -267,13 +267,13 @@ FileDescriptorName=debug
 ### ✅ DO: Leave Debug Statements In Code
 
 ```aria
-fn calculate_balance(account: Account) -> Balance {
-    stddbg << "calculate_balance: account=" << account.id;
+func:calculate_balance = Balance(Account:account) {
+    stddbg_write("calculate_balance: account=" + account.id);
     
     balance: Balance = account.transactions.sum();
     
-    stddbg << "  balance=" << balance;
-    return balance;
+    stddbg_write("  balance=" + balance);
+    pass(balance);
 }
 ```
 
@@ -282,13 +282,13 @@ fn calculate_balance(account: Account) -> Balance {
 ### ✅ DO: Use for Invariant Checking
 
 ```aria
-fn add_item(list: []Item, item: Item) {
+func:add_item = NIL([]Item:list, Item:item) {
     before_len: usize = list.len();
     
     list.push(item);
     
     after_len: usize = list.len();
-    stddbg << "add_item: len " << before_len << " -> " << after_len;
+    stddbg_write("add_item: len " + before_len + " -> " + after_len);
     
     assert(after_len == before_len + 1);  // This should always hold
 }
@@ -297,17 +297,17 @@ fn add_item(list: []Item, item: Item) {
 ### ✅ DO: Trace Complex Logic
 
 ```aria
-fn resolve_dependency(pkg: Package) -> Maybe<Package> {
-    stddbg << "Resolving " << pkg.name << "@" << pkg.version;
+func:resolve_dependency = Maybe<Package>(Package:pkg) {
+    stddbg_write("Resolving " + pkg.name + "@" + pkg.version);
     
     match registry.find(pkg) {
         Some(found) => {
-            stddbg << "  Found: " << found.name << "@" << found.version;
-            return Some(found);
+            stddbg_write("  Found: " + found.name + "@" + found.version);
+            pass(Some(found));
         }
         None => {
-            stddbg << "  Not found, trying alternatives";
-            return try_alternatives(pkg);
+            stddbg_write("  Not found, trying alternatives");
+            pass(try_alternatives(pkg));
         }
     }
 }
@@ -317,10 +317,10 @@ fn resolve_dependency(pkg: Package) -> Maybe<Package> {
 
 ```aria
 // WRONG: This should go to stdout, not stddbg
-stddbg << "Welcome to MyApp!";
+stddbg_write("Welcome to MyApp!");
 
 // RIGHT:
-stdout << "Welcome to MyApp!";
+print("Welcome to MyApp!");
 ```
 
 **Rationale**: `stddbg` is for **developers**, not users.
@@ -329,10 +329,10 @@ stdout << "Welcome to MyApp!";
 
 ```aria
 // WRONG: Errors should go to stderr
-stddbg << "ERROR: File not found";
+stddbg_write("ERROR: File not found");
 
 // RIGHT:
-stderr << "ERROR: File not found";
+stderr_write("ERROR: File not found");
 ```
 
 **Rationale**: `stderr` is for errors, `stddbg` is for diagnostics.
@@ -342,11 +342,11 @@ stderr << "ERROR: File not found";
 ```aria
 // WRONG: Unnecessary - just leave it in!
 when DEBUG_MODE then
-    stddbg << "Debug info";
+    stddbg_write("Debug info");
 end
 
 // RIGHT: Just write it!
-stddbg << "Debug info";
+stddbg_write("Debug info");
 ```
 
 **Rationale**: The runtime environment controls whether `stddbg` is visible. No need for conditional logic in most cases.
@@ -355,7 +355,7 @@ stddbg << "Debug info";
 
 ```aria
 when debug_enabled then
-    stddbg << "Full state: " << serialize_full_state();  // Expensive
+    stddbg_write("Full state: " + serialize_full_state());  // Expensive
 end
 ```
 
@@ -377,11 +377,11 @@ If computing the debug message is expensive:
 
 ```aria
 // Expensive: Always serializes, even if stddbg is /dev/null
-stddbg << "State: " << expensive_serialize(state);
+stddbg_write("State: " + expensive_serialize(state));
 
 // Better: Only compute if debug is enabled
 when stddbg.is_redirected() then
-    stddbg << "State: " << expensive_serialize(state);
+    stddbg_write("State: " + expensive_serialize(state));
 end
 ```
 
@@ -414,11 +414,11 @@ def process_data(data):
 ### Aria stddbg
 
 ```aria
-fn process_data(data: []Item) -> Result {
-    stddbg << "Processing " << data.len() << " items";
+func:process_data = Result([]Item:data) {
+    stddbg_write("Processing " + data.len() + " items");
     Result: Result = crunch(data);
-    stddbg << "Result: " << result;
-    return result;
+    stddbg_write("Result: " + result);
+    pass(result);
 }
 ```
 
@@ -469,9 +469,9 @@ Instead of fighting human nature (developers add print statements when debugging
 Here's production code from an Aria HTTP server:
 
 ```aria
-fn handle_request(req: HttpRequest) -> HttpResponse {
-    stddbg << "Request: " << req.method << " " << req.path;
-    stddbg << "  Headers: " << req.headers.len();
+func:handle_request = HttpResponse(HttpRequest:req) {
+    stddbg_write("Request: " + req.method + " " + req.path);
+    stddbg_write("  Headers: " + req.headers.len());
     
     response: HttpResponse = match req.path {
         "/api/users" => handle_users(req),
@@ -479,9 +479,9 @@ fn handle_request(req: HttpRequest) -> HttpResponse {
         _ => HttpResponse::not_found(),
     };
     
-    stddbg << "Response: " << response.status << " (" << response.body.len() << " bytes)";
+    stddbg_write("Response: " + response.status + " (" + response.body.len() + " bytes)");
     
-    return response;
+    pass(response);
 }
 ```
 

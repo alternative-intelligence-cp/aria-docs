@@ -661,12 +661,12 @@ The <code>is</code> operator checks if a value matches a type or pattern.
 <pre><code>value: any = 42;
 <p>
 when value is i32 then
-stdout << "Integer";
+print("Integer");
 end
 </p>
 <p>
 when value is string then
-stdout << "String";
+print("String");
 end</code></pre>
 </p>
 <hr>
@@ -674,9 +674,9 @@ end</code></pre>
 <pre><code>Result: Result<i32, Error> = compute();
 <p>
 when result is Ok(value) then
-stdout << "Success: " << value;
+print("Success: " + value);
 elsif result is Err(error) then
-stdout << "Error: " << error;
+print("Error: " + error);
 end</code></pre>
 </p>
 <hr>
@@ -693,7 +693,7 @@ value: Value = Value::Int(42);
 </p>
 <p>
 when value is Int(n) then
-stdout << "Integer: " << n;
+print("Integer: " + n);
 end</code></pre>
 </p>
 <hr>

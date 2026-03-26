@@ -655,13 +655,13 @@
 <pre><code>pick value {
 <p>
 case 1:
-stdout << "One\n";
+print("One\n");
 case 2:
-stdout << "Two\n";
+print("Two\n");
 case 3:
-stdout << "Three\n";
+print("Three\n");
 else:
-stdout << "Other\n";
+print("Other\n");
 }</code></pre>
 </p>
 <hr>
@@ -669,9 +669,9 @@ stdout << "Other\n";
 <pre><code>pick day {
 <p>
 case "Monday", "Tuesday", "Wednesday", "Thursday", "Friday":
-stdout << "Weekday\n";
+print("Weekday\n");
 case "Saturday", "Sunday":
-stdout << "Weekend\n";
+print("Weekend\n");
 }</code></pre>
 </p>
 <hr>
@@ -685,7 +685,7 @@ stop_server();
 case "restart":
 restart_server();
 else:
-stderr << "Unknown command\n";
+stderr_write("Unknown command\n");
 }</code></pre>
 </p>
 <hr>
@@ -731,13 +731,13 @@ retry();
 <pre><code>pick value {
 <p>
 case i32:
-stdout << "Integer\n";
+print("Integer\n");
 case string:
-stdout << "String\n";
+print("String\n");
 case bool:
-stdout << "Boolean\n";
+print("Boolean\n");
 else:
-stdout << "Other type\n";
+print("Other type\n");
 }</code></pre>
 </p>
 <hr>
@@ -745,13 +745,13 @@ stdout << "Other type\n";
 <pre><code>pick point {
 <p>
 case (0, 0):
-stdout << "Origin\n";
+print("Origin\n");
 case (x, 0):
-stdout << "On X axis\n";
+print("On X axis\n");
 case (0, y):
-stdout << "On Y axis\n";
+print("On Y axis\n");
 case (x, y):
-stdout << "Point at ({}, {})\n";
+print("Point at ({}, {})\n");
 }</code></pre>
 </p>
 <hr>
@@ -759,11 +759,11 @@ stdout << "Point at ({}, {})\n";
 <pre><code>pick value {
 <p>
 case x when x > 0:
-stdout << "Positive\n";
+print("Positive\n");
 case x when x < 0:
-stdout << "Negative\n";
+print("Negative\n");
 case 0:
-stdout << "Zero\n";
+print("Zero\n");
 }</code></pre>
 </p>
 <hr>
@@ -872,7 +872,7 @@ update_item();
 case "list", "show", "ls":
 list_items();
 else:
-stderr << "Unknown command: " << command << "\n";
+stderr_write("Unknown command: " << command + "\n");
 }</code></pre>
 </p>
 <hr>

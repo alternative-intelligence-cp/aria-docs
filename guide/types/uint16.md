@@ -60,8 +60,8 @@ end
 // UTF-16 code units
 char_code: u16 = 0x4E2D;  // 中
 
-fn to_utf16(text: string) -> []u16 {
-    return text.encode_utf16();
+func:to_utf16 = []u16(string:text) {
+    pass(text.encode_utf16());
 }
 ```
 

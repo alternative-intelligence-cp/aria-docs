@@ -17,17 +17,17 @@ The **stack** is a region of memory for automatic, short-lived allocations that 
 ### Automatic Management
 
 ```aria
-fn calculate() -> i32 {
+func:calculate = int32() {
     x: i32 = 42;        // Allocated on stack
     y: i32 = x * 2;     // Allocated on stack
-    return y;
+    pass(y);
 }  // x and y automatically freed
 ```
 
 ### LIFO (Last In, First Out)
 
 ```aria
-fn example() {
+func:example = NIL() {
     a: i32 = 1;     // Pushed to stack
     b: i32 = 2;     // Pushed to stack
     c: i32 = 3;     // Pushed to stack
@@ -53,7 +53,7 @@ value: Box<i32> = Box::new(42);  // Slower
 ### Local Variables
 
 ```aria
-fn process() {
+func:process = NIL() {
     count: i32 = 0;          // Stack
     name: string = "test";   // Stack (string header)
     active: bool = true;     // Stack
@@ -63,18 +63,18 @@ fn process() {
 ### Function Parameters
 
 ```aria
-fn add(a: i32, b: i32) -> i32 {
+func:add = int32(int32:a, int32:b) {
     // a and b are on the stack
-    return a + b;
+    pass(a + b);
 }
 ```
 
 ### Return Values
 
 ```aria
-fn create() -> Point {
+func:create = Point() {
     p: Point = Point{x: 10, y: 20};
-    return p;  // Copied to caller's stack
+    pass(p);  // Copied to caller's stack
 }
 ```
 
@@ -96,17 +96,17 @@ point: Point = Point{x: 10, y: 20};  // Stack
 Each function call creates a **stack frame**:
 
 ```aria
-fn main() {
+func:main = NIL() {
     // main's stack frame
     x: i32 = 10;
     
     Result: i32 = calculate(x);
 }
 
-fn calculate(value: i32) -> i32 {
+func:calculate = int32(int32:value) {
     // calculate's stack frame (on top of main's)
     doubled: i32 = value * 2;
-    return doubled;
+    pass(doubled);
 }  // calculate's frame popped
 // Back to main's frame
 ```
@@ -119,13 +119,13 @@ Stack space is **limited** (typically 1-8 MB):
 
 ```aria
 // ❌ Stack overflow!
-fn recursive() {
+func:recursive = NIL() {
     large: [i32; 1000000] = [0; 1000000];  // Too big!
     recursive();  // Infinite recursion
 }
 
 // ✅ Use heap for large data
-fn better() {
+func:better = NIL() {
     large: Vec<i32> = Vec::with_capacity(1000000);
 }
 ```
@@ -146,7 +146,7 @@ till(999999, 1) {
 ### 2. Automatic Cleanup
 
 ```aria
-fn example() {
+func:example = NIL() {
     file: File = pass open("data.txt");
     // file automatically closed at end of scope
 }  // Automatic!
@@ -222,13 +222,13 @@ vector: Vec<i32> = Vec::new();
 Stack variables live until the end of their scope:
 
 ```aria
-fn example() {
+func:example = NIL() {
     {
         x: i32 = 42;
-        stdout << x;  // OK
+        print(x);  // OK
     }  // x freed here
     
-    stdout << x;  // ❌ Error: x doesn't exist
+    print(x);  // ❌ Error: x doesn't exist
 }
 ```
 
@@ -242,9 +242,9 @@ fn example() {
 
 ```aria
 // ❌ Stack overflow
-fn factorial(n: i32) -> i32 {
+func:factorial = int32(int32:n) {
     if n == 0 { return 1; }
-    return n * factorial(n - 1);  // 1000000 recursive calls!
+    pass(n * factorial(n - 1));  // 1000000 recursive calls!
 }
 ```
 
@@ -252,7 +252,7 @@ fn factorial(n: i32) -> i32 {
 
 ```aria
 // ❌ Stack overflow
-fn process() {
+func:process = NIL() {
     huge: [i32; 10000000] = [0; 10000000];  // Too big!
 }
 ```
@@ -261,17 +261,17 @@ fn process() {
 
 ```aria
 // ✅ Use heap for large data
-fn process() {
+func:process = NIL() {
     huge: Vec<i32> = vec![0; 10000000];
 }
 
 // ✅ Use iteration instead of recursion
-fn factorial(n: i32) -> i32 {
+func:factorial = int32(int32:n) {
     result: i32 = 1;
     till(n, 1) {
         result = result * $;
     }
-    return result;
+    pass(result);
 }
 ```
 
@@ -301,9 +301,9 @@ huge: [u8; 10000000] = [0; 10000000];  // Use heap!
 
 ```aria
 // Good: Bounded recursion
-fn search(node: Node, depth: i32) -> bool {
+func:search = bool(Node:node, int32:depth) {
     if depth > 100 {
-        return false;  // Prevent overflow
+        pass(false);  // Prevent overflow
     }
     // ...
 }
@@ -313,15 +313,15 @@ fn search(node: Node, depth: i32) -> bool {
 
 ```aria
 // ❌ Wrong: Dangling pointer!
-fn get_pointer() -> &i32 {
+func:get_pointer = int32->() {
     x: i32 = 42;
-    return &x;  // Error: x freed at end of function!
+    pass($x);  // Error: x freed at end of function!
 }
 
 // ✅ Right: Return value
-fn get_value() -> i32 {
+func:get_value = int32() {
     x: i32 = 42;
-    return x;  // Copied to caller
+    pass(x);  // Copied to caller
 }
 ```
 
@@ -332,17 +332,17 @@ fn get_value() -> i32 {
 ### Simple Function
 
 ```aria
-fn calculate_area(width: f64, height: f64) -> f64 {
+func:calculate_area = flt64(flt64:width, flt64:height) {
     // All on stack
     area: f64 = width * height;
-    return area;
+    pass(area);
 }  // width, height, area all freed
 ```
 
 ### Processing Loop
 
 ```aria
-fn process_items(items: []Item) {
+func:process_items = NIL([]Item:items) {
     till(items.length - 1, 1) {
         // Loop variables on stack
         valid: bool = items[$].validate();
@@ -358,16 +358,16 @@ fn process_items(items: []Item) {
 ### Nested Scopes
 
 ```aria
-fn example() {
+func:example = NIL() {
     outer: i32 = 1;
     
     {
         inner: i32 = 2;
-        stdout << outer + inner;  // 3
+        print(outer + inner);  // 3
     }  // inner freed
     
-    stdout << outer;  // OK
-    stdout << inner;  // ❌ Error
+    print(outer);  // OK
+    print(inner);  // ❌ Error
 }
 ```
 
@@ -378,18 +378,18 @@ fn example() {
 When errors occur, stack frames are **unwound**:
 
 ```aria
-fn main() {
+func:main = NIL() {
     when process() == ERR then
-        stderr << "Error occurred\n";
+        stderr_write("Error occurred\n");
     end
 }
 
-fn process() -> Result {
+func:process = Result() {
     file: File = pass open("data.txt");
     defer file.close();  // Runs on unwind
     
     data: Data = pass parse(file);  // Error here
-    return Ok(data);
+    pass(Ok(data));
 }
 // file.close() called during unwind
 ```

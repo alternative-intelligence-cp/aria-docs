@@ -59,7 +59,7 @@ config: Config = {
 
 ```aria
 // Use function for defaults
-fn default_settings() -> Settings {
+func:default_settings = Settings() {
     return {
         timeout = 30,
         retries = 3,

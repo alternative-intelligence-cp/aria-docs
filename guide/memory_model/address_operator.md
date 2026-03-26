@@ -16,9 +16,9 @@ The **address operator** `&` gets the **memory address** of a value (creates a p
 
 ```aria
 value: i32 = 42;
-ptr: *i32 = &value;  // Get address of value
+ptr: *i32 = $value;  // Get address of value
 
-stdout << ptr;  // Prints memory address (e.g., 0x7ffc8b4d5a1c)
+print(ptr);  // Prints memory address (e.g., 0x7ffc8b4d5a1c)
 ```
 
 ---
@@ -31,14 +31,14 @@ In Aria, `&` has **two meanings** depending on context:
 
 ```aria
 // Creating reference for borrowing
-ref: &i32 = &value;  // Borrow
+ref: $i32 = $value;  // Borrow
 ```
 
 ### Address (Pointer)
 
 ```aria
 // Getting raw memory address
-ptr: *i32 = &value;  // Pointer
+ptr: *i32 = $value;  // Pointer
 ```
 
 ---
@@ -47,10 +47,10 @@ ptr: *i32 = &value;  // Pointer
 
 ```aria
 value: i32 = 42;
-address: *i32 = &value;
+address: *i32 = $value;
 
-stdout << "Value: " << value << "\n";        // 42
-stdout << "Address: " << address << "\n";    // 0x...
+print("Value: " + value + "\n");        // 42
+print("Address: " + address + "\n");    // 0x...
 ```
 
 ---
@@ -62,9 +62,9 @@ number: i32 = 42;
 text: string = "hello";
 point: Point = Point{x: 10, y: 20};
 
-num_ptr: *i32 = &number;
-str_ptr: *string = &text;
-point_ptr: *Point = &point;
+num_ptr: *i32 = $number;
+str_ptr: *string = $text;
+point_ptr: *Point = $point;
 ```
 
 ---
@@ -75,10 +75,10 @@ Use `*` to access value at address:
 
 ```aria
 value: i32 = 42;
-ptr: *i32 = &value;
+ptr: *i32 = $value;
 
 dereferenced: i32 = *ptr;  // Get value at address
-stdout << dereferenced;     // 42
+print(dereferenced);     // 42
 ```
 
 ---
@@ -89,10 +89,10 @@ stdout << dereferenced;     // 42
 
 ```aria
 // C function expects pointer
-extern fn c_function(ptr: *i32);
+extern func:c_function = NIL(*i32:ptr);
 
 value: i32 = 42;
-c_function(&value);  // Pass address
+c_function($value);  // Pass address
 ```
 
 ### Manual Memory
@@ -112,7 +112,7 @@ aria_free(ptr);
 
 ```aria
 arr: [i32; 5] = [1, 2, 3, 4, 5];
-ptr: *i32 = &arr[0];  // Address of first element
+ptr: *i32 = $arr[0];  // Address of first element
 ```
 
 ---
@@ -126,13 +126,13 @@ ptr: *i32 = &arr[0];  // Address of first element
 ptr: *i32 = nil;
 
 // Can outlive data
-fn bad() -> *i32 {
+func:bad = *i32() {
     x: i32 = 42;
-    return &x;  // ⚠️ Dangling pointer!
+    pass($x);  // ⚠️ Dangling pointer!
 }
 
 // No bounds checking
-ptr: *i32 = &arr[0];
+ptr: *i32 = $arr[0];
 value: i32 = *(ptr + 100);  // ⚠️ Out of bounds!
 ```
 
@@ -140,10 +140,10 @@ value: i32 = *(ptr + 100);  // ⚠️ Out of bounds!
 
 ```aria
 // Safe: Borrow checking
-ref: &i32 = &value;
+ref: $i32 = $value;
 
 // Unsafe: Raw pointer
-ptr: *i32 = &value;
+ptr: *i32 = $value;
 ```
 
 ---
@@ -154,33 +154,33 @@ ptr: *i32 = &value;
 
 ```aria
 // Good: Safe borrowing
-fn process(value: &i32) { }
+func:process = NIL(int32->:value) { }
 
 // Avoid: Unsafe pointers
-fn process(value: *i32) { }
+func:process = NIL(*i32:value) { }
 ```
 
 ### ✅ DO: Use for C Interop
 
 ```aria
 // Good: Necessary for C
-extern fn c_func(data: *byte, len: i32);
+extern func:c_func = NIL(*byte:data, int32:len);
 
 buffer: []byte = [1, 2, 3];
-c_func(&buffer[0], buffer.length());
+c_func($buffer[0], buffer.length());
 ```
 
 ### ❌ DON'T: Use for Normal Code
 
 ```aria
 // Wrong: Unnecessary and unsafe
-fn add(a: *i32, b: *i32) -> i32 {
-    return *a + *b;
+func:add = int32(*i32:a, *i32:b) {
+    pass(*a + *b);
 }
 
 // Right: Use references
-fn add(a: &i32, b: &i32) -> i32 {
-    return a + b;
+func:add = int32(int32->:a, int32->:b) {
+    pass(a + b);
 }
 ```
 
@@ -191,7 +191,7 @@ fn add(a: &i32, b: &i32) -> i32 {
 ### References (Preferred)
 
 ```aria
-ref: &i32 = &value;
+ref: $i32 = $value;
 
 // ✅ Always valid
 // ✅ Can't be null
@@ -202,7 +202,7 @@ ref: &i32 = &value;
 ### Pointers (Rare)
 
 ```aria
-ptr: *i32 = &value;
+ptr: *i32 = $value;
 
 // ⚠️ Can be invalid
 // ⚠️ Can be null
@@ -217,19 +217,19 @@ ptr: *i32 = &value;
 ### C Interop
 
 ```aria
-extern fn memcpy(dest: *byte, src: *byte, n: i32);
+extern func:memcpy = NIL(*byte:dest, *byte:src, int32:n);
 
 src: []byte = [1, 2, 3, 4];
 dst: []byte = [0; 4];
 
-memcpy(&dst[0], &src[0], 4);
+memcpy($dst[0], $src[0], 4);
 ```
 
 ### Custom Allocator
 
 ```aria
-fn allocate_array(size: i32) -> *i32 {
-    return aria_alloc(size * sizeof(i32));
+func:allocate_array = *i32(int32:size) {
+    pass(aria_alloc(size * sizeof(i32)));
 }
 
 ptr: *i32 = allocate_array(10);

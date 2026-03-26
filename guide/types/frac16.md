@@ -1,5 +1,8 @@
 # frac16 - 16-bit Exact Rational Arithmetic
 
+> **⚠️ DESIGN DOCUMENT — NOT YET IMPLEMENTED IN COMPILER**
+> Fractional types are part of the Aria language specification but are not yet available in the compiler. The documentation below describes the planned design.
+
 ## Overview
 
 `frac16` is a 16-bit **mixed-fraction rational number** that provides **mathematically exact** representation of rational values with significantly larger range than frac8. Unlike floating-point types which approximate fractions, frac16 maintains **perfect precision** by storing values as whole numbers plus proper fractions (numerator/denominator).
@@ -561,7 +564,7 @@ fn:gcd_example = [tbb16:a, tbb16:b] -> tbb16 {
         a = temp;
     }
     
-    return a;
+    pass(a);
 }
 
 tbb16:gcd_result = gcd_example(2000, 3000);
@@ -688,7 +691,7 @@ fn:arctan_rational_term = [frac16:x, tbb16:n] -> frac16 {
         result = -result;
     }
     
-    return result;
+    pass(result);
 }
 
 // Approximate π (first few terms, limited by frac16 range)

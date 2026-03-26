@@ -16,13 +16,13 @@ Aria provides system diagnostics for monitoring resource usage and performance.
 ### Memory Diagnostics
 
 ```aria
-import std.system;
+use std.system;
 
 // Get memory usage
 mem: MemoryInfo = getMemoryUsage();
 
-stdout << "Heap: $(mem.heap_used) / $(mem.heap_total)";
-stdout << "RSS: $(mem.rss)";
+print("Heap: $(mem.heap_used) / $(mem.heap_total)");
+print("RSS: $(mem.rss)");
 ```
 
 ### Network Diagnostics
@@ -31,7 +31,7 @@ stdout << "RSS: $(mem.rss)";
 // Get active connections
 connections: []ConnectionInfo = getActiveConnections();
 
-stdout << "Active connections: $(connections.length())";
+print("Active connections: $(connections.length())");
 ```
 
 ---
@@ -41,7 +41,7 @@ stdout << "Active connections: $(connections.length())";
 ### Health Check
 
 ```aria
-fn health_check() -> HealthStatus {
+func:health_check = HealthStatus() {
     mem: MemoryInfo = getMemoryUsage();
     conns: []ConnectionInfo = getActiveConnections();
     
@@ -53,14 +53,14 @@ fn health_check() -> HealthStatus {
     
     status.healthy = status.memory_ok and status.connections_ok;
     
-    return status;
+    pass(status);
 }
 ```
 
 ### Periodic Monitoring
 
 ```aria
-fn monitor_system() {
+func:monitor_system = NIL() {
     loop
         mem: MemoryInfo = getMemoryUsage();
         conns: []ConnectionInfo = getActiveConnections();
@@ -79,7 +79,7 @@ fn monitor_system() {
 ### Resource Alerts
 
 ```aria
-fn check_resources() {
+func:check_resources = NIL() {
     mem: MemoryInfo = getMemoryUsage();
     
     // Memory threshold: 80% of total
@@ -106,7 +106,7 @@ struct SystemMetrics {
     connections: i32
 }
 
-fn collect_metrics() -> SystemMetrics {
+func:collect_metrics = SystemMetrics() {
     mem: MemoryInfo = getMemoryUsage();
     conns: []ConnectionInfo = getActiveConnections();
     

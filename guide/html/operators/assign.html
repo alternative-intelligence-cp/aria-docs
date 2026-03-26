@@ -700,7 +700,7 @@ x: i32 = 42;
 <p>
 // Comparison (double ==)
 when x == 42 then
-stdout << "Equal";
+print("Equal");
 end</code></pre>
 </p>
 <hr>
@@ -726,7 +726,7 @@ y: i32 = (x = 42);  // x and y both 42
 <p>
 // Useful in conditionals
 when (x = get_value()) > 0 then
-stdout << "Positive: " << x;
+print("Positive: " + x);
 end</code></pre>
 </p>
 <hr>
@@ -739,13 +739,13 @@ end</code></pre>
 <pre><code>// Wrong: Assignment in condition (probably a bug)
 <p>
 when x = 42 then  // Assigns 42 to x, always true!
-stdout << "Bug!";
+print("Bug!");
 end
 </p>
 <p>
 // Right: Comparison
 when x == 42 then
-stdout << "Correct";
+print("Correct");
 end</code></pre>
 </p>
 <h3>❌ DON'T: Chain Assignments Unnecessarily</h3>

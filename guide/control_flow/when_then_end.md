@@ -28,7 +28,7 @@ end
 age: i32 = 20;
 
 when age >= 18 then
-    stdout << "Adult\n";
+    print("Adult\n");
 end
 ```
 
@@ -40,9 +40,9 @@ end
 age: i32 = 16;
 
 when age >= 18 then
-    stdout << "Adult\n";
+    print("Adult\n");
 else
-    stdout << "Minor\n";
+    print("Minor\n");
 end
 ```
 
@@ -65,7 +65,7 @@ else
     grade = "F";
 end
 
-stdout << "Grade: " << grade << "\n";
+print("Grade: " + grade + "\n");
 ```
 
 ---
@@ -112,12 +112,12 @@ end
 ```aria
 when user.is_authenticated then
     when user.is_admin then
-        stdout << "Admin dashboard\n";
+        print("Admin dashboard\n");
     else
-        stdout << "User dashboard\n";
+        print("User dashboard\n");
     end
 else
-    stdout << "Please log in\n";
+    print("Please log in\n");
 end
 ```
 
@@ -129,8 +129,8 @@ end
 file: File = open("data.txt");
 
 when file == ERR then
-    stderr << "Failed to open file\n";
-    return;
+    stderr_write("Failed to open file\n");
+    pass(NIL);
 end
 
 // Use file
@@ -142,18 +142,18 @@ content: string = pass file.read();
 ## Guard Clauses
 
 ```aria
-fn process_user(user: User?) -> bool {
+func:process_user = bool(User?:user) {
     when user == nil then
-        return false;
+        pass(false);
     end
     
     when !user.is_valid() then
-        return false;
+        pass(false);
     end
     
     // Main logic
     user.update();
-    return true;
+    pass(true);
 }
 ```
 
@@ -225,11 +225,11 @@ when name != nil then
 ```aria
 // Good: Handle errors early
 when input == nil then
-    return;
+    pass(NIL);
 end
 
 when input.length() == 0 then
-    return;
+    pass(NIL);
 end
 ```
 
@@ -281,7 +281,7 @@ when !d then return; end
 ### Input Validation
 
 ```aria
-fn validate_order(order: Order) {
+func:validate_order = NIL(Order:order) {
     when order.items.length() == 0 then
         fail "Order must contain items";
     end
@@ -308,7 +308,7 @@ else when state == "processing" then
         finish_work();
     end
 else when state == "done" then
-    stdout << "Work already done\n";
+    print("Work already done\n");
 end
 ```
 

@@ -17,11 +17,11 @@
 ### Generic Code
 
 ```aria
-fn max<T>(a: T, b: T) -> T where T: Comparable {
+func:max = T(T:a, T:b)where T: Comparable {
     when a > b then
-        return a;
+        pass(a);
     else
-        return b;
+        pass(b);
     end
 }
 ```
@@ -38,29 +38,29 @@ z: string = max("alice", "bob");
 
 ```aria
 // Specialized for i32
-fn max_i32(a: i32, b: i32) -> i32 {
+func:max_i32 = int32(int32:a, int32:b) {
     when a > b then
-        return a;
+        pass(a);
     else
-        return b;
+        pass(b);
     end
 }
 
 // Specialized for f64
-fn max_f64(a: f64, b: f64) -> f64 {
+func:max_f64 = flt64(flt64:a, flt64:b) {
     when a > b then
-        return a;
+        pass(a);
     else
-        return b;
+        pass(b);
     end
 }
 
 // Specialized for string
-fn max_string(a: string, b: string) -> string {
+func:max_string = string(string:a, string:b) {
     when a > b then
-        return a;
+        pass(a);
     else
-        return b;
+        pass(b);
     end
 }
 ```
@@ -81,8 +81,8 @@ z: string = max_string("alice", "bob");  // Direct call
 
 ```aria
 // Generic version
-fn add<T>(a: T, b: T) -> T {
-    return a + b;
+func:add = T(T:a, T:b) {
+    pass(a + b);
 }
 
 // After monomorphization, calling:
@@ -103,7 +103,7 @@ Result: i32 = 5 + 10;
 Each specialized version can be **independently optimized**:
 
 ```aria
-fn process<T>(value: T) -> T {
+func:process = T(T:value) {
     // Complex operations
 }
 
@@ -120,8 +120,8 @@ z: string = process("hello");
 ### 3. Type Safety at Compile Time
 
 ```aria
-fn multiply<T>(a: T, b: T) -> T where T: Numeric {
-    return a * b;
+func:multiply = T(T:a, T:b)where T: Numeric {
+    pass(a * b);
 }
 
 // OK: i32 is Numeric
@@ -138,8 +138,8 @@ Result: i32 = multiply(5, 10);
 ### More Types = More Code
 
 ```aria
-fn identity<T>(value: T) -> T {
-    return value;
+func:identity = T(T:value) {
+    pass(value);
 }
 
 // Used with 3 types
@@ -177,7 +177,7 @@ struct Box<T> {
 The compiler **only generates code for types you actually use**:
 
 ```aria
-fn process<T>(value: T) -> T {
+func:process = T(T:value) {
     // Complex 1000-line implementation
 }
 
@@ -198,12 +198,12 @@ Result: i32 = process(42);
 ### Nested Generics
 
 ```aria
-fn wrap<T>(value: T) -> Box<T> {
-    return Box{value: value};
+func:wrap = Box<T>(T:value) {
+    pass(Box{value: value});
 }
 
-fn double_wrap<T>(value: T) -> Box<Box<T>> {
-    return wrap(wrap(value));
+func:double_wrap = Box<Box<T>>(T:value) {
+    pass(wrap(wrap(value)));
 }
 
 // Usage
@@ -235,13 +235,13 @@ nested: Vec<Vec<i32>> = Vec::new();
 ### Monomorphization (Aria, Rust, C++)
 
 ```aria
-fn sum<T>(array: []T) -> T where T: Numeric {
+func:sum = T([]T:array)where T: Numeric {
     total: T = T::zero();
     till(array.length - 1, 1) {
         item: T = array[$];
         total = total + item;
     }
-    return total;
+    pass(total);
 }
 
 // Generates optimized code for each type
@@ -274,7 +274,7 @@ More generic instantiations = longer compile times:
 
 ```aria
 // This function is used with 50 different types
-fn process<T>(value: T) -> T {
+func:process = T(T:value) {
     // Large implementation
 }
 
@@ -297,8 +297,8 @@ Most build systems only recompile what changed:
 
 ```aria
 // Good: Small, frequently used
-fn swap<T>(a: T, b: T) -> (T, T) {
-    return (b, a);
+func:swap = (T,(T:a, T:b)T) {
+    pass((b, a));
 }
 
 // Minimal code size impact
@@ -309,14 +309,14 @@ fn swap<T>(a: T, b: T) -> (T, T) {
 
 ```aria
 // Good: Generic wrapper around non-generic core
-fn process_bytes(data: []u8) {
+func:process_bytes = NIL([]u8:data) {
     // Large implementation
 }
 
-fn process<T>(value: T) -> T where T: Serializable {
+func:process = T(T:value)where T: Serializable {
     bytes: []u8 = value.serialize();
     process_bytes(bytes);  // Shared across all types
-    return T::deserialize(bytes);
+    pass(T::deserialize(bytes));
 }
 ```
 
@@ -336,7 +336,7 @@ aria build --verbose --size-analysis
 
 ```aria
 // Wrong: 5000-line generic function
-fn massive_algorithm<T>(value: T) -> T {
+func:massive_algorithm = T(T:value) {
     // 5000 lines of code
 }
 
@@ -347,12 +347,12 @@ fn massive_algorithm<T>(value: T) -> T {
 
 ```aria
 // Wrong: Avoiding generics for "performance"
-fn process_i32(value: i32) { ... }
-fn process_f64(value: f64) { ... }
-fn process_string(value: string) { ... }
+func:process_i32 = NIL(int32:value) { ... }
+func:process_f64 = NIL(flt64:value) { ... }
+func:process_string = NIL(string:value) { ... }
 
 // Right: Use generics, profile later
-fn process<T>(value: T) { ... }
+func:process = NIL(T:value) { ... }
 ```
 
 ---
@@ -422,7 +422,7 @@ aria build --debug
 ### Small Generic Functions
 
 ```aria
-fn max<T>(a: T, b: T) -> T { ... }  // ~10 instructions
+func:max = T(T:a, T:b) { ... }  // ~10 instructions
 
 // Used with 100 types = 1000 instructions
 // Impact: Negligible (~4KB)
@@ -431,7 +431,7 @@ fn max<T>(a: T, b: T) -> T { ... }  // ~10 instructions
 ### Medium Generic Functions
 
 ```aria
-fn parse<T>(input: string) -> T { ... }  // ~200 instructions
+func:parse = T(string:input) { ... }  // ~200 instructions
 
 // Used with 20 types = 4000 instructions
 // Impact: Moderate (~16KB)
@@ -440,7 +440,7 @@ fn parse<T>(input: string) -> T { ... }  // ~200 instructions
 ### Large Generic Functions
 
 ```aria
-fn complex_algorithm<T>(data: []T) -> Result<T> {
+func:complex_algorithm = Result<T>([]T:data) {
     // 10,000 instructions
 }
 

@@ -1,5 +1,8 @@
 # The `vec9` Type (9D Vector - Nikola Consciousness)
 
+> **⚠️ DESIGN DOCUMENT — LIMITED COMPILER SUPPORT**
+> SIMD vector types have limited compiler support. The documentation below describes the planned design.
+
 **Category**: Types → Vectors → 9D (Consciousness)  
 **Syntax**: `vec9`  
 **Purpose**: Nine-dimensional vector for Nikola's ATPM consciousness model  

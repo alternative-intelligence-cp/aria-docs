@@ -661,13 +661,13 @@ Functions with no return type implicitly return "unit" (like <code>void</code>):
 </p>
 <pre><code>fn print_message() {
 <p>
-stdout << "Hello, World!\n";
+print("Hello, World!\n");
 }
 </p>
 <p>
 // Equivalent to:
 fn print_message() -> () {
-stdout << "Hello, World!\n";
+print("Hello, World!\n");
 }</code></pre>
 </p>
 <hr>
@@ -720,9 +720,9 @@ return input.parse();
 // Usage
 Result: i32? = parse_number("42");
 when result == ERR then
-stderr << "Parse failed\n";
+stderr_write("Parse failed\n");
 else
-stdout << "Number: " << result << "\n";
+print("Number: " << result + "\n");
 end</code></pre>
 </p>
 <hr>
@@ -757,8 +757,8 @@ return (quotient, remainder);
 <p>
 // Usage
 (quot, rem): (i32, i32) = divide_with_remainder(17, 5);
-stdout << quot;  // 3
-stdout << rem;   // 2</code></pre>
+print(quot);  // 3
+print(rem);   // 2</code></pre>
 </p>
 <hr>
 <h2>Array Return Types</h2>
@@ -928,7 +928,7 @@ For functions that never return:
 </p>
 <pre><code>fn panic(message: string) -> ! {
 <p>
-stderr << "PANIC: " << message << "\n";
+stderr_write("PANIC: " << message + "\n");
 exit(1);
 // Never reaches here
 }
@@ -946,13 +946,13 @@ process_events();
 <pre><code>// Implicit unit
 <p>
 fn log(message: string) {
-stdout << message << "\n";
+print(message + "\n");
 }
 </p>
 <p>
 // Explicit unit
 fn log(message: string) -> () {
-stdout << message << "\n";
+print(message + "\n");
 return ();
 }</code></pre>
 </p>

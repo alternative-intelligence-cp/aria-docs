@@ -42,12 +42,12 @@ z: i32 = x << 2;  // 20 (5 * 4)
 
 ```aria
 // Output to stdout
-stdout << "Hello";
-stdout << 42;
-stdout << 3.14;
+print("Hello");
+print(42);
+print(3.14);
 
 // Chained output
-stdout << "Value: " << value << "\n";
+print("Value: " + value + "\n");
 ```
 
 ---
@@ -111,7 +111,7 @@ EXEC: i32 = 1 << 2;
 ### ✅ DO: Chain Stream Output
 
 ```aria
-stdout << "Name: " << name << ", Age: " << age << "\n";
+print("Name: " + name + ", Age: " + age + "\n");
 ```
 
 ### ❌ DON'T: Shift by Negative
@@ -136,8 +136,8 @@ Result: i32 = value << 32;  // ❌ Dangerous
 
 ```aria
 // Check if power of 2
-fn is_power_of_two(n: i32) -> bool {
-    return n > 0 and (n & (n - 1)) == 0;
+func:is_power_of_two = bool(int32:n) {
+    pass(n > 0 and (n & (n - 1)) == 0);
 }
 
 // Generate powers
@@ -167,7 +167,7 @@ value ^= (1 << position);
 ```aria
 value: i32 = 5;
 value <<= 2;  // value = value << 2
-stdout << value;  // 20
+print(value);  // 20
 ```
 
 ---

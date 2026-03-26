@@ -30,7 +30,7 @@ numbers: []i32 = [1, 2, 3, 4, 5];
 
 till(numbers.length - 1, 1) {
     // $ is the index, numbers[$] is the current value
-    stdout << numbers[$] << "\n";
+    print(numbers[$] + "\n");
 }
 ```
 
@@ -60,7 +60,7 @@ numbers: []i32 = [1, 2, 3];
 
 till(numbers.length - 1, 1) {
     num: auto = numbers[$];  // num is local read-only copy
-    stdout << num;           // ✅ Can read
+    print(num);           // ✅ Can read
     num = 10;                // ✅ Can modify local copy
     numbers[$] = 10;         // ❌ Can't modify array directly
 }
@@ -89,7 +89,7 @@ items: []string = ["apple", "banana", "cherry"];
 // $ is the index - access both item and index
 till(items.length - 1, 1) {
     item: auto = items[$];
-    stdout << $ << ": " << item << "\n";
+    print($ + ": " + item + "\n");
 }
 ```
 
@@ -103,7 +103,7 @@ Aria uses **$** as the index variable in loops:
 // $ is the current index (0-based)
 till(items.length - 1, 1) {
     // $ varies from 0 to items.length-1
-    stdout << "Index: " << $ << "\n";
+    print("Index: " + $ + "\n");
 }
 ```
 
@@ -174,11 +174,11 @@ Iteration variable exists **only inside the loop**:
 ```aria
 till(items.length - 1, 1) {
     item: auto = items[$];
-    stdout << item;
+    print(item);
 }
 
 // item doesn't exist here
-stdout << item;  // ❌ Error
+print(item);  // ❌ Error
 ```
 
 ---
@@ -192,10 +192,10 @@ item: string = "outer";
 
 till(items.length - 1, 1) {
     item: auto = items[$];  // This 'item' shadows the outer one
-    stdout << item;
+    print(item);
 }
 
-stdout << item;  // Back to "outer"
+print(item);  // Back to "outer"
 ```
 
 ---
@@ -223,7 +223,7 @@ keys: []string = map.keys();
 till(keys.length - 1, 1) {
     key: auto = keys[$];
     value: auto = map[key];
-    stdout << key << ": " << value << "\n";
+    print(key + ": " + value + "\n");
 }
 ```
 
@@ -234,13 +234,13 @@ till(keys.length - 1, 1) {
 ```aria
 // Only need index - just use $
 till(items.length - 1, 1) {
-    stdout << "Position: " << $ << "\n";
+    print("Position: " + $ + "\n");
 }
 
 // Only need value - declare variable
 till(items.length - 1, 1) {
     item: auto = items[$];
-    stdout << "Item: " << item << "\n";
+    print("Item: " + item + "\n");
 }
 ```
 
@@ -401,7 +401,7 @@ till(students.length - 1, 1) {
     student: auto = students[$];
     rank: int64 = $;  // Index is the rank ($ is int64)
     // Both student and rank are clear
-    stdout << format("{}. {} - GPA: {}", 
+    print(format("{}. {} - GPA: {}"),
         rank + 1, student.name, student.gpa);
 }
 ```

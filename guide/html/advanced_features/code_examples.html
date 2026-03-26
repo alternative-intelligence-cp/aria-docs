@@ -665,13 +665,13 @@ listener: TcpListener,
 <p>
 impl Server {
 pub fn new(port: i32) -> Result<Server> {
-listener: TcpListener = TcpListener.bind("0.0.0.0:$port")?;
+listener: TcpListener = TcpListener.bind(`0.0.0.0:&{port}`)?;
 return Ok(Server { listener });
 }
 </p>
 <p>
 pub fn run() -> Result<void> {
-stdout << "Server listening on port ${self.listener.port()}";
+print("Server listening on port &{self.listener.port()}");
 </p>
 <p>
 while true {
@@ -940,17 +940,17 @@ watcher: FileWatcher = FileWatcher.new(Path.new("./watched"));
 </p>
 <p>
 watcher.on(EventKind.Create, |event| {
-stdout << "File created: ${event.path}";
+print("File created: &{event.path}");
 });
 </p>
 <p>
 watcher.on(EventKind.Modify, |event| {
-stdout << "File modified: ${event.path}";
+print("File modified: &{event.path}");
 });
 </p>
 <p>
 watcher.on(EventKind.Delete, |event| {
-stdout << "File deleted: ${event.path}";
+print("File deleted: &{event.path}");
 });
 </p>
 <p>
@@ -1066,7 +1066,7 @@ timeout: 30,
 </p>
 <p>
 pub async fn get(path: string) -> Result<Response> {
-url: string = "${self.base_url}$path";
+url: string = `&{self.base_url}&{path}`;
 </p>
 <p>
 request: Request = Request.builder()
@@ -1080,7 +1080,7 @@ response: Response = await request.send()?;
 </p>
 <p>
 if !response.ok() {
-return Err("HTTP ${response.status}");
+return Err("HTTP &{response.status}");
 }
 </p>
 <p>
@@ -1089,7 +1089,7 @@ return Ok(response);
 </p>
 <p>
 pub async fn post(path: string, body: string) -> Result<Response> {
-url: string = "${self.base_url}$path";
+url: string = `&{self.base_url}&{path}`;
 </p>
 <p>
 request: Request = Request.builder()
@@ -1116,7 +1116,7 @@ users: []User = await response.json()?;
 </p>
 <p>
 till(users.length - 1, 1) {
-stdout << users[$].name;
+print(users[$].name);
 }
 </p>
 <p>

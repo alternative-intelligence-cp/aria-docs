@@ -356,7 +356,7 @@ float:transform_vertex(float:x, float:y, float:z, float[16]:matrix) -> vec3 {
 // 48kHz audio = 48,000 samples/second
 // Real-time processing requires float speed
 float:apply_filter(float:sample, float:coefficient) -> float {
-    return sample * coefficient;  // Must be fast
+    pass(sample * coefficient);  // Must be fast
 }
 ```
 
@@ -365,7 +365,7 @@ float:apply_filter(float:sample, float:coefficient) -> float {
 // Game physics (30-60 updates/second)
 // Approximate is fine, speed critical
 float:update_velocity(float:velocity, float:acceleration, float:dt) -> float {
-    return velocity + acceleration * dt;
+    pass(velocity + acceleration * dt);
 }
 ```
 
@@ -417,7 +417,7 @@ float:fast = exact_value.to_float();  // Use for computation
 ```aria
 // Compare floats with tolerance
 bool:approximately_equal(float:a, float:b, float:epsilon = 0.00001) -> bool {
-    return abs(a - b) < epsilon;
+    pass(abs(a - b) < epsilon);
 }
 
 // Usage
@@ -434,9 +434,9 @@ if (approximately_equal(computed, expected, 0.001)) {
 float:safe_divide(float:numerator, float:denominator) -> float {
     if (abs(denominator) < 0.000001) {
         log.write("WARNING: Division by near-zero\n");
-        return float.infinity;  // Or 0.0, or ERR
+        pass(float.infinity);  // Or 0.0, or ERR
     }
-    return numerator / denominator;
+    pass(numerator / denominator);
 }
 ```
 
@@ -455,7 +455,7 @@ float:kahan_sum(float[]:values) -> float {
         sum = t;
     }
     
-    return sum;
+    pass(sum);
 }
 ```
 
@@ -466,7 +466,7 @@ float:kahan_sum(float[]:values) -> float {
 float:clamp(float:value, float:min_val, float:max_val) -> float {
     if (value < min_val) return min_val;
     if (value > max_val) return max_val;
-    return value;
+    pass(value);
 }
 
 // Usage (e.g., color channels)
@@ -512,7 +512,7 @@ void:apply_gain(float[]:samples, float:gain) {
 
 // Mix channels
 float:mix(float:sample_a, float:sample_b, float:ratio) -> float {
-    return sample_a * (1.0 - ratio) + sample_b * ratio;
+    pass(sample_a * (1.0 - ratio) + sample_b * ratio);
 }
 ```
 

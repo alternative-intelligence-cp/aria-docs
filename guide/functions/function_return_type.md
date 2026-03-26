@@ -9,8 +9,8 @@
 ## Basic Return Type Syntax
 
 ```aria
-fn function_name() -> ReturnType {
-    return value;
+func:function_name = ReturnType() {
+    pass(value);
 }
 ```
 
@@ -21,13 +21,13 @@ fn function_name() -> ReturnType {
 Functions with no return type implicitly return "unit" (like `void`):
 
 ```aria
-fn print_message() {
-    stdout << "Hello, World!\n";
+func:print_message = NIL() {
+    print("Hello, World!\n");
 }
 
 // Equivalent to:
-fn print_message() -> () {
-    stdout << "Hello, World!\n";
+func:print_message = ()() {
+    print("Hello, World!\n");
 }
 ```
 
@@ -37,28 +37,28 @@ fn print_message() -> () {
 
 ```aria
 // Integer
-fn get_age() -> i32 {
-    return 25;
+func:get_age = int32() {
+    pass(25);
 }
 
 // Float
-fn get_price() -> f64 {
-    return 19.99;
+func:get_price = flt64() {
+    pass(19.99);
 }
 
 // Boolean
-fn is_valid() -> bool {
-    return true;
+func:is_valid = bool() {
+    pass(true);
 }
 
 // Character
-fn get_grade() -> char {
-    return 'A';
+func:get_grade = char() {
+    pass('A');
 }
 
 // String
-fn get_name() -> string {
-    return "Alice";
+func:get_name = string() {
+    pass("Alice");
 }
 ```
 
@@ -70,19 +70,19 @@ Use `?` suffix for functions that might fail:
 
 ```aria
 // Returns i32 or ERR
-fn parse_number(input: string) -> i32? {
+func:parse_number = i32?(string:input) {
     when input == "" then
-        return ERR;
+        pass(ERR);
     end
-    return input.parse();
+    pass(input.parse());
 }
 
 // Usage
 Result: i32? = parse_number("42");
 when result == ERR then
-    stderr << "Parse failed\n";
+    stderr_write("Parse failed\n");
 else
-    stdout << "Number: " << result << "\n";
+    print("Number: " + result + "\n");
 end
 ```
 
@@ -96,8 +96,8 @@ struct User {
     age: i32
 }
 
-fn create_user(name: string, age: i32) -> User {
-    return User{name: name, age: age};
+func:create_user = User(string:name, int32:age) {
+    pass(User{name: name, age: age});
 }
 
 // Usage
@@ -111,16 +111,16 @@ user: User = create_user("Alice", 30);
 Return multiple values:
 
 ```aria
-fn divide_with_remainder(a: i32, b: i32) -> (i32, i32) {
+func:divide_with_remainder = (i32,(int32:a, int32:b)i32) {
     quotient: i32 = a / b;
     remainder: i32 = a % b;
-    return (quotient, remainder);
+    pass((quotient, remainder));
 }
 
 // Usage
 (quot, rem): (i32, i32) = divide_with_remainder(17, 5);
-stdout << quot;  // 3
-stdout << rem;   // 2
+print(quot);  // 3
+print(rem);   // 2
 ```
 
 ---
@@ -128,8 +128,8 @@ stdout << rem;   // 2
 ## Array Return Types
 
 ```aria
-fn get_primes() -> []i32 {
-    return [2, 3, 5, 7, 11];
+func:get_primes = []i32() {
+    pass([2, 3, 5, 7, 11]);
 }
 
 // Usage
@@ -147,8 +147,8 @@ enum Status {
     Pending
 }
 
-fn check_status() -> Status {
-    return Status::Success;
+func:check_status = Status() {
+    pass(Status::Success);
 }
 ```
 
@@ -157,8 +157,8 @@ fn check_status() -> Status {
 ## Generic Return Types
 
 ```aria
-fn identity<T>(value: T) -> T {
-    return value;
+func:identity = T(T:value) {
+    pass(value);
 }
 
 // T inferred from usage
@@ -173,8 +173,8 @@ text: string = identity("hi"); // Returns string
 Functions can return other functions:
 
 ```aria
-fn make_multiplier(factor: i32) -> fn(i32) -> i32 {
-    return |x| x * factor;
+func:make_multiplier = fn(i32)(int32:factor)-> i32 {
+    pass(|x| x * factor);
 }
 
 // Usage
@@ -187,8 +187,8 @@ Result: i32 = times_3(5);  // 15
 ## Async Return Types
 
 ```aria
-async fn fetch_data() -> Data {
-    return await http_get("/api/data");
+async func:fetch_data = Data() {
+    pass(await http_get("/api/data"));
 }
 
 // Returns Future<Data>
@@ -201,13 +201,13 @@ data: Data = await fetch_data();
 ## Optional with Generics
 
 ```aria
-fn find<T>(array: []T, target: T) -> T? {
+func:find = T?([]T:array, T:target) {
     till(array.length - 1, 1) {
         when array[$] == target then
-            return array[$];
+            pass(array[$]);
         end
     }
-    return nil;
+    pass(nil);
 }
 
 // Usage
@@ -242,19 +242,19 @@ func:safe_divide = Result<int32, string>(int32:a, int32:b) {
 ### Explicit Return
 
 ```aria
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 ```
 
 ### Multiple Returns
 
 ```aria
-fn abs(x: i32) -> i32 {
+func:abs = int32(int32:x) {
     when x < 0 then
-        return -x;
+        pass(-x);
     else
-        return x;
+        pass(x);
     end
 }
 ```
@@ -262,16 +262,16 @@ fn abs(x: i32) -> i32 {
 ### Early Return
 
 ```aria
-fn validate_age(age: i32) -> bool {
+func:validate_age = bool(int32:age) {
     when age < 0 then
-        return false;  // Early exit
+        pass(false);  // Early exit
     end
     
     when age > 120 then
-        return false;  // Early exit
+        pass(false);  // Early exit
     end
     
-    return true;
+    pass(true);
 }
 ```
 
@@ -288,8 +288,8 @@ Aria requires **explicit return types** on functions:
 // }
 
 // ✅ Right: Explicit return type
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 ```
 
@@ -300,8 +300,8 @@ fn add(a: i32, b: i32) -> i32 {
 add = |a, b| a + b;
 
 // Function: Must specify
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 ```
 
@@ -312,13 +312,13 @@ fn add(a: i32, b: i32) -> i32 {
 For functions that never return:
 
 ```aria
-fn panic(message: string) -> ! {
-    stderr << "PANIC: " << message << "\n";
+func:panic = !(string:message) {
+    stderr_write("PANIC: " + message + "\n");
     exit(1);
     // Never reaches here
 }
 
-fn infinite_loop() -> ! {
+func:infinite_loop = !() {
     while true {
         process_events();
     }
@@ -332,14 +332,14 @@ fn infinite_loop() -> ! {
 
 ```aria
 // Implicit unit
-fn log(message: string) {
-    stdout << message << "\n";
+func:log = NIL(string:message) {
+    print(message + "\n");
 }
 
 // Explicit unit
-fn log(message: string) -> () {
-    stdout << message << "\n";
-    return ();
+func:log = ()(string:message) {
+    print(message + "\n");
+    pass(());
 }
 ```
 
@@ -351,16 +351,16 @@ fn log(message: string) -> () {
 
 ```aria
 // Good: Clear what's returned
-fn get_user_count() -> i32 { }
-fn is_authenticated() -> bool { }
-fn load_config() -> Config { }
+func:get_user_count = int32() { }
+func:is_authenticated = bool() { }
+func:load_config = Config() { }
 ```
 
 ### ✅ DO: Use Option for Failable Operations
 
 ```aria
 // Good: Clear it might fail
-fn find_user(id: i32) -> User? {
+func:find_user = User?(int32:id) {
     // Returns User or ERR
 }
 ```
@@ -369,8 +369,8 @@ fn find_user(id: i32) -> User? {
 
 ```aria
 // Good: Related values
-fn get_dimensions() -> (i32, i32) {
-    return (width, height);
+func:get_dimensions = (i32,()i32) {
+    pass((width, height));
 }
 ```
 
@@ -384,8 +384,8 @@ struct UserInfo {
     email: string
 }
 
-fn get_user_info() -> UserInfo {
-    return UserInfo{...};
+func:get_user_info = UserInfo() {
+    pass(UserInfo{...});
 }
 ```
 
@@ -393,8 +393,8 @@ fn get_user_info() -> UserInfo {
 
 ```aria
 // Wrong: Hard to remember order
-fn get_stats() -> (i32, i32, f64, bool, string) {
-    return (count, total, avg, active, status);
+func:get_stats = (i32,()i32, f64, bool, string) {
+    pass((count, total, avg, active, status));
 }
 
 // Right: Use struct
@@ -406,22 +406,22 @@ struct Stats {
     status: string
 }
 
-fn get_stats() -> Stats { }
+func:get_stats = Stats() { }
 ```
 
 ### ❌ DON'T: Forget Return Statement
 
 ```aria
 // Wrong: Missing return
-fn add(a: i32, b: i32) -> i32 {
+func:add = int32(int32:a, int32:b) {
     sum: i32 = a + b;
     // Error: No return statement
 }
 
 // Right: Always return
-fn add(a: i32, b: i32) -> i32 {
+func:add = int32(int32:a, int32:b) {
     sum: i32 = a + b;
-    return sum;
+    pass(sum);
 }
 ```
 
@@ -432,7 +432,7 @@ fn add(a: i32, b: i32) -> i32 {
 ### Factory Functions
 
 ```aria
-fn new_user(name: string) -> User {
+func:new_user = User(string:name) {
     return User{
         name: name,
         created_at: Time::now(),
@@ -444,27 +444,27 @@ fn new_user(name: string) -> User {
 ### Conversion Functions
 
 ```aria
-fn to_string(value: i32) -> string {
-    return format("{}", value);
+func:to_string = string(int32:value) {
+    pass(format("{}", value));
 }
 
-fn from_string(s: string) -> i32? {
-    return s.parse();
+func:from_string = i32?(string:s) {
+    pass(s.parse());
 }
 ```
 
 ### Validation Functions
 
 ```aria
-fn validate_email(email: string) -> bool {
-    return email.contains("@") and email.contains(".");
+func:validate_email = bool(string:email) {
+    pass(email.contains("@") and email.contains("."));
 }
 ```
 
 ### Builder Pattern
 
 ```aria
-fn build() -> Config {
+func:build = Config() {
     return Config{
         host: self.host,
         port: self.port,

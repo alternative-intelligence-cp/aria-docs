@@ -172,7 +172,7 @@ small: i32 = big as i32;  // Truncates!
 ### Checked Conversion
 
 ```aria
-fn to_i32(value: i64) -> Result<i32> {
+func:to_i32 = Result<int32>(int64:value) {
     when value < -2147483648 or value > 2147483647 then
         fail("Value out of range for i32");
     end
@@ -193,7 +193,7 @@ start: i64 = get_time_ms();
 end: i64 = get_time_ms();
 duration: i64 = end - start;
 
-stdout << "Took ${duration}ms";
+print("Took &{duration}ms");
 ```
 
 ### Large Accumulation
@@ -212,9 +212,9 @@ till(large_values.length - 1, 1) {
 // Generate unique IDs
 next_id: i64 = 0;
 
-fn generate_id() -> i64 {
+func:generate_id = int64() {
     next_id += 1;
-    return next_id;
+    pass(next_id);
 }
 ```
 

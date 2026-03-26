@@ -362,7 +362,7 @@ double:planck_constant = 6.62607015e-34;  // J⋅Hz⁻¹
 double:orbital_period(double:semi_major_axis, double:central_mass) -> double {
     double:numerator = 4.0 * pi * pi * semi_major_axis * semi_major_axis * semi_major_axis;
     double:denominator = gravitational_constant * central_mass;
-    return sqrt(numerator / denominator);
+    pass(sqrt(numerator / denominator));
 }
 ```
 
@@ -375,7 +375,7 @@ double:mean(double[]:values) -> double {
     loop (values.length:i) {
         sum += values[i];
     }
-    return sum / values.length.to_double();
+    pass(sum / values.length.to_double());
 }
 
 // Standard deviation (needs precision)
@@ -385,7 +385,7 @@ double:std_dev(double[]:values, double:mean) -> double {
         double:diff = values[i] - mean;
         sum_sq_diff += diff * diff;
     }
-    return sqrt(sum_sq_diff / values.length.to_double());
+    pass(sqrt(sum_sq_diff / values.length.to_double()));
 }
 ```
 
@@ -402,7 +402,7 @@ double:integrate_simpsons(double:a, double:b, int32:n) -> double {
         sum += (i % 2 == 0 ? 2.0 : 4.0) * f(x);
     }
     
-    return (h / 3.0) * sum;
+    pass((h / 3.0) * sum);
 }
 ```
 
@@ -461,7 +461,7 @@ double:kahan_sum(double[]:values) -> double {
         sum = t;
     }
     
-    return sum;
+    pass(sum);
 }
 
 // Dramatically improves accuracy for large arrays
@@ -475,7 +475,7 @@ bool:approximately_equal_relative(double:a, double:b, double:rel_epsilon = 1e-9)
     double:diff = abs(a - b);
     double:larger = max(abs(a), abs(b));
     
-    return diff <= larger * rel_epsilon;
+    pass(diff <= larger * rel_epsilon);
 }
 
 // Works for both large and small values
@@ -488,17 +488,17 @@ bool:approximately_equal_relative(double:a, double:b, double:rel_epsilon = 1e-9)
 double:safe_sqrt(double:x) -> double {
     if (x < 0.0) {
         log.write("ERROR: Negative square root\n");
-        return double.nan;
+        pass(double.nan);
     }
-    return x.sqrt();
+    pass(x.sqrt());
 }
 
 double:safe_log(double:x) -> double {
     if (x <= 0.0) {
         log.write("ERROR: Log of non-positive\n");
-        return double.nan;
+        pass(double.nan);
     }
-    return x.log();
+    pass(x.log());
 }
 ```
 
@@ -580,7 +580,7 @@ double:distance_km(GeoPoint:p1, GeoPoint:p2) -> double {
                cos(lat1) * cos(lat2) * sin(dlon/2.0) * sin(dlon/2.0);
     double:c = 2.0 * atan2(sqrt(a), sqrt(1.0-a));
     
-    return earth_radius * c;
+    pass(earth_radius * c);
 }
 ```
 

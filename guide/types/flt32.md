@@ -121,8 +121,8 @@ matrix: [][]f32 = create_identity_matrix();
 // Floating point comparison
 EPSILON: f32 = 0.0001;
 
-fn almost_equal(a: f32, b: f32) -> bool {
-    return abs(a - b) < EPSILON;
+func:almost_equal = bool(flt32:a, flt32:b) {
+    pass(abs(a - b) < EPSILON);
 }
 ```
 
@@ -206,20 +206,20 @@ struct Vec3 {
     z: f32
 }
 
-fn dot(a: Vec3, b: Vec3) -> f32 {
-    return a.x * b.x + a.y * b.y + a.z * b.z;
+func:dot = flt32(Vec3:a, Vec3:b) {
+    pass(a.x * b.x + a.y * b.y + a.z * b.z);
 }
 
-fn length(v: Vec3) -> f32 {
-    return sqrt(dot(v, v));
+func:length = flt32(Vec3:v) {
+    pass(sqrt(dot(v, v)));
 }
 ```
 
 ### Linear Interpolation
 
 ```aria
-fn lerp(a: f32, b: f32, t: f32) -> f32 {
-    return a + (b - a) * t;
+func:lerp = flt32(flt32:a, flt32:b, flt32:t) {
+    pass(a + (b - a) * t);
 }
 
 // Interpolate between values

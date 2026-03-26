@@ -35,7 +35,7 @@ till(9, 1) {
         continue;  // Skip even numbers
     }
     
-    stdout << $ << " ";
+    print($ + " ");
 }
 // Output: 1 3 5 7 9
 ```
@@ -52,7 +52,7 @@ till(numbers.length - 1, 1) {
         continue;  // Skip negative numbers
     }
     
-    stdout << numbers[$] << " ";
+    print(numbers[$] + " ");
 }
 // Output: 1 3 5
 ```
@@ -71,7 +71,7 @@ while count < 10 {
         continue;  // Skip 5
     }
     
-    stdout << count << " ";
+    print(count + " ");
 }
 // Output: 1 2 3 4 6 7 8 9 10
 ```
@@ -86,7 +86,7 @@ records: []Record = load_records();
 till(records.length - 1, 1) {
     record: auto = records[$];
     if !record.is_valid() {
-        stderr << "Skipping invalid record: " << record.id << "\n";
+        stderr_write("Skipping invalid record: " + record.id + "\n");
         continue;
     }
     
@@ -109,9 +109,9 @@ till(2, 1) {
         if j == 2 {
             continue;  // Skip j=2 in inner loop
         }
-        stdout << "(" << i << "," << j << ") ";
+        print("(" + i + "," + j + ") ");
     }
-    stdout << "\n";
+    print("\n");
 }
 
 // Skips when j=2 in each row
@@ -153,7 +153,7 @@ till(items.length - 1, 1) {
     result: Result = validate(items[$]);
     
     if result == ERR {
-        stderr << "Invalid item, skipping\n";
+        stderr_write("Invalid item, skipping\n");
         continue;
     }
     
@@ -172,7 +172,7 @@ till(4, 1) {
     if $ == 2 {
         continue;  // Skip 2, keep going
     }
-    stdout << $ << " ";
+    print($ + " ");
 }
 // Output: 0 1 3 4
 ```
@@ -184,7 +184,7 @@ till(4, 1) {
     if $ == 2 {
         break;  // Stop completely
     }
-    stdout << $ << " ";
+    print($ + " ");
 }
 // Output: 0 1
 ```
@@ -306,7 +306,7 @@ till(records.length - 1, 1) {
     save_result(record, result);
 }
 
-stdout << "Processed: " << success_count << " successful, " 
+print("Processed: " + success_count + " successful, ")
        << error_count << " errors\n";
 ```
 

@@ -711,7 +711,7 @@ Total time: max(time(user), time(posts), time(comments))
 match await fetch_data() {
 Ok(data) => return Ok(data),
 Err(e) => {
-stdout << "Error: $e";
+print(`Error: &{e}`);
 return Err(e);
 }
 }

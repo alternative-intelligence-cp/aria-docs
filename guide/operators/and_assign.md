@@ -25,7 +25,7 @@ The bitwise AND assignment operator `&=` performs a bitwise AND and assigns the 
 ```aria
 x: i32 = 0b1111;
 x &= 0b1010;  // x = x & 0b1010
-stdout << x;  // 0b1010 = 10
+print(x);  // 0b1010 = 10
 ```
 
 ---

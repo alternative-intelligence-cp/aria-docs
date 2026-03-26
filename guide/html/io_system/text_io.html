@@ -680,25 +680,25 @@ process_line(lines[$]);
 <h3>Writing Text</h3>
 <pre><code>// Write to stdout
 <p>
-stdout << "Hello, world!\n";
+print("Hello, world!\n");
 </p>
 <p>
 // Formatted text
-stdout << format("Value: {:.2f}", value);
+print(format("Value: {:.2f}", value));
 </p>
 <p>
 // Multiple values
-stdout << "Count: " << count << ", Total: " << total << "\n";</code></pre>
+print("Count: " << count << ", Total: " << total + "\n");</code></pre>
 </p>
 <h3>Error Messages (Text)</h3>
 <pre><code>// Error messages are human-readable text
 <p>
-stderr << "ERROR: File not found: " << filename << "\n";</code></pre>
+stderr_write("ERROR: File not found: " << filename + "\n");</code></pre>
 </p>
 <h3>Debug Traces (Text)</h3>
 <pre><code>// Debug output is also text
 <p>
-stddbg << "Processing item " << item.id << ", status=" << item.status;</code></pre>
+stddbg_write("Processing item " << item.id << ", status=" + item.status);</code></pre>
 </p>
 <hr>
 <h2>Encoding</h2>
@@ -731,12 +731,12 @@ Aria uses <strong>UTF-8</strong> encoding for all text by default:
 <h2>Example: Text-Based CLI</h2>
 <pre><code>fn main() {
 <p>
-stdout << "Welcome to MyApp\n";
-stdout << "================\n\n";
+print("Welcome to MyApp\n");
+print("================\n\n");
 </p>
 <p>
 loop {
-stdout << "Command (help, run, quit): ";
+print("Command (help, run, quit): ");
 command: string = stdin.read_line().trim();
 </p>
 <p>
@@ -744,12 +744,12 @@ match command {
 "help" => show_help(),
 "run"  => run_task(),
 "quit" => break,
-_      => stderr << "Unknown command: " << command << "\n",
+_      => stderr_write("Unknown command: " << command << "\n"),
 }
 }
 </p>
 <p>
-stdout << "Goodbye!\n";
+print("Goodbye!\n");
 }</code></pre>
 </p>
 <hr>

@@ -19,10 +19,10 @@ pin data;
 defer unpin data;
 
 // Safe to get address
-ptr: *Data = &data;
+ptr: *Data = $data;
 
 // Use with C interop
-c_function(&data);
+c_function($data);
 ```
 
 ---

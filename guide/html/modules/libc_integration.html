@@ -796,11 +796,11 @@ fn strcmp(s1: <em>u8, s2: </em>u8) -> i32;
 <p>
 Result: i32 = extern.strcmp("apple\0", "banana\0");
 if result < 0 {
-stdout << "apple comes first";
+print("apple comes first");
 } else if result > 0 {
-stdout << "banana comes first";
+print("banana comes first");
 } else {
-stdout << "strings are equal";
+print("strings are equal");
 }</code></pre>
 </p>
 <hr>
@@ -839,7 +839,7 @@ buffer: [u8; 1024];
 bytes_read: usize = extern.fread(&buffer[0], 1, 1024, file);
 </p>
 <p>
-stdout << "Read $bytes_read bytes";
+print(`Read &{bytes_read} bytes`);
 </p>
 <p>
 extern.fclose(file);</code></pre>
@@ -894,7 +894,7 @@ fn fopen(path: <em>u8, mode: </em>u8) -> *void;
 file: *void = extern.fopen("nonexistent.txt\0", "r\0");
 if file == NULL {
 error: i32 = extern.errno;
-return Err("fopen failed with errno: $error");
+return Err(`fopen failed with errno: &{error}`);
 }</code></pre>
 </p>
 <hr>

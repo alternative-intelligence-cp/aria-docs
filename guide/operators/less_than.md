@@ -25,17 +25,17 @@ The less than operator `<` tests if the left value is strictly less than the rig
 ```aria
 // Numbers
 when 5 < 10 then
-    stdout << "5 is less";
+    print("5 is less");
 end
 
 when 10 < 5 then
-    stdout << "Won't print";
+    print("Won't print");
 end
 
 // Variables
 age: i32 = 15;
 when age < 18 then
-    stdout << "Minor";
+    print("Minor");
 end
 ```
 
@@ -46,12 +46,12 @@ end
 ```aria
 // Strict: not equal
 when 5 < 5 then
-    stdout << "Won't print";  // false
+    print("Won't print");  // false
 end
 
 // Use <= for less or equal
 when 5 <= 5 then
-    stdout << "Will print";  // true
+    print("Will print");  // true
 end
 ```
 
@@ -62,16 +62,16 @@ end
 ```aria
 // Lexicographic comparison
 when "apple" < "banana" then
-    stdout << "a comes before b";
+    print("a comes before b");
 end
 
 when "cat" < "dog" then
-    stdout << "c comes before d";
+    print("c comes before d");
 end
 
 // Case sensitive
 when "a" < "Z" then  // false ('a' = 97, 'Z' = 90)
-    stdout << "Won't print";
+    print("Won't print");
 end
 ```
 
@@ -82,12 +82,12 @@ end
 ```aria
 // Check if in range
 when x < max and x > min then
-    stdout << "In range";
+    print("In range");
 end
 
 // Chained (if supported)
 when min < x < max then
-    stdout << "In range";
+    print("In range");
 end
 ```
 
@@ -132,11 +132,11 @@ end
 ### Minimum
 
 ```aria
-fn min(a: i32, b: i32) -> i32 {
+func:min = int32(int32:a, int32:b) {
     when a < b then
-        return a;
+        pass(a);
     else
-        return b;
+        pass(b);
     end
 }
 ```

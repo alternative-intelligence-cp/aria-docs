@@ -25,7 +25,7 @@ The division assignment operator `/=` divides the variable by the right operand 
 ```aria
 x: i32 = 100;
 x /= 5;  // x = x / 5
-stdout << x;  // 20
+print(x);  // 20
 ```
 
 ---
@@ -45,7 +45,7 @@ x = x / 2;
 ```aria
 value: i32 = 10;
 value /= 3;  // 3 (truncates)
-stdout << value;
+print(value);
 ```
 
 ---
@@ -55,7 +55,7 @@ stdout << value;
 ```aria
 price: f64 = 99.99;
 price /= 2.0;  // 49.995
-stdout << price;
+print(price);
 ```
 
 ---

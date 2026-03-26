@@ -16,12 +16,12 @@ A **mutable borrow** is a mutable reference created with `$` that allows modifyi
 
 ```aria
 value: i32 = 42;
-ref: &i32 = $value;  // Mutable borrow
+ref: $i32 = $value;  // Mutable borrow
 
-stdout << ref;  // ✅ Can read
+print(ref);  // ✅ Can read
 ref = 100;      // ✅ Can modify
 
-stdout << value;  // 100
+print(value);  // 100
 ```
 
 ---
@@ -33,8 +33,8 @@ Only **one** mutable borrow at a time:
 ```aria
 value: i32 = 42;
 
-ref1: &i32 = $value;  // ✅ OK
-ref2: &i32 = $value;  // ❌ Error: already borrowed mutably
+ref1: $i32 = $value;  // ✅ OK
+ref2: $i32 = $value;  // ❌ Error: already borrowed mutably
 ```
 
 ---
@@ -42,13 +42,13 @@ ref2: &i32 = $value;  // ❌ Error: already borrowed mutably
 ## In Functions
 
 ```aria
-fn double(value: &i32) {
+func:double = NIL(int32->:value) {
     value = value * 2;
 }
 
 x: i32 = 21;
 double($x);  // Mutable borrow
-stdout << x;  // 42
+print(x);  // 42
 ```
 
 ---
@@ -61,14 +61,14 @@ struct Point {
     y: i32
 }
 
-fn move_point(p: &Point, dx: i32, dy: i32) {
+func:move_point = NIL(Point->:p, int32:dx, int32:dy) {
     p.x = p.x + dx;
     p.y = p.y + dy;
 }
 
 point: Point = Point{x: 10, y: 20};
 move_point($point, 5, 5);
-stdout << point.x << ", " << point.y;  // 15, 25
+print(point.x + ", " + point.y);  // 15, 25
 ```
 
 ---
@@ -79,7 +79,7 @@ stdout << point.x << ", " << point.y;  // 15, 25
 
 ```aria
 value: i32 = 42;
-ref: &i32 = $value;  // ✅ OK
+ref: $i32 = $value;  // ✅ OK
 ref = 100;           // ✅ Can modify
 ```
 
@@ -88,8 +88,8 @@ ref = 100;           // ✅ Can modify
 ```aria
 value: i32 = 42;
 
-ref1: &i32 = $value;  // ✅ OK
-ref2: &i32 = $value;  // ❌ Error: already borrowed
+ref1: $i32 = $value;  // ✅ OK
+ref2: $i32 = $value;  // ❌ Error: already borrowed
 ```
 
 ### ❌ CAN'T: Mix with Immutable Borrows
@@ -97,8 +97,8 @@ ref2: &i32 = $value;  // ❌ Error: already borrowed
 ```aria
 value: i32 = 42;
 
-ref1: &i32 = &value;  // Immutable
-ref2: &i32 = $value;  // ❌ Error: can't borrow mutably
+ref1: $i32 = $value;  // Immutable
+ref2: $i32 = $value;  // ❌ Error: can't borrow mutably
 ```
 
 ---
@@ -110,8 +110,8 @@ ref2: &i32 = $value;  // ❌ Error: can't borrow mutably
 ```aria
 // If multiple mutable borrows were allowed:
 value: i32 = 42;
-ref1: &i32 = $value;
-ref2: &i32 = $value;
+ref1: $i32 = $value;
+ref2: $i32 = $value;
 
 // Thread 1: ref1 = 100
 // Thread 2: ref2 = 200
@@ -126,8 +126,8 @@ ref2: &i32 = $value;
 ```aria
 // If allowed:
 vec: Vec<i32> = vec![1, 2, 3];
-ref1: &Vec<i32> = $vec;
-ref2: &Vec<i32> = $vec;
+ref1: $Vec<i32> = $vec;
+ref2: $Vec<i32> = $vec;
 
 ref1.clear();  // Clears vec
 ref2.push(4);  // Undefined behavior!
@@ -146,13 +146,13 @@ Borrow lasts until last use:
 value: i32 = 42;
 
 {
-    ref: &i32 = $value;
+    ref: $i32 = $value;
     ref = 100;
-    stdout << ref;  // Last use
+    print(ref);  // Last use
 }  // Borrow ends
 
 // Can borrow again
-ref2: &i32 = $value;  // ✅ OK
+ref2: $i32 = $value;  // ✅ OK
 ```
 
 ---
@@ -162,20 +162,20 @@ ref2: &i32 = $value;  // ✅ OK
 ### In-Place Modification
 
 ```aria
-fn increment(counter: &i32) {
+func:increment = NIL(int32->:counter) {
     counter = counter + 1;
 }
 
 count: i32 = 0;
 increment($count);
 increment($count);
-stdout << count;  // 2
+print(count);  // 2
 ```
 
 ### Update Fields
 
 ```aria
-fn update_user(user: &User, name: string) {
+func:update_user = NIL(User->:user, string:name) {
     user.name = name;
     user.updated_at = now();
 }
@@ -187,7 +187,7 @@ update_user($user, "Alice");
 ### Swap Values
 
 ```aria
-fn swap(a: &i32, b: &i32) {
+func:swap = NIL(int32->:a, int32->:b) {
     temp: i32 = a;
     a = b;
     b = temp;
@@ -196,7 +196,7 @@ fn swap(a: &i32, b: &i32) {
 x: i32 = 10;
 y: i32 = 20;
 swap($x, $y);
-stdout << x << ", " << y;  // 20, 10
+print(x + ", " + y);  // 20, 10
 ```
 
 ---
@@ -204,7 +204,7 @@ stdout << x << ", " << y;  // 20, 10
 ## With Collections
 
 ```aria
-fn append_to_all(strings: &[]string, suffix: string) {
+func:append_to_all = NIL([]string->:strings, string:suffix) {
     till(strings.length - 1, 1) {
         strings[$] = strings[$] + suffix;
     }
@@ -222,11 +222,11 @@ append_to_all($words, "!");
 Can create new borrow from existing:
 
 ```aria
-fn modify(value: &i32) {
+func:modify = NIL(int32->:value) {
     helper($value);  // Reborrow as mutable
 }
 
-fn helper(v: &i32) {
+func:helper = NIL(int32->:v) {
     v = v * 2;
 }
 ```
@@ -239,7 +239,7 @@ fn helper(v: &i32) {
 
 ```aria
 // Good: Need to modify
-fn reset(config: &Config) {
+func:reset = NIL(Config->:config) {
     config.load_defaults();
 }
 ```
@@ -249,7 +249,7 @@ fn reset(config: &Config) {
 ```aria
 // Good: Short-lived borrow
 {
-    ref: &i32 = $value;
+    ref: $i32 = $value;
     ref = ref * 2;
 }  // Borrow ends
 
@@ -260,7 +260,7 @@ fn reset(config: &Config) {
 
 ```aria
 // Wrong: Held too long
-ref: &i32 = $value;
+ref: $i32 = $value;
 
 // Lots of code...
 
@@ -269,7 +269,7 @@ ref = 100;  // Finally used
 // Right: Defer until needed
 // ... lots of code ...
 {
-    ref: &i32 = $value;
+    ref: $i32 = $value;
     ref = 100;
 }
 ```
@@ -278,12 +278,12 @@ ref = 100;  // Finally used
 
 ```aria
 // Wrong: Unnecessary borrowing
-fn take_ownership(value: &i32) {
+func:take_ownership = NIL(int32->:value) {
     temp: i32 = value;  // Just copying anyway
 }
 
 // Right: Take by value
-fn take_ownership(value: i32) {
+func:take_ownership = NIL(int32:value) {
     // Direct ownership
 }
 ```
@@ -295,7 +295,7 @@ fn take_ownership(value: i32) {
 ### Batch Update
 
 ```aria
-fn apply_discount(products: &[]Product, discount: f64) {
+func:apply_discount = NIL([]Product->:products, flt64:discount) {
     till(products.length - 1, 1) {
         products[$].price = products[$].price * (1.0 - discount);
     }
@@ -312,7 +312,7 @@ struct Cache {
     data: Map<string, string>
 }
 
-fn update_cache(cache: &Cache, key: string, value: string) {
+func:update_cache = NIL(Cache->:cache, string:key, string:value) {
     cache.data.insert(key, value);
 }
 
@@ -328,7 +328,7 @@ struct Connection {
     data: []byte
 }
 
-fn transition(conn: &Connection, new_state: State) {
+func:transition = NIL(Connection->:conn, State:new_state) {
     conn.state = new_state;
     when new_state == State::Closed then
         conn.data.clear();

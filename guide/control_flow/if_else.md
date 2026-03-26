@@ -30,7 +30,7 @@ if condition {
 age: i32 = 20;
 
 if age >= 18 {
-    stdout << "Adult\n";
+    print("Adult\n");
 }
 
 // No else - code continues
@@ -44,9 +44,9 @@ if age >= 18 {
 age: i32 = 16;
 
 if age >= 18 {
-    stdout << "Adult\n";
+    print("Adult\n");
 } else {
-    stdout << "Minor\n";
+    print("Minor\n");
 }
 ```
 
@@ -69,7 +69,7 @@ if score >= 90 {
     grade: string = "F";
 }
 
-stdout << "Grade: " << grade << "\n";
+print("Grade: " + grade + "\n");
 ```
 
 ---
@@ -145,12 +145,12 @@ end
 ```aria
 if user.is_authenticated {
     if user.is_admin {
-        stdout << "Admin dashboard\n";
+        print("Admin dashboard\n");
     } else {
-        stdout << "User dashboard\n";
+        print("User dashboard\n");
     }
 } else {
-    stdout << "Please log in\n";
+    print("Please log in\n");
 }
 ```
 
@@ -162,8 +162,8 @@ if user.is_authenticated {
 Result: File = open("data.txt");
 
 if result == ERR {
-    stderr << "Failed to open file\n";
-    return;
+    stderr_write("Failed to open file\n");
+    pass(NIL);
 }
 
 file: File = result;
@@ -178,9 +178,9 @@ file: File = result;
 file: File = pass open("data.txt");
 
 if file.size() > 1000000 {
-    stdout << "Large file\n";
+    print("Large file\n");
 } else {
-    stdout << "Small file\n";
+    print("Small file\n");
 }
 ```
 
@@ -191,22 +191,22 @@ if file.size() > 1000000 {
 ```aria
 // AND
 if age >= 18 && has_license {
-    stdout << "Can drive\n";
+    print("Can drive\n");
 }
 
 // OR
 if is_admin || is_moderator {
-    stdout << "Has elevated privileges\n";
+    print("Has elevated privileges\n");
 }
 
 // NOT
 if !is_banned {
-    stdout << "Welcome!\n";
+    print("Welcome!\n");
 }
 
 // Complex conditions
 if (age >= 18 || has_parent_permission) && !is_banned {
-    stdout << "Access granted\n";
+    print("Access granted\n");
 }
 ```
 
@@ -215,20 +215,20 @@ if (age >= 18 || has_parent_permission) && !is_banned {
 ## Early Return Pattern
 
 ```aria
-fn process(value: i32) {
+func:process = NIL(int32:value) {
     if value < 0 {
-        stderr << "Invalid value\n";
-        return;
+        stderr_write("Invalid value\n");
+        pass(NIL);
     }
     
     if value == 0 {
-        stdout << "Zero\n";
-        return;
+        print("Zero\n");
+        pass(NIL);
     }
     
     // Main logic for positive values
     Result: i32 = value * 2;
-    stdout << "Result: " << result << "\n";
+    print("Result: " + result + "\n");
 }
 ```
 
@@ -237,26 +237,26 @@ fn process(value: i32) {
 ## Guard Clauses
 
 ```aria
-fn withdraw(amount: f64) -> bool {
+func:withdraw = bool(flt64:amount) {
     // Guard clauses - check error conditions first
     if amount <= 0 {
-        stderr << "Amount must be positive\n";
-        return false;
+        stderr_write("Amount must be positive\n");
+        pass(false);
     }
     
     if amount > balance {
-        stderr << "Insufficient funds\n";
-        return false;
+        stderr_write("Insufficient funds\n");
+        pass(false);
     }
     
     if account_frozen {
-        stderr << "Account is frozen\n";
-        return false;
+        stderr_write("Account is frozen\n");
+        pass(false);
     }
     
     // Main logic - happy path
     balance = balance - amount;
-    return true;
+    pass(true);
 }
 ```
 
@@ -290,14 +290,14 @@ if user == nil {
 }
 
 // Safe to use user here
-stdout << user.name << "\n";
+print(user.name + "\n");
 ```
 
 ### Flag Checking
 
 ```aria
 if debug_mode {
-    stdout << "Debug: Processing item " << id << "\n";
+    print("Debug: Processing item " + id + "\n");
 }
 ```
 
@@ -319,11 +319,11 @@ if status == "active" { }
 ```aria
 // Good: Handle errors early
 if input == nil {
-    return;
+    pass(NIL);
 }
 
 if input.length() == 0 {
-    return;
+    pass(NIL);
 }
 
 // Main logic here
@@ -396,7 +396,7 @@ value: i32 = condition ? 10 : 20;
 ### Input Validation
 
 ```aria
-fn process_order(order: Order) {
+func:process_order = NIL(Order:order) {
     if order.items.length() == 0 {
         fail "Order must contain items";
     }
@@ -416,7 +416,7 @@ fn process_order(order: Order) {
 ### Permission Checking
 
 ```aria
-fn delete_file(user: User, file: File) {
+func:delete_file = NIL(User:user, File:file) {
     if !user.is_authenticated {
         fail "User not authenticated";
     }
@@ -449,7 +449,7 @@ if state == "idle" {
     }
 } else if state == "done" {
     // Already complete
-    stdout << "Work already done\n";
+    print("Work already done\n");
 }
 ```
 

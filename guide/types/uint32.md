@@ -66,13 +66,13 @@ hash: u32 = calculate_hash(data);
 // IPv4 as u32
 ip: u32 = 0xC0A80001;  // 192.168.0.1
 
-fn ip_to_string(ip: u32) -> string {
+func:ip_to_string = string(uint32:ip) {
     a: u8 = ((ip >> 24) & 0xFF) as u8;
     b: u8 = ((ip >> 16) & 0xFF) as u8;
     c: u8 = ((ip >> 8) & 0xFF) as u8;
     d: u8 = (ip & 0xFF) as u8;
     
-    return "${a}.${b}.${c}.${d}";
+    pass("&{a}.&{b}.&{c}.&{d}");
 }
 ```
 

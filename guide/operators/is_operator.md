@@ -27,11 +27,11 @@ The `is` operator checks if a value matches a type or pattern.
 value: any = 42;
 
 when value is i32 then
-    stdout << "Integer";
+    print("Integer");
 end
 
 when value is string then
-    stdout << "String";
+    print("String");
 end
 ```
 
@@ -43,9 +43,9 @@ end
 Result: Result<i32, Error> = compute();
 
 when result is Ok(value) then
-    stdout << "Success: " << value;
+    print("Success: " + value);
 elsif result is Err(error) then
-    stdout << "Error: " << error;
+    print("Error: " + error);
 end
 ```
 
@@ -63,7 +63,7 @@ union Value {
 value: Value = Value::Int(42);
 
 when value is Int(n) then
-    stdout << "Integer: " << n;
+    print("Integer: " + n);
 end
 ```
 

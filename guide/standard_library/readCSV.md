@@ -15,7 +15,7 @@
 ## Syntax
 
 ```aria
-import std.csv;
+use std.csv;
 
 data: Result<[][]string> = readCSV("data.csv");
 ```
@@ -39,17 +39,17 @@ data: Result<[][]string> = readCSV("data.csv");
 ### Basic Usage
 
 ```aria
-import std.csv;
+use std.csv;
 
 // Read CSV
 Result: Result<[][]string> = readCSV("users.csv");
 
 when result is Ok(rows) then
     till(rows.length - 1, 1) {
-        stdout << "Row: $(rows[$].join(", "))";
+        print("Row: $(rows[$].join(", "))");
     end
 elsif result is Err(msg) then
-    stderr << "Failed to read CSV: $msg";
+    stderr_write(`Failed to read CSV: &{msg}`);
 end
 ```
 
@@ -74,7 +74,7 @@ till(rows.length() - 1, 1) {
         age: string = row[1];  // Note: still string, need to parse
         city: string = row[2];
         
-        stdout << "$name, age $(age), from $city";
+        print(`&{name}, age $(age), from &{city}`);
     end
 end
 ```
@@ -155,7 +155,7 @@ end
 till(rows.length - 1, 1) {
     row = rows[$];
     when row.length() < 3 then
-        stderr << "Incomplete row: $(row.join(","))";
+        stderr_write("Incomplete row: $(row.join(","))");
         continue;
     end
     

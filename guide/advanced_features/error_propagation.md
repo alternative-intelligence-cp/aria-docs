@@ -14,14 +14,14 @@ Error propagation handles errors **cleanly** without deeply nested error checkin
 ## The `?` Operator
 
 ```aria
-fn read_file(path: string) -> Result<string> {
+func:read_file = Result<string>(string:path) {
     file: File = open(path)?;  // Returns Err if open fails
     content: string = file.read_all()?;  // Returns Err if read fails
-    return Ok(content);
+    pass(Ok(content));
 }
 
 // Without ?
-fn read_file_verbose(path: string) -> Result<string> {
+func:read_file_verbose = Result<string>(string:path) {
     match open(path) {
         Ok(file) => {
             match file.read_all() {
@@ -39,13 +39,13 @@ fn read_file_verbose(path: string) -> Result<string> {
 ## Propagating Multiple Errors
 
 ```aria
-fn process_user_file(user_id: i32) -> Result<Data> {
+func:process_user_file = Result<Data>(int32:user_id) {
     user: User = fetch_user(user_id)?;          // Network error?
     file: File = open(user.file_path)?;         // IO error?
     content: string = file.read_all()?;         // Read error?
     data: Data = parse_content(content)?;       // Parse error?
     validated: Data = validate(data)?;          // Validation error?
-    return Ok(validated);
+    pass(Ok(validated));
 }
 ```
 
@@ -54,7 +54,7 @@ fn process_user_file(user_id: i32) -> Result<Data> {
 ## Error Context
 
 ```aria
-fn load_config(path: string) -> Result<Config> {
+func:load_config = Result<Config>(string:path) {
     content: string = readFile(path)
         .context("Failed to read config file")?;
     
@@ -64,7 +64,7 @@ fn load_config(path: string) -> Result<Config> {
     validated: Config = validate_config(config)
         .context("Invalid configuration")?;
     
-    return Ok(validated);
+    pass(Ok(validated));
 }
 ```
 
@@ -73,24 +73,24 @@ fn load_config(path: string) -> Result<Config> {
 ## Early Return Pattern
 
 ```aria
-fn validate_user(user: User) -> Result<void> {
+func:validate_user = Result<NIL>(User:user) {
     if user.name == "" {
-        return Err("Name cannot be empty");
+        pass(Err("Name cannot be empty"));
     }
     
     if user.age < 0 {
-        return Err("Age cannot be negative");
+        pass(Err("Age cannot be negative"));
     }
     
     if user.age > 150 {
-        return Err("Age too high");
+        pass(Err("Age too high"));
     }
     
     if !user.email.contains("@") {
-        return Err("Invalid email");
+        pass(Err("Invalid email"));
     }
     
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -99,7 +99,7 @@ fn validate_user(user: User) -> Result<void> {
 ## Combining Results
 
 ```aria
-fn fetch_all_data() -> Result<AllData> {
+func:fetch_all_data = Result<AllData>() {
     user: User = fetch_user()?;
     posts: []Post = fetch_posts()?;
     comments: []Comment = fetch_comments()?;
@@ -117,16 +117,16 @@ fn fetch_all_data() -> Result<AllData> {
 ## Optional to Result
 
 ```aria
-fn get_user(id: i32) -> Result<User> {
+func:get_user = Result<User>(int32:id) {
     user: ?User = database.find(id);
     
     // Convert Option to Result
-    return user.ok_or("User not found");
+    pass(user.ok_or("User not found"));
 }
 
-fn parse_number(s: string) -> Result<i32> {
+func:parse_number = Result<int32>(string:s) {
     num: ?i32 = s.parse();
-    return num.ok_or("Invalid number");
+    pass(num.ok_or("Invalid number"));
 }
 ```
 
@@ -137,7 +137,7 @@ fn parse_number(s: string) -> Result<i32> {
 ### File Processing
 
 ```aria
-fn process_file(input_path: string, output_path: string) -> Result<void> {
+func:process_file = Result<NIL>(string:input_path, string:output_path) {
     // Read input
     content: string = readFile(input_path)?;
     
@@ -147,7 +147,7 @@ fn process_file(input_path: string, output_path: string) -> Result<void> {
     // Write output
     writeFile(output_path, processed)?;
     
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -156,16 +156,16 @@ fn process_file(input_path: string, output_path: string) -> Result<void> {
 ### HTTP Request Chain
 
 ```aria
-async fn fetch_user_posts(user_id: i32) -> Result<[]Post> {
+async func:fetch_user_posts = Result<[]Post>(int32:user_id) {
     // Fetch user
-    user_resp: Response = await http.get("/users/$user_id")?;
+    user_resp: Response = await http.get(`/users/&{user_id}`)?;
     user: User = await user_resp.json()?;
     
     // Fetch posts
-    posts_resp: Response = await http.get("/posts?user=$user_id")?;
+    posts_resp: Response = await http.get(`/posts?user=&{user_id}`)?;
     posts: []Post = await posts_resp.json()?;
     
-    return Ok(posts);
+    pass(Ok(posts));
 }
 ```
 
@@ -174,7 +174,7 @@ async fn fetch_user_posts(user_id: i32) -> Result<[]Post> {
 ### Database Transaction
 
 ```aria
-fn create_user(name: string, email: string) -> Result<User> {
+func:create_user = Result<User>(string:name, string:email) {
     tx: Transaction = db.begin()?;
     
     // Insert user
@@ -194,7 +194,7 @@ fn create_user(name: string, email: string) -> Result<User> {
     
     // Fetch created user
     user: User = get_user(user_id)?;
-    return Ok(user);
+    pass(Ok(user));
 }
 ```
 
@@ -203,7 +203,7 @@ fn create_user(name: string, email: string) -> Result<User> {
 ### Validation Chain
 
 ```aria
-fn register_user(data: UserData) -> Result<User> {
+func:register_user = Result<User>(UserData:data) {
     // Validate each field
     validate_name(data.name)?;
     validate_email(data.email)?;
@@ -216,7 +216,7 @@ fn register_user(data: UserData) -> Result<User> {
     // Create user
     user: User = create_user(data)?;
     
-    return Ok(user);
+    pass(Ok(user));
 }
 ```
 
@@ -225,7 +225,7 @@ fn register_user(data: UserData) -> Result<User> {
 ### Resource Cleanup
 
 ```aria
-fn copy_file(src: string, dst: string) -> Result<void> {
+func:copy_file = Result<NIL>(string:src, string:dst) {
     src_file: File = open(src)?;
     defer src_file.close();
     
@@ -236,7 +236,7 @@ fn copy_file(src: string, dst: string) -> Result<void> {
     content: []u8 = src_file.read_all()?;
     dst_file.write_all(content)?;
     
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -245,7 +245,7 @@ fn copy_file(src: string, dst: string) -> Result<void> {
 ## Error Transformation
 
 ```aria
-fn fetch_data() -> Result<Data, CustomError> {
+func:fetch_data = Result<Data,()CustomError> {
     // Transform error type
     response: Response = http_get("/data")
         .map_err(|e| CustomError.NetworkError(e))?;
@@ -253,7 +253,7 @@ fn fetch_data() -> Result<Data, CustomError> {
     data: Data = parse_response(response)
         .map_err(|e| CustomError.ParseError(e))?;
     
-    return Ok(data);
+    pass(Ok(data));
 }
 ```
 
@@ -262,14 +262,14 @@ fn fetch_data() -> Result<Data, CustomError> {
 ## Fallible Iterator
 
 ```aria
-fn process_files(paths: []string) -> Result<void> {
+func:process_files = Result<NIL>([]string:paths) {
     till(paths.length - 1, 1) {
         // Each iteration can fail
         content: string = readFile(paths[$])?;
         processed: string = process(content)?;
         writeFile(paths[$] ++ ".processed", processed)?;
     }
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -278,7 +278,7 @@ fn process_files(paths: []string) -> Result<void> {
 ## Collecting Results
 
 ```aria
-fn fetch_all_users(ids: []i32) -> Result<[]User> {
+func:fetch_all_users = Result<[]User>([]i32:ids) {
     users: []User = [];
     
     till(ids.length - 1, 1) {
@@ -286,18 +286,18 @@ fn fetch_all_users(ids: []i32) -> Result<[]User> {
         users.push(user);
     }
     
-    return Ok(users);
+    pass(Ok(users));
 }
 
 // Or collect all results
-fn try_fetch_all(ids: []i32) -> []Result<User> {
+func:try_fetch_all = []Result<User>([]i32:ids) {
     results: []Result<User> = [];
     
     till(ids.length - 1, 1) {
         results.push(fetch_user(ids[$]));  // Continue on errors
     }
     
-    return results;
+    pass(results);
 }
 ```
 
@@ -308,41 +308,41 @@ fn try_fetch_all(ids: []i32) -> []Result<User> {
 ### ✅ DO: Use ? for Clean Error Handling
 
 ```aria
-fn load_and_process() -> Result<Data> {
+func:load_and_process = Result<Data>() {
     config: Config = load_config()?;
     input: Input = load_input()?;
     data: Data = process(config, input)?;
-    return Ok(data);
+    pass(Ok(data));
 }
 ```
 
 ### ✅ DO: Provide Context
 
 ```aria
-fn load_user_data(user_id: i32) -> Result<UserData> {
+func:load_user_data = Result<UserData>(int32:user_id) {
     user: User = fetch_user(user_id)
-        .context("Failed to fetch user $user_id")?;
+        .context(`Failed to fetch user &{user_id}`)?;
     
     profile: Profile = fetch_profile(user_id)
-        .context("Failed to fetch profile for user $user_id")?;
+        .context(`Failed to fetch profile for user &{user_id}`)?;
     
-    return Ok(UserData { user, profile });
+    pass(Ok(UserData { user, profile }));
 }
 ```
 
 ### ✅ DO: Use Early Returns
 
 ```aria
-fn validate(data: Data) -> Result<void> {
+func:validate = Result<NIL>(Data:data) {
     if data.is_empty() {
-        return Err("Data cannot be empty");
+        pass(Err("Data cannot be empty"));
     }
     
     if !data.is_valid() {
-        return Err("Invalid data format");
+        pass(Err("Invalid data format"));
     }
     
-    return Ok();
+    pass(Ok());
 }
 ```
 
@@ -350,21 +350,21 @@ fn validate(data: Data) -> Result<void> {
 
 ```aria
 // ❌ Bad - silently ignores error
-fn bad_process() {
+func:bad_process = NIL() {
     _ = risky_operation();  // Error ignored!
 }
 
 // ✅ Good - handle or propagate
-fn good_process() -> Result<void> {
+func:good_process = Result<NIL>() {
     risky_operation()?;  // Propagate error
-    return Ok();
+    pass(Ok());
 }
 
 // ✅ Or explicitly handle
-fn handle_process() {
+func:handle_process = NIL() {
     match risky_operation() {
-        Ok(_) => stdout << "Success",
-        Err(e) => stderr << "Error: $e",
+        Ok(_) => print("Success"),
+        Err(e) => stderr_write(`Error: &{e}`),
     }
 }
 ```
@@ -373,14 +373,14 @@ fn handle_process() {
 
 ```aria
 // ❌ Error - can't use ? here
-fn bad() {
+func:bad = NIL() {
     content: string = readFile("file.txt")?;  // Error!
 }
 
 // ✅ Good - return Result
-fn good() -> Result<string> {
+func:good = Result<string>() {
     content: string = readFile("file.txt")?;
-    return Ok(content);
+    pass(Ok(content));
 }
 ```
 

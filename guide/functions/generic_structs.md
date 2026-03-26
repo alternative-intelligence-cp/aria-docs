@@ -62,17 +62,17 @@ struct Box<T> {
 
 impl<T> Box<T> {
     // Constructor
-    fn new(value: T) -> Box<T> {
-        return Box{value: value};
+    func:new = Box<T>(T:value) {
+        pass(Box{value: value});
     }
     
     // Getter
-    fn get() -> T {
-        return self.value;
+    func:get = T() {
+        pass(self.value);
     }
     
     // Setter
-    fn set(new_value: T) {
+    func:set = NIL(T:new_value) {
         self.value = new_value;
     }
 }
@@ -88,8 +88,8 @@ box.set(100);
 ```aria
 impl<T> Box<T> {
     // Method with its own type parameter U
-    fn map<U>(f: fn(T) -> U) -> Box<U> {
-        return Box{value: f(self.value)};
+    func:map = U)(fn(T:f)-> Box<U> {
+        pass(Box{value: f(self.value)});
     }
 }
 
@@ -109,22 +109,22 @@ struct Box<T> {
 
 // Implementation for ALL types
 impl<T> Box<T> {
-    fn get() -> T {
-        return self.value;
+    func:get = T() {
+        pass(self.value);
     }
 }
 
 // Implementation ONLY for i32
 impl Box<i32> {
-    fn is_even() -> bool {
-        return self.value % 2 == 0;
+    func:is_even = bool() {
+        pass(self.value % 2 == 0);
     }
 }
 
 // Implementation ONLY for string
 impl Box<string> {
-    fn uppercase() -> string {
-        return self.value.to_uppercase();
+    func:uppercase = string() {
+        pass(self.value.to_uppercase());
     }
 }
 
@@ -147,8 +147,8 @@ struct Printable<T> where T: Display {
 }
 
 impl<T> Printable<T> where T: Display {
-    fn print() {
-        stdout << self.value << "\n";
+    func:print = NIL() {
+        print(self.value + "\n");
     }
 }
 
@@ -174,21 +174,21 @@ enum Option<T> {
 }
 
 impl<T> Option<T> {
-    fn is_some() -> bool {
+    func:is_some = bool() {
         return match self {
             Some(_) => true,
             None => false
         };
     }
     
-    fn unwrap() -> T {
+    func:unwrap = T() {
         return match self {
             Some(value) => value,
             None => panic("Called unwrap on None")
         };
     }
     
-    fn unwrap_or(default: T) -> T {
+    func:unwrap_or = T(T:default) {
         return match self {
             Some(value) => value,
             None => default
@@ -206,14 +206,14 @@ enum Result<T, E> {
 }
 
 impl<T, E> Result<T, E> {
-    fn is_ok() -> bool {
+    func:is_ok = bool() {
         return match self {
             Ok(_) => true,
             Err(_) => false
         };
     }
     
-    fn unwrap() -> T {
+    func:unwrap = T() {
         return match self {
             Ok(value) => value,
             Err(_) => panic("Called unwrap on Err")
@@ -232,7 +232,7 @@ struct Vec<T> {
 }
 
 impl<T> Vec<T> {
-    fn new() -> Vec<T> {
+    func:new = Vec<T>() {
         return Vec{
             data: [],
             len: 0,
@@ -240,16 +240,16 @@ impl<T> Vec<T> {
         };
     }
     
-    fn push(item: T) {
+    func:push = NIL(T:item) {
         // Implementation
         self.len = self.len + 1;
     }
     
-    fn get(index: usize) -> T? {
+    func:get = T?(uint64:index) {
         when index >= self.len then
-            return nil;
+            pass(nil);
         end
-        return self.data[index];
+        pass(self.data[index]);
     }
 }
 ```
@@ -267,15 +267,15 @@ struct Entry<K, V> {
 }
 
 impl<K, V> Map<K, V> where K: Hashable {
-    fn new() -> Map<K, V> {
-        return Map{entries: []};
+    func:new = Map<K,()V> {
+        pass(Map{entries: []});
     }
     
-    fn insert(key: K, value: V) {
+    func:insert = NIL(K:key, V:value) {
         // Implementation
     }
     
-    fn get(key: K) -> V? {
+    func:get = V?(K:key) {
         // Implementation
     }
 }
@@ -330,8 +330,8 @@ struct Reference<'a, T> {
 }
 
 impl<'a, T> Reference<'a, T> {
-    fn get() -> &'a T {
-        return self.data;
+    func:get = 'a->()T {
+        pass(self.data);
     }
 }
 ```
@@ -344,7 +344,7 @@ impl<'a, T> Reference<'a, T> {
 trait Iterator {
     type Item;
     
-    fn next() -> Option<Self::Item>;
+    func:next = Result<Self::Item>()
 }
 
 struct VecIterator<T> {
@@ -355,14 +355,14 @@ struct VecIterator<T> {
 impl<T> Iterator for VecIterator<T> {
     type Item = T;
     
-    fn next() -> Option<T> {
+    func:next = Result<T>() {
         when self.index >= self.data.len() then
-            return None;
+            pass(None);
         end
         
         item: T = self.data.get(self.index);
         self.index = self.index + 1;
-        return Some(item);
+        pass(Some(item));
     }
 }
 ```
@@ -380,8 +380,8 @@ struct Stack<T> {
 }
 
 impl<T> Stack<T> {
-    fn push(item: T) { }
-    fn pop() -> T? { }
+    func:push = NIL(T:item) { }
+    func:pop = T?() { }
 }
 ```
 
@@ -394,7 +394,7 @@ struct SortedSet<T> where T: Comparable {
 }
 
 impl<T> SortedSet<T> where T: Comparable {
-    fn insert(item: T) {
+    func:insert = NIL(T:item) {
         // Can use comparison operators
     }
 }
@@ -456,18 +456,18 @@ struct Cache<K, V> {
 }
 
 impl<K, V> Cache<K, V> where K: Hashable {
-    fn new(max_size: usize) -> Cache<K, V> {
+    func:new = Cache<K,(uint64:max_size)V> {
         return Cache{
             data: Map::new(),
             max_size: max_size
         };
     }
     
-    fn get(key: K) -> V? {
-        return self.data.get(key);
+    func:get = V?(K:key) {
+        pass(self.data.get(key));
     }
     
-    fn set(key: K, value: V) {
+    func:set = NIL(K:key, V:value) {
         when self.data.len() >= self.max_size then
             self.evict_oldest();
         end
@@ -489,14 +489,14 @@ struct Builder<T> {
 }
 
 impl<T> Builder<T> {
-    fn new() -> Builder<T> {
+    func:new = Builder<T>() {
         return Builder{
             items: [],
             validators: []
         };
     }
     
-    fn add(item: T) -> Builder<T> {
+    func:add = Builder<T>(T:item) {
         till(self.validators.length - 1, 1) {
             validator: fn(T) -> bool = self.validators[$];
             when !validator(item) then
@@ -504,16 +504,16 @@ impl<T> Builder<T> {
             end
         }
         self.items.push(item);
-        return self;
+        pass(self);
     }
     
-    fn validate(f: fn(T) -> bool) -> Builder<T> {
+    func:validate = bool)(fn(T:f)-> Builder<T> {
         self.validators.push(f);
-        return self;
+        pass(self);
     }
     
-    fn build() -> []T {
-        return self.items;
+    func:build = []T() {
+        pass(self.items);
     }
 }
 ```
@@ -528,7 +528,7 @@ struct Tree<T> {
 }
 
 impl<T> Tree<T> {
-    fn leaf(value: T) -> Tree<T> {
+    func:leaf = Tree<T>(T:value) {
         return Tree{
             value: value,
             left: nil,
@@ -536,7 +536,7 @@ impl<T> Tree<T> {
         };
     }
     
-    fn insert(value: T) where T: Comparable {
+    func:insert = NIL(T:value)where T: Comparable {
         when value < self.value then
             when self.left == nil then
                 self.left = Some(Box::new(Tree::leaf(value)));

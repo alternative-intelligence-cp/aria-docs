@@ -15,7 +15,7 @@
 ## Syntax
 
 ```aria
-import std.io;
+use std.io;
 
 content: Result<string> = readFile("data.txt");
 ```
@@ -39,15 +39,15 @@ content: Result<string> = readFile("data.txt");
 ### Basic Usage
 
 ```aria
-import std.io;
+use std.io;
 
 // Read file
 Result: Result<string> = readFile("config.txt");
 
 when result is Ok(content) then
-    stdout << "File contents:\n$content";
+    print(`File contents:\n&{content}`);
 elsif result is Err(msg) then
-    stderr << "Error reading file: $msg";
+    stderr_write(`Error reading file: &{msg}`);
 end
 ```
 
@@ -71,7 +71,7 @@ till(files.length - 1, 1) {
     when readFile(files[$]) is Ok(content) then
         process(content);
     elsif is Err(msg) then
-        stderr << "Failed to read $(files[$]): $msg";
+        stderr_write(`Failed to read $(files[$]): &{msg}`);
     end
 end
 ```
@@ -94,7 +94,7 @@ end
 ```aria
 Result<string>:Result = readFile("important.txt");
 when result is Err(msg) then
-    log_error("Failed to read: $msg");
+    log_error(`Failed to read: &{msg}`);
     fail("Cannot proceed");
 end
 ```

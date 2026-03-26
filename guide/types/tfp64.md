@@ -1,8 +1,11 @@
 # tfp64 - Twisted Floating Point 64-bit (High-Precision Deterministic Float)
 
+> **⚠️ DESIGN DOCUMENT — NOT YET IMPLEMENTED IN COMPILER**
+> This type is part of the Aria language specification but is not yet available in the compiler. The documentation below describes the planned design.
+
 **Category**: Types → Floating-Point / Deterministic  
 **Purpose**: High-precision cross-platform bit-exact deterministic floating-point  
-**Status**: ✅ COMPLETE (All operations implemented)
+**Status**: 📋 SPECIFIED (not yet implemented)
 
 ---
 
@@ -187,7 +190,7 @@ bool:less_eq = (a <= c);     // true
 bool:greater_eq = (a >= b);  // true
 
 // Three-way comparison
-int32:cmp = aria_tfp64_cmp(&a, &b);  // Returns 1 (a > b)
+int32:cmp = aria_tfp64_cmp($a, $b);  // Returns 1 (a > b)
 // Returns: -1 if a < b, 0 if a == b, 1 if a > b
 ```
 
@@ -601,7 +604,7 @@ function rk4_step(
         !!! ERR_INTEGRATION_FAILED;
     }
     
-    return y_next;
+    pass(y_next);
 end
 ```
 
@@ -692,7 +695,7 @@ function compute_acceleration(tfp64:x, tfp64:y) : (tfp64, tfp64) begin
         !!! ERR_PHYSICS_CORRUPTED;
     }
     
-    return (ax, ay);
+    pass((ax, ay));
 end
 
 // Simulate orbit (Verlet integration)

@@ -741,7 +741,7 @@ logger.set_output(stderr);  // or file handle</code></pre>
 <hr>
 <h2>Best Practices</h2>
 <h3>✅ DO: Use Appropriate Levels</h3>
-<pre><code>logger.debug("Variable value: $x");  // Development
+<pre><code>logger.debug(`Variable value: &{x}`);  // Development
 <p>
 logger.info("Request processed");    // Normal operation
 logger.warn("Retry attempt 3/5");    // Potential issues

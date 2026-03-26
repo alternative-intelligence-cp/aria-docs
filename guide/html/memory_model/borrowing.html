@@ -660,12 +660,12 @@ value: i32 = 42;
 print_value(&value);  // Borrow value
 </p>
 <p>
-stdout << value;  // Still owns value
+print(value);  // Still owns value
 }
 </p>
 <p>
 fn print_value(v: &i32) {
-stdout << v << "\n";  // Temporary access
+print(v + "\n");  // Temporary access
 }  // Borrow ends here</code></pre>
 </p>
 <hr>
@@ -673,24 +673,24 @@ stdout << v << "\n";  // Temporary access
 <h3>Ownership (Transfer)</h3>
 <pre><code>fn take_ownership(s: string) {
 <p>
-stdout << s;
+print(s);
 }  // s dropped here
 </p>
 <p>
 value: string = "hello";
 take_ownership(value);
-stdout << value;  // ❌ Error: value moved</code></pre>
+print(value);  // ❌ Error: value moved</code></pre>
 </p>
 <h3>Borrowing (Reference)</h3>
 <pre><code>fn borrow(s: &string) {
 <p>
-stdout << s;
+print(s);
 }  // Borrow ends, s still valid
 </p>
 <p>
 value: string = "hello";
 borrow(&value);
-stdout << value;  // ✅ OK: still owns value</code></pre>
+print(value);  // ✅ OK: still owns value</code></pre>
 </p>
 <hr>
 <h2>Immutable Borrowing</h2>
@@ -702,7 +702,7 @@ Default borrows are <strong>read-only</strong>:
 ref: &i32 = &value;
 </p>
 <p>
-stdout << ref;   // ✅ Can read
+print(ref);   // ✅ Can read
 ref = 100;       // ❌ Can't modify</code></pre>
 </p>
 <hr>
@@ -718,7 +718,7 @@ ref: &i32 = $value;  // Mutable borrow
 ref = 100;  // ✅ Can modify through reference
 </p>
 <p>
-stdout << value;  // 100</code></pre>
+print(value);  // 100</code></pre>
 </p>
 <hr>
 <h2>Borrowing Rules</h2>
@@ -730,7 +730,7 @@ ref2: &i32 = &value;  // ✅ OK
 ref3: &i32 = &value;  // ✅ OK
 </p>
 <p>
-stdout << ref1 << ref2 << ref3;  // All can read</code></pre>
+print(ref1 << ref2 + ref3);  // All can read</code></pre>
 </p>
 <h3>Rule 2: Only One Mutable Borrow</h3>
 <pre><code>value: i32 = 42;
@@ -784,7 +784,7 @@ Borrows last until their <strong>last use</strong>:
 <p>
 {
 ref: &i32 = &value;  // Borrow starts
-stdout << ref;       // Last use of ref
+print(ref);       // Last use of ref
 }  // Borrow ends
 </p>
 <p>
@@ -796,7 +796,7 @@ mut_ref: &i32 = $value;  // ✅ OK</code></pre>
 <h3>By Value (Takes Ownership)</h3>
 <pre><code>fn consume(s: string) {
 <p>
-stdout << s;
+print(s);
 }  // s dropped
 </p>
 <p>
@@ -807,7 +807,7 @@ consume(text);
 <h3>By Reference (Borrows)</h3>
 <pre><code>fn display(s: &string) {
 <p>
-stdout << s;
+print(s);
 }  // Borrow ends
 </p>
 <p>
@@ -824,7 +824,7 @@ s.push_str(" world");
 <p>
 text: string = "hello";
 modify($text);  // Mutable borrow
-stdout << text;  // "hello world"</code></pre>
+print(text);  // "hello world"</code></pre>
 </p>
 <hr>
 <h2>Returning References</h2>
@@ -865,7 +865,7 @@ value = value * 2;
 <p>
 x: i32 = 21;
 double($x);
-stdout << x;  // 42</code></pre>
+print(x);  // 42</code></pre>
 </p>
 <h3>Multiple Readers</h3>
 <pre><code>fn compare(a: &i32, b: &i32) -> bool {
@@ -916,7 +916,7 @@ fn modify(s: &string) { }   // Needs mutation</code></pre>
 <p>
 {
 ref: &i32 = &value;
-stdout << ref;
+print(ref);
 }  // Borrow ends
 </p>
 <p>
@@ -933,7 +933,7 @@ ref: &i32 = &value;
 </p>
 <p>
 value = 100;  // ❌ Error: can't modify while borrowed
-stdout << ref;  // Still using borrow</code></pre>
+print(ref);  // Still using borrow</code></pre>
 </p>
 <h3>❌ DON'T: Return References to Locals</h3>
 <pre><code>// Wrong: Dangling reference
@@ -994,7 +994,7 @@ price = price * (1.0 - discount);
 <p>
 item_price: f64 = 100.0;
 apply_discount($item_price, 0.2);
-stdout << item_price;  // 80.0</code></pre>
+print(item_price);  // 80.0</code></pre>
 </p>
 <hr>
 <h2>Borrowing in Loops</h2>
@@ -1002,7 +1002,7 @@ stdout << item_price;  // 80.0</code></pre>
 <p>
 // Immutable borrow
 till(items.length - 1, 1) {
-stdout << items[$].name;  // Read only
+print(items[$].name);  // Read only
 }
 </p>
 <p>

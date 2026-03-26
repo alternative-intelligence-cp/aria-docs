@@ -15,7 +15,7 @@
 ## Syntax
 
 ```aria
-import std.process;
+use std.process;
 
 Result: Result<ProcessResult> = exec("ls", ["-la", "/home"]);
 ```
@@ -52,12 +52,12 @@ struct ProcessResult {
 ### Basic Command
 
 ```aria
-import std.process;
+use std.process;
 
 Result: ProcessResult = exec("echo", ["Hello, World!"])?;
 
-stdout << "Output: $(result.stdout)";
-stdout << "Exit code: $(result.exit_code)";
+print("Output: $(result.stdout)");
+print("Exit code: $(result.exit_code)");
 ```
 
 ### Check Exit Code
@@ -66,9 +66,9 @@ stdout << "Exit code: $(result.exit_code)";
 Result<ProcessResult>:Result = exec("grep", ["pattern", "file.txt"])?;
 
 when result.exit_code == 0 then
-    stdout << "Found:\n$(result.stdout)";
+    print("Found:\n$(result.stdout)");
 else
-    stderr << "Not found or error";
+    stderr_write("Not found or error");
 end
 ```
 
@@ -78,11 +78,11 @@ end
 ProcessResult:Result = exec("git", ["status"])?;
 
 when result.exit_code != 0 then
-    stderr << "Git error: $(result.stderr)";
+    stderr_write("Git error: $(result.stderr)");
     fail("Git command failed");
 end
 
-stdout << result.stdout;
+print(result.stdout);
 ```
 
 ### Run Script
@@ -90,7 +90,7 @@ stdout << result.stdout;
 ```aria
 Result: ProcessResult = exec("python3", ["script.py", "arg1", "arg2"])?;
 
-stdout << "Script output: $(result.stdout)";
+print("Script output: $(result.stdout)");
 ```
 
 ---
@@ -101,7 +101,7 @@ stdout << "Script output: $(result.stdout)";
 
 ```aria
 Result: ProcessResult = exec("ls", ["-la"])?;
-stdout << result.stdout;
+print(result.stdout);
 ```
 
 ### Git Operations
@@ -121,7 +121,7 @@ commit: ProcessResult = exec("git", ["commit", "-m", "Update"])?;
 build: ProcessResult = exec("gcc", ["main.c", "-o", "program"])?;
 
 when build.exit_code != 0 then
-    stderr << "Build failed:\n$(build.stderr)";
+    stderr_write("Build failed:\n$(build.stderr)");
 end
 ```
 
@@ -144,8 +144,8 @@ end
 ProcessResult:Result = exec(command, args)?;
 
 when result.exit_code != 0 then
-    stderr << "Command failed with code $(result.exit_code)";
-    stderr << "Error: $(result.stderr)";
+    stderr_write("Command failed with code $(result.exit_code)");
+    stderr_write("Error: $(result.stderr)");
     fail("Execution failed");
 end
 ```
@@ -155,10 +155,10 @@ end
 ```aria
 Result: ProcessResult = exec("make", ["build"])?;
 
-stdout << result.stdout;
+print(result.stdout);
 
 when result.stderr.length() > 0 then
-    stderr << "Warnings:\n$(result.stderr)";
+    stderr_write("Warnings:\n$(result.stderr)");
 end
 ```
 
@@ -179,7 +179,7 @@ end
 ```aria
 // DANGEROUS - user input could contain malicious commands!
 user_input: string = get_user_input();
-exec("sh", ["-c", "rm $user_input"])?;  // ❌ UNSAFE
+exec("sh", ["-c", `rm &{user_input}`])?;  // ❌ UNSAFE
 
 // Safe - args are properly escaped
 exec("rm", [user_input])?;  // ✅ Safe
@@ -192,11 +192,11 @@ exec("rm", [user_input])?;  // ✅ Safe
 ```aria
 // exec() - WAITS for completion
 Result: ProcessResult = exec("sleep", ["5"])?;  // Blocks for 5 seconds
-stdout << "Done sleeping";
+print("Done sleeping");
 
 // spawn() - Runs in background
 process: Process = spawn("sleep", ["5"])?;  // Returns immediately
-stdout << "Still running...";
+print("Still running...");
 process.wait()?;  // Wait when needed
 ```
 

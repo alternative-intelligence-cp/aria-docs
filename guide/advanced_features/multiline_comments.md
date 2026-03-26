@@ -28,7 +28,7 @@ x: i32 = 42;
 ## Inline Multi-Line Comments
 
 ```aria
-fn example() {
+func:example = NIL() {
     x: i32 = /* comment */ 42;
     y: i32 = add(/* a */ 10, /* b */ 20);
 }
@@ -46,7 +46,7 @@ fn example() {
  /* Another /* deeply nested */ comment */
 */
 
-fn nested_example() {
+func:nested_example = NIL() {
     /* Level 1 /* Level 2 /* Level 3 */ Level 2 */ Level 1 */
     x: i32 = 42;
 }
@@ -97,12 +97,12 @@ mod core;
 ## Commenting Out Code Blocks
 
 ```aria
-fn refactored_function() {
+func:refactored_function = NIL() {
     new_implementation();
     
     /*
     // Old implementation (kept for reference)
-    fn old_way() {
+    func:old_way = NIL() {
         step1();
         step2();
         step3();
@@ -181,7 +181,7 @@ fn calculate_compound_interest(
 ### Algorithm Explanation
 
 ```aria
-fn quick_sort(arr: []i32) -> []i32 {
+func:quick_sort = []i32([]i32:arr) {
     /*
      Quick Sort Algorithm
      
@@ -199,7 +199,7 @@ fn quick_sort(arr: []i32) -> []i32 {
     */
     
     if arr.len() <= 1 {
-        return arr;
+        pass(arr);
     }
     
     // Implementation
@@ -258,7 +258,7 @@ mod licensed_code;
  Deadline: 2025-02-01
 */
 
-fn user_registration() {
+func:user_registration = NIL() {
     // Implementation
 }
 ```
@@ -279,7 +279,7 @@ fn user_registration() {
  
  This will be deprecated in version 2.0
 */
-fn unsafe_global_update() {
+func:unsafe_global_update = NIL() {
     // Implementation
 }
 ```
@@ -307,7 +307,7 @@ fn unsafe_global_update() {
  Benchmarks show this approach is 30% faster than
  standard quicksort across varied workloads.
 */
-fn hybrid_sort(arr: []i32) -> []i32 {
+func:hybrid_sort = []i32([]i32:arr) {
     // Implementation
 }
 ```
@@ -341,8 +341,8 @@ struct ConnectionPool {
  This function uses SHA-1 for hashing
  (updated to SHA-256 in v2.0)
 */
-fn hash_password(password: string) -> string {
-    return sha256(password);  // Comment says SHA-1!
+func:hash_password = string(string:password) {
+    pass(sha256(password));  // Comment says SHA-1!
 }
 
 // ✅ Good - accurate comment
@@ -352,8 +352,8 @@ fn hash_password(password: string) -> string {
  Changed from SHA-1 in v2.0 for improved security.
  See: https://issues.example.com/SECURITY-42
 */
-fn hash_password(password: string) -> string {
-    return sha256(password);
+func:hash_password = string(string:password) {
+    pass(sha256(password));
 }
 ```
 
@@ -361,19 +361,19 @@ fn hash_password(password: string) -> string {
 
 ```aria
 // ❌ Excessive multi-line comments for simple code
-fn add(a: i32, b: i32) -> i32 {
+func:add = int32(int32:a, int32:b) {
     /*
      This function adds two integers.
      It takes parameter a and parameter b.
      Then it adds them together.
      Finally it returns the result.
     */
-    return a + b;
+    pass(a + b);
 }
 
 // ✅ Simple code needs minimal or no comments
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 ```
 

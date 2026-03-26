@@ -697,7 +697,7 @@ fn format_user(id: i32, name: string, active: bool) -> string { }</code></pre>
 <pre><code>// No return (implicitly returns unit/void)
 <p>
 fn print_message() {
-stdout << "Message\n";
+print("Message\n");
 }
 </p>
 <p>
@@ -773,7 +773,7 @@ age: i32
 impl User {
 // Instance method (has self)
 fn greet() {
-stdout << "Hello, " << self.name << "\n";
+print("Hello, " << self.name + "\n");
 }
 </p>
 <p>
@@ -944,7 +944,7 @@ greet_name("World");
 </p>
 <p>
 fn greet_name(name: string) {
-stdout << "Hello, " << name << "\n";
+print("Hello, " << name + "\n");
 }</code></pre>
 </p>
 <h3>Variadic Functions (Not Supported)</h3>

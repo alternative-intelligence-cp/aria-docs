@@ -700,12 +700,12 @@ regex: string = <code>\d+\.\d+</code>;</code></pre>
 <pre><code>// Embed variables
 <p>
 name: string = "Alice";
-greeting: string = "Hello, $name!";
+greeting: string = `Hello, &{name}!`;
 </p>
 <p>
 // Expressions
 x: i32 = 10;
-msg: string = "The value is ${x + 5}";</code></pre>
+msg: string = "The value is &{x + 5}";</code></pre>
 </p>
 <hr>
 <h2>Operations</h2>
@@ -720,7 +720,7 @@ combined: string = first + " " + second;  // "Hello World"
 </p>
 <p>
 // Using interpolation (better)
-combined: string = "$first $second";</code></pre>
+combined: string = `&{first} &{second}`;</code></pre>
 </p>
 <h3>Comparison</h3>
 <pre><code>a: string = "apple";
@@ -796,7 +796,7 @@ end
 <h3>Building Messages</h3>
 <pre><code>fn format_user(name: string, age: i32) -> string {
 <p>
-return "User: $name (age $age)";
+return `User: &{name} (age &{age})`;
 }
 </p>
 <p>
@@ -828,7 +828,7 @@ pass((key, value));
 <p>
 name: string = "Alice";
 age: i32 = 30;
-msg: string = "Name: $name, Age: $age";</code></pre>
+msg: string = `Name: &{name}, Age: &{age}`;</code></pre>
 </p>
 <h3>✅ DO: Use Raw Strings for Paths</h3>
 <pre><code>// No escaping needed
@@ -902,7 +902,7 @@ Result: string = create_message();
 <h3>Template Formatting</h3>
 <pre><code>fn format_email(user: string, domain: string) -> string {
 <p>
-return "${user}@${domain}";
+return "&{user}@&{domain}";
 }
 </p>
 <p>
@@ -934,7 +934,7 @@ Result: string = names.join(", ");
 </p>
 <hr>
 <h2>Related</h2>
-<ul><li><a href="../operators/interpolation.md">String Interpolation (${})</a></li>
+<ul><li><a href="../operators/interpolation.md">String Interpolation (&{})</a></li>
 <li><a href="../operators/backtick.md">Raw Strings (`)</a></li>
 <li>[Arrays ([])](array.md)</li>
 </ul>

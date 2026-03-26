@@ -675,9 +675,9 @@ Result: Result<void> = writeFile("greeting.txt", "Hello!");
 </p>
 <p>
 when result is Ok() then
-stdout << "File written successfully";
+print("File written successfully");
 elsif result is Err(msg) then
-stderr << "Write failed: $msg";
+stderr_write(`Write failed: &{msg}`);
 end</code></pre>
 </p>
 <h3>With Error Propagation</h3>
@@ -693,7 +693,7 @@ pass(NULL);
 <p>
 report += "=============\n";
 report += "Status: OK\n";
-report += "Uptime: $uptime seconds\n";
+report += `Uptime: &{uptime} seconds\n`;
 </p>
 <p>
 writeFile("report.txt", report)?;</code></pre>
@@ -724,7 +724,7 @@ writeFile("data.txt", "New content")?;
 <pre><code>Result<nil>:Result = writeFile("output.txt", data);
 <p>
 when result is Err(msg) then
-log_error("Failed to write: $msg");
+log_error(`Failed to write: &{msg}`);
 fail("Save failed");
 end</code></pre>
 </p>

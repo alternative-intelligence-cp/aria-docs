@@ -25,18 +25,18 @@ item
 
 ```aria
 #[cfg(os = "linux")]
-fn linux_specific() {
-    stdout << "Running on Linux";
+func:linux_specific = NIL() {
+    print("Running on Linux");
 }
 
 #[cfg(os = "windows")]
-fn windows_specific() {
-    stdout << "Running on Windows";
+func:windows_specific = NIL() {
+    print("Running on Windows");
 }
 
 #[cfg(os = "macos")]
-fn macos_specific() {
-    stdout << "Running on macOS";
+func:macos_specific = NIL() {
+    print("Running on macOS");
 }
 ```
 
@@ -46,18 +46,18 @@ fn macos_specific() {
 
 ```aria
 #[cfg(arch = "x86_64")]
-fn x86_64_code() {
-    stdout << "64-bit x86";
+func:x86_64_code = NIL() {
+    print("64-bit x86");
 }
 
 #[cfg(arch = "aarch64")]
-fn arm_code() {
-    stdout << "ARM 64-bit";
+func:arm_code = NIL() {
+    print("ARM 64-bit");
 }
 
 #[cfg(arch = "wasm32")]
-fn wasm_code() {
-    stdout << "WebAssembly";
+func:wasm_code = NIL() {
+    print("WebAssembly");
 }
 ```
 
@@ -67,8 +67,8 @@ fn wasm_code() {
 
 ```aria
 #[cfg(feature = "logging")]
-fn log_message(msg: string) {
-    stdout << "[LOG] $msg";
+func:log_message = NIL(string:msg) {
+    print(`[LOG] &{msg}`);
 }
 
 #[cfg(feature = "database")]
@@ -86,13 +86,13 @@ mod cache {
 
 ```aria
 #[cfg(debug)]
-fn debug_only() {
-    stdout << "Debug build";
+func:debug_only = NIL() {
+    print("Debug build");
 }
 
 #[cfg(release)]
-fn release_only() {
-    stdout << "Release build";
+func:release_only = NIL() {
+    print("Release build");
 }
 ```
 
@@ -104,7 +104,7 @@ fn release_only() {
 
 ```aria
 #[cfg(not(os = "windows"))]
-fn unix_like() {
+func:unix_like = NIL() {
     // Runs on non-Windows platforms
 }
 ```
@@ -113,7 +113,7 @@ fn unix_like() {
 
 ```aria
 #[cfg(all(os = "linux", arch = "x86_64"))]
-fn linux_x86_64() {
+func:linux_x86_64 = NIL() {
     // Only on 64-bit Linux
 }
 ```
@@ -122,7 +122,7 @@ fn linux_x86_64() {
 
 ```aria
 #[cfg(any(os = "linux", os = "macos"))]
-fn unix_platforms() {
+func:unix_platforms = NIL() {
     // Runs on Linux or macOS
 }
 ```
@@ -136,7 +136,7 @@ fn unix_platforms() {
     any(os = "linux", os = "macos"),
     not(arch = "wasm32")
 ))]
-fn native_unix() {
+func:native_unix = NIL() {
     // Linux or macOS, but not WebAssembly
 }
 ```
@@ -148,14 +148,14 @@ fn native_unix() {
 ```aria
 #[cfg(os = "linux")]
 mod linux {
-    pub fn platform_init() {
+    pub func:platform_init = NIL() {
         // Linux initialization
     }
 }
 
 #[cfg(os = "windows")]
 mod windows {
-    pub fn platform_init() {
+    pub func:platform_init = NIL() {
         // Windows initialization
     }
 }
@@ -167,10 +167,10 @@ mod windows {
 
 ```aria
 #[cfg(feature = "http")]
-import std.http;
+use std.http;
 
 #[cfg(feature = "database")]
-import database.sqlite;
+use database.sqlite;
 ```
 
 ---
@@ -194,15 +194,15 @@ struct Config {
 ## Function Body
 
 ```aria
-fn platform_specific_code() {
+func:platform_specific_code = NIL() {
     #[cfg(os = "linux")]
     {
-        stdout << "Linux code";
+        print("Linux code");
     }
     
     #[cfg(os = "windows")]
     {
-        stdout << "Windows code";
+        print("Windows code");
     }
 }
 ```
@@ -266,14 +266,14 @@ const PATH_SEP: u8 = '/';
 ```aria
 #[cfg(os = "linux")]
 mod platform {
-    pub fn init() { }
-    pub fn cleanup() { }
+    pub func:init = NIL() { }
+    pub func:cleanup = NIL() { }
 }
 
 #[cfg(os = "windows")]
 mod platform {
-    pub fn init() { }
-    pub fn cleanup() { }
+    pub func:init = NIL() { }
+    pub func:cleanup = NIL() { }
 }
 ```
 
@@ -282,7 +282,7 @@ mod platform {
 ```aria
 // Only available on Unix-like systems
 #[cfg(any(os = "linux", os = "macos"))]
-pub fn unix_socket() -> Socket {
+pub func:unix_socket = Socket() {
     // Implementation
 }
 ```
@@ -306,7 +306,7 @@ Apply attributes conditionally:
 ```aria
 #[cfg_attr(os = "windows", link(name = "ws2_32"))]
 extern "C" {
-    fn network_function();
+    func:network_function = NIL();
 }
 ```
 

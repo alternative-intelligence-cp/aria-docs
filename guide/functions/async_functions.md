@@ -15,10 +15,10 @@
 ## Basic Syntax
 
 ```aria
-async fn fetch_data(url: string) -> Data {
+async func:fetch_data = Data(string:url) {
     response: Response = await http_get(url);
     data: Data = await response.parse_json();
-    return data;
+    pass(data);
 }
 ```
 
@@ -34,7 +34,7 @@ async fn fetch_data(url: string) -> Data {
 ### Synchronous (Blocking)
 
 ```aria
-fn download_files(urls: []string) -> []Data {
+func:download_files = []Data([]string:urls) {
     results: []Data = [];
     
     till(urls.length - 1, 1) {
@@ -42,7 +42,7 @@ fn download_files(urls: []string) -> []Data {
         results.push(data);
     }
     
-    return results;
+    pass(results);
 }
 // Total time: sum of all downloads (sequential)
 ```
@@ -50,7 +50,7 @@ fn download_files(urls: []string) -> []Data {
 ### Asynchronous (Non-Blocking)
 
 ```aria
-async fn download_files(urls: []string) -> []Data {
+async func:download_files = []Data([]string:urls) {
     results: []Data = [];
     
     till(urls.length - 1, 1) {
@@ -58,7 +58,7 @@ async fn download_files(urls: []string) -> []Data {
         results.push(data);
     }
     
-    return results;
+    pass(results);
 }
 // Other tasks can run while waiting for HTTP responses
 ```
@@ -70,22 +70,22 @@ async fn download_files(urls: []string) -> []Data {
 ### From Async Context (with `await`)
 
 ```aria
-async fn main() {
+async func:main = NIL() {
     // await pauses until fetch_data completes
     data: Data = await fetch_data("https://api.example.com/data");
     
-    stdout << "Received: " << data.size() << " bytes\n";
+    print("Received: " + data.size() + " bytes\n");
 }
 ```
 
 ### From Sync Context (blocking)
 
 ```aria
-fn main() {
+func:main = NIL() {
     // Block until async function completes
     data: Data = run_async(fetch_data("https://api.example.com/data"));
     
-    stdout << "Received: " << data.size() << " bytes\n";
+    print("Received: " + data.size() + " bytes\n");
 }
 ```
 
@@ -96,13 +96,13 @@ fn main() {
 ### Sequential (Slow)
 
 ```aria
-async fn load_user_data(user_id: i32) -> UserData {
+async func:load_user_data = UserData(int32:user_id) {
     // Each await waits for previous to complete
     profile: Profile = await fetch_profile(user_id);
     posts: []Post = await fetch_posts(user_id);
     friends: []User = await fetch_friends(user_id);
     
-    return UserData{profile, posts, friends};
+    pass(UserData{profile, posts, friends});
 }
 // Total time: profile + posts + friends (sequential)
 ```
@@ -110,7 +110,7 @@ async fn load_user_data(user_id: i32) -> UserData {
 ### Concurrent (Fast)
 
 ```aria
-async fn load_user_data(user_id: i32) -> UserData {
+async func:load_user_data = UserData(int32:user_id) {
     // Start all requests concurrently
     profile_future: Future<Profile> = fetch_profile(user_id);
     posts_future: Future<[]Post> = fetch_posts(user_id);
@@ -121,7 +121,7 @@ async fn load_user_data(user_id: i32) -> UserData {
     posts: []Post = await posts_future;
     friends: []User = await friends_future;
     
-    return UserData{profile, posts, friends};
+    pass(UserData{profile, posts, friends});
 }
 // Total time: max(profile, posts, friends) (parallel)
 ```
@@ -133,28 +133,28 @@ async fn load_user_data(user_id: i32) -> UserData {
 ### Using TBB Results
 
 ```aria
-async fn safe_fetch(url: string) -> Data? {
+async func:safe_fetch = Data?(string:url) {
     response: Response? = await http_get(url);
     
     when fail response then
-        stderr << "ERROR: Failed to fetch " << url << "\n";
-        return ERR;
+        stderr_write("ERROR: Failed to fetch " + url + "\n");
+        pass(ERR);
     end
     
     data: Data = await response.parse();
-    return data;
+    pass(data);
 }
 ```
 
 ### With `pass` Keyword
 
 ```aria
-async fn load_config(path: string) -> Config? {
+async func:load_config = Config?(string:path) {
     file: File = pass await open_file(path);
     content: string = pass await file.read();
     config: Config = pass await parse_json(content);
     
-    return config;
+    pass(config);
 }
 // Errors propagate with pass, as in sync code
 ```
@@ -166,7 +166,7 @@ async fn load_config(path: string) -> Config? {
 ### Timeout
 
 ```aria
-async fn fetch_with_timeout(url: string, timeout_ms: i32) -> Data? {
+async func:fetch_with_timeout = Data?(string:url, int32:timeout_ms) {
     fetch_future: Future<Data> = fetch_data(url);
     timeout_future: Future<()> = sleep(timeout_ms);
     
@@ -174,8 +174,8 @@ async fn fetch_with_timeout(url: string, timeout_ms: i32) -> Data? {
     match await race(fetch_future, timeout_future) {
         Left(data) => return data,
         Right(()) => {
-            stderr << "ERROR: Request timed out\n";
-            return ERR;
+            stderr_write("ERROR: Request timed out\n");
+            pass(ERR);
         }
     }
 }
@@ -184,10 +184,10 @@ async fn fetch_with_timeout(url: string, timeout_ms: i32) -> Data? {
 ### Retry Logic
 
 ```aria
-async fn fetch_with_retry(url: string, max_attempts: i32) -> Data? {
+async func:fetch_with_retry = Data?(string:url, int32:max_attempts) {
     till(max_attempts - 1, 1) {
         attempt: i32 = $ + 1;
-        stddbg << "Attempt " << attempt << "/" << max_attempts;
+        stddbg_write("Attempt " + attempt + "/" + max_attempts);
         
         data: Data? = await fetch_data(url);
         
@@ -196,21 +196,21 @@ async fn fetch_with_retry(url: string, max_attempts: i32) -> Data? {
                 await sleep(1000);  // Wait 1 second before retry
                 continue;
             else
-                return ERR;
+                pass(ERR);
             end
         end
         
-        return data;
+        pass(data);
     }
     
-    return ERR;
+    pass(ERR);
 }
 ```
 
 ### Background Tasks
 
 ```aria
-async fn process_in_background(items: []Item) {
+async func:process_in_background = NIL([]Item:items) {
     till(items.length - 1, 1) {
         item: Item = items[$];
         await process_item(item);
@@ -223,7 +223,7 @@ async fn process_in_background(items: []Item) {
 }
 
 // Spawn as background task
-async fn main() {
+async func:main = NIL() {
     spawn(process_in_background(items));
     
     // Main continues while background task runs
@@ -239,11 +239,11 @@ async fn main() {
 
 ```aria
 // Good: Network, file I/O benefit from async
-async fn load_from_network(url: string) -> Data {
-    return await http_get(url);
+async func:load_from_network = Data(string:url) {
+    pass(await http_get(url));
 }
 
-async fn save_to_disk(file: string, data: Data) {
+async func:save_to_disk = NIL(string:file, Data:data) {
     await write_file(file, data);
 }
 ```
@@ -252,7 +252,7 @@ async fn save_to_disk(file: string, data: Data) {
 
 ```aria
 // Good: Concurrent when possible
-async fn load_dashboard() -> Dashboard {
+async func:load_dashboard = Dashboard() {
     users_future = fetch_users();
     stats_future = fetch_stats();
     alerts_future = fetch_alerts();
@@ -261,22 +261,22 @@ async fn load_dashboard() -> Dashboard {
     stats: Stats = await stats_future;
     alerts: []Alert = await alerts_future;
     
-    return Dashboard{users, stats, alerts};
+    pass(Dashboard{users, stats, alerts});
 }
 ```
 
 ### ✅ DO: Handle Errors Explicitly
 
 ```aria
-async fn safe_operation() -> Result? {
+async func:safe_operation = Result?() {
     data: Data? = await fetch_data();
     
     when fail data then
-        stderr << "ERROR: Fetch failed\n";
-        return ERR;
+        stderr_write("ERROR: Fetch failed\n");
+        pass(ERR);
     end
     
-    return process(data);
+    pass(process(data));
 }
 ```
 
@@ -284,14 +284,14 @@ async fn safe_operation() -> Result? {
 
 ```aria
 // Wrong: Async doesn't help CPU-bound tasks
-async fn calculate_primes(n: i32) -> []i32 {
+async func:calculate_primes = []i32(int32:n) {
     // This just adds overhead!
-    return await compute_primes(n);
+    pass(await compute_primes(n));
 }
 
 // Right: Use regular function
-fn calculate_primes(n: i32) -> []i32 {
-    return compute_primes(n);
+func:calculate_primes = []i32(int32:n) {
+    pass(compute_primes(n));
 }
 ```
 
@@ -299,14 +299,14 @@ fn calculate_primes(n: i32) -> []i32 {
 
 ```aria
 // Wrong: Sequential awaits in loop
-async fn process_all(items: []Item) {
+async func:process_all = NIL([]Item:items) {
     till(items.length - 1, 1) {
         await process(items[$]);  // Each waits for previous
     }
 }
 
 // Right: Batch process concurrently
-async fn process_all(items: []Item) {
+async func:process_all = NIL([]Item:items) {
     futures: []Future = items.map(|item| process(item));
     await all(futures);  // All run concurrently
 }
@@ -319,49 +319,49 @@ async fn process_all(items: []Item) {
 ### HTTP API Client
 
 ```aria
-async fn get_user(user_id: i32) -> User? {
+async func:get_user = User?(int32:user_id) {
     url: string = format("https://api.example.com/users/{}", user_id);
     
     response: Response = pass await http_get(url);
     
     when response.status != 200 then
-        stderr << "ERROR: HTTP " << response.status << "\n";
-        return ERR;
+        stderr_write("ERROR: HTTP " + response.status + "\n");
+        pass(ERR);
     end
     
     user: User = pass await response.json();
-    return user;
+    pass(user);
 }
 ```
 
 ### Database Query Pool
 
 ```aria
-async fn query_all_shards(query: string) -> []Result {
+async func:query_all_shards = []Result(string:query) {
     shards: []Shard = get_shards();
     
     // Query all shards concurrently
     futures: []Future<Result> = shards.map(|shard| {
-        return shard.query(query);
+        pass(shard.query(query));
     });
     
     // Wait for all results
     results: []Result = await all(futures);
     
-    return results;
+    pass(results);
 }
 ```
 
 ### WebSocket Server
 
 ```aria
-async fn handle_client(socket: WebSocket) {
+async func:handle_client = NIL(WebSocket:socket) {
     loop {
         // Wait for message from client
         message: Message? = await socket.receive();
         
         when fail message then
-            stddbg << "Client disconnected";
+            stddbg_write("Client disconnected");
             break;
         end
         
@@ -373,7 +373,7 @@ async fn handle_client(socket: WebSocket) {
     }
 }
 
-async fn main() {
+async func:main = NIL() {
     server: WebSocketServer = WebSocketServer::new("0.0.0.0:8080");
     
     loop {

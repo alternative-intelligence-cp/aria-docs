@@ -665,10 +665,10 @@ FATAL    // Critical failures
 <hr>
 <h2>DEBUG</h2>
 <strong>Use for</strong>: Detailed development/debugging information
-<pre><code>logger.debug("Variable values: x=$x, y=$y, z=$z");
+<pre><code>logger.debug(`Variable values: x=&{x}, y=&{y}, z=&{z}`);
 <p>
 logger.debug("Entering function process_data()");
-logger.debug("Cache hit for key: $key");</code></pre>
+logger.debug(`Cache hit for key: &{key}`);</code></pre>
 </p>
 <strong>Typically</strong>: Disabled in production
 <hr>
@@ -696,9 +696,9 @@ logger.warn("Request took $(duration)ms (threshold: 1000ms)");</code></pre>
 <strong>Use for</strong>: Error conditions that don't stop the application
 <pre><code>logger.error("Failed to connect to database");
 <p>
-logger.error("Invalid user input: $input");
+logger.error(`Invalid user input: &{input}`);
 logger.error("HTTP 500 error from external API");
-logger.error("File not found: $path");</code></pre>
+logger.error(`File not found: &{path}`);</code></pre>
 </p>
 <strong>Typically</strong>: Always enabled, requires investigation
 <hr>

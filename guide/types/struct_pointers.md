@@ -17,7 +17,7 @@ struct Node {
 node: Node = { data = 42, next = nil };
 
 // Pointer to struct
-ptr: *Node = &node;
+ptr: *Node = $node;
 ```
 
 ---
@@ -43,18 +43,18 @@ struct ListNode {
     next: *ListNode
 }
 
-fn create_list() -> *ListNode {
+func:create_list = *ListNode() {
     head: *ListNode = aria_alloc(ListNode);
     head.value = 1;
     head.next = nil;
-    return head;
+    pass(head);
 }
 
 // Traverse
-fn print_list(head: *ListNode) {
+func:print_list = NIL(*ListNode:head) {
     current: *ListNode = head;
     while current != nil {
-        stdout << current.value;
+        print(current.value);
         current = current.next;
     }
 }
@@ -71,12 +71,12 @@ struct TreeNode {
     right: *TreeNode
 }
 
-fn create_tree() -> *TreeNode {
+func:create_tree = *TreeNode() {
     root: *TreeNode = aria_alloc(TreeNode);
     root.data = 10;
     root.left = nil;
     root.right = nil;
-    return root;
+    pass(root);
 }
 ```
 

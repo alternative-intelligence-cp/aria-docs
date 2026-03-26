@@ -682,7 +682,7 @@ connections: []ConnectionInfo = getActiveConnections();
 <p>
 till(connections.length - 1, 1) {
 conn = connections[$];
-stdout << "$(conn.protocol) $(conn.local_addr):$(conn.local_port) -> $(conn.remote_addr):$(conn.remote_port) [$(conn.state)]";
+print("$(conn.protocol) $(conn.local_addr):$(conn.local_port) -> $(conn.remote_addr):$(conn.remote_port) [$(conn.state)]");
 end</code></pre>
 </p>
 <h3>Count by State</h3>
@@ -702,7 +702,7 @@ end
 end
 </p>
 <p>
-stdout << "Established: $established, Listening: $listening";</code></pre>
+print(`Established: &{established}, Listening: &{listening}`);</code></pre>
 </p>
 <h3>Find Connections to Specific Host</h3>
 <pre><code>target_host: string = "192.168.1.100";
@@ -715,7 +715,7 @@ return conn.remote_addr == target_host;
 });
 </p>
 <p>
-stdout << "Connections to $target_host: $(matching.length())";</code></pre>
+print(`Connections to &{target_host}: $(matching.length())`);</code></pre>
 </p>
 <hr>
 <h2>Best Practices</h2>

@@ -790,12 +790,12 @@ return Ok();
 <pre><code>async fn fetch_user_posts(user_id: i32) -> Result<[]Post> {
 <p>
 // Fetch user
-user_resp: Response = await http.get("/users/$user_id")?;
+user_resp: Response = await http.get(`/users/&{user_id}`)?;
 user: User = await user_resp.json()?;
 </p>
 <p>
 // Fetch posts
-posts_resp: Response = await http.get("/posts?user=$user_id")?;
+posts_resp: Response = await http.get(`/posts?user=&{user_id}`)?;
 posts: []Post = await posts_resp.json()?;
 </p>
 <p>
@@ -948,11 +948,11 @@ return Ok(data);
 <pre><code>fn load_user_data(user_id: i32) -> Result<UserData> {
 <p>
 user: User = fetch_user(user_id)
-.context("Failed to fetch user $user_id")?;
+.context(`Failed to fetch user &{user_id}`)?;
 </p>
 <p>
 profile: Profile = fetch_profile(user_id)
-.context("Failed to fetch profile for user $user_id")?;
+.context(`Failed to fetch profile for user &{user_id}`)?;
 </p>
 <p>
 return Ok(UserData { user, profile });
@@ -992,8 +992,8 @@ return Ok();
 // ✅ Or explicitly handle
 fn handle_process() {
 match risky_operation() {
-Ok(_) => stdout << "Success",
-Err(e) => stderr << "Error: $e",
+Ok(_) => print("Success"),
+Err(e) => stderr_write(`Error: &{e}`),
 }
 }</code></pre>
 </p>

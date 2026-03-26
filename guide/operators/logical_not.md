@@ -42,12 +42,12 @@ is_not_ready: bool = !is_ready;  // true
 is_valid: bool = check_input();
 
 when !is_valid then
-    stdout << "Invalid input";
+    print("Invalid input");
 end
 
 // Equivalent to
 when is_valid == false then
-    stdout << "Invalid input";
+    print("Invalid input");
 end
 ```
 
@@ -70,12 +70,12 @@ Result: bool = !!x;  // true
 ```aria
 // Negate comparison
 when !(x > 10) then
-    stdout << "x is 10 or less";
+    print("x is 10 or less");
 end
 
 // Better: Use opposite operator
 when x <= 10 then
-    stdout << "x is 10 or less";
+    print("x is 10 or less");
 end
 ```
 
@@ -97,7 +97,7 @@ end
 found: bool = search(item);
 
 when !found then
-    stdout << "Not found";
+    print("Not found");
 end
 ```
 

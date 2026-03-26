@@ -14,19 +14,19 @@ The context stack tracks **function calls**, **error locations**, and **debuggin
 ## Stack Traces
 
 ```aria
-fn level3() {
+func:level3 = NIL() {
     panic("Something went wrong!");
 }
 
-fn level2() {
+func:level2 = NIL() {
     level3();
 }
 
-fn level1() {
+func:level1 = NIL() {
     level2();
 }
 
-fn main() {
+func:main = NIL() {
     level1();
 }
 
@@ -45,14 +45,14 @@ panic: Something went wrong!
 ## Error Context
 
 ```aria
-fn process_file(path: string) -> Result<Data> {
+func:process_file = Result<Data>(string:path) {
     content: string = readFile(path)
-        .context("Failed to read file: $path")?;
+        .context(`Failed to read file: &{path}`)?;
     
     data: Data = parse(content)
-        .context("Failed to parse content from $path")?;
+        .context(`Failed to parse content from &{path}`)?;
     
-    return Ok(data);
+    pass(Ok(data));
 }
 
 /*
@@ -67,14 +67,14 @@ Caused by: Invalid JSON at line 5
 ## Call Stack Information
 
 ```aria
-fn debug_stack() {
+func:debug_stack = NIL() {
     // Get current stack trace
     stack: StackTrace = StackTrace.capture();
     frames = stack.frames();
     
     till(frames.length - 1, 1) {
-        stdout << "Function: ${frames[$].function}";
-        stdout << "File: ${frames[$].file}:${frames[$].line}";
+        print("Function: &{frames[$].function}");
+        print("File: &{frames[$].file}:&{frames[$].line}");
     }
 }
 ```
@@ -84,25 +84,25 @@ fn debug_stack() {
 ## Unwinding
 
 ```aria
-fn level3() -> Result<void> {
-    return Err("Error at level3");
+func:level3 = Result<NIL>() {
+    pass(Err("Error at level3"));
 }
 
-fn level2() -> Result<void> {
+func:level2 = Result<NIL>() {
     level3()?;  // Unwinds on error
-    return Ok();
+    pass(Ok());
 }
 
-fn level1() -> Result<void> {
+func:level1 = Result<NIL>() {
     level2()?;  // Unwinds on error
-    return Ok();
+    pass(Ok());
 }
 
-fn main() {
+func:main = NIL() {
     match level1() {
-        Ok(_) => stdout << "Success",
+        Ok(_) => print("Success"),
         Err(e) => {
-            stderr << "Error: $e";
+            stderr_write(`Error: &{e}`);
             // Stack automatically unwound
         }
     }
@@ -119,18 +119,18 @@ struct Resource {
 }
 
 impl Resource {
-    fn destroy() {
-        stdout << "Cleaning up $self.name";
+    func:destroy = NIL() {
+        print(`Cleaning up &{self.name}`);
     }
 }
 
 impl Drop for Resource {
-    fn drop() {
+    func:drop = NIL() {
         self.destroy();
     }
 }
 
-fn use_resources() {
+func:use_resources = NIL() {
     r1: Resource = Resource { name: "A" };
     r2: Resource = Resource { name: "B" };
     r3: Resource = Resource { name: "C" };
@@ -156,12 +156,12 @@ panic: Something failed!
 ### Error Propagation with Context
 
 ```aria
-fn load_config() -> Result<Config> {
+func:load_config = Result<Config>() {
     path: string = get_config_path()
         .context("Failed to determine config path")?;
     
     content: string = readFile(path)
-        .context("Failed to read config from $path")?;
+        .context(`Failed to read config from &{path}`)?;
     
     config: Config = parse_config(content)
         .context("Failed to parse config")?;
@@ -169,7 +169,7 @@ fn load_config() -> Result<Config> {
     validate_config(config)
         .context("Config validation failed")?;
     
-    return Ok(config);
+    pass(Ok(config));
 }
 
 /*
@@ -192,19 +192,19 @@ struct Error {
 }
 
 impl Error {
-    fn new(message: string) -> Error {
+    func:new = Error(string:message) {
         return Error {
             message: message,
             backtrace: StackTrace.capture(),
         };
     }
     
-    fn print() {
-        stderr << "Error: $self.message\n";
-        stderr << "Backtrace:\n";
+    func:print = NIL() {
+        stderr_write(`Error: &{self.message}\n`);
+        stderr_write("Backtrace:\n");
         frames = self.backtrace.frames();
         till(frames.length - 1, 1) {
-            stderr << "  ${frames[$].file}:${frames[$].line} - ${frames[$].function}\n";
+            stderr_write("  &{frames[$].file}:&{frames[$].line} - &{frames[$].function}\n");
         }
     }
 }
@@ -220,19 +220,19 @@ struct Guard {
 }
 
 impl Guard {
-    fn new(name: string) -> Guard {
-        stdout << "Entering $name";
-        return Guard { name: name };
+    func:new = Guard(string:name) {
+        print(`Entering &{name}`);
+        pass(Guard { name: name });
     }
 }
 
 impl Drop for Guard {
-    fn drop() {
-        stdout << "Leaving $self.name";
+    func:drop = NIL() {
+        print(`Leaving &{self.name}`);
     }
 }
 
-fn example() {
+func:example = NIL() {
     _g1: Guard = Guard.new("outer");
     
     {
@@ -257,7 +257,7 @@ Leaving outer
 ### Defer Cleanup
 
 ```aria
-fn process() -> Result<void> {
+func:process = Result<NIL>() {
     file: File = open("data.txt")?;
     defer file.close();
     
@@ -268,7 +268,7 @@ fn process() -> Result<void> {
     data: string = file.read_all()?;
     process_data(data)?;
     
-    return Ok();
+    pass(Ok());
     // Deferred cleanup runs in reverse order:
     // 1. lock.unlock()
     // 2. file.close()
@@ -280,11 +280,11 @@ fn process() -> Result<void> {
 ## Debug Information
 
 ```aria
-fn trace_execution() {
-    stdout << "__FUNCTION__: ${__FUNCTION__}";  // Current function
-    stdout << "__FILE__: ${__FILE__}";          // Current file
-    stdout << "__LINE__: ${__LINE__}";          // Current line
-    stdout << "__MODULE__: ${__MODULE__}";      // Current module
+func:trace_execution = NIL() {
+    print("__FUNCTION__: &{__FUNCTION__}");  // Current function
+    print("__FILE__: &{__FILE__}");          // Current file
+    print("__LINE__: &{__LINE__}");          // Current line
+    print("__MODULE__: &{__MODULE__}");      // Current module
 }
 ```
 
@@ -295,25 +295,25 @@ fn trace_execution() {
 ### ✅ DO: Add Context to Errors
 
 ```aria
-fn load_user(id: i32) -> Result<User> {
+func:load_user = Result<User>(int32:id) {
     user: User = database.find(id)
-        .context("Failed to load user $id")?;
+        .context(`Failed to load user &{id}`)?;
     
-    return Ok(user);
+    pass(Ok(user));
 }
 ```
 
 ### ✅ DO: Use RAII for Cleanup
 
 ```aria
-fn safe_resource_use() -> Result<void> {
+func:safe_resource_use = Result<NIL>() {
     resource: Resource = acquire()?;
     defer resource.release();
     
     // Use resource
     resource.do_work()?;
     
-    return Ok();
+    pass(Ok());
     // resource.release() called automatically
 }
 ```
@@ -321,7 +321,7 @@ fn safe_resource_use() -> Result<void> {
 ### ✅ DO: Capture Backtraces for Debugging
 
 ```aria
-fn create_error(msg: string) -> Error {
+func:create_error = Error(string:msg) {
     return Error {
         message: msg,
         backtrace: StackTrace.capture(),
@@ -333,15 +333,15 @@ fn create_error(msg: string) -> Error {
 ### ⚠️ WARNING: Stack Overflow
 
 ```aria
-fn infinite_recursion(n: i32) {
-    stdout << n;
+func:infinite_recursion = NIL(int32:n) {
+    print(n);
     infinite_recursion(n + 1);  // ⚠️ Will overflow stack
 }
 
 // ✅ Better - use iteration or tail recursion
-fn safe_iteration(max: i32) {
+func:safe_iteration = NIL(int32:max) {
     till(max - 1, 1) {
-        stdout << $;
+        print($);
     }
 }
 ```
@@ -350,14 +350,14 @@ fn safe_iteration(max: i32) {
 
 ```aria
 // ❌ Bad - resource leak on panic
-fn bad() {
+func:bad = NIL() {
     resource: *Resource = allocate();
     risky_operation();  // Might panic
     free(resource);     // Never reached if panic
 }
 
 // ✅ Good - RAII ensures cleanup
-fn good() {
+func:good = NIL() {
     resource: Resource = Resource.new();
     defer resource.cleanup();
     risky_operation();  // Cleanup happens even on panic
@@ -370,21 +370,21 @@ fn good() {
 
 ```aria
 // Get current stack depth
-fn check_depth() -> i32 {
+func:check_depth = int32() {
     stack: StackTrace = StackTrace.capture();
-    return stack.depth();
+    pass(stack.depth());
 }
 
-fn recursive(n: i32, max_depth: i32) -> Result<void> {
+func:recursive = Result<NIL>(int32:n, int32:max_depth) {
     if check_depth() > max_depth {
-        return Err("Stack too deep");
+        pass(Err("Stack too deep"));
     }
     
     if n > 0 {
-        return recursive(n - 1, max_depth);
+        pass(recursive(n - 1, max_depth));
     }
     
-    return Ok();
+    pass(Ok());
 }
 ```
 

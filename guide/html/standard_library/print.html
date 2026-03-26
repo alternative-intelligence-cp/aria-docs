@@ -689,7 +689,7 @@ print("Name:", name, "Age:", age);
 age: i32 = 30;
 </p>
 <p>
-print("$name is $age years old");
+print(`&{name} is &{age} years old`);
 // Output: Alice is 30 years old</code></pre>
 </p>
 <hr>
@@ -703,9 +703,9 @@ print("World");
 // World
 </p>
 <p>
-// stdout << - no automatic newline
-stdout << "Hello";
-stdout << "World";
+// stdout_write() - no automatic newline
+print("Hello");
+print("World");
 // Output:
 // HelloWorld</code></pre>
 </p>
@@ -733,9 +733,9 @@ print(p);
 <h2>Print without Newline</h2>
 <pre><code>// Use stdout directly
 <p>
-stdout << "Hello";
-stdout << " ";
-stdout << "World";
+print("Hello");
+print(" ");
+print("World");
 // Output: Hello World (no newlines)</code></pre>
 </p>
 <hr>
@@ -759,7 +759,7 @@ logger.info("User logged in", { username = username });  // ✅</code></pre>
 <li><a href="createLogger.md">createLogger()</a> - Structured logging</li>
 </ul>
 <hr>
-<strong>Remember</strong>: <code>print()</code> adds <strong>newline</strong> - use <code>stdout <<</code> for no newline!
+<strong>Remember</strong>: <code>print()</code> adds <strong>newline</strong> - use <code>stdout_write()</code> for no newline!
     </main>
 </body>
 </html>

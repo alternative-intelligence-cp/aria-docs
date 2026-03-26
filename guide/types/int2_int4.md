@@ -113,7 +113,7 @@ func:transition_state = (state: int2) -> int2 {
     if (state == STATE_INIT) return STATE_READY;
     if (state == STATE_READY) return STATE_RUNNING;
     if (state == STATE_RUNNING) return STATE_DONE;
-    return STATE_INIT;  // Loop
+    pass(STATE_INIT);  // Loop
 }
 
 current_state = transition_state(current_state);  // -2 → -1
@@ -200,7 +200,7 @@ int4:f = e * -1i4;           // -8 × -1 = 8, overflows to -8 (abs(MIN) problem!
 func:pack_nibbles = (high: int4, low: int4) -> uint8 {
     uint8:h = uint8(high) << 4u8;
     uint8:l = uint8(low) & 0x0Fu8;
-    return h | l;
+    pass(h | l);
 }
 
 // Unpack byte into two int4
@@ -330,11 +330,11 @@ int4:truncate = c / d;       // 7 / 2 = 3 (truncate toward zero)
 
 ```aria
 func:extract_high_nibble = (byte: uint8) -> int4 {
-    return int4((byte >> 4u8) & 0x0Fu8);
+    pass(int4((byte >> 4u8) & 0x0Fu8));
 }
 
 func:extract_low_nibble = (byte: uint8) -> int4 {
-    return int4(byte & 0x0Fu8);
+    pass(int4(byte & 0x0Fu8));
 }
 
 uint8:value = 0xA7u8;  // Binary: 1010 0111
@@ -352,14 +352,14 @@ int4:low = extract_low_nibble(value);    // 0x7 = 7 ✓
 func:decimal_to_bcd = (value: uint8) -> uint8 {
     uint8:tens = value / 10u8;
     uint8:ones = value % 10u8;
-    return (tens << 4u8) | ones;
+    pass((tens << 4u8) | ones);
 }
 
 // Decode BCD to decimal
 func:bcd_to_decimal = (bcd: uint8) -> uint8 {
     uint8:tens = (bcd >> 4u8) & 0x0Fu8;
     uint8:ones = bcd & 0x0Fu8;
-    return (tens * 10u8) + ones;
+    pass((tens * 10u8) + ones);
 }
 
 uint8:decimal = 42u8;
@@ -455,9 +455,9 @@ struct:PackedInt4Array = {
         uint8:byte = self.data[byte_index];
         
         if (is_high) {
-            return int4((byte >> 4u8) & 0x0Fu8);
+            pass(int4((byte >> 4u8) & 0x0Fu8));
         } else {
-            return int4(byte & 0x0Fu8);
+            pass(int4(byte & 0x0Fu8));
         }
     }
     
@@ -499,7 +499,7 @@ func:handle_event = (current: int2, event: uint8) -> int2 {
     if (current == IDLE && event == 1u8) return PROCESSING;
     if (current == PROCESSING && event == 2u8) return ERROR;
     if (current == ERROR && event == 3u8) return SHUTDOWN;
-    return current;  // No transition
+    pass(current);  // No transition
 }
 ```
 
@@ -541,10 +541,10 @@ func:handle_event = (current: int2, event: uint8) -> int2 {
 ```aria
 func:narrow_to_int4 = (value: int8) -> ?int4 {
     if (value < -8i8 || value > 7i8) {
-        return NIL;  // Out of range
+        pass(NIL);  // Out of range
     }
     
-    return int4(value);  // Safe
+    pass(int4(value));  // Safe
 }
 
 int8:large = 100i8;
@@ -564,7 +564,7 @@ func:saturating_add_int4 = (a: int4, b: int4) -> int4 {
     if (sum > 7i8) return 7i4;
     if (sum < -8i8) return -8i4;
     
-    return int4(sum);
+    pass(int4(sum));
 }
 
 int4:a = 7i4;

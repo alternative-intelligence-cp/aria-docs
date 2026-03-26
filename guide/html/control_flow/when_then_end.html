@@ -662,7 +662,7 @@ end</code></pre>
 <pre><code>age: i32 = 20;
 <p>
 when age >= 18 then
-stdout << "Adult\n";
+print("Adult\n");
 end</code></pre>
 </p>
 <hr>
@@ -670,9 +670,9 @@ end</code></pre>
 <pre><code>age: i32 = 16;
 <p>
 when age >= 18 then
-stdout << "Adult\n";
+print("Adult\n");
 else
-stdout << "Minor\n";
+print("Minor\n");
 end</code></pre>
 </p>
 <hr>
@@ -692,7 +692,7 @@ grade = "F";
 end
 </p>
 <p>
-stdout << "Grade: " << grade << "\n";</code></pre>
+print("Grade: " << grade + "\n");</code></pre>
 </p>
 <hr>
 <h2>Identical to If-Else</h2>
@@ -732,12 +732,12 @@ end</code></pre>
 <pre><code>when user.is_authenticated then
 <p>
 when user.is_admin then
-stdout << "Admin dashboard\n";
+print("Admin dashboard\n");
 else
-stdout << "User dashboard\n";
+print("User dashboard\n");
 end
 else
-stdout << "Please log in\n";
+print("Please log in\n");
 end</code></pre>
 </p>
 <hr>
@@ -745,7 +745,7 @@ end</code></pre>
 <pre><code>file: File = open("data.txt");
 <p>
 when file == ERR then
-stderr << "Failed to open file\n";
+stderr_write("Failed to open file\n");
 return;
 end
 </p>
@@ -902,7 +902,7 @@ state = "done";
 finish_work();
 end
 else when state == "done" then
-stdout << "Work already done\n";
+print("Work already done\n");
 end</code></pre>
 </p>
 <h3>Permission System</h3>

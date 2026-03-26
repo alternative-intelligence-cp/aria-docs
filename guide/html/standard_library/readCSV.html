@@ -675,10 +675,10 @@ Result: Result<[][]string> = readCSV("users.csv");
 <p>
 when result is Ok(rows) then
 till(rows.length - 1, 1) {
-stdout << "Row: $(rows[$].join(", "))";
+print("Row: $(rows[$].join(", "))");
 end
 elsif result is Err(msg) then
-stderr << "Failed to read CSV: $msg";
+stderr_write(`Failed to read CSV: &{msg}`);
 end</code></pre>
 </p>
 <h3>With Headers</h3>
@@ -705,7 +705,7 @@ age: string = row[1];  // Note: still string, need to parse
 city: string = row[2];
 </p>
 <p>
-stdout << "$name, age $(age), from $city";
+print(`&{name}, age $(age), from &{city}`);
 end
 end</code></pre>
 </p>
@@ -780,7 +780,7 @@ end</code></pre>
 <p>
 row = rows[$];
 when row.length() < 3 then
-stderr << "Incomplete row: $(row.join(","))";
+stderr_write("Incomplete row: $(row.join(","))");
 continue;
 end
 </p>

@@ -655,7 +655,7 @@ Async/await provides <strong>non-blocking concurrency</strong> with <strong>read
 <h2>Basic Pattern</h2>
 <pre><code>async fn fetch_user(id: i32) -> Result<User> {
 <p>
-response: Response = await http.get("/users/$id")?;
+response: Response = await http.get(`/users/&{id}`)?;
 user: User = await response.json()?;
 return Ok(user);
 }</code></pre>
@@ -665,7 +665,7 @@ return Ok(user);
 <h3>Without Async/Await (Callbacks)</h3>
 <pre><code>fn fetch_user_callback(id: i32, callback: fn(Result<User>)) {
 <p>
-http.get("/users/$id", fn(response) {
+http.get(`/users/&{id}`, fn(response) {
 response.json(fn(user) {
 callback(Ok(user));
 });
@@ -677,7 +677,7 @@ callback(Ok(user));
 <h3>With Async/Await</h3>
 <pre><code>async fn fetch_user(id: i32) -> Result<User> {
 <p>
-response: Response = await http.get("/users/$id")?;
+response: Response = await http.get(`/users/&{id}`)?;
 user: User = await response.json()?;
 return Ok(user);
 }
@@ -727,7 +727,7 @@ notifications: notifications,
 match await fetch_user(id) {
 Ok(user) => return user,
 Err(e) => {
-stdout << "Primary fetch failed: $e";
+print(`Primary fetch failed: &{e}`);
 </p>
 <p>
 match await fetch_user_from_cache(id) {
@@ -747,7 +747,7 @@ response: Response = await http.get(endpoint)?;
 </p>
 <p>
 if !response.ok() {
-return Err("HTTP $response.status");
+return Err(`HTTP &{response.status}`);
 }
 </p>
 <p>

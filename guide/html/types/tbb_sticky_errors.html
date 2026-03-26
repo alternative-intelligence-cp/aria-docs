@@ -717,7 +717,7 @@ total: tbb32 = balance + fee;        // ERR if either is ERR
 </p>
 <p>
 when total == ERR then
-stdout << "Transaction failed";
+print("Transaction failed");
 else
 commit_transaction(total);
 end</code></pre>
@@ -752,9 +752,9 @@ return result;  // ERR if any step failed
 // Use
 Result: tbb32 = safe_calculate("10 + abc");
 when result == ERR then
-stdout << "Invalid expression";
+print("Invalid expression");
 else
-stdout << "Result: $result";
+print(`Result: &{result}`);
 end</code></pre>
 </p>
 <hr>
@@ -769,7 +769,7 @@ sum: tbb32 = x + y;  // ERR (overflow!)
 </p>
 <p>
 when sum == ERR then
-stdout << "Calculation overflowed";
+print("Calculation overflowed");
 end</code></pre>
 </p>
 <hr>

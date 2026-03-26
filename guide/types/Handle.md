@@ -516,12 +516,12 @@ func:enqueue<T> = Result<NIL>(LockFreeQueue<T>@:queue, T:value) {
         Node<T>:tail_node = queue.arena.get(tail) ? default;
         
         if tail_node == default {
-            return ERR_QUEUE_CORRUPTED;  // Stale handle!
+            pass(ERR_QUEUE_CORRUPTED);  // Stale handle!
         }
         
         if tail_node.next == NULL_HANDLE {
             // Try to set tail.next to new_node (atomic CAS)
-            if atomic_cas(&tail_node.next, NULL_HANDLE, new_node) {
+            if atomic_cas($tail_node.next, NULL_HANDLE, new_node) {
                 queue.tail = new_node;
                 pass(NULL);
             }
@@ -550,7 +550,7 @@ func:spawn_entity = Handle<Entity>(GameWorld@:world, EntityType:type) {
     Handle<Terrain>:terrain_cell = find_terrain_at(entity.position);
     entity.terrain_ref = terrain_cell;
     
-    return world.entities.alloc(entity);
+    pass(world.entities.alloc(entity));
 }
 
 // Entities can reference terrain safely across reallocations!
@@ -570,10 +570,10 @@ func:pool_alloc<T> = Handle<T>(HandlePool<T>@:pool, T:value) {
         // Reuse existing handle (fast path!)
         Handle<T>:h = pool.free_handles.pop();
         pool.arena.set(h, value);
-        return h;
+        pass(h);
     } else {
         // Allocate new (slow path)
-        return pool.arena.alloc(value);
+        pass(pool.arena.alloc(value));
     }
 }
 ```
@@ -727,7 +727,7 @@ arena.free(h);  // Explicit free (deterministic timing)
 
 ```aria
 // Rust (compile-time lifetime tracking, restrictive)
-fn use_node(node: &Node) {  // Borrow checker enforces lifetime
+func:use_node = NIL(Node->:node) {  // Borrow checker enforces lifetime
     // Cannot use after return (compile error)
 }
 

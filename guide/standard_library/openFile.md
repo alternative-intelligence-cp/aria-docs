@@ -15,7 +15,7 @@
 ## Syntax
 
 ```aria
-import std.io;
+use std.io;
 
 file: Result<File> = openFile("data.txt", "r");
 ```
@@ -53,7 +53,7 @@ file: Result<File> = openFile("data.txt", "r");
 ### Read File in Chunks
 
 ```aria
-import std.io;
+use std.io;
 
 file: File = openFile("large.txt", "r")?;
 
@@ -61,7 +61,7 @@ loop
     chunk: ?string = file.read_line();
     when chunk == nil then break; end
     
-    stdout << chunk;
+    print(chunk);
 end
 
 file.close();
@@ -85,7 +85,7 @@ file.close();
 // Append mode - doesn't overwrite
 file: File = openFile("log.txt", "a")?;
 
-file.write("[$timestamp] Event occurred\n")?;
+file.write(`[&{timestamp}] Event occurred\n`)?;
 
 file.close();
 ```
@@ -177,7 +177,7 @@ defer file.close();  // Auto-close when scope ends
 log: File = openFile("app.log", "a")?;
 defer log.close();
 
-log.write("[$time] Application started\n")?;
+log.write(`[&{time}] Application started\n`)?;
 ```
 
 ### ❌ DON'T: Forget to Close

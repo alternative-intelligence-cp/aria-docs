@@ -25,7 +25,7 @@ The bitwise XOR assignment operator `^=` performs a bitwise XOR and assigns the 
 ```aria
 x: i32 = 0b1100;
 x ^= 0b0110;  // x = x ^ 0b0110
-stdout << x;  // 0b1010 = 10
+print(x);  // 0b1010 = 10
 ```
 
 ---

@@ -676,7 +676,7 @@ fail "Allocation failed";
 end
 </p>
 <p>
-stdout << str;
+print(str);
 </p>
 <p>
 // Must free
@@ -691,7 +691,7 @@ defer aria_free(str);
 </p>
 <p>
 str = str + " World";
-stdout << str;  // "Hello World"</code></pre>
+print(str);  // "Hello World"</code></pre>
 </p>
 <hr>
 <h2>Best Practices</h2>

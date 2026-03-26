@@ -17,13 +17,13 @@
 ```aria
 pick value {
     case 1:
-        stdout << "One\n";
+        print("One\n");
     case 2:
-        stdout << "Two\n";
+        print("Two\n");
     case 3:
-        stdout << "Three\n";
+        print("Three\n");
     else:
-        stdout << "Other\n";
+        print("Other\n");
 }
 ```
 
@@ -34,9 +34,9 @@ pick value {
 ```aria
 pick day {
     case "Monday", "Tuesday", "Wednesday", "Thursday", "Friday":
-        stdout << "Weekday\n";
+        print("Weekday\n");
     case "Saturday", "Sunday":
-        stdout << "Weekend\n";
+        print("Weekend\n");
 }
 ```
 
@@ -53,7 +53,7 @@ pick command {
     case "restart":
         restart_server();
     else:
-        stderr << "Unknown command\n";
+        stderr_write("Unknown command\n");
 }
 ```
 
@@ -107,13 +107,13 @@ pick status {
 ```aria
 pick value {
     case i32:
-        stdout << "Integer\n";
+        print("Integer\n");
     case string:
-        stdout << "String\n";
+        print("String\n");
     case bool:
-        stdout << "Boolean\n";
+        print("Boolean\n");
     else:
-        stdout << "Other type\n";
+        print("Other type\n");
 }
 ```
 
@@ -124,13 +124,13 @@ pick value {
 ```aria
 pick point {
     case (0, 0):
-        stdout << "Origin\n";
+        print("Origin\n");
     case (x, 0):
-        stdout << "On X axis\n";
+        print("On X axis\n");
     case (0, y):
-        stdout << "On Y axis\n";
+        print("On Y axis\n");
     case (x, y):
-        stdout << "Point at ({}, {})\n";
+        print("Point at ({}, {})\n");
 }
 ```
 
@@ -141,11 +141,11 @@ pick point {
 ```aria
 pick value {
     case x when x > 0:
-        stdout << "Positive\n";
+        print("Positive\n");
     case x when x < 0:
-        stdout << "Negative\n";
+        print("Negative\n");
     case 0:
-        stdout << "Zero\n";
+        print("Zero\n");
 }
 ```
 
@@ -250,15 +250,15 @@ pick response.status {
 ```aria
 pick percentage {
     case 90..=100:
-        return "A";
+        pass("A");
     case 80..=89:
-        return "B";
+        pass("B");
     case 70..=79:
-        return "C";
+        pass("C");
     case 60..=69:
-        return "D";
+        pass("D");
     else:
-        return "F";
+        pass("F");
 }
 ```
 
@@ -275,7 +275,7 @@ pick command {
     case "list", "show", "ls":
         list_items();
     else:
-        stderr << "Unknown command: " << command << "\n";
+        stderr_write("Unknown command: " + command + "\n");
 }
 ```
 

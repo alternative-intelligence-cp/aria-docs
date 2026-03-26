@@ -74,22 +74,22 @@ till i: 100 {
 ```aria
 // Count 0-9
 till i: 10 {
-    stdout << i;
+    print(i);
 }
 
 // Count 1-10
 till i: 1 to 11 {
-    stdout << i;
+    print(i);
 }
 
 // Countdown
 till i: 10 down {
-    stdout << i << "...\n";
+    print(i + "...\n");
 }
 
 // Even numbers
 till i: 0 to 20 by 2 {
-    stdout << i;
+    print(i);
 }
 
 // Array indexing

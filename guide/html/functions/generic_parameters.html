@@ -766,13 +766,13 @@ return Box{value: f(self.value)};
 <pre><code>// T must implement Display
 <p>
 fn print<T>(value: T) where T: Display {
-stdout << value << "\n";
+print(value + "\n");
 }
 </p>
 <p>
 // Inline syntax
 fn print<T: Display>(value: T) {
-stdout << value << "\n";
+print(value + "\n");
 }</code></pre>
 </p>
 <h3>Multiple Constraints</h3>

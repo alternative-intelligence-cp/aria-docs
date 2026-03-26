@@ -793,13 +793,13 @@ process(collection[$]);
 <pre><code>// Before
 <p>
 for i in 0..10 {
-stdout << i;
+print(i);
 }
 </p>
 <p>
 // After
 till(9, 1) {
-stdout << $;  // $ is index: 0,1,...,9
+print($);  // $ is index: 0,1,...,9
 }</code></pre>
 </p>
 <strong>Generators/Streams</strong>:
@@ -1227,7 +1227,7 @@ The range operator files (foundational documentation) were teaching:
 <pre><code>// ❌ WRONG (Rust syntax - was being taught!):
 <p>
 for i in 0..10 {
-stdout << i;
+print(i);
 }
 </p>
 <p>
@@ -1238,7 +1238,7 @@ int32[]:slice = arr[0..=10];  // Inclusive (indices 0-10)
 <p>
 // ✅ CORRECT (Aria) - till for LOOPS:
 till(9, 1) {
-stdout << $;  // $ = 0 to 9 (10 iterations)
+print($);  // $ = 0 to 9 (10 iterations)
 }</code></pre>
 </p>
 <strong>Operator examples fixed</strong>:
@@ -3411,7 +3411,7 @@ return Ok(config);
 }
 match read_config("config.toml") {
 Ok(config) => use_config(config),
-Err(e) => stderr << "Failed: $e",
+Err(e) => stderr_write("Failed: $e"),
 }
 </p>
 <p>

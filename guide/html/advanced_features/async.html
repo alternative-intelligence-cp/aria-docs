@@ -665,7 +665,7 @@ return Ok(text);
 <p>
 async fn main() {
 data: string = await fetch_data("https://example.com")?;
-stdout << data;
+print(data);
 }</code></pre>
 </p>
 <hr>
@@ -732,7 +732,7 @@ data1: Data = await task1?;
 data2: Data = await task2?;
 </p>
 <p>
-stdout << "Got $data1 and $data2";
+print(`Got &{data1} and &{data2}`);
 return Ok();
 }</code></pre>
 </p>
@@ -780,7 +780,7 @@ yield $;
 async fn use_generator() {
 values = await async_generator().collect();
 till(values.length - 1, 1) {
-stdout << values[$];
+print(values[$]);
 }
 }</code></pre>
 </p>

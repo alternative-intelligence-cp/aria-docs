@@ -28,11 +28,11 @@ Metaprogramming allows code to **generate**, **inspect**, and **transform** othe
 comptime {
     type_info: TypeInfo = @type_info(User);
     
-    stdout << "Struct: $type_info.name";
-    stdout << "Fields: $type_info.fields.len";
+    print(`Struct: &{type_info.name}`);
+    print(`Fields: &{type_info.fields.len}`);
     
     till(type_info.fields.length - 1, 1) {
-        stdout << "  ${type_info.fields[$].name}: ${type_info.fields[$].type}";
+        print("  &{type_info.fields[$].name}: &{type_info.fields[$].type}");
     }
 }
 ```
@@ -44,7 +44,7 @@ comptime {
 ### Generate Getters/Setters
 
 ```aria
-comptime fn generate_accessors(T: type) {
+comptime func:generate_accessors = NIL(type:T) {
     type_info: TypeInfo = @type_info(T);
     
     till(type_info.fields.length - 1, 1) {
@@ -52,7 +52,7 @@ comptime fn generate_accessors(T: type) {
         // Generate getter
         @generate_function("get_" ++ field.name, {
             fn() -> field.type {
-                return self.[field.name];
+                pass(self.[field.name]);
             }
         });
         
@@ -83,16 +83,16 @@ user.set_age(31);
 ## Generic Specialization
 
 ```aria
-fn serialize<T>(value: T) -> string {
+func:serialize = string(T:value) {
     comptime {
         if @type_is_integer(T) {
-            return int_to_string(value);
+            pass(int_to_string(value));
         } else if @type_is_float(T) {
-            return float_to_string(value);
+            pass(float_to_string(value));
         } else if @type_is_string(T) {
-            return "\"" ++ value ++ "\"";
+            pass("\"" ++ value ++ "\"");
         } else if @type_is_struct(T) {
-            return serialize_struct(value);
+            pass(serialize_struct(value));
         } else {
             @compile_error("Cannot serialize type: $T");
         }
@@ -105,7 +105,7 @@ fn serialize<T>(value: T) -> string {
 ## Compile-Time Introspection
 
 ```aria
-comptime fn struct_to_json<T>(value: T) -> string {
+comptime func:struct_to_json = string(T:value) {
     type_info: TypeInfo = @type_info(T);
     
     json: string = "{";
@@ -118,12 +118,12 @@ comptime fn struct_to_json<T>(value: T) -> string {
         }
         
         field_value = value.[field.name];
-        json = json ++ "\"$field.name\": " ++ serialize(field_value);
+        json = json ++ `\"&{field.name}\": ` ++ serialize(field_value);
         first = false;
     }
     
     json = json ++ "}";
-    return json;
+    pass(json);
 }
 
 struct User {
@@ -141,12 +141,12 @@ json: string = struct_to_json(user);
 ## Type Manipulation
 
 ```aria
-comptime fn make_optional(T: type) -> type {
-    return ?T;
+comptime func:make_optional = type(type:T) {
+    pass(?T);
 }
 
-comptime fn make_array(T: type, N: i32) -> type {
-    return [T; N];
+comptime func:make_array = type(type:T, int32:N) {
+    pass([T; N]);
 }
 
 type OptionalInt = comptime make_optional(i32);     // ?i32
@@ -158,7 +158,7 @@ type IntArray10 = comptime make_array(i32, 10);     // [i32; 10]
 ## Compile-Time Validation
 
 ```aria
-comptime fn validate_struct(T: type) {
+comptime func:validate_struct = NIL(type:T) {
     type_info: TypeInfo = @type_info(T);
     
     // Must have at least one field
@@ -198,17 +198,17 @@ comptime validate_struct(Invalid);  // Compile error: missing 'id' field
 ## Macro-like Code Generation
 
 ```aria
-comptime fn implement_trait(T: type, trait_name: string) {
+comptime func:implement_trait = NIL(type:T, string:trait_name) {
     if trait_name == "Debug" {
         @generate_impl(T, {
-            fn debug() -> string {
-                return "@type_name(T) { ... }";
+            func:debug = string() {
+                pass("@type_name(T) { ... }");
             }
         });
     } else if trait_name == "Clone" {
         @generate_impl(T, {
-            fn clone() -> T {
-                return self;
+            func:clone = T() {
+                pass(self);
             }
         });
     }
@@ -232,18 +232,18 @@ cloned: Point = point.clone();
 ## Generic Algorithms
 
 ```aria
-comptime fn generate_comparison<T>() {
+comptime func:generate_comparison = NIL() {
     if @type_has_method(T, "compare") {
         // Use custom compare
-        fn compare(a: T, b: T) -> i32 {
-            return a.compare(b);
+        func:compare = int32(T:a, T:b) {
+            pass(a.compare(b));
         }
     } else if @type_is_numeric(T) {
         // Numeric comparison
-        fn compare(a: T, b: T) -> i32 {
+        func:compare = int32(T:a, T:b) {
             if a < b { return -1; }
             if a > b { return 1; }
-            return 0;
+            pass(0);
         }
     } else {
         @compile_error("Type $T cannot be compared");
@@ -258,7 +258,7 @@ comptime fn generate_comparison<T>() {
 ### Builder Pattern Generation
 
 ```aria
-comptime fn generate_builder(T: type) {
+comptime func:generate_builder = NIL(type:T) {
     type_info: TypeInfo = @type_info(T);
     
     // Generate Builder struct
@@ -278,7 +278,7 @@ comptime fn generate_builder(T: type) {
         @generate_method(T.name ++ "Builder", "with_" ++ field.name, {
             fn(value: field.type) -> Self {
                 self.[field.name] = value;
-                return self;
+                pass(self);
             }
         });
     }
@@ -290,19 +290,19 @@ comptime fn generate_builder(T: type) {
 ### Enum String Conversion
 
 ```aria
-comptime fn generate_enum_to_string(E: type) {
+comptime func:generate_enum_to_string = NIL(type:E) {
     type_info: TypeInfo = @type_info(E);
     
     @generate_impl(E, {
-        fn to_string(self) -> string {
+        func:to_string = string(self) {
             comptime {
                 till(type_info.variants.length - 1, 1) {
                     if self == E.[type_info.variants[$].name] {
-                        return type_info.variants[$].name;
+                        pass(type_info.variants[$].name);
                     }
                 }
             }
-            return "Unknown";
+            pass("Unknown");
         }
     });
 }
@@ -347,9 +347,9 @@ comptime {
 ### ✅ DO: Type-Safe Code Generation
 
 ```aria
-comptime fn generate_safe<T>(generator: string) {
+comptime func:generate_safe = NIL(string:generator) {
     validate_type(T);
-    return generate_code(T, generator);
+    pass(generate_code(T, generator));
 }
 ```
 
@@ -357,7 +357,7 @@ comptime fn generate_safe<T>(generator: string) {
 
 ```aria
 // Simple case - just write it
-fn get_name() -> string { return self.name; }
+func:get_name = string() { return self.name; }
 
 // Don't metaprogram when not needed
 comptime generate_simple_getter("name");  // ❌ Overkill
@@ -370,11 +370,11 @@ comptime generate_simple_getter("name");  // ❌ Overkill
 ### Serialization Framework
 
 ```aria
-comptime fn derive_serialize(T: type) {
+comptime func:derive_serialize = NIL(type:T) {
     type_info: TypeInfo = @type_info(T);
     
     @generate_impl(T, {
-        fn serialize() -> []u8 {
+        func:serialize = []u8() {
             buffer: []u8 = [];
             
             comptime till(type_info.fields.length - 1, 1) {
@@ -382,10 +382,10 @@ comptime fn derive_serialize(T: type) {
                 buffer.append(field_data);
             }
             
-            return buffer;
+            pass(buffer);
         }
         
-        fn deserialize(data: []u8) -> Result<T> {
+        func:deserialize = Result<T>([]u8:data) {
             offset: usize = 0;
             Result: T;
             
@@ -396,7 +396,7 @@ comptime fn derive_serialize(T: type) {
                 offset += @size_of(field.type);
             }
             
-            return Ok(result);
+            pass(Ok(result));
         }
     });
 }

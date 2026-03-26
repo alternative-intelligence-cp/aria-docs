@@ -25,7 +25,7 @@ The subtract assignment operator `-=` subtracts the right operand from the varia
 ```aria
 x: i32 = 20;
 x -= 5;  // x = x - 5
-stdout << x;  // 15
+print(x);  // 15
 ```
 
 ---

@@ -736,7 +736,7 @@ fn process<T>(value: T) -> T
 where T: Display,
 T: Clone {
 copy: T = value.clone();
-stdout << copy << "\n";
+print(copy + "\n");
 return copy;
 }
 </p>
@@ -744,7 +744,7 @@ return copy;
 // Inline with +
 fn process<T: Display + Clone>(value: T) -> T {
 copy: T = value.clone();
-stdout << copy << "\n";
+print(copy + "\n");
 return copy;
 }</code></pre>
 </p>
@@ -824,7 +824,7 @@ return self.value % 2 == 0;
 // Implementation with constraints
 impl<T> Box<T> where T: Display {
 fn print() {
-stdout << self.value << "\n";
+print(self.value + "\n");
 }
 }</code></pre>
 </p>

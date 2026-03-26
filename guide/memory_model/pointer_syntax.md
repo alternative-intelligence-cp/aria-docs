@@ -20,7 +20,7 @@ ptr: *Point      // Pointer to Point
 
 ```aria
 value: i32 = 42;
-ptr: *i32 = &value;  // Get address
+ptr: *i32 = $value;  // Get address
 ```
 
 ---
@@ -29,7 +29,7 @@ ptr: *i32 = &value;  // Get address
 
 ```aria
 value: i32 = 42;
-ptr: *i32 = &value;
+ptr: *i32 = $value;
 
 dereferenced: i32 = *ptr;  // Get value at address
 ```
@@ -42,7 +42,7 @@ dereferenced: i32 = *ptr;  // Get value at address
 ptr: *i32 = nil;  // Null pointer
 
 when ptr == nil then
-    stderr << "Null pointer!\n";
+    stderr_write("Null pointer!\n");
 end
 ```
 
@@ -52,7 +52,7 @@ end
 
 ```aria
 arr: [i32; 5] = [1, 2, 3, 4, 5];
-ptr: *i32 = &arr[0];
+ptr: *i32 = $arr[0];
 
 first: i32 = *ptr;        // 1
 second: i32 = *(ptr + 1); // 2
@@ -64,8 +64,8 @@ third: i32 = *(ptr + 2);  // 3
 ## Function Pointers
 
 ```aria
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 
 func_ptr: fn(i32, i32) -> i32 = add;
@@ -84,12 +84,12 @@ ptr: *i32 = nil;
 value: i32 = *ptr;  // Crash!
 
 // Can be invalid
-ptr: *i32 = &local_var;
+ptr: *i32 = $local_var;
 // local_var freed
 value: i32 = *ptr;  // Undefined behavior!
 
 // No bounds checking
-ptr: *i32 = &arr[0];
+ptr: *i32 = $arr[0];
 value: i32 = *(ptr + 1000);  // Out of bounds!
 ```
 
@@ -99,12 +99,12 @@ value: i32 = *(ptr + 1000);  // Out of bounds!
 
 ```aria
 // ❌ Unsafe: Raw pointer
-fn process(ptr: *i32) {
+func:process = NIL(*i32:ptr) {
     value: i32 = *ptr;
 }
 
 // ✅ Safe: Reference
-fn process(ref: &i32) {
+func:process = NIL(int32->:ref) {
     value: i32 = ref;
 }
 ```
@@ -116,10 +116,10 @@ fn process(ref: &i32) {
 ### C Interop
 
 ```aria
-extern fn c_function(data: *byte, len: i32);
+extern func:c_function = NIL(*byte:data, int32:len);
 
 buffer: []byte = [1, 2, 3];
-c_function(&buffer[0], 3);
+c_function($buffer[0], 3);
 ```
 
 ### Manual Allocation

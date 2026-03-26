@@ -784,7 +784,7 @@ return pass divide(sum, numbers.len());
 user: User = pass fetch_user(id);  // Returns ERR if not found
 </p>
 <p>
-stddbg << "Loaded user: " << user.name;
+stddbg_write("Loaded user: " + user.name);
 </p>
 <p>
 return user;
@@ -796,7 +796,7 @@ user: User? = load_user(123);
 </p>
 <p>
 when user == ERR then
-stderr << "ERROR: User not found\n";
+stderr_write("ERROR: User not found\n");
 end</code></pre>
 </p>
 <hr>
@@ -829,7 +829,7 @@ Result: tbb32 = pass failing_function();
 // 2. Lines below never execute
 </p>
 <p>
-stdout << "This won't print if error occurred\n";
+print("This won't print if error occurred\n");
 return result;
 }
 </p>
@@ -894,13 +894,13 @@ return step3;
 <h3>✅ DO: Add Debug Context</h3>
 <pre><code>fn process(id: i32) -> Data? {
 <p>
-stddbg << "Processing ID: " << id;
+stddbg_write("Processing ID: " + id);
 </p>
 <p>
 data: Data = pass fetch(id);
 </p>
 <p>
-stddbg << "Fetched data: " << data.size() << " bytes";
+stddbg_write("Fetched data: " << data.size() + " bytes");
 </p>
 <p>
 return data;
@@ -978,7 +978,7 @@ return result;
 <h2>Real-World Example</h2>
 <pre><code>fn process_transaction(txn_id: string) -> Transaction? {
 <p>
-stddbg << "Processing transaction: " << txn_id;
+stddbg_write("Processing transaction: " + txn_id);
 </p>
 <p>
 // Fetch transaction from database
@@ -995,7 +995,7 @@ balance: tbb64 = pass account.get_balance();
 </p>
 <p>
 when balance < validated.amount then
-stderr << "ERROR: Insufficient funds\n";
+stderr_write("ERROR: Insufficient funds\n");
 return ERR;
 end
 </p>
@@ -1005,7 +1005,7 @@ new_balance: tbb64 = pass subtract_checked(balance, validated.amount);
 pass db.update_balance(account.id, new_balance);
 </p>
 <p>
-stddbg << "Transaction complete, new balance: " << new_balance;
+stddbg_write("Transaction complete, new balance: " + new_balance);
 </p>
 <p>
 return validated;

@@ -36,7 +36,7 @@ extern {
         value: i32
     }
     
-    fn use_c_struct(ptr: *CStruct) {
+    func:use_c_struct = NIL(*CStruct:ptr) {
         // C-style access
         n: i32 = ptr->value;
     }
@@ -49,7 +49,7 @@ extern {
 
 ```aria
 // Aria style - use dot
-ptr: *Data = &data;
+ptr: *Data = $data;
 Result: i32 = ptr.calculate();  // ✅ Auto-dereference
 
 // Not needed

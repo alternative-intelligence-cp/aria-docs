@@ -655,11 +655,11 @@ See <a href="interpolation.md">String Interpolation</a> and <a href="backtick.md
 <h3>Interpolation</h3>
 <pre><code>// Embed variables
 <p>
-msg: string = "Hello, $name!";
+msg: string = `Hello, &{name}!`;
 </p>
 <p>
 // Embed expressions
-text: string = "Total: ${price * quantity}";</code></pre>
+text: string = "Total: &{price * quantity}";</code></pre>
 </p>
 <h3>Raw Strings</h3>
 <pre><code>// No escape processing

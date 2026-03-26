@@ -17,15 +17,15 @@
 ### Without Generics (Code Duplication)
 
 ```aria
-fn max_i32(a: i32, b: i32) -> i32 {
+func:max_i32 = int32(int32:a, int32:b) {
     when a > b then return a; else return b; end
 }
 
-fn max_f64(a: f64, b: f64) -> f64 {
+func:max_f64 = flt64(flt64:a, flt64:b) {
     when a > b then return a; else return b; end
 }
 
-fn max_string(a: string, b: string) -> string {
+func:max_string = string(string:a, string:b) {
     when a > b then return a; else return b; end
 }
 
@@ -35,7 +35,7 @@ fn max_string(a: string, b: string) -> string {
 ### With Generics (Write Once)
 
 ```aria
-fn max<T>(a: T, b: T) -> T where T: Comparable {
+func:max = T(T:a, T:b)where T: Comparable {
     when a > b then return a; else return b; end
 }
 
@@ -52,7 +52,7 @@ z: string = max("alice", "bob");
 ### Syntax
 
 ```aria
-fn function_name<T>(param: T) -> T {
+func:function_name = T(T:param) {
     // T is a type parameter
     // Can be any type
 }
@@ -61,8 +61,8 @@ fn function_name<T>(param: T) -> T {
 ### Single Type Parameter
 
 ```aria
-fn identity<T>(value: T) -> T {
-    return value;
+func:identity = T(T:value) {
+    pass(value);
 }
 
 num: i32 = identity(42);
@@ -72,8 +72,8 @@ text: string = identity("hello");
 ### Multiple Type Parameters
 
 ```aria
-fn pair<T, U>(first: T, second: U) -> (T, U) {
-    return (first, second);
+func:pair = (T,(T:first, U:second)U) {
+    pass((first, second));
 }
 
 Result: (i32, string) = pair(42, "answer");
@@ -83,16 +83,16 @@ Result: (i32, string) = pair(42, "answer");
 
 ```aria
 // Single generic: T (type)
-fn wrap<T>(value: T) -> Box<T> { ... }
+func:wrap = Box<T>(T:value) { ... }
 
 // Input/Output: In, Out
-fn convert<In, Out>(value: In) -> Out { ... }
+func:convert = Out(In:value) { ... }
 
 // Key/Value: K, V
-fn insert<K, V>(key: K, value: V) { ... }
+func:insert = NIL(K:key, V:value) { ... }
 
 // Element: T or E
-fn sum<T>(array: []T) -> T { ... }
+func:sum = T([]T:array) { ... }
 ```
 
 ---
@@ -103,19 +103,19 @@ fn sum<T>(array: []T) -> T { ... }
 
 ```aria
 // T must implement Display
-fn print<T>(value: T) where T: Display {
-    stdout << value << "\n";
+func:print = NIL(T:value)where T: Display {
+    print(value + "\n");
 }
 
 // T must implement Comparable
-fn sort<T>(array: []T) where T: Comparable {
+func:sort = NIL([]T:array)where T: Comparable {
     // Can use >, <, ==, etc.
 }
 
 // T must implement both traits
-fn process<T>(value: T) where T: Display, T: Clone {
+func:process = NIL(T:value)where T: Display, T: Clone {
     copy: T = value.clone();
-    stdout << copy << "\n";
+    print(copy + "\n");
 }
 ```
 
@@ -123,13 +123,13 @@ fn process<T>(value: T) where T: Display, T: Clone {
 
 ```aria
 // Method 1: where clause
-fn unique<T>(array: []T) -> []T 
+func:unique = []T([]T:array)
     where T: Comparable, T: Hashable {
     // Implementation
 }
 
 // Method 2: inline (less common)
-fn unique<T: Comparable + Hashable>(array: []T) -> []T {
+func:unique = []T([]T:array) {
     // Implementation
 }
 ```
@@ -144,12 +144,12 @@ struct Box<T> {
 }
 
 impl<T> Box<T> {
-    fn new(value: T) -> Box<T> {
-        return Box{value: value};
+    func:new = Box<T>(T:value) {
+        pass(Box{value: value});
     }
     
-    fn get() -> T {
-        return self.value;
+    func:get = T() {
+        pass(self.value);
     }
 }
 
@@ -184,8 +184,8 @@ Result: Result<string, Error> = Ok("success");
 The compiler can often infer generic types:
 
 ```aria
-fn first<T>(array: []T) -> T {
-    return array[0];
+func:first = T([]T:array) {
+    pass(array[0]);
 }
 
 // Explicit type
@@ -206,8 +206,8 @@ value: i32 = first(numbers);  // T inferred as i32
 Aria generates **specialized code** for each type you use:
 
 ```aria
-fn add<T>(a: T, b: T) -> T {
-    return a + b;
+func:add = T(T:a, T:b) {
+    pass(a + b);
 }
 
 x: i32 = add(1, 2);
@@ -217,13 +217,13 @@ y: f64 = add(1.5, 2.5);
 **Compiler generates**:
 ```aria
 // Generated for i32
-fn add_i32(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add_i32 = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 
 // Generated for f64
-fn add_f64(a: f64, b: f64) -> f64 {
-    return a + b;
+func:add_f64 = flt64(flt64:a, flt64:b) {
+    pass(a + b);
 }
 ```
 
@@ -260,13 +260,13 @@ struct Set<T> {
 ### Iterator Pattern
 
 ```aria
-fn map<T, U>(array: []T, f: fn(T) -> U) -> []U {
+func:map = U)([]T:array, fn(T:f)-> []U {
     Result: []U = [];
     till(array.length - 1, 1) {
         item: T = array[$];
         result.push(f(item));
     }
-    return result;
+    pass(result);
 }
 
 numbers: []i32 = [1, 2, 3];
@@ -281,17 +281,17 @@ struct Builder<T> {
 }
 
 impl<T> Builder<T> {
-    fn new() -> Builder<T> {
-        return Builder{items: []};
+    func:new = Builder<T>() {
+        pass(Builder{items: []});
     }
     
-    fn add(item: T) -> Builder<T> {
+    func:add = Builder<T>(T:item) {
         self.items.push(item);
-        return self;
+        pass(self);
     }
     
-    fn build() -> []T {
-        return self.items;
+    func:build = []T() {
+        pass(self.items);
     }
 }
 ```
@@ -304,8 +304,8 @@ impl<T> Builder<T> {
 
 ```aria
 // Good: Works with any type
-fn swap<T>(a: T, b: T) -> (T, T) {
-    return (b, a);
+func:swap = (T,(T:a, T:b)T) {
+    pass((b, a));
 }
 ```
 
@@ -313,7 +313,7 @@ fn swap<T>(a: T, b: T) -> (T, T) {
 
 ```aria
 // Good: Clear what T must support
-fn max<T>(a: T, b: T) -> T where T: Comparable {
+func:max = T(T:a, T:b)where T: Comparable {
     when a > b then return a; else return b; end
 }
 ```
@@ -322,23 +322,23 @@ fn max<T>(a: T, b: T) -> T where T: Comparable {
 
 ```aria
 // Good: Clear purpose
-fn cache_get<Key, Value>(key: Key) -> Value? { ... }
+func:cache_get = Value?(Key:key) { ... }
 
 // Avoid: Unclear
-fn cache_get<A, B>(key: A) -> B? { ... }
+func:cache_get = B?(A:key) { ... }
 ```
 
 ### ❌ DON'T: Overuse Generics
 
 ```aria
 // Wrong: Only works with numbers anyway
-fn add_numbers<T>(a: T, b: T) -> T {
-    return a + b;
+func:add_numbers = T(T:a, T:b) {
+    pass(a + b);
 }
 
 // Right: Be specific
-fn add_numbers(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add_numbers = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 ```
 
@@ -346,23 +346,23 @@ fn add_numbers(a: i32, b: i32) -> i32 {
 
 ```aria
 // Wrong: Won't compile - T might not support +
-fn sum<T>(array: []T) -> T {
+func:sum = T([]T:array) {
     total: T = 0;  // Error: can't assign 0 to T
     till(array.length - 1, 1) {
         item: T = array[$];
         total = total + item;  // Error: T might not have +
     }
-    return total;
+    pass(total);
 }
 
 // Right: Add constraint
-fn sum<T>(array: []T) -> T where T: Numeric {
+func:sum = T([]T:array)where T: Numeric {
     total: T = T::zero();
     till(array.length - 1, 1) {
         item: T = array[$];
         total = total + item;
     }
-    return total;
+    pass(total);
 }
 ```
 

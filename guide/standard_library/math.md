@@ -14,7 +14,7 @@ The `std.math` module provides mathematical operations, constants, and utilities
 ## Importing
 
 ```aria
-import std.math;
+use std.math;
 ```
 
 ---
@@ -135,10 +135,10 @@ tanh: flt64 = math.tanh(x);
 ### Distance Between Points
 
 ```aria
-fn distance(x1: flt64, y1: flt64, x2: flt64, y2: flt64) -> flt64 {
+func:distance = flt64(flt64:x1, flt64:y1, flt64:x2, flt64:y2) {
     dx: flt64 = x2 - x1;
     dy: flt64 = y2 - y1;
-    return math.sqrt(dx*dx + dy*dy);
+    pass(math.sqrt(dx*dx + dy*dy));
 }
 
 dist: flt64 = distance(0, 0, 3, 4);  // 5.0
@@ -147,24 +147,24 @@ dist: flt64 = distance(0, 0, 3, 4);  // 5.0
 ### Angle Between Vectors
 
 ```aria
-fn angle_between(x1: flt64, y1: flt64, x2: flt64, y2: flt64) -> flt64 {
+func:angle_between = flt64(flt64:x1, flt64:y1, flt64:x2, flt64:y2) {
     dot: flt64 = x1*x2 + y1*y2;
     mag1: flt64 = math.sqrt(x1*x1 + y1*y1);
     mag2: flt64 = math.sqrt(x2*x2 + y2*y2);
     
-    return math.acos(dot / (mag1 * mag2));
+    pass(math.acos(dot / (mag1 * mag2)));
 }
 ```
 
 ### Convert Degrees to Radians
 
 ```aria
-fn to_radians(degrees: flt64) -> flt64 {
-    return degrees * math.PI / 180.0;
+func:to_radians = flt64(flt64:degrees) {
+    pass(degrees * math.PI / 180.0);
 }
 
-fn to_degrees(radians: flt64) -> flt64 {
-    return radians * 180.0 / math.PI;
+func:to_degrees = flt64(flt64:radians) {
+    pass(radians * 180.0 / math.PI);
 }
 
 radians: flt64 = to_radians(90.0);   // π/2

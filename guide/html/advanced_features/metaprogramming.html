@@ -667,12 +667,12 @@ Metaprogramming allows code to <strong>generate</strong>, <strong>inspect</stron
 type_info: TypeInfo = @type_info(User);
 </p>
 <p>
-stdout << "Struct: $type_info.name";
-stdout << "Fields: $type_info.fields.len";
+print(`Struct: &{type_info.name}`);
+print(`Fields: &{type_info.fields.len}`);
 </p>
 <p>
 till(type_info.fields.length - 1, 1) {
-stdout << "  ${type_info.fields[$].name}: ${type_info.fields[$].type}";
+print("  &{type_info.fields[$].name}: &{type_info.fields[$].type}");
 }
 }</code></pre>
 </p>
@@ -756,7 +756,7 @@ json = json ++ ", ";
 </p>
 <p>
 field_value = value.[field.name];
-json = json ++ "\"$field.name\": " ++ serialize(field_value);
+json = json ++ `\"&{field.name}\": ` ++ serialize(field_value);
 first = false;
 }
 </p>

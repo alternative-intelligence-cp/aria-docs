@@ -2,9 +2,9 @@
 
 **Target audience:** Anyone who wants to understand the compiler internals, contribute to the compiler, or implement new language features.
 
-**Compiler version:** 0.2.4  
+**Compiler version:** 0.2.13  
 **LLVM version:** 20.1  
-**Total codebase:** ~126,000 lines of C/C++
+**Total codebase:** ~102,000 lines of C/C++ (compiler) + ~37,000 lines (runtime)
 
 ---
 
@@ -64,7 +64,7 @@ The compiler is written in C++17. The LLVM backend remains in C++ by design, whi
 
 ## Compilation Pipeline
 
-Entry point: `src/main.cpp` (1,596 lines)
+Entry point: `src/main.cpp` (2,057 lines)
 
 The `compile_to_module()` function orchestrates the full pipeline:
 
@@ -100,8 +100,7 @@ After `compile_to_module()`, `main.cpp` handles:
 | `-Wall` | Enable all warnings |
 | `-Werror` | Warnings as errors |
 | `--emit-llvm` | Output LLVM IR text |
-| `--emit-asm` | Output assembly |
-| `--ast-dump` | Print AST tree |
+| `--emit-asm` | Output assembly || `--emit-wasm` | Compile to WebAssembly (.wasm) || `--ast-dump` | Print AST tree |
 | `--tokens` | Print token stream |
 | `-E` | Preprocessor output only |
 
@@ -126,6 +125,8 @@ The lexer produces a stream of `Token` values, each carrying a `TokenType`, stri
 **Control flow:** `if`, `else`, `while`, `for`, `loop`, `till`, `when`/`then`/`end`, `pick`/`fall`, `break`, `continue`, `return`, `pass`, `fail`
 
 **Async:** `async`, `await`, `catch`, `in`
+
+**Compile-time:** `comptime`, `inline`, `noinline`
 
 **Declarations:** `func`, `struct`, `enum`, `Type`, `opaque`, `trait`, `impl`, `use`, `mod`, `pub`, `extern`, `const`, `fixed`, `cfg`, `as`
 
@@ -158,7 +159,7 @@ The lexer produces a stream of `Token` values, each carrying a `TokenType`, stri
 
 ## Parser
 
-**Source:** `src/frontend/parser/parser.cpp` (4,646 lines)  
+**Source:** `src/frontend/parser/parser.cpp` (4,720 lines)  
 **Header:** `include/frontend/parser/parser.h`
 
 Recursive-descent parser producing a `ProgramNode` AST root. Notable features:
@@ -241,7 +242,7 @@ All nodes inherit from `ASTNode` and use `std::shared_ptr<ASTNode>` (typedef'd a
 
 15 analysis passes in `src/frontend/sema/`:
 
-### TypeChecker (10,615 lines)
+### TypeChecker (10,826 lines)
 
 The largest single file. Performs:
 - Type inference for variable declarations
@@ -306,8 +307,8 @@ Implements "Appendage Theory" for memory safety:
 
 | File | Lines | Purpose |
 |------|------:|---------|
-| `ir_generator.cpp` | 9,803 | Module setup, top-level declarations, function codegen, extern blocks, debug info, generic specialization |
-| `codegen_expr.cpp` | 10,183 | Expression codegen: literals, binary/unary ops, calls, member access, arrays, casts, LBIM arithmetic, UFCS, pipelines |
+| `ir_generator.cpp` | 10,084 | Module setup, top-level declarations, function codegen, extern blocks, debug info, generic specialization |
+| `codegen_expr.cpp` | 10,531 | Expression codegen: literals, binary/unary ops, calls, member access, arrays, casts, LBIM arithmetic, UFCS, pipelines |
 | `codegen_stmt.cpp` | 2,929 | Statement codegen: var decl, control flow, defer, return/pass/fail, struct/enum/trait/impl |
 | `tbb_codegen.cpp` | 467 | TBB (Twisted Balanced Binary) safe arithmetic with overflow sentinel detection |
 | `ternary_codegen.cpp` | 600 | Balanced ternary & nonary arithmetic codegen |
@@ -397,6 +398,28 @@ These live in `src/backend/runtime/` and support Aria's unique numeric types:
 | `frac_ops.cpp` | 563 | Exact rational arithmetic |
 | `tmatrix_ops.cpp` | 514 | Twisted matrix operations |
 | `vec9_ops.cpp` | — | 9D vector operations |
+
+---
+
+## WebAssembly Target (v0.2.13)
+
+When `--emit-wasm` is passed, the compiler targets the `wasm32-unknown-wasi` triple:
+
+- LLVM emits WebAssembly object code
+- Linked with `wasm-ld` against a WASM-specific runtime (`aria_runtime_wasm`)
+- Output is a `.wasm` module runnable under WASI-compatible runtimes (Wasmtime, Wasmer)
+
+### WASM Restrictions
+
+- No threading (single-threaded only)
+- No process spawning (`fork`/`exec` unavailable in WASM sandbox)
+- No signals or `mmap` (WASM uses linear memory)
+- No native FFI (WASM has its own import model)
+- File I/O requires a WASI-compatible runtime
+
+### WASM Runtime
+
+A separate `aria_runtime_wasm` static library is built targeting wasm32. It excludes threading, io_uring, process, and networking subsystems. Core features (strings, math, collections, Result types) work unchanged.
 
 ---
 
@@ -681,15 +704,15 @@ src/
 
 include/                              mirrors src/ with headers
 
-Total: ~126,000 lines
+Total: ~139,000 lines (102K compiler + 37K runtime)
 ```
 
 ### The Three Megafiles
 
 Three files exceed 9,000 lines and are candidates for future splitting:
 
-1. **`type_checker.cpp` (10,615 lines)** — Contains type inference, generic resolution, operator checking, module loading, and error reporting all in one file.
-2. **`codegen_expr.cpp` (10,183 lines)** — Expression code generation for every expression type, plus UFCS, pipeline, cast, and arithmetic logic.
-3. **`ir_generator.cpp` (9,803 lines)** — Module initialization, function generation, extern blocks, debug info emission, and top-level orchestration.
+1. **`type_checker.cpp` (10,826 lines)** — Contains type inference, generic resolution, operator checking, module loading, and error reporting all in one file.
+2. **`codegen_expr.cpp` (10,531 lines)** — Expression code generation for every expression type, plus UFCS, pipeline, cast, and arithmetic logic.
+3. **`ir_generator.cpp` (10,084 lines)** — Module initialization, function generation, extern blocks, debug info emission, and top-level orchestration.
 
 These files work correctly but are difficult to navigate. Future refactoring may split them along logical boundaries (e.g., separating generic resolution from type checking, or splitting arithmetic codegen from call codegen).

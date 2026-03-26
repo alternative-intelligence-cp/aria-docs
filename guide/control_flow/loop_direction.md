@@ -16,7 +16,7 @@
 
 ```aria
 till i: 10 {
-    stdout << i << " ";
+    print(i + " ");
 }
 // Output: 0 1 2 3 4 5 6 7 8 9
 ```
@@ -37,7 +37,7 @@ till i: 0 to 10 {
 
 ```aria
 till i: 10 down {
-    stdout << i << " ";
+    print(i + " ");
 }
 // Output: 10 9 8 7 6 5 4 3 2 1
 ```
@@ -49,13 +49,13 @@ till i: 10 down {
 ```aria
 // Count up from 5 to 14
 till i: 5 to 15 {
-    stdout << i << " ";
+    print(i + " ");
 }
 // Output: 5 6 7 8 9 10 11 12 13 14
 
 // Count down from 10 to 1
 till i: 10 down to 1 {
-    stdout << i << " ";
+    print(i + " ");
 }
 // Output: 10 9 8 7 6 5 4 3 2 1
 ```
@@ -67,13 +67,13 @@ till i: 10 down to 1 {
 ```aria
 // Count by 2
 till i: 0 to 10 by 2 {
-    stdout << i << " ";
+    print(i + " ");
 }
 // Output: 0 2 4 6 8
 
 // Count down by 2
 till i: 10 down to 0 by 2 {
-    stdout << i << " ";
+    print(i + " ");
 }
 // Output: 10 8 6 4 2 0
 ```
@@ -87,7 +87,7 @@ till i: 10 down to 0 by 2 {
 ```aria
 // Good: Clear intent
 till i: 10 down {
-    stdout << i << "...\n";
+    print(i + "...\n");
 }
 ```
 
@@ -106,13 +106,13 @@ till i: 1 to 100 {
 // Wrong: Overcomplicated
 i: i32 = 10;
 while i > 0 {
-    stdout << i;
+    print(i);
     i = i - 1;
 }
 
 // Right: Use till
 till i: 10 down {
-    stdout << i;
+    print(i);
 }
 ```
 
@@ -124,17 +124,17 @@ till i: 10 down {
 
 ```aria
 till seconds: 10 down {
-    stdout << seconds << "...\n";
+    print(seconds + "...\n");
     sleep(1000);
 }
-stdout << "Liftoff!\n";
+print("Liftoff!\n");
 ```
 
 ### Step Through Array Backwards
 
 ```aria
 till i: items.length() down {
-    stdout << items[i] << "\n";
+    print(items[i] + "\n");
 }
 ```
 
@@ -142,7 +142,7 @@ till i: items.length() down {
 
 ```aria
 till i: 0 to 100 by 10 {
-    stdout << i << " ";
+    print(i + " ");
 }
 // Output: 0 10 20 30 40 50 60 70 80 90
 ```

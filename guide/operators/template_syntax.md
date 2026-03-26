@@ -14,27 +14,27 @@ See [String Interpolation](interpolation.md) and [Template Literal](backtick.md)
 ### Interpolation
 
 ```aria
-// Embed variables
-msg: string = "Hello, $name!";
+// Backtick template literals with &{} interpolation
+string:msg = `Hello, &{name}!`;
 
 // Embed expressions
-text: string = "Total: ${price * quantity}";
+string:text = `Total: &{price * quantity}`;
 ```
 
 ### Raw Strings
 
 ```aria
 // No escape processing
-path: string = `C:\Windows\System32`;
+string:path = `C:\Windows\System32`;
 ```
 
 ### Multi-line
 
 ```aria
-template: string = `
-    Name: $name
-    Age: $age
-    Email: $email
+string:template = `
+    Name: &{name}
+    Age: &{age}
+    Email: &{email}
 `;
 ```
 

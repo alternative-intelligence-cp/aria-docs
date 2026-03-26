@@ -25,7 +25,7 @@ map: Map<string, i32> = Map.new();
 ## Module Alias
 
 ```aria
-import very.long.module.path as short;
+use very.long.module.path as short;
 
 Result: i32 = short.function();
 ```
@@ -266,8 +266,8 @@ use std.collections.{
 use std.result.Result as Res;
 use std.option.Option as Opt;
 
-fn process() -> Res<Data, Error> { }
-fn find() -> Opt<Item> { }
+func:process = Res<Data,()Error> { }
+func:find = Opt<Item>() { }
 ```
 
 ### Platform-Specific

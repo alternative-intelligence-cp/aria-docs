@@ -119,7 +119,7 @@ pick command {
         restart();
     
     else:
-        stderr << "Unknown command\n";
+        stderr_write("Unknown command\n");
 }
 ```
 

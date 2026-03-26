@@ -1,5 +1,8 @@
 # The `vec3` Type (3D Vector)
 
+> **⚠️ DESIGN DOCUMENT — LIMITED COMPILER SUPPORT**
+> SIMD vector types have limited compiler support. The documentation below describes the planned design. Use the `aria-vec` ecosystem package for vector operations.
+
 **Category**: Types → Vectors → 3D  
 **Syntax**: `vec3`  
 **Purpose**: Three-dimensional vector for 3D graphics, physics, and spatial mathematics  

@@ -19,7 +19,7 @@
 ```aria
 // With GC, objects can move
 data: Data = aria_gc_alloc(Data);
-ptr: *Data = &data;  // Get address
+ptr: *Data = $data;  // Get address
 
 // GC collection happens
 gc_collect();
@@ -35,7 +35,7 @@ gc_collect();
 data: Data = aria_gc_alloc(Data);
 pin data;
 
-ptr: *Data = &data;  // Safe - won't move
+ptr: *Data = $data;  // Safe - won't move
 
 // Even after GC
 gc_collect();
@@ -54,11 +54,11 @@ unpin data;  // Allow movement again
 
 ```aria
 // C function expects stable pointer
-extern fn c_process(data: *Data);
+extern func:c_process = NIL(*Data:data);
 
 data: Data = aria_gc_alloc(Data);
 pin data;
-c_process(&data);
+c_process($data);
 unpin data;
 ```
 
@@ -69,7 +69,7 @@ unpin data;
 data: Data = aria_gc_alloc(Data);
 pin data;
 
-ptr: *Data = &data;
+ptr: *Data = $data;
 // Use ptr over time
 // ptr remains valid
 
@@ -83,7 +83,7 @@ unpin data;
 buffer: []byte = aria_gc_alloc(buffer_size);
 pin buffer;
 
-dma_start(&buffer);
+dma_start($buffer);
 // buffer won't move during DMA
 
 unpin buffer;
@@ -143,7 +143,7 @@ defer unpin data;  // Auto-unpin
 ```aria
 // Good: Pin only when needed
 pin data;
-c_function(&data);
+c_function($data);
 unpin data;
 
 // Wrong: Pin forever
@@ -157,19 +157,19 @@ pin data;
 pin data;
 defer unpin data;  // Can't forget
 
-foreign_call(&data);
+foreign_call($data);
 ```
 
 ### ✅ DO: Prefer Borrowing
 
 ```aria
 // Better: Use references
-fn process(data: &Data) {
+func:process = NIL(Data->:data) {
     // No pinning needed
 }
 
 // Only pin for raw pointers
-fn process_raw(data: *Data) {
+func:process_raw = NIL(*Data:data) {
     // Needs pinning
 }
 ```
@@ -199,36 +199,36 @@ till(all_data.length - 1, 1) {
 ### C Interop
 
 ```aria
-extern fn c_process(buffer: *byte, size: i32);
+extern func:c_process = NIL(*byte:buffer, int32:size);
 
-fn call_c() {
+func:call_c = NIL() {
     buffer: []byte = aria_gc_alloc_buffer(1024);
     pin buffer;
     defer unpin buffer;
     
-    c_process(&buffer[0], buffer.length());
+    c_process($buffer[0], buffer.length());
 }
 ```
 
 ### Async Operation
 
 ```aria
-async fn write_async(data: Data) {
+async func:write_async = NIL(Data:data) {
     pin data;
     defer unpin data;
     
-    await disk.write(&data);
+    await disk.write($data);
 }
 ```
 
 ### Hardware DMA
 
 ```aria
-fn dma_transfer(data: []byte) {
+func:dma_transfer = NIL([]byte:data) {
     pin data;
     defer unpin data;
     
-    dma_controller.start(&data[0], data.length());
+    dma_controller.start($data[0], data.length());
     await dma_controller.wait();
 }
 ```
@@ -243,12 +243,12 @@ Instead of pinning GC data:
 // GC + pin
 data: Data = aria_gc_alloc(Data);
 pin data;
-c_function(&data);
+c_function($data);
 unpin data;
 
 // Better: Stack allocation
 data: Data = Data::new();
-c_function(&data);  // Already stable
+c_function($data);  // Already stable
 ```
 
 ---

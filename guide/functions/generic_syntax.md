@@ -12,13 +12,13 @@
 
 ```aria
 // Single type parameter
-fn identity<T>(value: T) -> T {
-    return value;
+func:identity = T(T:value) {
+    pass(value);
 }
 
 // Multiple type parameters
-fn pair<T, U>(first: T, second: U) -> (T, U) {
-    return (first, second);
+func:pair = (T,(T:first, U:second)U) {
+    pass((first, second));
 }
 ```
 
@@ -61,22 +61,22 @@ enum Result<T, E> {
 
 ```aria
 // T for single generic type
-fn wrap<T>(value: T) -> Box<T> { }
+func:wrap = Box<T>(T:value) { }
 
 // T, U for two types
-fn convert<T, U>(input: T) -> U { }
+func:convert = U(T:input) { }
 
 // K, V for Key/Value
-fn insert<K, V>(key: K, value: V) { }
+func:insert = NIL(K:key, V:value) { }
 ```
 
 ### Descriptive Names (Rare)
 
 ```aria
 // More descriptive when needed
-fn transform<Input, Output>(data: Input) -> Output { }
+func:transform = Output(Input:data) { }
 
-fn cache<Key, Value>(k: Key, v: Value) { }
+func:cache = NIL(Key:k, Value:v) { }
 ```
 
 ---
@@ -87,12 +87,12 @@ fn cache<Key, Value>(k: Key, v: Value) { }
 
 ```aria
 // Using where clause
-fn max<T>(a: T, b: T) -> T where T: Comparable {
+func:max = T(T:a, T:b)where T: Comparable {
     when a > b then return a; else return b; end
 }
 
 // Inline constraint (alternative)
-fn max<T: Comparable>(a: T, b: T) -> T {
+func:max = T(T:a, T:b) {
     when a > b then return a; else return b; end
 }
 ```
@@ -101,30 +101,30 @@ fn max<T: Comparable>(a: T, b: T) -> T {
 
 ```aria
 // Multiple where clauses
-fn process<T>(value: T) -> T 
+func:process = T(T:value)
     where T: Display, 
           T: Clone {
     copy: T = value.clone();
-    stdout << copy << "\n";
-    return copy;
+    print(copy + "\n");
+    pass(copy);
 }
 
 // Inline with +
-fn process<T: Display + Clone>(value: T) -> T {
+func:process = T(T:value) {
     copy: T = value.clone();
-    stdout << copy << "\n";
-    return copy;
+    print(copy + "\n");
+    pass(copy);
 }
 ```
 
 ### Multiple Type Parameters with Constraints
 
 ```aria
-fn transform<T, U>(input: T) -> U
+func:transform = U(T:input)
     where T: Serializable,
           U: Deserializable {
     data: []u8 = input.serialize();
-    return U::deserialize(data);
+    pass(U::deserialize(data));
 }
 ```
 
@@ -182,26 +182,26 @@ str_box = Box{value: "hello"};  // Box<string>
 ```aria
 // Generic implementation
 impl<T> Box<T> {
-    fn new(value: T) -> Box<T> {
-        return Box{value: value};
+    func:new = Box<T>(T:value) {
+        pass(Box{value: value});
     }
     
-    fn get() -> T {
-        return self.value;
+    func:get = T() {
+        pass(self.value);
     }
 }
 
 // Implementation for specific type
 impl Box<i32> {
-    fn is_even() -> bool {
-        return self.value % 2 == 0;
+    func:is_even = bool() {
+        pass(self.value % 2 == 0);
     }
 }
 
 // Implementation with constraints
 impl<T> Box<T> where T: Display {
-    fn print() {
-        stdout << self.value << "\n";
+    func:print = NIL() {
+        print(self.value + "\n");
     }
 }
 ```
@@ -233,11 +233,11 @@ Result: i32 = match some_value {
 
 ```aria
 // Lifetime parameter (rare in Aria)
-fn longest<'a>(s1: &'a string, s2: &'a string) -> &'a string {
+func:longest = 'a->('a string->:s1, 'a string->:s2)string {
     when s1.len() > s2.len() then
-        return s1;
+        pass(s1);
     else
-        return s2;
+        pass(s2);
     end
 }
 ```
@@ -250,7 +250,7 @@ fn longest<'a>(s1: &'a string, s2: &'a string) -> &'a string {
 trait Iterator {
     type Item;  // Associated type
     
-    fn next() -> Option<Self::Item>;
+    func:next = Result<Self::Item>()
 }
 
 struct Counter;
@@ -258,7 +258,7 @@ struct Counter;
 impl Iterator for Counter {
     type Item = i32;  // Concrete type
     
-    fn next() -> Option<i32> {
+    func:next = Result<int32>() {
         // Implementation
     }
 }
@@ -273,7 +273,7 @@ impl Iterator for Counter {
 type Result<T> = Result<T, Error>;
 
 // Usage
-fn parse(input: string) -> Result<i32> {
+func:parse = Result<int32>(string:input) {
     // Returns Result<i32, Error>
 }
 
@@ -316,13 +316,13 @@ doubler: fn(i32) -> i32 = |x| x * 2;
 
 ```aria
 // Alternative generic syntax (if supported)
-fn identity<*T>(value: T) -> T {
-    return value;
+func:identity = T(T:value) {
+    pass(value);
 }
 
 // Equivalent to:
-fn identity<T>(value: T) -> T {
-    return value;
+func:identity = T(T:value) {
+    pass(value);
 }
 ```
 
@@ -352,7 +352,7 @@ struct Vec<T> {
 }
 
 impl<T> Vec<T> {
-    fn new() -> Vec<T> {
+    func:new = Vec<T>() {
         return Vec{
             data: [],
             len: 0,
@@ -360,15 +360,15 @@ impl<T> Vec<T> {
         };
     }
     
-    fn push(item: T) {
+    func:push = NIL(T:item) {
         // Implementation
     }
     
-    fn get(index: usize) -> T? {
+    func:get = T?(uint64:index) {
         when index >= self.len then
-            return nil;
+            pass(nil);
         end
-        return self.data[index];
+        pass(self.data[index]);
     }
 }
 
@@ -381,7 +381,7 @@ numbers.push(2);
 ### Generic Function with Multiple Constraints
 
 ```aria
-fn unique_sorted<T>(array: []T) -> []T
+func:unique_sorted = []T([]T:array)
     where T: Comparable,
           T: Hashable,
           T: Clone {
@@ -397,7 +397,7 @@ fn unique_sorted<T>(array: []T) -> []T
         end
     }
     
-    return sort(unique);
+    pass(sort(unique));
 }
 
 // Usage
@@ -413,7 +413,7 @@ Result: []i32 = unique_sorted(numbers);  // [1, 2, 3, 4, 5, 6, 9]
 
 ```aria
 // Good: Readable
-fn process<T, U>(input: T, output: U) -> Result
+func:process = Result(T:input, U:output)
     where T: Serializable + Clone,
           U: Deserializable + Display {
     // Implementation
@@ -432,7 +432,7 @@ doubled: []i32 = numbers.map(|x| x * 2);
 
 ```aria
 // Good: Clear purpose
-fn cache_lookup<Key, Value>(key: Key) -> Value? { }
+func:cache_lookup = Value?(Key:key) { }
 ```
 
 ### ❌ DON'T: Over-specify Types
@@ -449,11 +449,11 @@ Result: i32 = identity(42);
 
 ```aria
 // Wrong: Confusing
-fn complex<T, U, V, W, X>(a: T, b: U, c: V, d: W) -> X { }
+func:complex = X(T:a, U:b, V:c, W:d) { }
 
 // Right: Simplify or use structs
 struct Config<T, U, V, W> { }
-fn complex<X>(config: Config, ...) -> X { }
+func:complex = X(Config:config, ...) { }
 ```
 
 ---

@@ -657,10 +657,10 @@ int32[]:standard = aria.alloc<int32>(1000000);
 ```aria
 func:narrow_to_i8 = (value: int32) -> ?int8 {
     if (value < -128i32 || value > 127i32) {
-        return NIL;  // Out of range
+        pass(NIL);  // Out of range
     }
     
-    return int8(value);  // Safe cast
+    pass(int8(value));  // Safe cast
 }
 
 // Usage
@@ -679,11 +679,11 @@ func:saturating_add_i8 = (a: int8, b: int8) -> int8 {
     int16:wide_sum = int16(a) + int16(b);  // Widen to avoid wrap
     
     if (wide_sum > 127i16) {
-        return 127i8;  // Saturate at max
+        pass(127i8);  // Saturate at max
     } else if (wide_sum < -128i16) {
-        return -128i8;  // Saturate at min
+        pass(-128i8);  // Saturate at min
     } else {
-        return int8(wide_sum);
+        pass(int8(wide_sum));
     }
 }
 

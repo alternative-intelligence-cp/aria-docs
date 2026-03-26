@@ -17,12 +17,12 @@ Modules are defined either as **files** or **inline declarations**.
 
 ```aria
 // math.aria
-pub fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+pub func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 
-pub fn subtract(a: i32, b: i32) -> i32 {
-    return a - b;
+pub func:subtract = int32(int32:a, int32:b) {
+    pass(a - b);
 }
 ```
 
@@ -44,14 +44,14 @@ utils/
 pub mod string;
 pub mod array;
 
-pub fn common_util() {
+pub func:common_util = NIL() {
     // Shared utility
 }
 ```
 
 ```aria
 // utils/string.aria
-pub fn reverse(s: string) -> string {
+pub func:reverse = string(string:s) {
     // Implementation
 }
 ```
@@ -63,14 +63,14 @@ pub fn reverse(s: string) -> string {
 ```aria
 // main.aria
 mod helpers {
-    pub fn format_output(value: i32) -> string {
-        return "Value: $value";
+    pub func:format_output = string(int32:value) {
+        pass(`Value: &{value}`);
     }
 }
 
-fn main() {
+func:main = NIL() {
     output: string = helpers.format_output(42);
-    stdout << output;
+    print(output);
 }
 ```
 
@@ -92,18 +92,18 @@ struct ConnectionPool {
 }
 
 // Public API
-pub fn connect(url: string) -> Result<Connection> {
+pub func:connect = Result<Connection>(string:url) {
     // Use private items
     pool: ConnectionPool = get_pool();
-    return pool.acquire();
+    pass(pool.acquire());
 }
 
-pub fn query(sql: string) -> Result<Data> {
+pub func:query = Result<Data>(string:sql) {
     // Implementation
 }
 
 // Private helper
-fn get_pool() -> ConnectionPool {
+func:get_pool = ConnectionPool() {
     // Implementation
 }
 ```
@@ -177,12 +177,12 @@ pub enum Status {                      // Enums
     Inactive
 }
 
-pub fn process() -> Result<void> {     // Functions
+pub func:process = Result<NIL>() {     // Functions
     // Implementation
 }
 
 pub mod submodule {                    // Nested modules
-    pub fn helper() { }
+    pub func:helper = NIL() { }
 }
 ```
 
@@ -195,9 +195,9 @@ pub mod submodule {                    // Nested modules
 ```aria
 // user.aria - everything user-related
 pub struct User { }
-pub fn create_user() -> User { }
-pub fn delete_user() { }
-pub fn find_user() -> ?User { }
+pub func:create_user = User() { }
+pub func:delete_user = NIL() { }
+pub func:find_user = ?User() { }
 ```
 
 ### ✅ DO: Use mod.aria for Complex Modules
@@ -225,9 +225,9 @@ pub use queries.query;
 
 ```aria
 // bad_module.aria
-pub fn user_login() { }
-pub fn database_query() { }  // ❌ Different concerns
-pub fn send_email() { }      // ❌ Different concerns
+pub func:user_login = NIL() { }
+pub func:database_query = NIL() { }  // ❌ Different concerns
+pub func:send_email = NIL() { }      // ❌ Different concerns
 ```
 
 ---

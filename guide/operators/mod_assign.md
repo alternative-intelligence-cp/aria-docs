@@ -25,7 +25,7 @@ The modulo assignment operator `%=` calculates the remainder and assigns it back
 ```aria
 x: i32 = 17;
 x %= 5;  // x = x % 5
-stdout << x;  // 2
+print(x);  // 2
 ```
 
 ---

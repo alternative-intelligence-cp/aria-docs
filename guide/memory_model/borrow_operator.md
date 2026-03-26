@@ -18,9 +18,9 @@ The **borrow operator** creates references to values:
 
 ```aria
 value: i32 = 42;
-ref: &i32 = &value;  // Immutable reference
+ref: $i32 = $value;  // Immutable reference
 
-stdout << ref;  // ✅ Can read
+print(ref);  // ✅ Can read
 ref = 100;      // ❌ Can't modify
 ```
 
@@ -30,9 +30,9 @@ ref = 100;      // ❌ Can't modify
 
 ```aria
 value: i32 = 42;
-ref: &i32 = $value;  // Mutable reference
+ref: $i32 = $value;  // Mutable reference
 
-stdout << ref;  // ✅ Can read
+print(ref);  // ✅ Can read
 ref = 100;      // ✅ Can modify
 ```
 
@@ -41,17 +41,17 @@ ref = 100;      // ✅ Can modify
 ## In Function Calls
 
 ```aria
-fn read(v: &i32) {
-    stdout << v;
+func:read = NIL(int32->:v) {
+    print(v);
 }
 
-fn modify(v: &i32) {
+func:modify = NIL(int32->:v) {
     v = v * 2;
 }
 
 value: i32 = 42;
 
-read(&value);    // Pass immutable reference
+read($value);    // Pass immutable reference
 modify($value);  // Pass mutable reference
 ```
 
@@ -62,15 +62,15 @@ modify($value);  // Pass mutable reference
 ### Create References
 
 ```aria
-&value   // Immutable reference
+$value   // Immutable reference
 $value   // Mutable reference
 ```
 
 ### Declare Reference Types
 
 ```aria
-ref: &i32        // Immutable reference to i32
-mut_ref: &i32    // Mutable reference to i32 (must use $ when creating)
+ref: $i32        // Immutable reference to i32
+mut_ref: $i32    // Mutable reference to i32 (must use $ when creating)
 ```
 
 ---
@@ -82,9 +82,9 @@ mut_ref: &i32    // Mutable reference to i32 (must use $ when creating)
 ```aria
 value: i32 = 42;
 
-ref1: &i32 = &value;  // ✅
-ref2: &i32 = &value;  // ✅
-ref3: &i32 = &value;  // ✅
+ref1: $i32 = $value;  // ✅
+ref2: $i32 = $value;  // ✅
+ref3: $i32 = $value;  // ✅
 ```
 
 ### One Mutable
@@ -92,8 +92,8 @@ ref3: &i32 = &value;  // ✅
 ```aria
 value: i32 = 42;
 
-ref1: &i32 = $value;  // ✅
-ref2: &i32 = $value;  // ❌ Error: already borrowed
+ref1: $i32 = $value;  // ✅
+ref2: $i32 = $value;  // ❌ Error: already borrowed
 ```
 
 ### Can't Mix
@@ -101,8 +101,8 @@ ref2: &i32 = $value;  // ❌ Error: already borrowed
 ```aria
 value: i32 = 42;
 
-ref1: &i32 = &value;  // Immutable
-ref2: &i32 = $value;  // ❌ Error: can't borrow mutably
+ref1: $i32 = $value;  // Immutable
+ref2: $i32 = $value;  // ❌ Error: can't borrow mutably
 ```
 
 ---
@@ -113,11 +113,11 @@ ref2: &i32 = $value;  // ❌ Error: can't borrow mutably
 numbers: []i32 = [1, 2, 3];
 
 // Immutable borrow
-fn sum(arr: &[]i32) -> i32 { }
-total: i32 = sum(&numbers);
+func:sum = int32([]i32->:arr) { }
+total: i32 = sum($numbers);
 
 // Mutable borrow
-fn double_all(arr: &[]i32) { }
+func:double_all = NIL([]i32->:arr) { }
 double_all($numbers);
 ```
 
@@ -149,14 +149,14 @@ till(collection.length - 1, 1) {
 
 ```aria
 // Good: Immutable unless needed
-fn process(data: &Data) { }
+func:process = NIL(Data->:data) { }
 ```
 
 ### ✅ DO: Use $ When Modifying
 
 ```aria
 // Good: Clear mutation intent
-fn update(data: &Data) { }
+func:update = NIL(Data->:data) { }
 update($my_data);
 ```
 
@@ -164,10 +164,10 @@ update($my_data);
 
 ```aria
 // Aria: $ for mutable
-ref: &i32 = $value;
+ref: $i32 = $value;
 
-// Rust: &mut
-// let ref: &mut i32 = &mut value;
+// Rust: $mut
+// let ref: $mut i32 = $mut value;
 
 // C++: non-const reference
 // int& ref = value;

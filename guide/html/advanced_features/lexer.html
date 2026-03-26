@@ -903,7 +903,7 @@ self.advance();  // Skip closing quote
 <p>
 return Token {
 type: TokenType.String(value),
-lexeme: "\"$value\"",
+lexeme: `\"&{value}\"`,
 // ... position info
 };
 }
@@ -994,7 +994,7 @@ token: Token = lexer.next_token();
 </p>
 <p>
 if token.type == TokenType.Unknown {
-stderr << "Lexer error at ${token.line}:${token.column}: ${token.lexeme}";
+stderr_write("Lexer error at &{token.line}:&{token.column}: &{token.lexeme}");
 return;
 }
 </p>
@@ -1033,10 +1033,10 @@ self.advance();
 <h3>✅ DO: Provide Good Error Messages</h3>
 <pre><code>fn error(message: string) {
 <p>
-stderr << "Error at ${self.line}:${self.column}";
-stderr << "  ${message}";
-stderr << "  ${self.get_line_text()}";
-stderr << "  ${' ' * (self.column - 1)}^";
+stderr_write("Error at &{self.line}:&{self.column}");
+stderr_write("  &{message}");
+stderr_write("  &{self.get_line_text()}");
+stderr_write("  &{' ' * (self.column - 1)}^");
 }</code></pre>
 </p>
 <hr>

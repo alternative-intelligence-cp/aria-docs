@@ -666,7 +666,7 @@ mutable_ref: $i32 = $value;
 *mutable_ref = 100;
 </p>
 <p>
-stdout << value;  // 100</code></pre>
+print(value);  // 100</code></pre>
 </p>
 <hr>
 <h2>Function Parameters</h2>
@@ -678,7 +678,7 @@ stdout << value;  // 100</code></pre>
 <p>
 count: i32 = 5;
 increment($count);
-stdout << count;  // 6</code></pre>
+print(count);  // 6</code></pre>
 </p>
 <hr>
 <h2>Exclusive Access</h2>
@@ -712,7 +712,7 @@ p.y += dy;
 <p>
 point: Point = Point { x: 10, y: 20 };
 move_point($point, 5, -3);
-stdout << point.x << ", " << point.y;  // 15, 17</code></pre>
+print(point.x << ", " + point.y);  // 15, 17</code></pre>
 </p>
 <hr>
 <h2>In-Place Modification</h2>

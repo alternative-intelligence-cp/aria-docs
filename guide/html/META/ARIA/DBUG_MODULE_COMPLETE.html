@@ -757,7 +757,7 @@ dbug_exit("handlers", "process_request");
 <h2>Design Decisions</h2>
 <h3>Why Not Printf-Style Formatting?</h3>
 <p>
-The idea file mentioned <code>msg_fmt_str</code> with interpolation like <code>${expression}</code> or <code>{{int32}}</code>.
+The idea file mentioned <code>msg_fmt_str</code> with interpolation like <code>&{expression}</code> or <code>{{int32}}</code>.
 </p>
 <strong>Decision</strong>: Implement basic string-only version first because:
 <p>
@@ -882,7 +882,7 @@ dbug_print_labeled("sort", "Pivot index", "42");</code></pre>
 <p>
 📝 <strong>Deferred</strong> (language limitations):
 </p>
-<ul><li><code>msg_fmt_str</code> with <code>${expression}</code> or <code>{{int32}}</code> interpolation</li>
+<ul><li><code>msg_fmt_str</code> with <code>&{expression}</code> or <code>{{int32}}</code> interpolation</li>
 </ul>  - <strong>Why</strong>: Needs variadic functions or format string support
 <p>
 - <strong>When</strong>: After language gains these features

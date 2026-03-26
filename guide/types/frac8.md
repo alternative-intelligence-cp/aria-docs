@@ -1,5 +1,8 @@
 # frac8 - 8-bit Exact Rational Arithmetic
 
+> **⚠️ DESIGN DOCUMENT — NOT YET IMPLEMENTED IN COMPILER**
+> Fractional types are part of the Aria language specification but are not yet available in the compiler. The documentation below describes the planned design.
+
 ## Overview
 
 `frac8` is an 8-bit **mixed-fraction rational number** that provides **mathematically exact** representation of rational values. Unlike floating-point types which approximate fractions, frac8 maintains **perfect precision** by storing values as whole numbers plus proper fractions (numerator/denominator).

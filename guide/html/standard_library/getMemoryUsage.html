@@ -679,8 +679,8 @@ virtual_mem: i64      // Virtual memory size
 mem: MemoryInfo = getMemoryUsage();
 </p>
 <p>
-stdout << "Heap used: $(mem.heap_used) bytes";
-stdout << "RSS: $(mem.rss) bytes";</code></pre>
+print("Heap used: $(mem.heap_used) bytes");
+print("RSS: $(mem.rss) bytes");</code></pre>
 </p>
 <h3>Monitor Memory Growth</h3>
 <pre><code>before: MemoryInfo = getMemoryUsage();
@@ -693,7 +693,7 @@ after: MemoryInfo = getMemoryUsage();
 </p>
 <p>
 increase: i64 = after.heap_used - before.heap_used;
-stdout << "Memory increased by $increase bytes";</code></pre>
+print(`Memory increased by &{increase} bytes`);</code></pre>
 </p>
 <h3>Memory Leak Detection</h3>
 <pre><code>fn detect_leak() {
@@ -711,7 +711,7 @@ final: MemoryInfo = getMemoryUsage();
 </p>
 <p>
 when final.heap_used > initial.heap_used * 2 then
-stderr << "Possible memory leak detected!";
+stderr_write("Possible memory leak detected!");
 end
 }</code></pre>
 </p>
@@ -719,7 +719,7 @@ end
 <pre><code>fn format_bytes(bytes: i64) -> string {
 <p>
 when bytes < 1024 then
-return "$bytes B";
+return `&{bytes} B`;
 elsif bytes < 1024 * 1024 then
 return "$(bytes / 1024) KB";
 elsif bytes < 1024 <em> 1024 </em> 1024 then
@@ -731,7 +731,7 @@ end
 </p>
 <p>
 mem: MemoryInfo = getMemoryUsage();
-stdout << "Memory used: $(format_bytes(mem.heap_used))";</code></pre>
+print("Memory used: $(format_bytes(mem.heap_used))");</code></pre>
 </p>
 <hr>
 <h2>Best Practices</h2>

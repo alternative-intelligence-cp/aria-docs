@@ -27,10 +27,10 @@ case value:
 ```aria
 pick x {
     case 1:
-        stdout << "One\n";
+        print("One\n");
         fall;  // Falls to case 2
     case 2:
-        stdout << "Two\n";
+        print("Two\n");
 }
 ```
 
@@ -41,13 +41,13 @@ pick x {
 ```aria
 // ✅ Correct: fall is last
 case 1:
-    stdout << "One\n";
+    print("One\n");
     fall;
 
 // ❌ Wrong: Code after fall
 case 1:
     fall;
-    stdout << "Never runs\n";  // Unreachable
+    print("Never runs\n");  // Unreachable
 ```
 
 ---

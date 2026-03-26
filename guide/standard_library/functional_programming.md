@@ -25,8 +25,8 @@ Aria provides comprehensive **functional programming** tools for working with co
 Functions that take or return other functions:
 
 ```aria
-fn apply_twice(f: fn(i32) -> i32, x: i32) -> i32 {
-    return f(f(x));
+func:apply_twice = i32,(fn(i32:f)x: i32) -> i32 {
+    pass(f(f(x)));
 }
 
 double := fn(x: i32) -> i32 { return x * 2; };
@@ -42,15 +42,15 @@ Functions with no side effects:
 
 ```aria
 // Pure - same input always gives same output
-fn add(a: i32, b: i32) -> i32 {
-    return a + b;
+func:add = int32(int32:a, int32:b) {
+    pass(a + b);
 }
 
 // Impure - depends on external state
 counter: i32 = 0;
-fn increment() -> i32 {
+func:increment = int32() {
     counter += 1;  // Side effect!
-    return counter;
+    pass(counter);
 }
 ```
 
@@ -96,9 +96,9 @@ names: []string = users
 
 ```aria
 // Compose functions
-fn compose(f: fn(i32) -> i32, g: fn(i32) -> i32) -> fn(i32) -> i32 {
+func:compose = i32,(fn(i32:f)g: fn(i32) -> i32) -> fn(i32) -> i32 {
     return fn(x: i32) -> i32 {
-        return f(g(x));
+        pass(f(g(x)));
     };
 }
 
@@ -116,9 +116,9 @@ Result: i32 = double_then_add_one(5);  // (5*2)+1 = 11
 
 ```aria
 // Currying - convert multi-argument function to nested single-argument functions
-fn add(a: i32) -> fn(i32) -> i32 {
+func:add = fn(i32)(int32:a)-> i32 {
     return fn(b: i32) -> i32 {
-        return a + b;
+        pass(a + b);
     };
 }
 
@@ -211,13 +211,13 @@ first_large_even: ?i32 = numbers
 
 ```aria
 // Good - pure function
-fn square(x: i32) -> i32 {
-    return x * x;
+func:square = int32(int32:x) {
+    pass(x * x);
 }
 
 // Better than impure alternative
 total: i32 = 0;  // Avoid global state
-fn add_to_total(x: i32) {
+func:add_to_total = NIL(int32:x) {
     total += x;  // ❌ Side effect
 }
 ```

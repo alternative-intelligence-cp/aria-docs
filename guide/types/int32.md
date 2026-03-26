@@ -82,7 +82,7 @@ temperature: i32 = -40;
 // Perfect for array indexing
 arr: []string = ["a", "b", "c"];
 till(arr.length() - 1, 1) {
-    stdout << arr[$];
+    print(arr[$]);
 }
 ```
 
@@ -117,7 +117,7 @@ value: int32 = 42;  // ✅ Also fine
 ### ✅ DO: Check for Overflow in Critical Code
 
 ```aria
-fn safe_multiply(a: i32, b: i32) -> Result<i32> {
+func:safe_multiply = Result<int32>(int32:a, int32:b) {
     Result: i64 = (a as i64) * (b as i64);
     when result < -2147483648 or result > 2147483647 then
         fail("Overflow");

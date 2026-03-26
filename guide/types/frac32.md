@@ -1,5 +1,8 @@
 # frac32 - 32-bit Production Exact Rational Arithmetic
 
+> **⚠️ DESIGN DOCUMENT — NOT YET IMPLEMENTED IN COMPILER**
+> Fractional types are part of the Aria language specification but are not yet available in the compiler. The documentation below describes the planned design.
+
 ## Overview
 
 `frac32` is a 32-bit **mixed-fraction rational number** designed for **production financial, scientific, and musical applications** that demand exact rational arithmetic. With a range of ±2,147,483,647 for whole parts and denominators, frac32 handles real-world calculations where floating-point approximation is unacceptable.
