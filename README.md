@@ -1,6 +1,6 @@
 # aria-docs
 
-Documentation, man pages, and examples for the [Aria programming language](https://github.com/alternative-intelligence-cp/aria) (v0.2.13).
+Documentation, man pages, and examples for the [Aria programming language](https://github.com/alternative-intelligence-cp/aria) (v0.2.15).
 
 ## Contents
 
