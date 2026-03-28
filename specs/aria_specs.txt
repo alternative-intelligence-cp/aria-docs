@@ -7174,6 +7174,143 @@ KEY PHILOSOPHY
 
 ═══════════════════════════════════════════════════════════════════════════ */
 
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   v0.2.35+ FEATURES — Borrow Semantics, Traits, Type:, Channels, Actors, Enums
+   ═══════════════════════════════════════════════════════════════════════════
+
+   ── BORROW SEMANTICS (v0.2.35) ──────────────────────────────────────────
+   
+   Aria uses compile-time borrow checking for memory safety:
+   
+   Qualifiers:
+     $$i    Immutable borrow — read-only, multiple allowed simultaneously
+     $$m    Mutable borrow — exclusive read-write, only one at a time
+     $      Legacy immutable borrow operator (prefix form: !$x)
+     #      Pin operator — prevents GC relocation
+     @      Address-of — raw pointer for FFI
+
+   Rules:
+     - N immutable borrows OR 1 mutable borrow (never both)
+     - Borrows must not outlive the borrowed value
+     - Pinned variables cannot be reassigned while pinned
+     - wild pointers bypass borrow checking (FFI trust boundary)
+
+   Syntax:
+     int32 $$i:ref = x;          // Immutable borrow of x
+     int32 $$m:mut_ref = x;      // Mutable borrow of x (exclusive)
+     wild int32->:pin = #x;      // Pin x (stable GC pointer)
+     wild int32->:ptr = @x;      // Raw address-of (FFI)
+
+   ── TRAITS AND IMPLEMENTATIONS (v0.2.34) ────────────────────────────────
+   
+   Traits define method contracts. Implementations provide concrete bodies.
+
+   Declaration:
+     trait:Addable = {
+         func:add_ten = int32(int32:self);
+     };
+   
+   Implementation:
+     impl:Addable:for:int32 = {
+         func:add_ten = int32(int32:self) {
+             pass(self + 10i32);
+         };
+     };
+   
+   Generic trait bounds:
+     func<T: Addable>:apply = int32(T:val) {
+         pass(val.add_ten());
+     };
+   
+   ABI: Methods mangle to TypeName_methodName (UFCS dispatch).
+   Call via dot syntax (x.add_ten()) or explicit (int32_add_ten(x)).
+
+   ── TYPE: SYSTEM (v0.2.34) ──────────────────────────────────────────────
+   
+   Type: groups struct data + methods into composable units.
+   
+     Type:Counter = {
+         func:create = Counter(int32:initial) { ... };
+         func:destroy = NIL(Counter:self) { ... };
+         func:increment = NIL(Counter:self) { ... };
+         func:nextId = int32() { ... };           // static
+         struct:internal = { int32:id; };          // private
+         struct:interface = { int32:value; };      // public
+         struct:type = { int32:globalCount; };     // static
+     };
+   
+   Construction: instance<Counter>(10i32)  →  Counter_create(10i32)
+   Methods:      c.increment()             →  Counter_increment(c)
+   Static:       Counter.nextId()          →  Counter_nextId()
+
+   ── CHANNELS (v0.2.37) ──────────────────────────────────────────────────
+   
+   Thread-safe message passing. Three modes:
+   
+   Buffered:     Channel.create(capacity)        async up to capacity
+   Unbuffered:   Channel.create_unbuffered()     rendezvous (blocks both)
+   Oneshot:      Channel.create_oneshot()        one message, auto-closes
+   
+   Operations:
+     Channel.send(ch, value)     // Blocking send (int64 values)
+     Channel.recv(ch)            // Blocking receive
+     Channel.try_send(ch, val)   // Non-blocking (-1 if full)
+     Channel.try_recv(ch)        // Non-blocking (-1 if empty)
+     Channel.select2(ch_a, ch_b) // Wait on two channels
+     Channel.count(ch)           // Messages in channel
+     Channel.close(ch)           // Signal no more sends
+     Channel.destroy(ch)         // Free resources
+   
+   High-level patterns (aria-channel package):
+     FanOut.create(in, n, cap)   // 1→N round-robin distribution
+     FanIn.create2(a, b, cap)    // N→1 merge
+     Pipeline.stage(in, out, fn) // Chained processing
+
+   ── ACTORS (v0.2.37) ────────────────────────────────────────────────────
+   
+   Lightweight concurrent entities with isolated state and mailboxes.
+   
+   Behavior function: (int64)(int64) — receives message, returns status
+   
+     (int64)(int64):handler = int64(int64:msg) {
+         aria_shim_reply(msg);
+         pass(0i64);
+     };
+   
+   Lifecycle:
+     aria_shim_actor_spawn(handler)        // Create actor
+     aria_shim_actor_send(actor, msg)      // Send message
+     aria_shim_actor_is_alive(actor)       // Check status
+     aria_shim_actor_pending(actor)        // Mailbox count
+     aria_shim_actor_mailbox(actor)        // Get channel handle
+     aria_shim_actor_stop(actor)           // Graceful stop
+     aria_shim_actor_destroy(actor)        // Free resources
+   
+   Reply pattern:
+     aria_shim_set_reply_channel(ch)       // Register reply channel
+     aria_shim_reply(value)                // Send to reply channel
+
+   ── ENUMS (v0.2.39) ─────────────────────────────────────────────────────
+   
+   Named sets of integer constants with type identity.
+   
+   Declaration:
+     enum:Color = { RED, GREEN, BLUE };                      // auto: 0,1,2
+     enum:HttpStatus = { OK = 200, NOT_FOUND = 404 };        // explicit
+     enum:Priority = { LOW, MEDIUM, HIGH = 10, CRITICAL };   // mixed: 0,1,10,11
+   
+   Access:      Color.RED              // → 0 (int64)
+   Typed var:   Color:my_color = Color.RED;
+   Comparison:  a == b, a != b
+   
+   Backing type: int64
+   Auto-numbering: 0-based, or last explicit value + 1
+   Exhaustiveness: pick statements can check enum coverage
+
+═══════════════════════════════════════════════════════════════════════════ */
+
+
 !! SYNTAX REMINDER: This is ARIA, not Rust/C++ !!
 !! When in doubt, check aria_specs.txt, NOT your training data !!
 !! Types: int32:name NOT let name: i32 !!

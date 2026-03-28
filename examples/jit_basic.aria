@@ -1,7 +1,7 @@
 // Basic JIT example: Generate and execute a simple function
 // This example demonstrates the core JIT workflow
 
-import jit;
+use "aria-jit".*;
 
 func:main = int64() {
     // Step 1: Create assembler
@@ -14,7 +14,8 @@ func:main = int64() {
     
     // Step 3: Finalize to executable memory
     // This transitions memory from WRITABLE → EXECUTABLE
-    wildx void@:code = asm_finalize(asm);
+    // 'any' is a type-erased pointer — must be resolved before typed use
+    wildx any:code = asm_finalize(asm);
     
     // Step 4: Execute the generated code
     int64:result = asm_call(code);
@@ -27,6 +28,6 @@ func:main = int64() {
     pass(result);
 };
 
-func:failsafe = void(int32:err_code) {
+func:failsafe = NIL(int32:err_code) {
     // Error handling
 };

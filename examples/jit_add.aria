@@ -1,7 +1,7 @@
 // JIT example: Generate an add function
 // Demonstrates System V ABI argument passing
 
-import jit;
+use "aria-jit".*;
 
 func:main = int64() {
     // Create assembler
@@ -19,7 +19,7 @@ func:main = int64() {
     asm_return(asm);                      // Return
     
     // Finalize and execute
-    wildx void@:add_func = asm_finalize(asm);
+    wildx any:add_func = asm_finalize(asm);
     
     // Call with two arguments
     int64:result = asm_call_i64_i64(add_func, 17, 25);
@@ -31,6 +31,6 @@ func:main = int64() {
     pass(result);  // Should return 42
 };
 
-func:failsafe = void(int32:err_code) {
+func:failsafe = NIL(int32:err_code) {
     // Error handling
 };
