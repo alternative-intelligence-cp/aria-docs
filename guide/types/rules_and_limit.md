@@ -391,3 +391,85 @@ limit<r_safe_positive> int32:id = 42;   // OK — nonzero, positive, under 1000
 - All conditions in a Rules block use AND semantics (all must pass).
 - `failsafe` must be defined in any program using `limit` with dynamic values.
 - Rules are a zero-cost abstraction for literals (checked at compile time only).
+
+---
+
+## Z3 Static Verification (v0.2.45)
+
+The Aria compiler can use the **Z3 SMT solver** to mathematically *prove* that Rules constraints
+are satisfied — moving beyond simple compile-time constant evaluation to formal verification.
+
+### Enabling Verification
+
+```bash
+ariac source.aria --verify              # Enable Z3 proof checking
+ariac source.aria --verify-report       # Detailed proof report (implies --verify)
+```
+
+### What Gets Verified
+
+When `--verify` is enabled, the compiler runs a Z3 verification pass (Phase 3.25) that:
+
+1. **Rules Consistency** — Checks that each Rules declaration's conditions are not contradictory.
+   For example, `$ > 100` AND `$ < 50` is impossible — Z3 detects this and emits a compile error.
+
+2. **Literal Initializer Proofs** — For every `limit<>` variable with a literal or negative literal
+   initializer, Z3 formally proves each condition holds using exact-width bitvector arithmetic
+   (matching `int8`=BV8, `int16`=BV16, `int32`=BV32, `int64`=BV64) or real arithmetic for floats.
+
+3. **Cascading Rules** — Z3 follows `limit<parent>` cascades and verifies inherited conditions too.
+
+### Verification Report
+
+With `--verify-report`, the compiler prints a summary:
+
+```
+=== Z3 Verification Report ===
+  Proven:    19
+  Disproven: 0
+  Unknown:   0
+  Total:     19
+==============================
+```
+
+- **Proven**: Z3 mathematically proved the constraint holds for all relevant inputs.
+- **Disproven**: Z3 found a counterexample — the value violates the constraint. This is a compile error.
+- **Unknown**: Z3 timed out or the formula was too complex. Runtime checks are preserved.
+
+### How It Works
+
+Z3 verification uses the "negation check" approach:
+- To prove `42 > 0`, assert `NOT(42 > 0)` and ask Z3 if it's satisfiable.
+- If **unsatisfiable** → the negation has no solution → the original property holds for ALL inputs → **PROVEN**.
+- If **satisfiable** → the negation has a solution (counterexample) → **DISPROVEN**.
+
+Integer types use bitvector sorts for exact width-matching (e.g., `int32` → 32-bit signed bitvector),
+ensuring proofs account for overflow semantics. Float types use Z3's real sort.
+
+### Example
+
+```aria
+Rules:r_percentage = {
+    $ >= 0,
+    $ <= 100
+};
+
+limit<r_percentage> int32:score = 75;  // Z3 proves: 75 >= 0 ✓, 75 <= 100 ✓
+```
+
+Compiling with `--verify-report` shows each condition proven.
+
+### Contradictory Rules Detection
+
+```aria
+Rules:r_impossible = {
+    $ > 100,
+    $ < 50
+};
+// With --verify: error: [z3] Rules 'r_impossible' constraints are contradictory
+```
+
+### Requirements
+
+Z3 verification requires `libz3-dev` (or `libz3`) to be installed at build time. The compiler
+is built with `ARIA_HAS_Z3=1` when Z3 is found. Without Z3, `--verify` is accepted but has no effect.

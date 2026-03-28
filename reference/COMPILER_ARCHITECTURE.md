@@ -73,6 +73,7 @@ Phase 0: Preprocessor    → Macro expansion (NASM-style context stack)
 Phase 1: Lexer           → Token stream
 Phase 2: Parser          → AST (ProgramNode root)
 Phase 3: TypeChecker     → Type inference, generic resolution, module loading
+Phase 3.25: Z3Verifier   → SMT-based static proof of Rules/limit constraints (--verify)
 Phase 3.5: BorrowChecker → Ownership analysis, loan tracking, move semantics
 Phase 4: IRGenerator     → LLVM IR Module
 ```
