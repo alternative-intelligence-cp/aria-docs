@@ -45,7 +45,7 @@ use "../../stdlib/print_utils.aria".*;
 extern func:malloc = wild int64*(int64:size);
 extern func:free   = void(wild int64*:ptr);
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 // ── Cell allocation ───────────────────────────────────────────────────────────
 // Allocate one cell; writes tag/car/cdr; returns cell index.
@@ -276,5 +276,5 @@ func:main = int32() {
     free(cnext);
     free(env);
     free(etopp);
-    pass(0i32);
+    exit(0);
 };

@@ -16,4 +16,4 @@ func:main = int32() {
     int32:ec = 1;
     pass(ec);
 };
-func:failsafe = NIL(int32:err_code) {};
+func:failsafe = int32(tbb32:err) { exit(1); };

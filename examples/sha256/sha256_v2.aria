@@ -14,7 +14,7 @@
 
 use "../../stdlib/string_convert.aria".*;
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 // ── rotate right 32-bit ───────────────────────────────────────────────────────
 // rotr32(x, n) = (x >> n) | (x << (32 - n))
@@ -248,5 +248,5 @@ func:main = int32() {
     drop(println(d1));
     drop(println("  expect: ba7816bf8f01cfea414140de5dae2ec73b338c2ba3e1ca9e7aa1f9a8b99d1e74"));
 
-    pass(0i32);
+    exit(0);
 };

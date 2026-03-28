@@ -2,7 +2,7 @@
 
 use "../../stdlib/string_convert.aria".*;
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 func:main = int32() {
     uint32:max_val = 0xFFFFFFFFu32;
@@ -10,5 +10,5 @@ func:main = int32() {
     uint32:result = max_val + one;
     int32:r32 = result => int32;
     drop(println(int32_toString(r32)));
-    pass(0i32);
+    exit(0);
 };

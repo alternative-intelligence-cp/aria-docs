@@ -528,9 +528,10 @@ func:main = int32() {
     free(board);
     free(moves);
     free(mvstr);
-    pass(0i32);
+    exit(0);
 };
 
-func:failsafe = NIL(int32:err_code) {
+func:failsafe = int32(tbb32:err) {
     drop(println("chess: failsafe triggered"));
+    exit(1);
 };

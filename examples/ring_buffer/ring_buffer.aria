@@ -31,7 +31,7 @@ use "../../stdlib/print_utils.aria".*;
 extern func:malloc = wild int64*(int64:size);
 extern func:free   = void(wild int64*:ptr);
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 int64:RB_FULL  = 0i64 - 1i64;   // sentinel: enqueue on full buffer → -1
 int64:RB_EMPTY = 0i64 - 2i64;   // sentinel: dequeue on empty buffer → -2
@@ -206,5 +206,5 @@ func:main = int32() {
 
     free(state);
     free(buf);
-    pass(0i32);
+    exit(0);
 };

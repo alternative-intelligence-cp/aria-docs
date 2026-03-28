@@ -4,7 +4,7 @@
 
 use "../../stdlib/string_convert.aria".*;
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 func:main = int32() {
     // Test 1: simple rotation
@@ -72,5 +72,5 @@ func:main = int32() {
     drop(println(int32_toHex(ne => int32)));
     // Expected: ~0x510e527f = 0xaef1ad80
 
-    pass(0i32);
+    exit(0);
 };

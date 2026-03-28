@@ -1,7 +1,7 @@
 // probe13.aria: test uint32 addition saturation vs wrapping
 use "../../stdlib/string_convert.aria".*;
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 func:main = int32() {
     // Test 1: does INT32_MAX + 1 wrap to 0x80000000 or clamp to 0x7fffffff?
@@ -44,5 +44,5 @@ func:main = int32() {
     // Wrapping: 0x00000000
     // Clamping: ?
 
-    pass(0i32);
+    exit(0);
 };

@@ -167,6 +167,7 @@ pub func:token_name = int8->(int32:type) {
     return "error";
 };
 
-func:failsafe = void(int32:err_code) {
+func:failsafe = int32(tbb32:err) {
     // Error handling
+    exit(1);
 };

@@ -163,7 +163,7 @@ func:main = int32(){
     
     // Application summary
     print_header(\"Application Complete\");
-    print(\"This demo showcased:\");\n    print(\"✓ Data structures (Task, TaskManager)\");\n    print(\"✓ Modules (task_manager, priority)\");\n    print(\"✓ Generic functions (max)\");\n    print(\"✓ Memory management (pointers with @)\");\n    print(\"✓ TBB arithmetic (priority calculation)\");\n    print(\"✓ Standard library (io)\");\n    print(\"✓ Control flow (if/else, functions)\");\n    \n    pass(0);
+    print(\"This demo showcased:\");\n    print(\"✓ Data structures (Task, TaskManager)\");\n    print(\"✓ Modules (task_manager, priority)\");\n    print(\"✓ Generic functions (max)\");\n    print(\"✓ Memory management (pointers with @)\");\n    print(\"✓ TBB arithmetic (priority calculation)\");\n    print(\"✓ Standard library (io)\");\n    print(\"✓ Control flow (if/else, functions)\");\n    \n    exit(0);
 };
 
 // ============================================================================

@@ -8,8 +8,9 @@
 use "stdlib/number.aria".*;
 use "stdlib/print_utils.aria".*;
 
-func:failsafe = NIL(int32:err_code) {
+func:failsafe = int32(tbb32:err) {
     drop(println("failsafe triggered"));
+    exit(1);
 };
 
 func:main = int32() {
@@ -113,5 +114,5 @@ func:main = int32() {
         drop(println(string_from_int(big_val)));  // expected: 9007199254740993
     }
 
-    pass(0i32);
+    exit(0);
 };

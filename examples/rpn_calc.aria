@@ -48,8 +48,9 @@ func:print_result = int32(string:label, int64:val, string:expected) {
     pass(0i32);
 };
 
-func:failsafe = NIL(int32:err_code) {
+func:failsafe = int32(tbb32:err) {
     drop(println("FATAL: failsafe triggered"));
+    exit(1);
 };
 
 func:main = int32() {
@@ -143,5 +144,5 @@ func:main = int32() {
     drop(println(""));
 
     drop(println("Done."));
-    pass(0i32);
+    exit(0);
 };

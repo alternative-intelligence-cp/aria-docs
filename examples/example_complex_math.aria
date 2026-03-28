@@ -119,5 +119,5 @@ func:main = int32() {
     Complex:z1_minus_z2 = raw(z1.subtract(z2));
     Complex:difference_of_squares = raw(z1_plus_z2.multiply(z1_minus_z2));
     
-    pass(0i32);  // Success - all operations complete!
+    exit(0);  // Success - all operations complete!
 };

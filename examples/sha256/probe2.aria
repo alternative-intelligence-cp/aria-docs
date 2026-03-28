@@ -1,11 +1,11 @@
 use "../../stdlib/string_convert.aria".*;
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 func:main = int32() {
     uint32:x = 0xF0F0F0F0u32;
     uint32:notx = ~x;
     int32:out = notx => int32;
     drop(println(int32_toHex(out)));
-    pass(0i32);
+    exit(0);
 };

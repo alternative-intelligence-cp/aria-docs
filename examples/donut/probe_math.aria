@@ -54,9 +54,10 @@ func:main = int32() {
     aria_sleep_ms(10i64);
     drop(println("probe_math: ALL PASS"));
 
-    pass(0i32);
+    exit(0);
 };
 
-func:failsafe = NIL(int32:err_code) {
+func:failsafe = int32(tbb32:err) {
     drop(println("FATAL: probe_math failsafe triggered"));
+    exit(1);
 };

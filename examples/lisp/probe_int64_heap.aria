@@ -13,7 +13,7 @@ func:sum_arr = int64(int64->:a, int64:n) {
     pass(s);
 };
 
-func:failsafe = NIL(int32:c) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 func:main = int32() {
     wild int64->:arr = malloc(8i64 * 8i64);  // 8 int64 values

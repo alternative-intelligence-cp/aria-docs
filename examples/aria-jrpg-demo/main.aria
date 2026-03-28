@@ -255,7 +255,7 @@ func:draw_screen = int32(int32:e_hp, int32:e_mp, int32:h_hp, int32:h_mp, int32:m
     pass(0i32);
 };
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 func:main = int32() {
     // ── Initialize subsystems ────────────────────────────────────────────
@@ -399,5 +399,5 @@ func:main = int32() {
     // Print final newlines to restore clean terminal
     print("\n\nDemo ended. Thanks for playing ARIA QUEST!\n\n");
 
-    pass(0i32);
+    exit(0);
 };

@@ -161,10 +161,11 @@ func:main = int32() {
 
     aria_term_show_cursor();
     free(fb);
-    pass(0i32);
+    exit(0);
 };
 
-func:failsafe = NIL(int32:err_code) {
+func:failsafe = int32(tbb32:err) {
     aria_term_show_cursor();
     drop(println("donut: failsafe triggered"));
+    exit(1);
 };

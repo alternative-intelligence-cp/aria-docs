@@ -41,7 +41,7 @@
  *   ariac examples/test_cast_regression.aria -o /tmp/cast_reg && /tmp/cast_reg
  */
 
-func:failsafe = NIL(int32:err_code) { };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 func:main = int32() {
 
@@ -72,5 +72,5 @@ func:main = int32() {
     int64:small = -128i64;
     drop(println(string_from_int(small)));   // expected: -128
 
-    pass(0i32);
+    exit(0);
 };

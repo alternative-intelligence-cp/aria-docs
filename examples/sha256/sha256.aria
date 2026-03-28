@@ -21,7 +21,7 @@
 
 use "../../stdlib/string_convert.aria".*;
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 func:main = int32() {
 
@@ -269,7 +269,7 @@ func:main = int32() {
         drop(println("SHA256(\"abc\"): FAIL"));
     }
 
-    pass(0i32);
+    exit(0);
 };
 //
 // Purpose: stress-test uint32 arithmetic, all bitwise ops, fixed arrays.
@@ -284,7 +284,7 @@ func:main = int32() {
 
 use "../../stdlib/string_convert.aria".*;
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 func:main = int32() {
 
@@ -535,10 +535,10 @@ func:main = int32() {
         drop(println("SHA256(\"abc\"): FAIL"));
     }
 
-    pass(0i32);
+    exit(0);
 };
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 func:main = int32() {
 
@@ -779,5 +779,5 @@ func:main = int32() {
         drop(println("SHA256(\"abc\"): FAIL"));
     }
 
-    pass(0i32);
+    exit(0);
 };

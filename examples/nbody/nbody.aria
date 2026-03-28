@@ -30,7 +30,7 @@ extern "libm" {
     func:sqrt = flt64(flt64:x);
 }
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 // ── Body data stored in parallel arrays (avoids struct+array-index issues) ───
 // 10 bodies  ×  (x, y, z, vx, vy, vz, mass)
@@ -193,5 +193,5 @@ func:main = int32() {
     if (Efrac6 <     10i64) { drop(print("0")); }
     drop(printlnInt64(Efrac6));
 
-    pass(0i32);
+    exit(0);
 };

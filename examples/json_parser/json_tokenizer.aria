@@ -35,7 +35,7 @@ extern func:free   = void(wild int64*:ptr);
 // Returns -1 when out of bounds.  Defined in src/runtime/strings/byte_at.c.
 extern func:aria_string_byte_at = int64(string:s, int64:i);
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 // ── Classifiers ──────────────────────────────────────────────────────────────
 
@@ -301,5 +301,5 @@ func:main = int32() {
     free(ttypes);
     free(state);
 
-    pass(0i32);
+    exit(0);
 };

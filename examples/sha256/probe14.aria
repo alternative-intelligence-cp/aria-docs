@@ -2,7 +2,7 @@
 // If int64 has proper semantics, use int64 + mask to simulate uint32
 use "../../stdlib/string_convert.aria".*;
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 func:main = int32() {
     // Test 1: int64 addition — does it wrap or saturate?
@@ -57,5 +57,5 @@ func:main = int32() {
     drop(println(int32_toHex(T1 => int32)));
     // Expected: 0x7377ed68 (based on manual calculation)
 
-    pass(0i32);
+    exit(0);
 };

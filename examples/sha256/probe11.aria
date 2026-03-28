@@ -1,7 +1,7 @@
 // probe11.aria: verify masked rotations are correct
 use "../../stdlib/string_convert.aria".*;
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 func:main = int32() {
     // Test masked ROTR4(0xF0000000) — should give 0x0F000000
@@ -79,5 +79,5 @@ func:main = int32() {
     drop(print("e after round 0 = "));
     drop(println(int32_toHex(e1 => int32)));
 
-    pass(0i32);
+    exit(0);
 };

@@ -1,7 +1,7 @@
 // probe15.aria: test uint64 type
 use "../../stdlib/string_convert.aria".*;
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 func:main = int32() {
     // Test if uint64 type exists and works
@@ -23,5 +23,5 @@ func:main = int32() {
     drop(println(int32_toHex(e => int32)));
     // Expected: 0x9167f444 (wrapping)
 
-    pass(0i32);
+    exit(0);
 };

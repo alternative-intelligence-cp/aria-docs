@@ -1,7 +1,7 @@
 // probe12.aria: step-by-step addition chain debug
 use "../../stdlib/string_convert.aria".*;
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 func:main = int32() {
     // Diagnose T1 addition chain for SHA-256("") round 0
@@ -48,5 +48,5 @@ func:main = int32() {
     drop(println(int32_toHex(bigsum => int32)));
     // Expected: 0x00000001 (wraps mod 2^32)
 
-    pass(0i32);
+    exit(0);
 };

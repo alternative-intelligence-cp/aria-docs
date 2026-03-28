@@ -19,7 +19,7 @@ extern func:malloc = wild int64*(int64:size);
 extern func:free   = void(wild int64*:ptr);
 extern func:aria_string_byte_at = int64(string:s, int64:i);
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 const int64:JSON_NULL  = 0i64;
 const int64:JSON_BOOL  = 1i64;

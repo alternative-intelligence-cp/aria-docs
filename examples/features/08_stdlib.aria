@@ -93,9 +93,10 @@ func:main = int32(){
     
     print("\n=== Standard Library Demo Complete ===");
     
-    pass(0);
+    exit(0);
 };
 
-func:failsafe = void(int32:err_code) {
+func:failsafe = int32(tbb32:err) {
     // Error handling
+    exit(1);
 };

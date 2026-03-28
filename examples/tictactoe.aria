@@ -183,8 +183,9 @@ func:check_winner = int32(Wave9:b) {
 // failsafe
 // ─────────────────────────────────────────────────────────────────────────────
 
-func:failsafe = NIL(int32:err_code) {
+func:failsafe = int32(tbb32:err) {
     drop(println("Panic: unhandled error"));
+    exit(1);
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -298,5 +299,5 @@ func:main = int32() {
     // Test assertion: this scripted game must end in X winning
     if (winner != 1i32) { pass(1i32); }
 
-    pass(0i32);
+    exit(0);
 };

@@ -1,7 +1,7 @@
 // probe_flt.aria: test flt64 comparison with negative numbers
 use "../../stdlib/string_convert.aria".*;
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 func:main = int32() {
     flt64:a = 0.0 - 5.0;   // -5.0
@@ -30,5 +30,5 @@ func:main = int32() {
     drop(println(int32_toString(fracI => int32)));
     // Expected: 700000
 
-    pass(0i32);
+    exit(0);
 };

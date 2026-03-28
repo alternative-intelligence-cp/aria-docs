@@ -76,7 +76,7 @@ func:route = string(string:method, string:path) {
     pass(raw(make_response(405, "Method Not Allowed", "")));
 };
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 // ── Self-test main ────────────────────────────────────────────────────────────
 func:main = int32() {
@@ -178,5 +178,5 @@ func:main = int32() {
         drop(printlnString("FAIL: some HTTP routing tests failed"));
     }
 
-    pass(0i32);
+    exit(0);
 };

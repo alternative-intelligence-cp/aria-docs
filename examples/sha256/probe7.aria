@@ -1,6 +1,6 @@
 use "../../stdlib/string_convert.aria".*;
 
-func:failsafe = NIL(int32:code) { pass(NIL); };
+func:failsafe = int32(tbb32:err) { exit(1); };
 
 func:rotr32 = uint32(uint32:x, uint32:n) {
     uint32:r = (x >> n) | (x << (32u32 - n));
@@ -13,5 +13,5 @@ func:main = int32() {
     uint32:b = rotr32(x, 18u32);
     uint32:c = a ^ b;
     drop(println(int32_toHex(c => int32)));
-    pass(0i32);
+    exit(0);
 };
