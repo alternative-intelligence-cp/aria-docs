@@ -1976,7 +1976,7 @@ NOTES:
     for example:
     Rules<int8,uint8>:r_8_lt100 = { $ < 100 };
     Rules<int8,uint8>:r_8_isEven = { $ % 2 == 0 };
-    Rules<int8,uint8>:r_8_custom = { limit<r_8_lt100, limit<r_8_isEven, $ != 0};
+    Rules<int8,uint8>:r_8_custom = { limit<r_8_lt100>, limit<r_8_isEven>, $ != 0};
     Rules<string>:r_strlen_gt1 = { $.length > 1 };
     limit<r_8_lt100> uint8:lt100 = 99; //works
     limit<r_8_lt100> uint8:lt100 = 100; //error!
@@ -7352,6 +7352,31 @@ KEY PHILOSOPHY
    
    Supported types: all numeric (int8-int64, uint8-uint64, flt32, flt64)
    Conditions: AND semantics (all must pass)
+
+   ── RULES $.field — Member Access in Rules (v0.2.43) ─────────────────────
+   
+   $.field accesses struct/Type fields or string properties inside Rules.
+   The type checker validates fields against the Rules<T> type parameter.
+   
+   Struct field access:
+     struct:Person = { int32:age; int32:score; };
+     Rules<Person>:r_adult = { $.age >= 18 };
+     Rules<Person>:r_valid = { $.age >= 5, $.age <= 25, $.score >= 0 };
+     limit<r_adult> Person:p = Person{age: 30, score: 95};     // OK
+   
+   String properties:
+     Rules<string>:non_empty = { $.length > 0 };
+     Rules<string>:short_str = { $.length > 0, $.length <= 50 };
+     limit<non_empty> string:name = "Aria";                     // OK
+   
+   String methods (UFCS):
+     Rules<string>:has_at = { $.contains("@") == true };
+     Rules<string>:prefix = { $.startsWith("http") == true };
+     limit<has_at> string:email = "user@example.com";           // OK
+   
+   Compile-time validation:
+     - Unknown field on struct → error with available fields listed
+     - Unknown string property → error with valid properties listed
 
 ═══════════════════════════════════════════════════════════════════════════ */
 
