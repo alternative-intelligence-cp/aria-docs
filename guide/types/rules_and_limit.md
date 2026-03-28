@@ -1,9 +1,9 @@
 # Rules and limit
 
 **Category**: Types → Constraints  
-**Syntax**: `Rules:Name = { conditions };` / `limit<RulesName> type:var = value;`  
+**Syntax**: `Rules<T>:Name = { conditions };` / `limit<RulesName> type:var = value;`  
 **Purpose**: Refinement types — constrain variable values at compile time and runtime  
-**Since**: v0.2.41
+**Since**: v0.2.41 (type parameters since v0.2.42)
 
 ---
 
@@ -36,6 +36,65 @@ Rules:r_special = {
     $ != 0,
     $ != 50
 };
+```
+
+---
+
+## Type Parameters (v0.2.42)
+
+Rules can specify which types they accept using type parameters in angle brackets:
+
+```aria
+Rules<int32>:r_positive = {
+    $ > 0
+};
+
+Rules<uint8>:r_byte_range = {
+    $ > 0,
+    $ < 100
+};
+
+Rules<flt64>:r_unit = {
+    $ >= 0.0,
+    $ <= 1.0
+};
+```
+
+### Multiple Type Parameters
+
+A single Rules set can accept multiple types:
+
+```aria
+Rules<int8, uint8>:r_small = {
+    $ < 100
+};
+
+limit<r_small> int8:a = 50;    // OK — int8 is in the type list
+limit<r_small> uint8:b = 50u8; // OK — uint8 is in the type list
+limit<r_small> int32:c = 50;   // Compile error! int32 is not int8 or uint8
+```
+
+### Type Safety
+
+When type parameters are specified, the compiler enforces that `limit<>` is only applied to variables matching those types:
+
+```aria
+Rules<uint8>:r_byte = { $ > 0 };
+limit<r_byte> int32:x = 50;    // Error: limit<r_byte> can only be applied to uint8, got 'int32'
+```
+
+### Untyped Rules (Backward Compatible)
+
+Rules without type parameters accept any numeric type, preserving v0.2.41 behavior:
+
+```aria
+Rules:r_any_pos = {
+    $ > 0
+};
+
+limit<r_any_pos> int32:a = 10;   // OK
+limit<r_any_pos> flt64:b = 3.14; // OK
+limit<r_any_pos> uint8:c = 50u8; // OK
 ```
 
 ---

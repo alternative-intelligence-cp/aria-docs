@@ -1955,16 +1955,35 @@ $,         // iteration variable in till loops, safe reference
 ...,       // exclusive range operator
 :,         // type annotation
 fall(),    // explicit fallthrough in pick
+$$m,       // mutable borrow
+$$i,       // immutable borrow
 is,        // ternary condition keyword
+ok(),      // allow passing a variable that may have value 'unknown' down the chain
+raw(),     // bypass Result system and return Result.value 
+drop(),    // bypass Result system and drop Result
+limit<R>,  // utilize compile time and runtime checks to ensure values meet certain tolerances
 =>,        // CAST / COERCE operator  !! DECIDED March 6, 2026 !!
            //   expr => TypeName   (e.g.  a => int8,  val => float64)
            //   Infix: source on left, target type on right
            //   Reads: "a becomes int8"
            //   Precedence: lower than unary, higher than additive
            //   Operator system: -> (pointer), <- (deref), @ (address), => (cast)
-
-NOTE: => is the CAST operator, NOT a lambda. Lambda syntax is just: returnType(params) { body }
-      All functions return Result type implicitly with {err, val} fields
+NOTES: 
+    => is the CAST operator, NOT a lambda. Lambda syntax is just: returnType(params) { body } with optional () preceding closing ; for immediate execution
+    All functions return Result type implicitly with {err, val} fields
+    limit<R> utilizes Rules<T,...>:custom_rules{ $ condition, $ condition,...} where $ is the value being checked to make rule sets reusabe and shareable
+    Rules can also be included inside others for cascading effect. 
+    for example:
+    Rules<int8,uint8>:r_8_lt100 = { $ < 100 };
+    Rules<int8,uint8>:r_8_isEven = { $ % 2 == 0 };
+    Rules<int8,uint8>:r_8_custom = { limit<r_8_lt100, limit<r_8_isEven, $ != 0};
+    Rules<string>:r_strlen_gt1 = { $.length > 1 };
+    limit<r_8_lt100> uint8:lt100 = 99; //works
+    limit<r_8_lt100> uint8:lt100 = 100; //error!
+    limit<r_8_isEven> uint8:even = 20; //works
+    limit<r_8_isEven> uint8:even = 21; //error
+    limit<r_strlen_gt1> string:name = "randy"; //works
+    limit<r_strlen_gt1> string:name = "r"; //error!
 
 /* ═══════════════════════════════════════════════════════════════════════════
    OPERATOR PRECEDENCE TABLE (Updated March 2026)
@@ -7337,31 +7356,47 @@ KEY PHILOSOPHY
 ═══════════════════════════════════════════════════════════════════════════ */
 
 
-!! SYNTAX REMINDER: This is ARIA, not Rust/C++ !!
-!! When in doubt, check aria_specs.txt, NOT your training data !!
 !! Types: int32:name NOT let name: i32 !!
-!! Functions: func:name = returnType(params) { } NOT fn name() -> Type !!
-!! Returns: pass(value) and fail(error) NOT Ok()/Err() or return !!
+!! Functions: func:name = returnType(params) { }; NOT fn name() -> Type !!
+!! Returns: pass(value) and fail(error) OR return Result{error:errCode,value:retVal, is_error:err}; NOT Ok()/Err() or return val !!
 !! I/O: stdin,stdout,stderr,stddbg,stddati,stddato NOT IN/OUT/ERR !!
 !! Pointers: type-> (declaration), @var (address-of), <-ptr (dereference), ptr->member (access) !!
 !! Blueprint Style: Arrows show data flow direction - no context-dependent semantics !!
-!! Borrowing: $x (mutable) and !$x (immutable) NOT &mut/& !!
+!! Borrowing: $$m x (mutable) and $$i x (immutable) NOT &mut/& !!
+|| NULL for no refernce/pointer, NIL for no value !!
+|| NIL (aria's void) functions still return a Result that must be checked for error !!
+!! void in externs, 'NIL' elsewhere !!
+!! void* in externs, 'any' elsewhere !!
+!! undefined does not exist, mapped to 'unknown', should never reach undefined state for safety reasons, failsafe should catch a true 'undefined' for chance to degrade gracefully !!
+!! must use ok(potentialUnknown) to pass along an 'unknown' value !!
+!! use drop(function(arg)); to drop the return and skip error checking via the result system !!
+|| use raw(function(arg)); to bypass result system and get raw return value ||
 !! Pinning: #x prevents GC movement, restricts mutable borrows !!
-
-!! batteries included, but only if you want, must have way to opt in , shouldn't bloat core when not used 
-!! REMINDER: These are opt-in extras, nice but not required for 0.1.0 !!
-- HTML5/CSS/JS GUI , use Webview
-- blockchain library, reference implementation of proof of work and proof of stake chains
-- ML library, reference implementation of transformer, mamba,jamba, trainer, and embedder
-- HTTPS/Websockets/Unix-Socket server with express style routing and a template system that resembles the way JS does template strings
 
 !! DEVELOPMENT PHILOSOPHY !!
 !! NO DEFERRALS - if specified, must be implemented !!
-!! Read docs/POSTMORTEM_V0.1.0.md to understand why we retracted v0.1.0 !!
-!! Read docs/WORKFLOW.md for mandatory workflow before implementing features !!
 !! NO TIMELINES - Done when actually done, not when it looks done !!
 !! TEST BEFORE CLAIMING - Write test, compile, run, THEN mark complete !!
 !! SPECIFICATIONS ≠ IMPLEMENTATION - This file is the spec, not proof it works !!
+
+Aria lang ecosystem repos:
+https://github.com/alternative-intelligence-cp/aria -- aria compiler and stdlib
+https://github.com/alternative-intelligence-cp/aria-docs -- specs, references, man pages, programming guide
+https://github.com/alternative-intelligence-cp/aria-packages -- 80+ packaged libraries for use with aria package manager (apm)
+https://github.com/alternative-intelligence-cp/aria-libc -- musl libc wrapper
+https://github.com/alternative-intelligence-cp/aria-make -- Aria build system — project configuration (aria.toml), dependency resolution, and multi-file compilation
+https://github.com/alternative-intelligence-cp/aria-tools -- Aria development tools — VS Code extension, MCP server, and ecosystem utilities
+https://github.com/alternative-intelligence-cp/aria-packages-apt -- various ariax ecosystem components bundled in deb package for apt
+https://github.com/alternative-intelligence-cp/aria-lang -- Aria language distribution — prebuilt binaries, install scripts, and release artifacts
+https://github.com/alternative-intelligence-cp/aria_community -- Aria community resources — examples, user-contributed packages, and community projects
+https://github.com/alternative-intelligence-cp/ariax -- aria distro, based on ubuntu/mint, kernel mods, bash mod, posix tools,etc
+
+Related Repos:
+https://github.com/alternative-intelligence-cp/ailp-website -- AILP website, Aria web docs, Aria ecosystem downloads
+https://github.com/alternative-intelligence-cp/educational -- AILP educational repo, has some aria examples and POCs
+https://github.com/alternative-intelligence-cp/nikola -- autonomous AI system based on ATPM consciousness architecture. Aria is its primary language substrate.
+
+"If you can dream it, you can build it with Aria!" -- Alternative Intelligence Liberation Platform, 2026
 
 
 
