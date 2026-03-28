@@ -7308,6 +7308,32 @@ KEY PHILOSOPHY
    Auto-numbering: 0-based, or last explicit value + 1
    Exhaustiveness: pick statements can check enum coverage
 
+   ── RULES + LIMIT — Refinement Types (v0.2.41) ──────────────────────────
+   
+   Rules define named constraint sets; limit applies them to variables.
+   $ is the value placeholder (same as till loops).
+   
+   Declaration:
+     Rules:r_lt_100 = { $ < 100 };
+     Rules:r_special = { $ >= -2, $ <= 100, $ % 2 == 0, $ != 0 };
+   
+   Application:
+     limit<r_lt_100> int32:x = 50;         // OK — 50 < 100
+     limit<r_lt_100> int32:y = 100;         // Compile error!
+     x = 99;                                // OK — checked at runtime
+     x = 200;                               // Runtime: failsafe + exit
+   
+   Cascading (include other Rules):
+     Rules:r_even = { $ % 2 == 0 };
+     Rules:r_pos_even = { limit<r_even>, $ > 0 };
+   
+   Checking:
+     - Literal initializers → compile-time error on violation
+     - Dynamic values → runtime check, calls failsafe then exit
+   
+   Supported types: all numeric (int8-int64, uint8-uint64, flt32, flt64)
+   Conditions: AND semantics (all must pass)
+
 ═══════════════════════════════════════════════════════════════════════════ */
 
 

@@ -387,6 +387,41 @@ func:complex_operation = Result<Data, string>(string:input) {
 
 ---
 
+## Rules and limit (Refinement Types)
+
+### ✅ Correct: Rules declaration and limit application
+
+```aria
+// Declare rules with $ as value placeholder
+Rules:r_percentage = {
+    $ >= 0,
+    $ <= 100
+};
+
+// Apply rules to a variable with limit<>
+limit<r_percentage> int32:score = 85;
+
+// Cascading rules include other rules
+Rules:r_even = { $ % 2 == 0 };
+Rules:r_even_pct = {
+    limit<r_percentage>,
+    limit<r_even>
+};
+
+limit<r_even_pct> int32:val = 42;
+```
+
+### ❌ Incorrect: Rules patterns
+
+```aria
+rules:bad = { ... };           // ❌ Rules is capitalized
+Rules bad = { ... };           // ❌ Missing colon after Rules
+limit(r_lt_100) int32:x = 5;  // ❌ Use angle brackets, not parens
+int32:x limit<r_lt_100> = 5;  // ❌ limit goes before the type
+```
+
+---
+
 ## Summary of Key Differences from Other Languages
 
 | Concept | ❌ Other Languages | ✅ Aria |
