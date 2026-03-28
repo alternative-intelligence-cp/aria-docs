@@ -7378,6 +7378,32 @@ KEY PHILOSOPHY
      - Unknown field on struct → error with available fields listed
      - Unknown string property → error with valid properties listed
 
+   ── RULES Array & Null — Array Indexing, Multi-Type & Null/NIL (v0.2.44) ──
+
+   Rules<T[]> — array type parameter (matches any T[N]):
+     Rules<int32[]>:r_arr = { $[0] > 0, $.length >= 4 };
+     limit<r_arr> int32[4]:data = [5, 10, 15, 20];       // OK
+
+   $[idx] — element access by index:
+     Rules<int32[]>:r_first_pos = { $[0] > 0 };
+
+   $.length — compile-time array size:
+     Rules<int32[]>:r_min4 = { $.length >= 4 };
+
+   Multi-type parameters (any listed type accepted):
+     Rules<int8,int16,int32,flt32>:r_small = { $ >= -10, $ < 101 };
+     limit<r_small> int8:a = 50i8;      // OK — int8 in type list
+     limit<r_small> int16:b = 50i16;    // OK — int16 in type list
+     limit<r_small> int64:c = 50;       // Error! int64 not in type list
+
+   Null/NIL checks:
+     Rules<int32>:r_not_nil = { $ != NIL };     // NIL → zero check
+     // Rules<int8->>:r_not_null = { $ != NULL }; // NULL → null pointer check
+     limit<r_not_nil> int32:val = 42;            // OK — 42 != 0
+
+   T[] matching: limit<r_arr> T[N]:var matches Rules<T[]> for any N.
+   Rules<T> system complete as of v0.2.44.
+
 ═══════════════════════════════════════════════════════════════════════════ */
 
 

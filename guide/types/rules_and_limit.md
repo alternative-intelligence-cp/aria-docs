@@ -3,7 +3,7 @@
 **Category**: Types → Constraints  
 **Syntax**: `Rules<T>:Name = { conditions };` / `limit<RulesName> type:var = value;`  
 **Purpose**: Refinement types — constrain variable values at compile time and runtime  
-**Since**: v0.2.41 (type parameters since v0.2.42)
+**Since**: v0.2.41 (type parameters v0.2.42, member access v0.2.43, arrays & null v0.2.44)
 
 ---
 
@@ -262,6 +262,124 @@ func:main = int32() {
     
     pass(0);
 };
+```
+
+---
+
+## String Member Access (v0.2.43)
+
+Rules can access `.length` on string-typed `$`:
+
+```aria
+Rules<string>:r_nonempty = {
+    $.length > 0
+};
+
+Rules<string>:r_short_str = {
+    $.length >= 1,
+    $.length <= 50
+};
+
+limit<r_nonempty> string:name = "Alice";    // OK — length 5 > 0
+limit<r_short_str> string:tag = "hello";    // OK — length 5, within 1..50
+```
+
+### Struct Field Access
+
+Rules on struct types can access fields using `$.field`:
+
+```aria
+struct:Point = {
+    int32:x,
+    int32:y
+};
+
+Rules<Point>:r_first_quadrant = {
+    $.x > 0,
+    $.y > 0
+};
+
+limit<r_first_quadrant> Point:p = Point(10, 20);   // OK
+```
+
+---
+
+## Array Rules (v0.2.44)
+
+Rules can constrain arrays using `T[]` type parameter syntax:
+
+```aria
+Rules<int32[]>:r_arr_check = {
+    $[0] > 0,
+    $.length >= 4
+};
+```
+
+### Array Element Access
+
+Use `$[idx]` to access array elements by index:
+
+```aria
+Rules<int32[]>:r_positive_first = {
+    $[0] > 0
+};
+
+limit<r_positive_first> int32[4]:data = [5, 10, 15, 20];   // OK — data[0] is 5 > 0
+```
+
+### Array Length
+
+Use `$.length` to check the compile-time array size:
+
+```aria
+Rules<int32[]>:r_min_size = {
+    $.length >= 2
+};
+
+limit<r_min_size> int32[4]:arr = [1, 2, 3, 4];     // OK — length 4 >= 2
+limit<r_min_size> int32[1]:tiny = [1];              // Error! length 1 < 2
+```
+
+### Combined Array Checks
+
+```aria
+Rules<int32[]>:r_valid_data = {
+    $[0] > 0,
+    $.length >= 4
+};
+
+limit<r_valid_data> int32[4]:readings = [100, 200, 300, 400];   // OK
+```
+
+Note: `T[]` in the Rules type parameter matches any fixed-size array `T[N]` regardless of N.
+
+---
+
+## Null/NIL Checks (v0.2.44)
+
+Rules conditions can check for null and nil values:
+
+```aria
+Rules<int32>:r_not_nil = {
+    $ != NIL
+};
+
+limit<r_not_nil> int32:val = 42;    // OK — 42 != NIL (0)
+```
+
+- **NIL**: For integer types, `$ != NIL` checks that the value is not zero.
+- **NULL**: For pointer types, `$ != NULL` checks that the pointer is not null.
+
+### Combined with Range Checks
+
+```aria
+Rules<int32>:r_safe_positive = {
+    $ != NIL,
+    $ > 0,
+    $ < 1000
+};
+
+limit<r_safe_positive> int32:id = 42;   // OK — nonzero, positive, under 1000
 ```
 
 ---
