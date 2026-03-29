@@ -110,7 +110,7 @@ Checking for unknown:
     }
 
 Propagating unknown explicitly:
-    func:risky_calc = Result<int32>() {
+    func:risky_calc = int32() {
         int32:val = divide(10, maybe_zero) ? 0;
         if (ok(val) == 0) {
             // Explicitly acknowledge unknown and propagate
@@ -152,9 +152,10 @@ When failsafe() is called:
     ✅ Stack overflow (future)
 
 Error codes:
-    Negative: System errors (-1: OOM, -2: stack overflow, -3: div by zero)
-    Positive: Application errors (1: sensor offline, 2: config invalid, etc.)
-    Zero: Reserved (should not be used)
+    Negative: System errors (-1: SYS_GENERAL, -2: SYS_OUT_OF_MEMORY, -3: SYS_STACK_OVERFLOW, -4: SYS_DIVIDE_BY_ZERO)
+    Positive: User/application errors (1: USR_GENERAL, 2: USR_CONFIG, 3: USR_IO, etc.)
+    Zero: No error / testing
+    ERR (tbb sentinel): Unknown / unclassifiable error
 
 Calling failsafe:
     failsafe(ERR_HARDWARE_FAILURE);  // Direct call
@@ -168,7 +169,7 @@ Philosophy:
     "Fail to safe state" - Release resources, log errors, notify operators
 
 Example failsafe (robotics):
-func:failsafe = void(int32:err_code) {
+func:failsafe = int32(tbb32:err_code) {
     // 1. Emergency stop (cut power to motors)
     emergency_stop_all_motors();
     
@@ -186,6 +187,7 @@ func:failsafe = void(int32:err_code) {
         flash_error_led(err_code);
         delay_ms(500);
     }
+    exit(err_code);  // Unreachable but satisfies return requirement
 };
 
 ═══════════════════════════════════════════════════════════════════════════
@@ -1458,7 +1460,7 @@ struct:LockFreeQueue<T> {
     atomic<Handle<Node<*T>>>:tail;
 };
 
-func:enqueue<T> = result<NIL>(LockFreeQueue<*T>@:queue, *T:value) {
+func:enqueue<T> = NIL(LockFreeQueue<*T>@:queue, *T:value) {
     Handle<Node<*T>>:new_node = arena.alloc(Node { value, next: NULL });
     loop {
         Handle<Node<*T>>:tail = queue->tail.load_acquire();
@@ -1482,7 +1484,7 @@ Guarantees: Energy conservation law never violated (thermodynamic constitutional
 
 atomic<fix256>:virtual_atp = atomic_new(MAX_ENERGY);
 
-func:deduct_energy = result<NIL>(fix256:cost) {
+func:deduct_energy = NIL(fix256:cost) {
     loop {
         fix256:current = virtualATP.load_acquire();
         if (current < cost) { fail(ERR_INSUFFICIENT_ENERGY); }  // Would go negative!
@@ -1636,7 +1638,7 @@ func:sqrt = int64(int64:x)
 }
 
 // Energy conservation contract (Nikola physics)
-func:propagate_wave = result<wavefunction>(wavefunction:psi, fix256<Seconds>:dt)
+func:propagate_wave = wavefunction(wavefunction:psi, fix256<Seconds>:dt)
     requires psi.energy() <= MAX_HAMILTONIAN,
              dt > 0,
              dt < MAX_TIMESTEP
@@ -1658,7 +1660,7 @@ func:compute_force = fix256<Newtons>(fix256<Joules>:energy, fix256<Meters>:dista
 }
 
 // Concurrent access contract with atomic operations
-func:update_metric = result<NIL>(atomic<tensor>@:g_metric, tensor:delta)
+func:update_metric = NIL(atomic<tensor>@:g_metric, tensor:delta)
     requires g_metric.load().is_positive_definite(),
              delta.is_symmetric()
     ensures g_metric.load().is_positive_definite()
@@ -2100,7 +2102,7 @@ Diverges for Aria-specific operators (?, ?!, <=>, |>, <-, etc.)
 
 /* std library and builtins
 // SAFETY & ERROR HANDLING (MANDATORY - Feb 2026)
-failsafe(),    // MANDATORY error handler: func:failsafe = void(int32:err_code) { ... }
+failsafe(),    // MANDATORY error handler: func:failsafe = int32(tbb32:err_code) { ... }
 ok(),          // Check if value is unknown/error state: int32:valid = ok(value);
 drop(),        // Discard Result without error check (TOS explicit bypass): drop(expr); → void
                // You own the consequences. Compiler accepts, runtime is your problem.
@@ -2528,6 +2530,20 @@ func:divide = int32(int32:a, int32:b) {
 // Result<int32> (set is_error=false, val=result, err=NULL)
 // Result<int32> (set is_error=true, val=ERR, err=error_msg)
 
+// LONGHAND FORM (pedagogical — shows what the compiler actually produces):
+// You CAN write the Result<T> explicitly, but it's not required.
+// The shorthand above is preferred; the compiler wraps it for you.
+func:divide_explicit = Result<int32>(int32:a, int32:b) {
+    if (b == 0) {
+        fail(-1);
+    }
+    pass(a / b);
+};
+// This is identical to the shorthand: func:divide = int32(int32:a, int32:b)
+// The explicit Result<T> form offers no additional benefit — it just makes
+// the implicit wrapping visible. Once you understand that ALL functions
+// return Result<T>, the shorthand is cleaner and conventional.
+
 ---
 
 PASS() - SUCCESS RETURN:
@@ -2651,7 +2667,7 @@ Semantics:
 
 Requirements:
   - Program MUST define failsafe() handler:
-    func:failsafe = void(int32:err_code) { /* emergency cleanup */ }
+    func:failsafe = int32(tbb32:err_code) { /* emergency cleanup; exit(err_code); */ }
 
 Example:
 
@@ -3706,7 +3722,7 @@ CLOSURES WITH RESULT<T>:
 
 Closures integrate with Aria's error handling:
 
-func:safe_divide = Result<int32>(int32:a, int32:b, (int32)(int32):fallback) {
+func:safe_divide = int32(int32:a, int32:b, (int32)(int32):fallback) {
     if (b == 0) {
         pass(fallback(a));  // Use fallback on error
     }
@@ -3959,7 +3975,7 @@ DEFER FOR MEMORY MANAGEMENT:
 
 Automatic cleanup prevents memory leaks:
 
-func:process_file = Result<NIL>(string:path) {
+func:process_file = NIL(string:path) {
     // Allocate buffer
     int8->:buffer = aria.alloc<int8>(1024);
     defer aria.free(buffer);  // ✅ ALWAYS freed, even on error
@@ -3977,7 +3993,7 @@ func:process_file = Result<NIL>(string:path) {
 };
 
 Without defer (manual cleanup - ERROR PRONE):
-func:process_file_manual = Result<NIL>(string:path) {
+func:process_file_manual = NIL(string:path) {
     int8->:buffer = aria.alloc<int8>(1024);
     
     Result<int64>:bytes_read = read_file(path, buffer, 1024);
@@ -3999,7 +4015,7 @@ DEFER FOR FILE HANDLES:
 
 Ensures files are closed:
 
-func:read_config = Result<string>(string:path) {
+func:read_config = string(string:path) {
     FileHandle:file = open_file(path) ? NULL;
     defer close_file(file);  // ✅ ALWAYS closed
     
@@ -4008,7 +4024,7 @@ func:read_config = Result<string>(string:path) {
 };  // File closed here (defer)
 
 Multiple resources:
-func:copy_file = Result<NIL>(string:src, string:dst) {
+func:copy_file = NIL(string:src, string:dst) {
     FileHandle:input = open_file(src) ? NULL;
     defer close_file(input);  // Closed 2nd
     
@@ -4062,7 +4078,7 @@ DEFER FOR LOGGING AND TRACING:
 
 Function entry/exit logging:
 
-func:critical_operation = Result<NIL>() {
+func:critical_operation = NIL() {
     defer println("critical_operation: EXIT");
     println("critical_operation: ENTER");
     
@@ -4077,7 +4093,7 @@ func:critical_operation = Result<NIL>() {
 // critical_operation: EXIT
 
 Performance timing:
-func:timed_operation = Result<int32>() {
+func:timed_operation = int32() {
     int64:start_time = get_time_usec()?!;
     defer {
         int64:end_time = get_time_usec()?!;
@@ -4097,7 +4113,7 @@ DEFER FOR INVARIANT RESTORATION:
 
 Temporarily modify state, then restore:
 
-func:with_modified_config = Result<NIL>() {
+func:with_modified_config = NIL() {
     Config->:config = get_global_config();
     bool:old_debug = config->debug_enabled;
     
@@ -4113,7 +4129,7 @@ func:with_modified_config = Result<NIL>() {
 };  // debug_enabled restored here
 
 Atomic transaction pattern:
-func:database_transaction = Result<NIL>(DB@:db) {
+func:database_transaction = NIL(DB@:db) {
     db_begin_transaction(db);
     defer {
         if (transaction_failed) {
@@ -4182,7 +4198,7 @@ DEFER WITH ERROR HANDLING:
 
 Defers run on all exit paths (including errors):
 
-func:risky_operation = Result<NIL>() {
+func:risky_operation = NIL() {
     int8->:buf = aria.alloc<int8>(1024);
     defer aria.free(buf);  // ✅ Freed on ALL paths
     
@@ -4315,7 +4331,7 @@ DEFER BEST PRACTICES:
 DEFER EXAMPLES - REAL-WORLD:
 
 // Arena allocator with automatic cleanup
-func:with_arena<T> = Result<*T>((*T)(arena<*T>@):work) {
+func:with_arena<T> = *T((*T)(arena<*T>@):work) {
     arena<*T>:temp_arena;
     arena_init(@temp_arena, 1024);
     defer arena_destroy(@temp_arena);  // ✅ Always cleaned up
@@ -4325,7 +4341,7 @@ func:with_arena<T> = Result<*T>((*T)(arena<*T>@):work) {
 };
 
 // HTTP request with connection cleanup
-func:http_request = Result<string>(string:url) {
+func:http_request = string(string:url) {
     Connection:conn = http_connect(url) ? NULL;
     defer http_close(conn);  // ✅ Always closed
     
@@ -4605,7 +4621,7 @@ TRIGGERING FAILSAFE - EMPHATIC UNWRAP (?!):
 
 Emphatic unwrap operator (?!) calls failsafe() on error:
 
-func:load_critical_config = Result<Config>() {
+func:load_critical_config = Config() {
     // May fail (file not found, parse error, etc.)
     pass(read_config_file("./critical.cfg"));
 };
@@ -4709,7 +4725,7 @@ func:failsafe = int32(tbb32:err) {
 FAILSAFE FOR SAFETY-CRITICAL SYSTEMS:
 
 Nikola AGI consciousness substrate:
-func:failsafe = void(int32:err_code) {
+func:failsafe = int32(tbb32:err_code) {
     // 1. Pause all wave propagation (prevent corruption)
     pause_all_physics_threads();
     
@@ -4721,9 +4737,9 @@ func:failsafe = void(int32:err_code) {
     
     // 4. Attempt recovery if possible
     if (attempt_auto_recovery(err_code)) {
-        // Recovery succeeded - resume
+        // Recovery succeeded - exit cleanly
         resume_all_physics_threads();
-        pass;  // Never reached (failsafe can't return, but shows intent)
+        exit(0);
     }
     
     // 5. If recovery failed, graceful shutdown
@@ -4734,10 +4750,11 @@ func:failsafe = void(int32:err_code) {
     
     // 7. Halt
     halt_cpu();
+    exit(err_code);
 };
 
 Robotics failsafe:
-func:failsafe = void(int32:err_code) {
+func:failsafe = int32(tbb32:err_code) {
     // 1. Emergency stop (cut power to motors)
     emergency_stop_all_motors();
     
@@ -4755,10 +4772,11 @@ func:failsafe = void(int32:err_code) {
         flash_error_led(err_code);
         delay_ms(500);
     }
+    exit(err_code);  // Unreachable but satisfies return requirement
 };
 
 Medical device failsafe:
-func:failsafe = void(int32:err_code) {
+func:failsafe = int32(tbb32:err_code) {
     // 1. Stop all dosing (critical!)
     stop_all_drug_infusions();
     
@@ -4785,6 +4803,7 @@ func:failsafe = void(int32:err_code) {
     
     // Restart device in diagnostic mode
     reboot_to_diagnostic_mode();
+    exit(err_code);
 };
 
 ---
@@ -4823,19 +4842,19 @@ Compiler REQUIRES failsafe() definition:
 // This program will NOT compile (missing failsafe):
 func:main = int32() {
     Config:cfg = load_config()?!;  // Uses ?! operator
-    pass(0);
+    exit(0);
 };
 // Compile error: "failsafe() function required but not defined"
 
 // This program WILL compile:
-func:failsafe = void(int32:err_code) {
+func:failsafe = int32(tbb32:err_code) {
     stderr.write("Fatal error\n");
     exit(err_code);
 };
 
 func:main = int32() {
     Config:cfg = load_config()?!;
-    pass(0);
+    exit(0);
 };
 
 Rationale:
@@ -4848,7 +4867,7 @@ Rationale:
 FAILSAFE BEST PRACTICES:
 
 1. **Always define failsafe()** (mandatory, but define it WELL)
-   Bad: func:failsafe = void(int32:err) { exit(err); }  // Too simple
+   Bad: func:failsafe = int32(tbb32:err) { exit(err); }  // Too simple
    Good: Emergency cleanup + logging + safe state + termination
 
 2. **Differentiate error codes** (system vs application)
@@ -4899,13 +4918,13 @@ Current behavior (planned enhancement):
 FAILSAFE EXAMPLES:
 
 Minimal (testing/development):
-func:failsafe = void(int32:err_code) {
+func:failsafe = int32(tbb32:err_code) {
     println(`FAILSAFE TRIGGERED: &{err_code}`);
     exit(err_code);
 };
 
 Production (logging + cleanup):
-func:failsafe = void(int32:err_code) {
+func:failsafe = int32(tbb32:err_code) {
     // Log error
     Logger:log = get_logger()?!;
     log.critical(`Failsafe triggered: code &{err_code}`);
@@ -4920,7 +4939,7 @@ func:failsafe = void(int32:err_code) {
 };
 
 Embedded (minimal dependencies):
-func:failsafe = void(int32:err_code) {
+func:failsafe = int32(tbb32:err_code) {
     // Write error code to diagnostic register
     DIAG_REG = err_code;
     
@@ -4932,6 +4951,7 @@ func:failsafe = void(int32:err_code) {
         flash_pattern(err_code);
         delay(1000);
     }
+    exit(err_code);  // Unreachable but satisfies return requirement
 };
 
 ---
@@ -5149,8 +5169,8 @@ FAILSAFE SUMMARY:
 
 failsafe() is the mandatory last-resort error handler:
   ✅ MUST be defined in every Aria program
-  ✅ Signature: func:failsafe = void(int32:err_code) { ... };
-  ✅ Never returns (terminates program or halts system)
+  ✅ Signature: func:failsafe = int32(tbb32:err_code) { ... };
+  ✅ Never returns (terminates program via exit() or halts system)
   ✅ Triggered by ?! operator on error Results
   ✅ Provides controlled shutdown instead of undefined behavior
   ✅ Essential for safety-critical systems (Nikola, robotics, medical)
@@ -5269,7 +5289,7 @@ use network.http_get;
 
 func:main = int32() {
     string:response = http_get("https://example.com")?!;
-    pass(0);
+    exit(0);
 };
 
 ---
@@ -5371,7 +5391,7 @@ func:main = int32() {
     string:data = http_get("https://api.example.com") ? "";
     string:trimmed = trim(data) ? "";
     string:hashed = hash(trimmed) ? "";
-    pass(0);
+    exit(0);
 };
 
 ---
@@ -5401,7 +5421,7 @@ func:main = int32() {
     string:contents = readFile("data.txt") ? "";
     println(contents);
     
-    pass(0);
+    exit(0);
 };
 
 ---
@@ -6096,7 +6116,7 @@ int32:sum = numbers[0] + numbers[1] + numbers[2] + numbers[3] + numbers[4];
 print(`Sum of first 5: &{sum}`);
 
 Result unwrap in interpolation:
-func:compute = Result<int32>() { pass(42); };
+func:compute = int32() { pass(42); };
 print(`Result: &{compute() ? -1}`);  // "Result: 42" or "Result: -1"
 
 Conditional expressions:
@@ -6109,7 +6129,7 @@ print(`Grade: &{score >= 90 ? "A" : score >= 80 ? "B" : score >= 70 ? "C" : "F"}
 INTERPOLATION WITH RESULT<T>:
 
 Error context in debugging:
-func:divide = Result<tfp64>(tfp64:a, tfp64:b) {
+func:divide = tfp64(tfp64:a, tfp64:b) {
     if (b == 0.0) {
         fail("Division by zero");
     }
@@ -6618,18 +6638,19 @@ SAFETY LAYERS (from safest to most permissive):
           }
       - Note: ok() can also strip "unknown taint" when used as wrapper
       
-   Layer 5: failsafe(int32:err_code) - Mandatory error accountability
+   Layer 5: failsafe(tbb32:err_code) - Mandatory error accountability
       - Purpose: REQUIRED function for all programs, catches unhandled errors
-      - Signature: func:failsafe = void(int32:err_code) { /* handle error */ }
+      - Signature: func:failsafe = int32(tbb32:err_code) { /* handle error; exit(err_code); */ }
       - Behavior: Called automatically when:
          * ?! operator encounters error
          * Unwrap operation fails in certain contexts
          * Unhandled errors propagate to top level
       - Example:
-          func:failsafe = void(int32:err_code) {
+          func:failsafe = int32(tbb32:err_code) {
               stderr.write("CRITICAL ERROR: ");
               stderr.write(err_code);
               // Log to file, cleanup, emergency shutdown, etc.
+              exit(err_code);
           };
       - CRITICAL: Every program MUST define failsafe() or compilation fails
       - Philosophy: "Failsafe tax" - forces explicit error handling strategy
@@ -6767,7 +6788,7 @@ MANDATORY FAILSAFE PATTERN:
 
 Every Aria program MUST define a failsafe function:
 
-func:failsafe = void(int32:err_code) {
+func:failsafe = int32(tbb32:err_code) {
     // Handle unrecoverable errors
     // Examples: log to file, cleanup resources, emergency shutdown
     stderr.write("CRITICAL ERROR: ");
@@ -6775,12 +6796,13 @@ func:failsafe = void(int32:err_code) {
     
     // Application-specific error handling
     if (err_code == -1) {
-        stderr.write("Configuration load failed");
+        stderr.write("General system error");
     } else if (err_code == -2) {
-        stderr.write("Resource initialization failed");
+        stderr.write("Out of memory");
     }
     
-    // Cleanup, logging, etc.
+    // Cleanup, logging, then terminate
+    exit(err_code);
 };
 
 WHY MANDATORY?
@@ -7015,7 +7037,7 @@ Layer 2: unknown - Soft errors (undefined → defined)
   • Propagate with ok(unknown) to strip taint
 
 Layer 3: failsafe() - Final safety net (MANDATORY)
-  • func:failsafe = void(int32:err_code) { cleanup; exit; }
+  • func:failsafe = int32(tbb32:err_code) { cleanup; exit(err_code); }
   • Called by ?! operator, !!! operator
   • Compiler error if missing
   • Never returns
@@ -7085,7 +7107,15 @@ VARIABLES:
 FUNCTIONS:
   func:name = returnType(type:param) { body };
   
-  Example with Result:
+  // Shorthand (preferred — compiler wraps Result<T> for you):
+  func:divide = int32(int32:a, int32:b) {
+      if (b == 0) { fail("Division by zero"); }
+      pass(a / b);
+  };
+  
+  // Longhand (explicit Result<T> — identical behavior, pedagogical only):
+  // All functions implicitly return Result<ReturnType>, so stating it
+  // explicitly is redundant. The shorthand above is conventional.
     func:divide = Result<int32>(int32:a, int32:b) {
         if (b == 0) { fail("Division by zero"); }
         pass(a / b);
@@ -7188,7 +7218,7 @@ ERROR HANDLING:
   int32:value = r.val;
 
 RESOURCE CLEANUP:
-  func:process_file = Result<int32>() {
+  func:process_file = int32() {
       wild FILE->:fp = fopen("data.txt", "r");
       defer fclose(fp);  // Always closes, even on error
       
