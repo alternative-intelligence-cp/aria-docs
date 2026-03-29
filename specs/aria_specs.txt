@@ -3098,7 +3098,9 @@ Using them means you explicitly accept responsibility for correctness.
 │ wildx       │ Allocate executable memory (for JIT code generation)            │
 │ ok(v)       │ Acknowledge unknown value, strip taint, continue                │
 │ drop(expr)  │ Evaluate expr for side effect, discard Result without checking  │
+│ _?expr      │ Shorthand for drop(expr) — discard Result without checking       │
 │ raw(r)      │ Extract Result<T>.val without is_error check                    │
+│ _!r         │ Shorthand for raw(r) — extract value without is_error check      │
 │ ?           │ Unwrap with default value (safe - provides fallback)            │
 │ ??          │ Null-coalescing for NIL optionals (safe - provides fallback)    │
 │ ?!          │ Emphatic unwrap (triggers failsafe on error - safe-ish)         │
@@ -3140,6 +3142,17 @@ Implementation:
     → Validates argument, accepts any Result<T>, returns void type
   - Codegen:      src/backend/ir/codegen_expr.cpp
     → Emits expression IR, discards result (no check generated)
+
+Shorthand (_?):
+  _? is a prefix operator that desugars to drop() at parse time.
+  _?expr  is identical to  drop(expr)
+
+  Examples:
+    _?println("hello");           // same as drop(println("hello"));
+    _?writeFile("log.txt", msg);  // same as drop(writeFile("log.txt", msg));
+
+  The _? operator belongs to the ? family (safe/default handling).
+  Mnemonic: "_ drop the result, ? I don't need it"
 
 ---
 
@@ -3196,6 +3209,20 @@ Implementation:
   - Codegen:      src/backend/ir/codegen_expr.cpp
     → builder.CreateExtractValue(arg, 0, "raw.value")
     → Single LLVM extractvalue instruction, zero overhead
+
+Shorthand (_!):
+  _! is a prefix operator that desugars to raw() at parse time.
+  _!expr  is identical to  raw(expr)
+
+  Examples:
+    int32:x = _!safe_add(10, 32);   // same as raw(safe_add(10, 32))
+    int32:q = _!safe_div(100, 4);   // same as raw(safe_div(100, 4))
+
+  The _! operator belongs to the ! family (danger/force/bypass).
+  Mnemonic: "_ drop the safety, ! I know what I'm doing"
+
+  ⚠️  _! carries the same risks as raw(). If the Result is an error,
+  you get back whatever ERR sentinel the type carries.
 
 ---
 

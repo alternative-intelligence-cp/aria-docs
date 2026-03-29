@@ -508,7 +508,9 @@ Triggered by:
 | `r.is_error` | `bool` — true if error |
 | `r.err` | error info (valid when `is_error` is true) |
 | `raw(r)` | extract value — **no** `is_error` check; caller takes responsibility |
+| `_!expr` | shorthand for `raw(expr)` — prefix operator, desugars at parse time |
 | `drop(r)` | explicitly discard result without checking (TOS explicit bypass) |
+| `_?expr` | shorthand for `drop(expr)` — prefix operator, desugars at parse time |
 | `pass(value)` | success return from a function |
 | `fail(error)` | error return from a function |
 | `ok(val)` | check/strip `unknown` state: 1=valid, 0=unknown |
@@ -682,7 +684,9 @@ Type-specific concrete implementations while generics mature:
 |---------|-------------|
 | `ok(val)` | Test/strip `unknown`: returns 1 if valid, 0 if unknown |
 | `raw(expr)` | Extract `Result<T>` value without `is_error` check (TOS bypass — caller's responsibility) |
+| `_!expr` | Shorthand for `raw(expr)` — prefix operator (TOS bypass) |
 | `drop(expr)` | Discard `Result` without checking (TOS explicit bypass — you own the consequences) |
+| `_?expr` | Shorthand for `drop(expr)` — prefix operator (TOS explicit bypass) |
 | `pass(value)` | Return success from current function |
 | `fail(error)` | Return error from current function |
 | `failsafe(err_code)` | Directly invoke failsafe handler |

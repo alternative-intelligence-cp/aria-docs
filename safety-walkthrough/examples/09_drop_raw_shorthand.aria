@@ -1,0 +1,61 @@
+// 09_drop_raw_shorthand.aria
+// Feature 9: _? and _! — Ergonomic Drop & Raw Shorthand
+//
+// _? desugars to drop() at parse time.
+// _! desugars to raw() at parse time.
+// Both forms are fully interchangeable with their verbose counterparts.
+
+use std.io;
+
+func:failsafe = nil(tbb8:err) {
+    println("failsafe: error code " + err);
+    exit(1i32);
+}
+
+// A function that always succeeds
+func:safe_add = Result<int64>(int64:a, int64:b) {
+    pass(a + b);
+}
+
+// A function that might fail
+func:risky_divide = Result<int64>(int64:a, int64:b) {
+    if b == 0i64 then
+        fail(1t8);
+    end
+    pass(a / b);
+}
+
+func:main = int32() {
+    // === _? shorthand (drop) ===
+    // Verbose form:
+    drop(println("verbose drop"));
+
+    // Shorthand — identical behavior:
+    _?println("shorthand drop");
+
+    // Fire-and-forget logging:
+    _?println("audit: process started");
+
+    // === _! shorthand (raw) ===
+    // Verbose form:
+    int64:a = raw(safe_add(10i64, 32i64));
+    println("verbose raw: " + a);
+
+    // Shorthand — identical behavior:
+    int64:b = _!safe_add(20i64, 22i64);
+    println("shorthand raw: " + b);
+
+    // === Mixing both styles ===
+    // Use verbose where readability matters:
+    Result<int64>:r = risky_divide(100i64, 4i64);
+    if r.err == NULL then
+        int64:val = raw(r);
+        drop(println("divide result: " + val));
+    end
+
+    // Use terse in compact code:
+    int64:q = _!safe_add(1i64, 1i64);
+    _?println("quick: " + q);
+
+    exit(0i32);
+}

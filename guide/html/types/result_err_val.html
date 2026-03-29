@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Result Err and Val - Aria Programming Guide</title>
+    <title>Result Values in Aria - Aria Programming Guide</title>
     <style>
         :root {
             --bg-main: #1e1e1e;
@@ -222,21 +222,16 @@
         <div class="category">
 <h3>General</h3>
 <ul>
+<li><a href="/from_gml_to_native.html">From Gml To Native</a></li>
 <li><a href="/SYNTAX_AUDIT_FEB14_2026.html">Syntax Audit Feb14 2026</a></li>
+<li><a href="/SYNTAX_REFERENCE.html">Syntax Reference</a></li>
 <li><a href="/UPDATE_PROGRESS.html">Update Progress</a></li>
-</ul>
-</div>
-<div class="category">
-<h3>Meta</h3>
-<ul>
-<li><a href="/META/ARIA/DBUG_MODULE_COMPLETE.html">Dbug Module Complete</a></li>
-<li><a href="/META/ARIA/DBUG_WATCHPOINTS_COMPLETE.html">Dbug Watchpoints Complete</a></li>
-<li><a href="/META/ARIA/SYNTAX_REFERENCE.html">Syntax Reference</a></li>
 </ul>
 </div>
 <div class="category">
 <h3>Advanced Features</h3>
 <ul>
+<li><a href="/advanced_features/actors.html">Actors</a></li>
 <li><a href="/advanced_features/ast.html">Ast</a></li>
 <li><a href="/advanced_features/async.html">Async</a></li>
 <li><a href="/advanced_features/async_await.html">Async Await</a></li>
@@ -244,6 +239,7 @@
 <li><a href="/advanced_features/await.html">Await</a></li>
 <li><a href="/advanced_features/best_practices.html">Best Practices</a></li>
 <li><a href="/advanced_features/brace_delimited.html">Brace Delimited</a></li>
+<li><a href="/advanced_features/channels.html">Channels</a></li>
 <li><a href="/advanced_features/code_examples.html">Code Examples</a></li>
 <li><a href="/advanced_features/colons.html">Colons</a></li>
 <li><a href="/advanced_features/comments.html">Comments</a></li>
@@ -258,6 +254,7 @@
 <li><a href="/advanced_features/error_handling.html">Error Handling</a></li>
 <li><a href="/advanced_features/error_propagation.html">Error Propagation</a></li>
 <li><a href="/advanced_features/idioms.html">Idioms</a></li>
+<li><a href="/advanced_features/inline.html">Inline</a></li>
 <li><a href="/advanced_features/lexer.html">Lexer</a></li>
 <li><a href="/advanced_features/macros.html">Macros</a></li>
 <li><a href="/advanced_features/metaprogramming.html">Metaprogramming</a></li>
@@ -268,6 +265,8 @@
 <li><a href="/advanced_features/semicolons.html">Semicolons</a></li>
 <li><a href="/advanced_features/threading.html">Threading</a></li>
 <li><a href="/advanced_features/tokens.html">Tokens</a></li>
+<li><a href="/advanced_features/traits.html">Traits</a></li>
+<li><a href="/advanced_features/type_system.html">Type System</a></li>
 <li><a href="/advanced_features/whitespace_insensitive.html">Whitespace Insensitive</a></li>
 </ul>
 </div>
@@ -373,6 +372,7 @@
 <li><a href="/memory_model/aria_free.html">Aria Free</a></li>
 <li><a href="/memory_model/aria_gc_alloc.html">Aria Gc Alloc</a></li>
 <li><a href="/memory_model/borrow_operator.html">Borrow Operator</a></li>
+<li><a href="/memory_model/borrow_semantics.html">Borrow Semantics</a></li>
 <li><a href="/memory_model/borrowing.html">Borrowing</a></li>
 <li><a href="/memory_model/defer.html">Defer</a></li>
 <li><a href="/memory_model/gc.html">Gc</a></li>
@@ -440,7 +440,6 @@
 <li><a href="/operators/hash_operator.html">Hash Operator</a></li>
 <li><a href="/operators/increment.html">Increment</a></li>
 <li><a href="/operators/interpolation.html">Interpolation</a></li>
-<li><a href="/operators/is_operator.html">Is Operator</a></li>
 <li><a href="/operators/is_ternary.html">Is Ternary</a></li>
 <li><a href="/operators/iteration.html">Iteration</a></li>
 <li><a href="/operators/left_shift.html">Left Shift</a></li>
@@ -491,6 +490,17 @@
 </ul>
 </div>
 <div class="category">
+<h3>Specs</h3>
+<ul>
+<li><a href="/specs/ASYNC_MODEL.html">Async Model</a></li>
+<li><a href="/specs/ERROR_HANDLING.html">Error Handling</a></li>
+<li><a href="/specs/FFI_DESIGN.html">Ffi Design</a></li>
+<li><a href="/specs/IO_TOPOLOGY.html">Io Topology</a></li>
+<li><a href="/specs/MEMORY_MODEL.html">Memory Model</a></li>
+<li><a href="/specs/TYPE_SYSTEM.html">Type System</a></li>
+</ul>
+</div>
+<div class="category">
 <h3>Standard Library</h3>
 <ul>
 <li><a href="/standard_library/createLogger.html">Createlogger</a></li>
@@ -518,6 +528,7 @@
 <li><a href="/standard_library/spawn.html">Spawn</a></li>
 <li><a href="/standard_library/stream_io.html">Stream Io</a></li>
 <li><a href="/standard_library/structured_logging.html">Structured Logging</a></li>
+<li><a href="/standard_library/sys.html">Sys</a></li>
 <li><a href="/standard_library/system_diagnostics.html">System Diagnostics</a></li>
 <li><a href="/standard_library/transform.html">Transform</a></li>
 <li><a href="/standard_library/unique.html">Unique</a></li>
@@ -549,6 +560,7 @@
 <li><a href="/types/Complex.html">Complex</a></li>
 <li><a href="/types/double.html">Double</a></li>
 <li><a href="/types/dyn.html">Dyn</a></li>
+<li><a href="/types/enum.html">Enum</a></li>
 <li><a href="/types/ERR.html">Err</a></li>
 <li><a href="/types/fix256.html">Fix256</a></li>
 <li><a href="/types/float.html">Float</a></li>
@@ -598,6 +610,7 @@
 <li><a href="/types/Result.html">Result</a></li>
 <li><a href="/types/result_err_val.html">Result Err Val</a></li>
 <li><a href="/types/result_unwrap.html">Result Unwrap</a></li>
+<li><a href="/types/rules_and_limit.html">Rules And Limit</a></li>
 <li><a href="/types/SIMD.html">Simd</a></li>
 <li><a href="/types/simd.html">Simd</a></li>
 <li><a href="/types/string.html">String</a></li>
@@ -643,59 +656,88 @@
     </nav>
     <main>
         <div class="breadcrumb"><a href="/">Home</a> / Types</div>
-        <h1>Result Err and Val</h1>
+        <h1>Result Values in Aria</h1>
 <strong>Category</strong>: Types → Result
-<strong>Purpose</strong>: Ok and Err constructors
+<strong>Purpose</strong>: Creating and checking <code>result<T></code> values
 <hr>
-<h2>Ok Constructor</h2>
-<pre><code>// Success with value
+<h2>Overview</h2>
+<code>result<T></code> is Aria’s type for operations that can either succeed with a value or fail with an error.
 <p>
-Result: Result<i32> = Ok(42);
+| Field | Type | Meaning |
+|-------|------|---------|
+| <code>.is_error</code> | <code>bool</code> | <code>true</code> if the operation failed |
+| <code>.err</code> | <code>string</code> | Error message (valid when <code>is_error == true</code>) |
 </p>
 <p>
-// Success with void
-Result: Result<void> = Ok();</code></pre>
-</p>
-<hr>
-<h2>Err Constructor</h2>
-<pre><code>// Error with string message
-<p>
-Result: Result<i32> = Err("Something went wrong");
-</p>
-<p>
-// Error with custom type
-Result: Result<i32, ErrorCode> = Err(ErrorCode.NotFound);</code></pre>
+Use <code>raw()</code> to extract the underlying value (checks are your responsibility).
 </p>
 <hr>
-<h2>Pattern Matching</h2>
-<pre><code>when result is Ok(value) then
+<h2>Producing Results from Functions</h2>
+<pre><code>func:divide = result<int32>(int32:a, int32:b) {
 <p>
-print(`Success: &{value}`);
-elsif result is Err(error) then
-stderr_write(`Error: &{error}`);
-end</code></pre>
+if (b == 0) {
+fail("Division by zero");  // Returns error result
+}
+pass(a / b);  // Returns success result
+};</code></pre>
 </p>
 <hr>
 <h2>Checking State</h2>
-<pre><code>// Check if Ok
+<pre><code>result<int32>:r = divide(10, 2);
 <p>
-when result.is_ok() then
-value: i32 = result.unwrap();
-end
+if (r.is_error) {
+print(<code>Error: &{r.err}</code>);  // r.err is the error string
+} else {
+int32:value = raw(r);      // raw() extracts the value after checking
+print(<code>Result: &{value}</code>);
+}</code></pre>
 </p>
+<hr>
+<h2>Accessing the Error</h2>
+<pre><code>result<string>:result = readFile("config.txt");
 <p>
-// Check if Err
-when result.is_err() then
-msg: string = result.unwrap_err();
-end</code></pre>
+if (result.is_error) {
+// .err is the error message string
+stderr.write(<code>File error: &{result.err}\n</code>);
+fail(result.err);  // propagate it
+}</code></pre>
+</p>
+<hr>
+<h2>Propagating Success</h2>
+<pre><code>func:loadConfig = result<Config>() {
+<p>
+string:content = readFile("config.txt") ? "{}";  // default on error
+pass(parseJSON(content)?);  // propagate parse error upward
+};</code></pre>
+</p>
+<hr>
+<h2>Common Patterns</h2>
+<h3>Default on error</h3>
+<pre><code>string:config = readFile("config.txt") ? "default";</code></pre>
+<h3>Must succeed</h3>
+<pre><code>Config:cfg = loadConfig()?!;  // triggers failsafe if it fails</code></pre>
+<h3>Check and use</h3>
+<pre><code>result<string>:r = readFile("data.txt");
+<p>
+if (!r.is_error) {
+process(raw(r));
+}</code></pre>
+</p>
+<h3>Propagate in a result-returning function</h3>
+<pre><code>func:process = result<NIL>(string:path) {
+<p>
+string:content = readFile(path)?;  // propagate on failure
+transform(content)?;
+pass(NIL);
+};</code></pre>
 </p>
 <hr>
 <h2>Related</h2>
-<ul><li><a href="result.md">Result</a></li>
-<li><a href="result_unwrap.md">Result Unwrap</a></li>
+<ul><li><a href="result.md">result<T></a></li>
+<li><a href="result_unwrap.md">Result Extraction</a></li>
 </ul>
 <hr>
-<strong>Remember</strong>: <code>Ok</code> = success, <code>Err</code> = failure!
+<strong>Remember</strong>: <code>pass()</code> — success. <code>fail()</code> — error. Check <code>.is_error</code> before accessing <code>.err</code>.
     </main>
 </body>
 </html>

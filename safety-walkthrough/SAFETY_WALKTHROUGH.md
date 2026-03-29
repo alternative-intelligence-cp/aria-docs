@@ -18,10 +18,11 @@
 8. [Feature 6: Emergency Operators — ?! and !!!](#8-feature-6-emergency-operators---and-)
 9. [Feature 7: wild — Controlled Unsafe Access](#9-feature-7-wild--controlled-unsafe-access)
 10. [Feature 8: sys() — Tiered Syscall Safety](#10-feature-8-sys--tiered-syscall-safety)
-11. [Putting It Together: The Complete Pump Controller](#11-putting-it-together-the-complete-pump-controller)
-12. [Z3 Verification in Practice](#12-z3-verification-in-practice)
-13. [Comparison with Other Approaches](#13-comparison-with-other-approaches)
-14. [Summary](#14-summary)
+11. [Feature 9: _? and _! — Ergonomic Drop & Raw Shorthand](#11-feature-9-_-and-_--ergonomic-drop--raw-shorthand)
+12. [Putting It Together: The Complete Pump Controller](#12-putting-it-together-the-complete-pump-controller)
+13. [Z3 Verification in Practice](#13-z3-verification-in-practice)
+14. [Comparison with Other Approaches](#14-comparison-with-other-approaches)
+15. [Summary](#15-summary)
 
 ---
 
@@ -725,7 +726,67 @@ is required. Only truly dangerous operations like process spawning would need
 
 ---
 
-## 11. Putting It Together: The Complete Pump Controller
+## 11. Feature 9: _? and _! — Ergonomic Drop & Raw Shorthand
+
+*(See `examples/09_drop_raw_shorthand.aria`)*
+
+Aria v0.4.0 adds prefix shorthand operators for the two TOS-bypass builtins:
+
+| Shorthand | Desugars to | Operator Family |
+|-----------|------------|------------------|
+| `_?expr` | `drop(expr)` | `?` family (safe/default) |
+| `_!expr` | `raw(expr)` | `!` family (danger/force) |
+
+These are **pure parser sugar** — `_?` and `_!` are converted to `drop()` and `raw()`
+call nodes during parsing. The type checker and codegen see the same IR as the
+verbose forms. No new semantics, no new risks.
+
+### Why Both Forms?
+
+Aria keeps verbose and terse forms so developers can choose the right one for context:
+
+```aria
+// In a long function where readability matters most:
+drop(writeFile("audit.log", entry));
+int32:val = raw(verified_result);
+
+// In tight imperative code where the intent is obvious:
+_?println("tick");
+int32:x = _!safe_add(a, b);
+```
+
+### The ? and ! Families
+
+The shorthand operators fit naturally into Aria's existing operator families:
+
+**? family** (safe / provides fallback / discards):
+- `expr ? default` — unwrap with fallback
+- `expr??` — null-coalesce
+- `_?expr` — drop result entirely
+
+**! family** (danger / force / bypass):
+- `expr?!` — emphatic unwrap (calls failsafe on error)
+- `expr!!` — force cast
+- `!!!` — direct failsafe
+- `_!expr` — raw extract without check
+
+### Safety-Critical Perspective
+
+For the infusion pump, `_?` and `_!` are flagged by `aria-safety` just like their
+verbose counterparts. The tool reports `_!` as `[RAW]` severity — the shorthand
+does not let you sneak past code review:
+
+```
+[RAW]  Line 42: _! raw extraction shorthand — bypasses error check (desugars to raw())
+[DROP] Line 58: _? drop shorthand — discards Result without checking (desugars to drop())
+```
+
+Both `drop()` and `_?` are fully interchangeable. Both `raw()` and `_!` are fully
+interchangeable. The choice is purely stylistic.
+
+---
+
+## 12. Putting It Together: The Complete Pump Controller
 
 *(See `examples/07_infusion_pump.aria`)*
 
@@ -906,7 +967,7 @@ different from the source language.
 
 ---
 
-## 13. Comparison with Other Approaches
+## 14. Comparison with Other Approaches
 
 ### How Aria Compares to Safety-Critical Alternatives
 
@@ -939,7 +1000,7 @@ different from the source language.
 
 ---
 
-## 14. Summary
+## 15. Summary
 
 Aria's safety model is built on a simple insight: **safety features that can be
 forgotten will be forgotten.** Every feature described in this walkthrough is

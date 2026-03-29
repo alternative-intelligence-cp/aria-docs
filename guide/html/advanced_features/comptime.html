@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>`comptime` Expressions - Aria Programming Guide</title>
+    <title>Compile-Time Evaluation (`comptime`) - Aria Programming Guide</title>
     <style>
         :root {
             --bg-main: #1e1e1e;
@@ -222,21 +222,16 @@
         <div class="category">
 <h3>General</h3>
 <ul>
+<li><a href="/from_gml_to_native.html">From Gml To Native</a></li>
 <li><a href="/SYNTAX_AUDIT_FEB14_2026.html">Syntax Audit Feb14 2026</a></li>
+<li><a href="/SYNTAX_REFERENCE.html">Syntax Reference</a></li>
 <li><a href="/UPDATE_PROGRESS.html">Update Progress</a></li>
-</ul>
-</div>
-<div class="category">
-<h3>Meta</h3>
-<ul>
-<li><a href="/META/ARIA/DBUG_MODULE_COMPLETE.html">Dbug Module Complete</a></li>
-<li><a href="/META/ARIA/DBUG_WATCHPOINTS_COMPLETE.html">Dbug Watchpoints Complete</a></li>
-<li><a href="/META/ARIA/SYNTAX_REFERENCE.html">Syntax Reference</a></li>
 </ul>
 </div>
 <div class="category">
 <h3>Advanced Features</h3>
 <ul>
+<li><a href="/advanced_features/actors.html">Actors</a></li>
 <li><a href="/advanced_features/ast.html">Ast</a></li>
 <li><a href="/advanced_features/async.html">Async</a></li>
 <li><a href="/advanced_features/async_await.html">Async Await</a></li>
@@ -244,6 +239,7 @@
 <li><a href="/advanced_features/await.html">Await</a></li>
 <li><a href="/advanced_features/best_practices.html">Best Practices</a></li>
 <li><a href="/advanced_features/brace_delimited.html">Brace Delimited</a></li>
+<li><a href="/advanced_features/channels.html">Channels</a></li>
 <li><a href="/advanced_features/code_examples.html">Code Examples</a></li>
 <li><a href="/advanced_features/colons.html">Colons</a></li>
 <li><a href="/advanced_features/comments.html">Comments</a></li>
@@ -258,6 +254,7 @@
 <li><a href="/advanced_features/error_handling.html">Error Handling</a></li>
 <li><a href="/advanced_features/error_propagation.html">Error Propagation</a></li>
 <li><a href="/advanced_features/idioms.html">Idioms</a></li>
+<li><a href="/advanced_features/inline.html">Inline</a></li>
 <li><a href="/advanced_features/lexer.html">Lexer</a></li>
 <li><a href="/advanced_features/macros.html">Macros</a></li>
 <li><a href="/advanced_features/metaprogramming.html">Metaprogramming</a></li>
@@ -268,6 +265,8 @@
 <li><a href="/advanced_features/semicolons.html">Semicolons</a></li>
 <li><a href="/advanced_features/threading.html">Threading</a></li>
 <li><a href="/advanced_features/tokens.html">Tokens</a></li>
+<li><a href="/advanced_features/traits.html">Traits</a></li>
+<li><a href="/advanced_features/type_system.html">Type System</a></li>
 <li><a href="/advanced_features/whitespace_insensitive.html">Whitespace Insensitive</a></li>
 </ul>
 </div>
@@ -373,6 +372,7 @@
 <li><a href="/memory_model/aria_free.html">Aria Free</a></li>
 <li><a href="/memory_model/aria_gc_alloc.html">Aria Gc Alloc</a></li>
 <li><a href="/memory_model/borrow_operator.html">Borrow Operator</a></li>
+<li><a href="/memory_model/borrow_semantics.html">Borrow Semantics</a></li>
 <li><a href="/memory_model/borrowing.html">Borrowing</a></li>
 <li><a href="/memory_model/defer.html">Defer</a></li>
 <li><a href="/memory_model/gc.html">Gc</a></li>
@@ -440,7 +440,6 @@
 <li><a href="/operators/hash_operator.html">Hash Operator</a></li>
 <li><a href="/operators/increment.html">Increment</a></li>
 <li><a href="/operators/interpolation.html">Interpolation</a></li>
-<li><a href="/operators/is_operator.html">Is Operator</a></li>
 <li><a href="/operators/is_ternary.html">Is Ternary</a></li>
 <li><a href="/operators/iteration.html">Iteration</a></li>
 <li><a href="/operators/left_shift.html">Left Shift</a></li>
@@ -491,6 +490,17 @@
 </ul>
 </div>
 <div class="category">
+<h3>Specs</h3>
+<ul>
+<li><a href="/specs/ASYNC_MODEL.html">Async Model</a></li>
+<li><a href="/specs/ERROR_HANDLING.html">Error Handling</a></li>
+<li><a href="/specs/FFI_DESIGN.html">Ffi Design</a></li>
+<li><a href="/specs/IO_TOPOLOGY.html">Io Topology</a></li>
+<li><a href="/specs/MEMORY_MODEL.html">Memory Model</a></li>
+<li><a href="/specs/TYPE_SYSTEM.html">Type System</a></li>
+</ul>
+</div>
+<div class="category">
 <h3>Standard Library</h3>
 <ul>
 <li><a href="/standard_library/createLogger.html">Createlogger</a></li>
@@ -518,6 +528,7 @@
 <li><a href="/standard_library/spawn.html">Spawn</a></li>
 <li><a href="/standard_library/stream_io.html">Stream Io</a></li>
 <li><a href="/standard_library/structured_logging.html">Structured Logging</a></li>
+<li><a href="/standard_library/sys.html">Sys</a></li>
 <li><a href="/standard_library/system_diagnostics.html">System Diagnostics</a></li>
 <li><a href="/standard_library/transform.html">Transform</a></li>
 <li><a href="/standard_library/unique.html">Unique</a></li>
@@ -549,6 +560,7 @@
 <li><a href="/types/Complex.html">Complex</a></li>
 <li><a href="/types/double.html">Double</a></li>
 <li><a href="/types/dyn.html">Dyn</a></li>
+<li><a href="/types/enum.html">Enum</a></li>
 <li><a href="/types/ERR.html">Err</a></li>
 <li><a href="/types/fix256.html">Fix256</a></li>
 <li><a href="/types/float.html">Float</a></li>
@@ -598,6 +610,7 @@
 <li><a href="/types/Result.html">Result</a></li>
 <li><a href="/types/result_err_val.html">Result Err Val</a></li>
 <li><a href="/types/result_unwrap.html">Result Unwrap</a></li>
+<li><a href="/types/rules_and_limit.html">Rules And Limit</a></li>
 <li><a href="/types/SIMD.html">Simd</a></li>
 <li><a href="/types/simd.html">Simd</a></li>
 <li><a href="/types/string.html">String</a></li>
@@ -643,295 +656,154 @@
     </nav>
     <main>
         <div class="breadcrumb"><a href="/">Home</a> / Advanced Features</div>
-        <h1><code>comptime</code> Expressions</h1>
+        <h1>Compile-Time Evaluation (<code>comptime</code>)</h1>
 <strong>Category</strong>: Advanced Features → Compile-Time
-<strong>Syntax</strong>: <code>comptime <expression></code>
-<strong>Purpose</strong>: Force compile-time evaluation
+<strong>Added</strong>: v0.2.12
+<strong>Purpose</strong>: Force evaluation of expressions, blocks, or functions at compile time
 <hr>
 <h2>Overview</h2>
-<code>comptime</code> explicitly marks code to <strong>execute during compilation</strong>.
+<code>comptime</code> instructs the compiler to evaluate code during compilation rather than at runtime. The result is embedded as a constant in the generated binary. Aria provides three forms of compile-time evaluation.
 <hr>
-<h2>Basic Comptime</h2>
+<h2>Form 1: Comptime Expression</h2>
+<p>
+Evaluate a single expression at compile time. The result must be a constant (integer, float, bool, or string).
+</p>
+<pre><code>func:main = int32() {
+<p>
+int32:size = comptime(4 * 1024);
+flt64:pi_squared = comptime(3.14159265358979 * 3.14159265358979);
+bool:flag = comptime(8 > 4);
+</p>
+<p>
+pass(size);
+};
+</p>
+<p>
+failsafe {
+pass(1);
+};</code></pre>
+</p>
+<p>
+The inner expression is fully evaluated by the type checker's <code>ConstEvaluator</code>. The IR generator emits the pre-computed result as an LLVM constant.
+</p>
+<hr>
+<h2>Form 2: Comptime Block</h2>
+<p>
+Evaluate an entire block at compile time. Useful for complex computations with multiple steps.
+</p>
 <pre><code>comptime {
 <p>
-print("This prints during compilation!");
-}</code></pre>
+int32:table_size = 256;
+int32:mask = table_size - 1;
+};
 </p>
+<p>
+func:main = int32() {
+pass(0);
+};
+</p>
+<p>
+failsafe {
+pass(1);
+};</code></pre>
+</p>
+<p>
+The block executes during type checking. At IR generation time, comptime blocks emit <strong>no code</strong> — all effects are resolved at compile time.
+</p>
+<strong>Note</strong>: The closing <code>};</code> (semicolon after brace) is required for comptime blocks.
 <hr>
-<h2>Comptime Variables</h2>
-<pre><code>comptime value: i32 = expensive_computation();
+<h2>Form 3: Comptime Function</h2>
 <p>
-// 'value' is known at compile time
-let array: [u8; value];  // ✅ OK - value is comptime</code></pre>
+Mark a function for compile-time function evaluation (CTFE). The function is registered in the <code>ConstEvaluator</code> and can be called inside <code>comptime(...)</code> expressions.
 </p>
-<hr>
-<h2>Comptime vs Const</h2>
-<pre><code>const VALUE: i32 = 42;              // Simple constant
+<pre><code>comptime func:factorial = int64(int64:n) {
 <p>
-comptime result = compute();        // Complex computation
-</p>
-<p>
-const SIZE: i32 = 100;              // Value-based
-comptime type T = choose_type();    // Type-based</code></pre>
-</p>
-<hr>
-<h2>Comptime Functions</h2>
-<pre><code>fn regular_function(x: i32) -> i32 {
-<p>
-return x * 2;
+if(n <= 1i64) {
+pass(1i64);
 }
+pass(n * factorial(n - 1i64));
+};
 </p>
 <p>
-comptime Result: i32 = regular_function(21);  // Called at compile time
-// result = 42</code></pre>
-</p>
-<hr>
-<h2>Type-Level Programming</h2>
-<pre><code>comptime {
-<p>
-if sizeof(i32) == 4 {
-type IntType = i32;
-} else {
-type IntType = i64;
-}
-}
+func:main = int32() {
+int64:result = comptime(factorial(10i64));
+// result == 3628800 — computed at compile time
+pass(0);
+};
 </p>
 <p>
-value: IntType = 42;  // Type chosen at compile time</code></pre>
-</p>
-<hr>
-<h2>Comptime Conditionals</h2>
-<pre><code>comptime {
-<p>
-#[cfg(debug)]
-const OPTIMIZATION_LEVEL: i32 = 0;
+failsafe {
+pass(1);
+};</code></pre>
 </p>
 <p>
-#[cfg(release)]
-const OPTIMIZATION_LEVEL: i32 = 3;
-}</code></pre>
+Comptime functions:
 </p>
-<hr>
-<h2>Code Generation</h2>
-<pre><code>comptime {
-<p>
-// Generate different code based on platform
-#[cfg(arch = "x86_64")]
-{
-fn optimized_function() {
-// x86_64 SIMD code
-}
-}
-</p>
-<p>
-#[cfg(arch = "aarch64")]
-{
-fn optimized_function() {
-// ARM NEON code
-}
-}
-}</code></pre>
-</p>
-<hr>
-<h2>Comptime Assertions</h2>
-<pre><code>comptime {
-<p>
-if MAX_SIZE > BUFFER_SIZE {
-@compile_error("MAX_SIZE cannot exceed BUFFER_SIZE");
-}
-}
-</p>
-<p>
-comptime {
-@assert(sizeof(Pointer) == 8, "Expected 64-bit pointers");
-}</code></pre>
-</p>
-<hr>
-<h2>Comptime Loops</h2>
-<pre><code>comptime {
-<p>
-till(9, 1) {
-print("Generating code for iteration $($)");
-generate_function($);
-}
-}</code></pre>
-</p>
-<hr>
-<h2>Reflection</h2>
-<pre><code>comptime {
-<p>
-type_info: TypeInfo = @type_info(MyStruct);
-</p>
-<p>
-till(type_info.fields.length - 1, 1) {
-print("Field: &{type_info.fields[$].name}, Type: &{type_info.fields[$].type}");
-}
-}</code></pre>
-</p>
-<hr>
-<h2>Generic Specialization</h2>
-<pre><code>fn process<T>(value: T) -> T {
-<p>
-comptime {
-if @type_is_integer(T) {
-return value * 2;
-} else if @type_is_float(T) {
-return value * 2.0;
-} else {
-@compile_error("Unsupported type");
-}
-}
-}</code></pre>
-</p>
-<hr>
-<h2>Comptime String Building</h2>
-<pre><code>comptime {
-<p>
-name: string = "MyApp";
-version: string = "1.0";
-full_name: string = name ++ " v" ++ version;
-}
-</p>
-<p>
-const APP_NAME: string = full_name;  // "MyApp v1.0"</code></pre>
-</p>
-<hr>
-<h2>Comptime Array Generation</h2>
-<pre><code>comptime fn generate_powers_of_2(n: i32) -> [i32; n] {
-<p>
-Result: [i32; n];
-till(n - 1, 1) {
-result[$] = 1 << $;
-}
-return result;
-}
-</p>
-<p>
-const POWERS: [i32; 10] = comptime generate_powers_of_2(10);
-// [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]</code></pre>
-</p>
-<hr>
-<h2>Common Patterns</h2>
-<h3>Configuration Selection</h3>
-<pre><code>comptime {
-<p>
-#[cfg(feature = "fast")]
-type Allocator = FastAllocator;
-</p>
-<p>
-#[cfg(not(feature = "fast"))]
-type Allocator = SafeAllocator;
-}
-</p>
-<p>
-allocator: Allocator = Allocator.new();</code></pre>
-</p>
-<hr>
-<h3>Lookup Table Generation</h3>
-<pre><code>comptime fn crc_table() -> [u32; 256] {
-<p>
-table: [u32; 256];
-till(255, 1) {
-i = $;
-value: u32 = i;
-till(7, 1) {
-if (value & 1) != 0 {
-value = (value >> 1) ^ 0xEDB88320;
-} else {
-value = value >> 1;
-}
-}
-table[i] = value;
-}
-return table;
-}
-</p>
-<p>
-const CRC_TABLE: [u32; 256] = comptime crc_table();</code></pre>
-</p>
-<hr>
-<h3>Version String</h3>
-<pre><code>comptime {
-<p>
-const MAJOR: i32 = 1;
-const MINOR: i32 = 2;
-const PATCH: i32 = 3;
-</p>
-<p>
-const VERSION: string = "$MAJOR.$MINOR.$PATCH";
-}</code></pre>
-</p>
-<hr>
-<h2>Best Practices</h2>
-<h3>✅ DO: Use for Code Generation</h3>
-<pre><code>comptime {
-<p>
-sizes = [8, 16, 32, 64, 128, 256];
-till(sizes.length - 1, 1) {
-generate_buffer_type(sizes[$]);
-}
-}</code></pre>
-</p>
-<h3>✅ DO: Validate Configurations</h3>
-<pre><code>comptime {
-<p>
-if THREAD_COUNT < 1 || THREAD_COUNT > 64 {
-@compile_error("THREAD_COUNT must be between 1 and 64");
-}
-}</code></pre>
-</p>
-<h3>✅ DO: Optimize Based on Types</h3>
-<pre><code>fn process<T>(value: T) -> T {
-<p>
-comptime {
-if @type_size(T) <= 8 {
-return fast_process(value);  // Small type
-} else {
-return slow_process(value);  // Large type
-}
-}
-}</code></pre>
-</p>
-<h3>❌ DON'T: Overuse</h3>
-<pre><code>comptime {
-<p>
-value: i32 = 42;  // ❌ Just use: const VALUE: i32 = 42;
-}</code></pre>
-</p>
-<hr>
-<h2>Comptime Functions</h2>
-<pre><code>comptime fn is_power_of_2(n: i32) -> bool {
-<p>
-return n > 0 && (n & (n - 1)) == 0;
-}
-</p>
-<p>
-comptime {
-if !is_power_of_2(BUFFER_SIZE) {
-@compile_error("BUFFER_SIZE must be power of 2");
-}
-}</code></pre>
-</p>
-<hr>
-<h2>Debugging Comptime</h2>
-<pre><code>comptime {
-<p>
-print("SIZE = $SIZE");
-print("ALIGNMENT = $ALIGNMENT");
-</p>
-<p>
-@dump_type(MyStruct);
-@dump_value(CONSTANT);
-}</code></pre>
-</p>
-<hr>
-<h2>Related</h2>
-<ul><li><a href="const.md">const</a> - Const keyword</li>
-<li><a href="compile_time.md">compile_time</a> - Compile-time computation</li>
-<li><a href="metaprogramming.md">metaprogramming</a> - Metaprogramming</li>
+<ul><li>Are registered in the symbol table for CTFE calls</li>
+<li>Are <strong>also</strong> emitted as regular IR (they can be called at runtime too)</li>
+<li>Can be combined with <code>pub</code>: <code>pub comptime func:name = ...</code></li>
+<li>Must be deterministic — no I/O, no runtime-only operations</li>
 </ul>
 <hr>
-<strong>Remember</strong>: <code>comptime</code> is <strong>powerful</strong> - use it for <strong>zero-cost abstractions</strong>!
+<h2>ConstEvaluator</h2>
+<p>
+The compile-time interpreter supports:
+</p>
+<p>
+| Value Kind | Description |
+|---|---|
+| Integer | All Aria integer types (int8 through int4096) |
+| Unsigned | All unsigned types (uint8 through uint64) |
+| TBB | Ternary Balanced Binary with sticky error propagation |
+| Float | flt32, flt64, flt128 through flt512 |
+| Bool | <code>true</code> / <code>false</code> |
+| String | String constants |
+| Pointer, Struct, Array | Complex types via virtual heap |
+</p>
+<h3>Resource Limits</h3>
+<p>
+The evaluator enforces sandbox limits:
+</p>
+<ul><li><strong>1,000,000 instructions</strong> maximum per evaluation</li>
+<li><strong>512 stack frames</strong> maximum depth</li>
+<li><strong>1 GB virtual heap</strong> maximum allocation</li>
+</ul>
+<hr>
+<h2>Supported Operations in Comptime</h2>
+<ul><li>Arithmetic: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code></li>
+<li>Comparison: <code>==</code>, <code>!=</code>, <code><</code>, <code>></code>, <code><=</code>, <code>>=</code></li>
+<li>Logical: <code>&&</code>, <code>||</code>, <code>!</code></li>
+<li>Bitwise: <code>&</code>, <code>|</code>, <code>^</code>, <code><<</code>, <code>>></code></li>
+<li>Function calls (to comptime-registered functions)</li>
+<li>Conditional expressions</li>
+<li>TBB arithmetic with error propagation</li>
+</ul>
+<hr>
+<h2>What Cannot Be Used in Comptime</h2>
+<ul><li>I/O operations (<code>print()</code>, file operations)</li>
+<li>Memory allocation (<code>alloc</code>)</li>
+<li>Thread operations</li>
+<li>Extern/FFI calls</li>
+<li>Anything that requires runtime state</li>
+</ul>
+<hr>
+<h2>Error Handling</h2>
+<p>
+If a comptime expression cannot be evaluated, the compiler reports:
+</p>
+<pre><code>comptime evaluation failed: <reason></code></pre>
+<p>
+Common causes:
+</p>
+<ul><li>Referencing a runtime variable inside <code>comptime(...)</code></li>
+<li>Calling a non-comptime function</li>
+<li>Exceeding resource limits (instruction count, stack depth)</li>
+<li>Division by zero or other undefined operations</li>
+</ul>
+<hr>
+<h2>Related</h2>
+<ul><li><a href="macros.md">Preprocessor Macros</a> — Text-level code generation (<code>%define</code>, <code>%macro</code>)</li>
+<li><a href="inline.md">Inline Functions</a> — <code>inline func:</code> / <code>noinline func:</code> hints</li></ul>
     </main>
 </body>
 </html>

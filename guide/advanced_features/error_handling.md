@@ -465,7 +465,9 @@ Using them means **you accept responsibility** for correctness at that call site
 | `unsafe {}` | Block of raw pointer ops / weak memory orderings |
 | `ok(v)` | Acknowledge unknown value, strip taint, continue |
 | `drop(expr)` | Evaluate expr for side effects, discard Result without checking |
+| `_?expr` | Shorthand for `drop(expr)` — prefix operator, desugars at parse time |
 | `raw(result)` | Extract `Result<T>` value without `is_error` check |
+| `_!expr` | Shorthand for `raw(expr)` — prefix operator, desugars at parse time |
 | `?` | Unwrap with default value (safe — provides fallback) |
 | `??` | Null-coalescing for NIL optionals (safe — provides fallback) |
 | `?!` | Emphatic unwrap — triggers `failsafe()` on error |
@@ -517,6 +519,18 @@ drop(writeFile("critical_backup.bin", data));  // if this fails, data is lost
 drop(println("debug: entering loop"));  // cosmetic output
 ```
 
+### Shorthand: `_?`
+
+The `_?` prefix operator desugars to `drop()` at parse time. They are identical:
+
+```aria
+_?println("hello");           // same as drop(println("hello"));
+_?writeFile("log.txt", msg);  // same as drop(writeFile("log.txt", msg));
+```
+
+`_?` belongs to the `?` operator family (safe / default handling).
+Mnemonic: "drop the result — I don't need it."
+
 ---
 
 ## raw() — Force Unwrap Result
@@ -566,6 +580,21 @@ int32:x = must_succeed()?!;
 - You previously checked `.err` and want to avoid a second branch
 - Integration with code that is statically guaranteed to return success
 - Benchmarking / micro-optimization with formal proof of correctness
+
+### Shorthand: `_!`
+
+The `_!` prefix operator desugars to `raw()` at parse time. They are identical:
+
+```aria
+int32:x = _!safe_add(10, 32);   // same as raw(safe_add(10, 32))
+int32:q = _!safe_div(100, 4);   // same as raw(safe_div(100, 4))
+```
+
+`_!` belongs to the `!` operator family (danger / force / bypass).
+Mnemonic: "drop the safety — I know what I'm doing."
+
+⚠️ `_!` carries the same risks as `raw()`. If the Result is an error, you get back
+whatever ERR sentinel the type carries.
 
 ---
 

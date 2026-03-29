@@ -58,6 +58,8 @@ func:safe_divide = int32(int32:a, int32:b) {
   - `?` - casual unwrap with default
   - `??` - null coalesce for pointers/optionals
   - `?!` - emphatic unwrap (semantically stronger intent)
+  - `_?` - shorthand for `drop()` — discard Result without checking
+  - `_!` - shorthand for `raw()` — extract value without checking
 - Compiler enforces "no checky no val" - can't access `.value` without checking `.is_error`
 
 **Philosophy**: Failure is a normal part of the operation's contract, not an exceptional circumstance. The type system makes this explicit.

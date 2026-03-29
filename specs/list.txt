@@ -26,7 +26,9 @@ limit<Rules>            ** utilize compile time and runtime checks to ensure val
 ### Builtin Helpers ####################################################################################################
 ok(unknownVal)          ** allow passing a variable that may have value 'unknown' down the chain **
 drop()                  ** bypass Result system and drop Result **
-raw()                   ** bypass Result system and return Result.value ** 
+_?                      ** prefix shorthand for drop() — desugars at parse time **
+raw()                   ** bypass Result system and return Result.value **
+_!                      ** prefix shorthand for raw() — desugars at parse time ** 
 fall(label)             ** used in pick for fallthrough **
 pass(T:retVal)          ** constructs and returns Result<T>{tbb8:err,T:value,bool:is_error} with value set to retVal and error set to NIL, not valid in main or failsafe
 fail(tbb8:errCode)      ** constructs and returns Result<T>{tbb8:err,T:value,bool:is_error} with value set to NIL and error set to errCode, not valid in main or failsafe
@@ -51,7 +53,7 @@ tbb[8,16,32,64]                                     ** twisted balanced binary *
 flt[32,64,128,256,512]                              ** floating point **
 tfp[16,32]                                          ** twisted floating point **
 fix256                                              ** fixed point 128.128 **
-fix256<[Joules,Meters,Seconds,Newtonss,Kelvin]>     ** dimensional analysis types **
+fix256<[Joules,Meters,Seconds,Newtons,Kelvin]>     ** dimensional analysis types **
 frac[8,16,32,64]                                    ** fraction type with whole, numerator, denominator **
 bool                                                ** boolean **
 vec[2,3,9]                                          ** vector types in several widths **

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Result Unwrap - Aria Programming Guide</title>
+    <title>Result Extraction in Aria - Aria Programming Guide</title>
     <style>
         :root {
             --bg-main: #1e1e1e;
@@ -222,21 +222,16 @@
         <div class="category">
 <h3>General</h3>
 <ul>
+<li><a href="/from_gml_to_native.html">From Gml To Native</a></li>
 <li><a href="/SYNTAX_AUDIT_FEB14_2026.html">Syntax Audit Feb14 2026</a></li>
+<li><a href="/SYNTAX_REFERENCE.html">Syntax Reference</a></li>
 <li><a href="/UPDATE_PROGRESS.html">Update Progress</a></li>
-</ul>
-</div>
-<div class="category">
-<h3>Meta</h3>
-<ul>
-<li><a href="/META/ARIA/DBUG_MODULE_COMPLETE.html">Dbug Module Complete</a></li>
-<li><a href="/META/ARIA/DBUG_WATCHPOINTS_COMPLETE.html">Dbug Watchpoints Complete</a></li>
-<li><a href="/META/ARIA/SYNTAX_REFERENCE.html">Syntax Reference</a></li>
 </ul>
 </div>
 <div class="category">
 <h3>Advanced Features</h3>
 <ul>
+<li><a href="/advanced_features/actors.html">Actors</a></li>
 <li><a href="/advanced_features/ast.html">Ast</a></li>
 <li><a href="/advanced_features/async.html">Async</a></li>
 <li><a href="/advanced_features/async_await.html">Async Await</a></li>
@@ -244,6 +239,7 @@
 <li><a href="/advanced_features/await.html">Await</a></li>
 <li><a href="/advanced_features/best_practices.html">Best Practices</a></li>
 <li><a href="/advanced_features/brace_delimited.html">Brace Delimited</a></li>
+<li><a href="/advanced_features/channels.html">Channels</a></li>
 <li><a href="/advanced_features/code_examples.html">Code Examples</a></li>
 <li><a href="/advanced_features/colons.html">Colons</a></li>
 <li><a href="/advanced_features/comments.html">Comments</a></li>
@@ -258,6 +254,7 @@
 <li><a href="/advanced_features/error_handling.html">Error Handling</a></li>
 <li><a href="/advanced_features/error_propagation.html">Error Propagation</a></li>
 <li><a href="/advanced_features/idioms.html">Idioms</a></li>
+<li><a href="/advanced_features/inline.html">Inline</a></li>
 <li><a href="/advanced_features/lexer.html">Lexer</a></li>
 <li><a href="/advanced_features/macros.html">Macros</a></li>
 <li><a href="/advanced_features/metaprogramming.html">Metaprogramming</a></li>
@@ -268,6 +265,8 @@
 <li><a href="/advanced_features/semicolons.html">Semicolons</a></li>
 <li><a href="/advanced_features/threading.html">Threading</a></li>
 <li><a href="/advanced_features/tokens.html">Tokens</a></li>
+<li><a href="/advanced_features/traits.html">Traits</a></li>
+<li><a href="/advanced_features/type_system.html">Type System</a></li>
 <li><a href="/advanced_features/whitespace_insensitive.html">Whitespace Insensitive</a></li>
 </ul>
 </div>
@@ -373,6 +372,7 @@
 <li><a href="/memory_model/aria_free.html">Aria Free</a></li>
 <li><a href="/memory_model/aria_gc_alloc.html">Aria Gc Alloc</a></li>
 <li><a href="/memory_model/borrow_operator.html">Borrow Operator</a></li>
+<li><a href="/memory_model/borrow_semantics.html">Borrow Semantics</a></li>
 <li><a href="/memory_model/borrowing.html">Borrowing</a></li>
 <li><a href="/memory_model/defer.html">Defer</a></li>
 <li><a href="/memory_model/gc.html">Gc</a></li>
@@ -440,7 +440,6 @@
 <li><a href="/operators/hash_operator.html">Hash Operator</a></li>
 <li><a href="/operators/increment.html">Increment</a></li>
 <li><a href="/operators/interpolation.html">Interpolation</a></li>
-<li><a href="/operators/is_operator.html">Is Operator</a></li>
 <li><a href="/operators/is_ternary.html">Is Ternary</a></li>
 <li><a href="/operators/iteration.html">Iteration</a></li>
 <li><a href="/operators/left_shift.html">Left Shift</a></li>
@@ -491,6 +490,17 @@
 </ul>
 </div>
 <div class="category">
+<h3>Specs</h3>
+<ul>
+<li><a href="/specs/ASYNC_MODEL.html">Async Model</a></li>
+<li><a href="/specs/ERROR_HANDLING.html">Error Handling</a></li>
+<li><a href="/specs/FFI_DESIGN.html">Ffi Design</a></li>
+<li><a href="/specs/IO_TOPOLOGY.html">Io Topology</a></li>
+<li><a href="/specs/MEMORY_MODEL.html">Memory Model</a></li>
+<li><a href="/specs/TYPE_SYSTEM.html">Type System</a></li>
+</ul>
+</div>
+<div class="category">
 <h3>Standard Library</h3>
 <ul>
 <li><a href="/standard_library/createLogger.html">Createlogger</a></li>
@@ -518,6 +528,7 @@
 <li><a href="/standard_library/spawn.html">Spawn</a></li>
 <li><a href="/standard_library/stream_io.html">Stream Io</a></li>
 <li><a href="/standard_library/structured_logging.html">Structured Logging</a></li>
+<li><a href="/standard_library/sys.html">Sys</a></li>
 <li><a href="/standard_library/system_diagnostics.html">System Diagnostics</a></li>
 <li><a href="/standard_library/transform.html">Transform</a></li>
 <li><a href="/standard_library/unique.html">Unique</a></li>
@@ -549,6 +560,7 @@
 <li><a href="/types/Complex.html">Complex</a></li>
 <li><a href="/types/double.html">Double</a></li>
 <li><a href="/types/dyn.html">Dyn</a></li>
+<li><a href="/types/enum.html">Enum</a></li>
 <li><a href="/types/ERR.html">Err</a></li>
 <li><a href="/types/fix256.html">Fix256</a></li>
 <li><a href="/types/float.html">Float</a></li>
@@ -598,6 +610,7 @@
 <li><a href="/types/Result.html">Result</a></li>
 <li><a href="/types/result_err_val.html">Result Err Val</a></li>
 <li><a href="/types/result_unwrap.html">Result Unwrap</a></li>
+<li><a href="/types/rules_and_limit.html">Rules And Limit</a></li>
 <li><a href="/types/SIMD.html">Simd</a></li>
 <li><a href="/types/simd.html">Simd</a></li>
 <li><a href="/types/string.html">String</a></li>
@@ -643,70 +656,86 @@
     </nav>
     <main>
         <div class="breadcrumb"><a href="/">Home</a> / Types</div>
-        <h1>Result Unwrap</h1>
+        <h1>Result Extraction in Aria</h1>
 <strong>Category</strong>: Types → Result
-<strong>Purpose</strong>: Extracting values from Result
+<strong>Purpose</strong>: Extracting values from <code>result<T></code>
 <hr>
-<h2>Basic Unwrap</h2>
-<pre><code>// Unsafe - panics if Err
+<h2>Overview</h2>
 <p>
-Result: Result<i32> = Ok(42);
-value: i32 = result.unwrap();  // 42
+Aria provides four ways to handle a <code>result<T></code> value:
 </p>
 <p>
-// Panics!
-error: Result<i32> = Err("fail");
-value: i32 = error.unwrap();  // ❌ Runtime panic!</code></pre>
-</p>
-<hr>
-<h2>Unwrap with Default</h2>
-<pre><code>// Safe - provides default on error
-<p>
-Result: Result<i32> = Err("fail");
-value: i32 = result.unwrap_or(0);  // 0</code></pre>
+| Operator | Behaviour |
+|----------|-----------|
+| <code>? default</code> | Use <code>default</code> if error |
+| <code>?!</code> | Trigger failsafe if error |
+| <code>?</code> (inside result-returning func) | Propagate error upward |
+| <code>raw()</code> | Extract value — TOS-acknowledged, no check performed |
 </p>
 <hr>
-<h2>Unwrap with Function</h2>
-<pre><code>Result: Result<i32> = Err("fail");
+<h2>1. Safe extraction with default (<code>? default</code>)</h2>
+<pre><code>// Returns value on success, default on error
 <p>
-value: i32 = result.unwrap_or_else(fn() -> i32 {
-return calculate_fallback();
-});</code></pre>
+string:config = readFile("config.txt") ? "default config";
+</p>
+<p>
+int64:count = getCount() ? 0;
+</p>
+<p>
+string:theme = readFile("theme.css") ? "/<em> default theme </em>/";</code></pre>
 </p>
 <hr>
-<h2>Expect (With Message)</h2>
-<pre><code>// Like unwrap but with custom panic message
+<h2>2. Must-succeed (<code>?!</code>)</h2>
+<pre><code>// Returns value on success, triggers failsafe on error
 <p>
-value: i32 = result.expect("Failed to get value");</code></pre>
+Config:cfg = loadConfig()?!;     // failsafe fires if load fails
+</p>
+<p>
+Key:key = readKeyFile()?!;       // cryptographic key MUST load
+</p>
+<p>
+string:data = readFile("required.txt")?!;</code></pre>
 </p>
 <hr>
-<h2>Unwrap Error</h2>
-<pre><code>// Get error value (panics if Ok)
+<h2>3. Error propagation (<code>?</code>)</h2>
+<pre><code>// In a result-returning function, ? propagates error upward
 <p>
-Result: Result<i32> = Err("failure");
-error: string = result.unwrap_err();  // "failure"</code></pre>
+func:loadAndProcess = result<Config>(string:path) {
+string:content = readFile(path)?;        // propagate if read fails
+Config:cfg = parseConfig(content)?;      // propagate if parse fails
+pass(cfg);
+};</code></pre>
 </p>
 <hr>
-<h2>Best Practices</h2>
-<h3>✅ DO: Use unwrap_or for Defaults</h3>
-<pre><code>value: i32 = result.unwrap_or(DEFAULT_VALUE);</code></pre>
-<h3>✅ DO: Use Pattern Matching</h3>
-<pre><code>when result is Ok(v) then
+<h2>4. Explicit check then extract (<code>raw()</code>)</h2>
+<pre><code>result<string>:data = readFile("input.txt");
 <p>
-process(v);
-elsif result is Err(e) then
-handle_error(e);
-end</code></pre>
+if (data.is_error) {
+fail(<code>Cannot read: &{data.err}</code>);
+}
 </p>
-<h3>❌ DON'T: Unwrap Without Checking</h3>
-<pre><code>value: i32 = result.unwrap();  // ❌ Might panic!</code></pre>
+<p>
+string:content = raw(data);  // safe — we checked above
+processContent(content);</code></pre>
+</p>
+<hr>
+<h2>Checking before extracting</h2>
+<pre><code>result<string>:result = readFile("config.txt");
+<p>
+if (!result.is_error) {
+string:content = raw(result);
+print(content);
+} else {
+print(<code>Failed to read file: &{result.err}</code>);
+}</code></pre>
+</p>
 <hr>
 <h2>Related</h2>
-<ul><li><a href="result.md">Result</a></li>
+<ul><li><a href="result.md">result<T></a></li>
 <li><a href="result_err_val.md">Result Err/Val</a></li>
 </ul>
 <hr>
-<strong>Remember</strong>: <code>unwrap()</code> <strong>panics on error</strong> - use carefully!
+<strong>Remember</strong>: <code>?!</code> — failsafe on error. <code>? default</code> — safe fallback. <code>raw()</code> — I checked, extract it. <code>?</code> — propagate error.
     </main>
 </body>
 </html>

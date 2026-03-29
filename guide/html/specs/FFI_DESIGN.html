@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foreign Function Interface (FFI) Design - Technical Specification - Aria Programming Guide</title>
+    <style>
+        :root {
+            --bg-main: #1e1e1e;
+            --bg-code: #2d2d2d;
+            --bg-sidebar: #252526;
+            --text-main: #d4d4d4;
+            --text-dim: #808080;
+            --accent: #4ec9b0;
+            --accent-hover: #6fdfca;
+            --link: #569cd6;
+            --border: #3e3e42;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+        }
+        
+        /* Sidebar navigation */
+        nav {
+            width: 280px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        nav h2 {
+            color: var(--accent);
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        
+        nav .category {
+            margin-bottom: 20px;
+        }
+        
+        nav .category h3 {
+            color: var(--text-dim);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+        
+        nav ul {
+            list-style: none;
+        }
+        
+        nav a {
+            color: var(--text-main);
+            text-decoration: none;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            transition: all 0.2s;
+        }
+        
+        nav a:hover {
+            background: var(--bg-code);
+            color: var(--accent-hover);
+        }
+        
+        nav a.active {
+            background: var(--accent);
+            color: var(--bg-main);
+            font-weight: 500;
+        }
+        
+        /* Main content */
+        main {
+            margin-left: 280px;
+            padding: 40px 60px;
+            max-width: 900px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: var(--accent);
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 15px;
+        }
+        
+        h2 {
+            color: var(--accent);
+            font-size: 1.8em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        
+        h3 {
+            color: var(--text-main);
+            font-size: 1.3em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+        
+        code {
+            background: var(--bg-code);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            color: var(--accent);
+        }
+        
+        pre {
+            background: var(--bg-code);
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 3px solid var(--accent);
+        }
+        
+        pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-main);
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        a {
+            color: var(--link);
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid var(--border);
+        }
+        
+        th {
+            background: var(--bg-code);
+            color: var(--accent);
+            font-weight: 600;
+        }
+        
+        blockquote {
+            border-left: 4px solid var(--accent);
+            padding-left: 20px;
+            margin: 20px 0;
+            color: var(--text-dim);
+            font-style: italic;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 30px 0;
+        }
+        
+        .breadcrumb {
+            color: var(--text-dim);
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+        
+        .breadcrumb a {
+            color: var(--text-dim);
+        }
+        
+        .breadcrumb a:hover {
+            color: var(--accent);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                display: none;
+            }
+            main {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <h2>Aria Guide</h2>
+        <div class="category">
+<h3>General</h3>
+<ul>
+<li><a href="/from_gml_to_native.html">From Gml To Native</a></li>
+<li><a href="/SYNTAX_AUDIT_FEB14_2026.html">Syntax Audit Feb14 2026</a></li>
+<li><a href="/SYNTAX_REFERENCE.html">Syntax Reference</a></li>
+<li><a href="/UPDATE_PROGRESS.html">Update Progress</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Advanced Features</h3>
+<ul>
+<li><a href="/advanced_features/actors.html">Actors</a></li>
+<li><a href="/advanced_features/ast.html">Ast</a></li>
+<li><a href="/advanced_features/async.html">Async</a></li>
+<li><a href="/advanced_features/async_await.html">Async Await</a></li>
+<li><a href="/advanced_features/atomics.html">Atomics</a></li>
+<li><a href="/advanced_features/await.html">Await</a></li>
+<li><a href="/advanced_features/best_practices.html">Best Practices</a></li>
+<li><a href="/advanced_features/brace_delimited.html">Brace Delimited</a></li>
+<li><a href="/advanced_features/channels.html">Channels</a></li>
+<li><a href="/advanced_features/code_examples.html">Code Examples</a></li>
+<li><a href="/advanced_features/colons.html">Colons</a></li>
+<li><a href="/advanced_features/comments.html">Comments</a></li>
+<li><a href="/advanced_features/common_patterns.html">Common Patterns</a></li>
+<li><a href="/advanced_features/compile_time.html">Compile Time</a></li>
+<li><a href="/advanced_features/comptime.html">Comptime</a></li>
+<li><a href="/advanced_features/concurrency.html">Concurrency</a></li>
+<li><a href="/advanced_features/const.html">Const</a></li>
+<li><a href="/advanced_features/context_stack.html">Context Stack</a></li>
+<li><a href="/advanced_features/coroutines.html">Coroutines</a></li>
+<li><a href="/advanced_features/destructuring.html">Destructuring</a></li>
+<li><a href="/advanced_features/error_handling.html">Error Handling</a></li>
+<li><a href="/advanced_features/error_propagation.html">Error Propagation</a></li>
+<li><a href="/advanced_features/idioms.html">Idioms</a></li>
+<li><a href="/advanced_features/inline.html">Inline</a></li>
+<li><a href="/advanced_features/lexer.html">Lexer</a></li>
+<li><a href="/advanced_features/macros.html">Macros</a></li>
+<li><a href="/advanced_features/metaprogramming.html">Metaprogramming</a></li>
+<li><a href="/advanced_features/multiline_comments.html">Multiline Comments</a></li>
+<li><a href="/advanced_features/nasm_macros.html">Nasm Macros</a></li>
+<li><a href="/advanced_features/parser.html">Parser</a></li>
+<li><a href="/advanced_features/pattern_matching.html">Pattern Matching</a></li>
+<li><a href="/advanced_features/semicolons.html">Semicolons</a></li>
+<li><a href="/advanced_features/threading.html">Threading</a></li>
+<li><a href="/advanced_features/tokens.html">Tokens</a></li>
+<li><a href="/advanced_features/traits.html">Traits</a></li>
+<li><a href="/advanced_features/type_system.html">Type System</a></li>
+<li><a href="/advanced_features/whitespace_insensitive.html">Whitespace Insensitive</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Control Flow</h3>
+<ul>
+<li><a href="/control_flow/break.html">Break</a></li>
+<li><a href="/control_flow/continue.html">Continue</a></li>
+<li><a href="/control_flow/dollar_variable.html">Dollar Variable</a></li>
+<li><a href="/control_flow/fail.html">Fail</a></li>
+<li><a href="/control_flow/fall.html">Fall</a></li>
+<li><a href="/control_flow/fallthrough.html">Fallthrough</a></li>
+<li><a href="/control_flow/for.html">For</a></li>
+<li><a href="/control_flow/for_syntax.html">For Syntax</a></li>
+<li><a href="/control_flow/if_else.html">If Else</a></li>
+<li><a href="/control_flow/if_syntax.html">If Syntax</a></li>
+<li><a href="/control_flow/iteration_variable.html">Iteration Variable</a></li>
+<li><a href="/control_flow/loop.html">Loop</a></li>
+<li><a href="/control_flow/loop_direction.html">Loop Direction</a></li>
+<li><a href="/control_flow/loop_syntax.html">Loop Syntax</a></li>
+<li><a href="/control_flow/pass.html">Pass</a></li>
+<li><a href="/control_flow/pick.html">Pick</a></li>
+<li><a href="/control_flow/pick_patterns.html">Pick Patterns</a></li>
+<li><a href="/control_flow/pick_syntax.html">Pick Syntax</a></li>
+<li><a href="/control_flow/till.html">Till</a></li>
+<li><a href="/control_flow/till_direction.html">Till Direction</a></li>
+<li><a href="/control_flow/till_syntax.html">Till Syntax</a></li>
+<li><a href="/control_flow/when_syntax.html">When Syntax</a></li>
+<li><a href="/control_flow/when_then.html">When Then</a></li>
+<li><a href="/control_flow/when_then_end.html">When Then End</a></li>
+<li><a href="/control_flow/while.html">While</a></li>
+<li><a href="/control_flow/while_syntax.html">While Syntax</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Debugging</h3>
+<ul>
+<li><a href="/debugging/dbug.html">Dbug</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Functions</h3>
+<ul>
+<li><a href="/functions/anonymous_functions.html">Anonymous Functions</a></li>
+<li><a href="/functions/async_functions.html">Async Functions</a></li>
+<li><a href="/functions/async_keyword.html">Async Keyword</a></li>
+<li><a href="/functions/closure_capture.html">Closure Capture</a></li>
+<li><a href="/functions/closures.html">Closures</a></li>
+<li><a href="/functions/fail_keyword.html">Fail Keyword</a></li>
+<li><a href="/functions/func_keyword.html">Func Keyword</a></li>
+<li><a href="/functions/function_arguments.html">Function Arguments</a></li>
+<li><a href="/functions/function_declaration.html">Function Declaration</a></li>
+<li><a href="/functions/function_params.html">Function Params</a></li>
+<li><a href="/functions/function_return_type.html">Function Return Type</a></li>
+<li><a href="/functions/function_syntax.html">Function Syntax</a></li>
+<li><a href="/functions/generic_functions.html">Generic Functions</a></li>
+<li><a href="/functions/generic_parameters.html">Generic Parameters</a></li>
+<li><a href="/functions/generic_star_prefix.html">Generic Star Prefix</a></li>
+<li><a href="/functions/generic_structs.html">Generic Structs</a></li>
+<li><a href="/functions/generic_syntax.html">Generic Syntax</a></li>
+<li><a href="/functions/generic_types.html">Generic Types</a></li>
+<li><a href="/functions/generics.html">Generics</a></li>
+<li><a href="/functions/higher_order_functions.html">Higher Order Functions</a></li>
+<li><a href="/functions/immediate_execution.html">Immediate Execution</a></li>
+<li><a href="/functions/lambda.html">Lambda</a></li>
+<li><a href="/functions/lambda_syntax.html">Lambda Syntax</a></li>
+<li><a href="/functions/monomorphization.html">Monomorphization</a></li>
+<li><a href="/functions/multiple_generics.html">Multiple Generics</a></li>
+<li><a href="/functions/pass_keyword.html">Pass Keyword</a></li>
+<li><a href="/functions/type_inference.html">Type Inference</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Io System</h3>
+<ul>
+<li><a href="/io_system/binary_io.html">Binary Io</a></li>
+<li><a href="/io_system/control_plane.html">Control Plane</a></li>
+<li><a href="/io_system/data_plane.html">Data Plane</a></li>
+<li><a href="/io_system/debug_io.html">Debug Io</a></li>
+<li><a href="/io_system/hex_stream.html">Hex Stream</a></li>
+<li><a href="/io_system/io_overview.html">Io Overview</a></li>
+<li><a href="/io_system/six_stream_topology.html">Six Stream Topology</a></li>
+<li><a href="/io_system/stddati.html">Stddati</a></li>
+<li><a href="/io_system/stddato.html">Stddato</a></li>
+<li><a href="/io_system/stddbg.html">Stddbg</a></li>
+<li><a href="/io_system/stderr.html">Stderr</a></li>
+<li><a href="/io_system/stdin.html">Stdin</a></li>
+<li><a href="/io_system/stdout.html">Stdout</a></li>
+<li><a href="/io_system/stream_separation.html">Stream Separation</a></li>
+<li><a href="/io_system/text_io.html">Text Io</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Memory Model</h3>
+<ul>
+<li><a href="/memory_model/address_operator.html">Address Operator</a></li>
+<li><a href="/memory_model/allocation.html">Allocation</a></li>
+<li><a href="/memory_model/allocators.html">Allocators</a></li>
+<li><a href="/memory_model/aria_alloc.html">Aria Alloc</a></li>
+<li><a href="/memory_model/aria_alloc_array.html">Aria Alloc Array</a></li>
+<li><a href="/memory_model/aria_alloc_buffer.html">Aria Alloc Buffer</a></li>
+<li><a href="/memory_model/aria_alloc_string.html">Aria Alloc String</a></li>
+<li><a href="/memory_model/aria_free.html">Aria Free</a></li>
+<li><a href="/memory_model/aria_gc_alloc.html">Aria Gc Alloc</a></li>
+<li><a href="/memory_model/borrow_operator.html">Borrow Operator</a></li>
+<li><a href="/memory_model/borrow_semantics.html">Borrow Semantics</a></li>
+<li><a href="/memory_model/borrowing.html">Borrowing</a></li>
+<li><a href="/memory_model/defer.html">Defer</a></li>
+<li><a href="/memory_model/gc.html">Gc</a></li>
+<li><a href="/memory_model/immutable_borrow.html">Immutable Borrow</a></li>
+<li><a href="/memory_model/mutable_borrow.html">Mutable Borrow</a></li>
+<li><a href="/memory_model/pin_operator.html">Pin Operator</a></li>
+<li><a href="/memory_model/pinning.html">Pinning</a></li>
+<li><a href="/memory_model/pointer_syntax.html">Pointer Syntax</a></li>
+<li><a href="/memory_model/raii.html">Raii</a></li>
+<li><a href="/memory_model/stack.html">Stack</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Modules</h3>
+<ul>
+<li><a href="/modules/c_interop.html">C Interop</a></li>
+<li><a href="/modules/c_pointers.html">C Pointers</a></li>
+<li><a href="/modules/cfg.html">Cfg</a></li>
+<li><a href="/modules/conditional_compilation.html">Conditional Compilation</a></li>
+<li><a href="/modules/extern.html">Extern</a></li>
+<li><a href="/modules/extern_blocks.html">Extern Blocks</a></li>
+<li><a href="/modules/extern_functions.html">Extern Functions</a></li>
+<li><a href="/modules/extern_syntax.html">Extern Syntax</a></li>
+<li><a href="/modules/ffi.html">Ffi</a></li>
+<li><a href="/modules/libc_integration.html">Libc Integration</a></li>
+<li><a href="/modules/mod.html">Mod</a></li>
+<li><a href="/modules/mod_keyword.html">Mod Keyword</a></li>
+<li><a href="/modules/module_aliases.html">Module Aliases</a></li>
+<li><a href="/modules/module_definition.html">Module Definition</a></li>
+<li><a href="/modules/module_paths.html">Module Paths</a></li>
+<li><a href="/modules/nested_modules.html">Nested Modules</a></li>
+<li><a href="/modules/pub.html">Pub</a></li>
+<li><a href="/modules/public_visibility.html">Public Visibility</a></li>
+<li><a href="/modules/use.html">Use</a></li>
+<li><a href="/modules/use_syntax.html">Use Syntax</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Operators</h3>
+<ul>
+<li><a href="/operators/add.html">Add</a></li>
+<li><a href="/operators/add_assign.html">Add Assign</a></li>
+<li><a href="/operators/address.html">Address</a></li>
+<li><a href="/operators/ampersand.html">Ampersand</a></li>
+<li><a href="/operators/and_assign.html">And Assign</a></li>
+<li><a href="/operators/arrow.html">Arrow</a></li>
+<li><a href="/operators/assign.html">Assign</a></li>
+<li><a href="/operators/at_operator.html">At Operator</a></li>
+<li><a href="/operators/backtick.html">Backtick</a></li>
+<li><a href="/operators/bitwise_and.html">Bitwise And</a></li>
+<li><a href="/operators/bitwise_not.html">Bitwise Not</a></li>
+<li><a href="/operators/bitwise_or.html">Bitwise Or</a></li>
+<li><a href="/operators/bitwise_xor.html">Bitwise Xor</a></li>
+<li><a href="/operators/cast_operator.html">Cast Operator</a></li>
+<li><a href="/operators/colon.html">Colon</a></li>
+<li><a href="/operators/decrement.html">Decrement</a></li>
+<li><a href="/operators/div_assign.html">Div Assign</a></li>
+<li><a href="/operators/divide.html">Divide</a></li>
+<li><a href="/operators/dollar_operator.html">Dollar Operator</a></li>
+<li><a href="/operators/dollar_variable.html">Dollar Variable</a></li>
+<li><a href="/operators/dot.html">Dot</a></li>
+<li><a href="/operators/equal.html">Equal</a></li>
+<li><a href="/operators/greater_equal.html">Greater Equal</a></li>
+<li><a href="/operators/greater_than.html">Greater Than</a></li>
+<li><a href="/operators/hash_operator.html">Hash Operator</a></li>
+<li><a href="/operators/increment.html">Increment</a></li>
+<li><a href="/operators/interpolation.html">Interpolation</a></li>
+<li><a href="/operators/is_ternary.html">Is Ternary</a></li>
+<li><a href="/operators/iteration.html">Iteration</a></li>
+<li><a href="/operators/left_shift.html">Left Shift</a></li>
+<li><a href="/operators/less_equal.html">Less Equal</a></li>
+<li><a href="/operators/less_than.html">Less Than</a></li>
+<li><a href="/operators/logical_and.html">Logical And</a></li>
+<li><a href="/operators/logical_not.html">Logical Not</a></li>
+<li><a href="/operators/logical_or.html">Logical Or</a></li>
+<li><a href="/operators/lshift_assign.html">Lshift Assign</a></li>
+<li><a href="/operators/member_access.html">Member Access</a></li>
+<li><a href="/operators/minus.html">Minus</a></li>
+<li><a href="/operators/minus_assign.html">Minus Assign</a></li>
+<li><a href="/operators/mod_assign.html">Mod Assign</a></li>
+<li><a href="/operators/modulo.html">Modulo</a></li>
+<li><a href="/operators/mul_assign.html">Mul Assign</a></li>
+<li><a href="/operators/mult_assign.html">Mult Assign</a></li>
+<li><a href="/operators/multiply.html">Multiply</a></li>
+<li><a href="/operators/not_equal.html">Not Equal</a></li>
+<li><a href="/operators/null_coalesce.html">Null Coalesce</a></li>
+<li><a href="/operators/null_coalescing.html">Null Coalescing</a></li>
+<li><a href="/operators/or_assign.html">Or Assign</a></li>
+<li><a href="/operators/pin.html">Pin</a></li>
+<li><a href="/operators/pipe_backward.html">Pipe Backward</a></li>
+<li><a href="/operators/pipe_forward.html">Pipe Forward</a></li>
+<li><a href="/operators/pipeline.html">Pipeline</a></li>
+<li><a href="/operators/plus.html">Plus</a></li>
+<li><a href="/operators/plus_assign.html">Plus Assign</a></li>
+<li><a href="/operators/pointer_member.html">Pointer Member</a></li>
+<li><a href="/operators/question_operator.html">Question Operator</a></li>
+<li><a href="/operators/range.html">Range</a></li>
+<li><a href="/operators/range_exclusive.html">Range Exclusive</a></li>
+<li><a href="/operators/range_inclusive.html">Range Inclusive</a></li>
+<li><a href="/operators/right_shift.html">Right Shift</a></li>
+<li><a href="/operators/rshift_assign.html">Rshift Assign</a></li>
+<li><a href="/operators/safe_nav.html">Safe Nav</a></li>
+<li><a href="/operators/safe_navigation.html">Safe Navigation</a></li>
+<li><a href="/operators/spaceship.html">Spaceship</a></li>
+<li><a href="/operators/string_interpolation.html">String Interpolation</a></li>
+<li><a href="/operators/sub_assign.html">Sub Assign</a></li>
+<li><a href="/operators/subtract.html">Subtract</a></li>
+<li><a href="/operators/template_literal.html">Template Literal</a></li>
+<li><a href="/operators/template_syntax.html">Template Syntax</a></li>
+<li><a href="/operators/ternary_is.html">Ternary Is</a></li>
+<li><a href="/operators/three_way_comparison.html">Three Way Comparison</a></li>
+<li><a href="/operators/type_annotation.html">Type Annotation</a></li>
+<li><a href="/operators/unwrap.html">Unwrap</a></li>
+<li><a href="/operators/xor_assign.html">Xor Assign</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Specs</h3>
+<ul>
+<li><a href="/specs/ASYNC_MODEL.html">Async Model</a></li>
+<li><a href="/specs/ERROR_HANDLING.html">Error Handling</a></li>
+<li><a href="/specs/FFI_DESIGN.html">Ffi Design</a></li>
+<li><a href="/specs/IO_TOPOLOGY.html">Io Topology</a></li>
+<li><a href="/specs/MEMORY_MODEL.html">Memory Model</a></li>
+<li><a href="/specs/TYPE_SYSTEM.html">Type System</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Standard Library</h3>
+<ul>
+<li><a href="/standard_library/createLogger.html">Createlogger</a></li>
+<li><a href="/standard_library/createPipe.html">Createpipe</a></li>
+<li><a href="/standard_library/dbug.html">Dbug</a></li>
+<li><a href="/standard_library/exec.html">Exec</a></li>
+<li><a href="/standard_library/filter.html">Filter</a></li>
+<li><a href="/standard_library/fork.html">Fork</a></li>
+<li><a href="/standard_library/functional_programming.html">Functional Programming</a></li>
+<li><a href="/standard_library/getActiveConnections.html">Getactiveconnections</a></li>
+<li><a href="/standard_library/getMemoryUsage.html">Getmemoryusage</a></li>
+<li><a href="/standard_library/http_client.html">Http Client</a></li>
+<li><a href="/standard_library/httpGet.html">Httpget</a></li>
+<li><a href="/standard_library/log_levels.html">Log Levels</a></li>
+<li><a href="/standard_library/math.html">Math</a></li>
+<li><a href="/standard_library/math_round.html">Math Round</a></li>
+<li><a href="/standard_library/openFile.html">Openfile</a></li>
+<li><a href="/standard_library/print.html">Print</a></li>
+<li><a href="/standard_library/process_management.html">Process Management</a></li>
+<li><a href="/standard_library/readCSV.html">Readcsv</a></li>
+<li><a href="/standard_library/readFile.html">Readfile</a></li>
+<li><a href="/standard_library/readJSON.html">Readjson</a></li>
+<li><a href="/standard_library/reverse.html">Reverse</a></li>
+<li><a href="/standard_library/sort.html">Sort</a></li>
+<li><a href="/standard_library/spawn.html">Spawn</a></li>
+<li><a href="/standard_library/stream_io.html">Stream Io</a></li>
+<li><a href="/standard_library/structured_logging.html">Structured Logging</a></li>
+<li><a href="/standard_library/sys.html">Sys</a></li>
+<li><a href="/standard_library/system_diagnostics.html">System Diagnostics</a></li>
+<li><a href="/standard_library/transform.html">Transform</a></li>
+<li><a href="/standard_library/unique.html">Unique</a></li>
+<li><a href="/standard_library/wait.html">Wait</a></li>
+<li><a href="/standard_library/writeFile.html">Writefile</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Stdlib</h3>
+<ul>
+<li><a href="/stdlib/filter.html">Filter</a></li>
+<li><a href="/stdlib/print.html">Print</a></li>
+<li><a href="/stdlib/readFile.html">Readfile</a></li>
+<li><a href="/stdlib/reduce.html">Reduce</a></li>
+<li><a href="/stdlib/transform.html">Transform</a></li>
+<li><a href="/stdlib/writeFile.html">Writefile</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Types</h3>
+<ul>
+<li><a href="/types/Atomic.html">Atomic</a></li>
+<li><a href="/types/atomic.html">Atomic</a></li>
+<li><a href="/types/balanced_nonary.html">Balanced Nonary</a></li>
+<li><a href="/types/balanced_numbers.html">Balanced Numbers</a></li>
+<li><a href="/types/balanced_ternary.html">Balanced Ternary</a></li>
+<li><a href="/types/bool.html">Bool</a></li>
+<li><a href="/types/complex.html">Complex</a></li>
+<li><a href="/types/Complex.html">Complex</a></li>
+<li><a href="/types/double.html">Double</a></li>
+<li><a href="/types/dyn.html">Dyn</a></li>
+<li><a href="/types/enum.html">Enum</a></li>
+<li><a href="/types/ERR.html">Err</a></li>
+<li><a href="/types/fix256.html">Fix256</a></li>
+<li><a href="/types/float.html">Float</a></li>
+<li><a href="/types/flt128.html">Flt128</a></li>
+<li><a href="/types/flt256.html">Flt256</a></li>
+<li><a href="/types/flt32.html">Flt32</a></li>
+<li><a href="/types/flt512.html">Flt512</a></li>
+<li><a href="/types/flt64.html">Flt64</a></li>
+<li><a href="/types/frac16.html">Frac16</a></li>
+<li><a href="/types/frac32.html">Frac32</a></li>
+<li><a href="/types/frac64.html">Frac64</a></li>
+<li><a href="/types/frac8.html">Frac8</a></li>
+<li><a href="/types/frac8_frac16_frac32_frac64.html">Frac8 Frac16 Frac32 Frac64</a></li>
+<li><a href="/types/func_return.html">Func Return</a></li>
+<li><a href="/types/Handle.html">Handle</a></li>
+<li><a href="/types/int1.html">Int1</a></li>
+<li><a href="/types/int1024.html">Int1024</a></li>
+<li><a href="/types/int1024_int2048_int4096.html">Int1024 Int2048 Int4096</a></li>
+<li><a href="/types/int128.html">Int128</a></li>
+<li><a href="/types/int128_int256_int512.html">Int128 Int256 Int512</a></li>
+<li><a href="/types/int16.html">Int16</a></li>
+<li><a href="/types/int2.html">Int2</a></li>
+<li><a href="/types/int2_int4.html">Int2 Int4</a></li>
+<li><a href="/types/int2048.html">Int2048</a></li>
+<li><a href="/types/int256.html">Int256</a></li>
+<li><a href="/types/int32.html">Int32</a></li>
+<li><a href="/types/int32_int64.html">Int32 Int64</a></li>
+<li><a href="/types/int4.html">Int4</a></li>
+<li><a href="/types/int4096.html">Int4096</a></li>
+<li><a href="/types/int512.html">Int512</a></li>
+<li><a href="/types/int64.html">Int64</a></li>
+<li><a href="/types/int8.html">Int8</a></li>
+<li><a href="/types/int8_int16.html">Int8 Int16</a></li>
+<li><a href="/types/matrix.html">Matrix</a></li>
+<li><a href="/types/NIL.html">Nil</a></li>
+<li><a href="/types/nil_null_void.html">Nil Null Void</a></li>
+<li><a href="/types/nil_vs_null_vs_void.html">Nil Vs Null Vs Void</a></li>
+<li><a href="/types/nit.html">Nit</a></li>
+<li><a href="/types/nit_nyte.html">Nit Nyte</a></li>
+<li><a href="/types/NULL.html">Null</a></li>
+<li><a href="/types/nyte.html">Nyte</a></li>
+<li><a href="/types/obj.html">Obj</a></li>
+<li><a href="/types/pointer.html">Pointer</a></li>
+<li><a href="/types/pointers.html">Pointers</a></li>
+<li><a href="/types/Q21.html">Q21</a></li>
+<li><a href="/types/Q3_Q9.html">Q3 Q9</a></li>
+<li><a href="/types/Result.html">Result</a></li>
+<li><a href="/types/result_err_val.html">Result Err Val</a></li>
+<li><a href="/types/result_unwrap.html">Result Unwrap</a></li>
+<li><a href="/types/rules_and_limit.html">Rules And Limit</a></li>
+<li><a href="/types/SIMD.html">Simd</a></li>
+<li><a href="/types/simd.html">Simd</a></li>
+<li><a href="/types/string.html">String</a></li>
+<li><a href="/types/struct.html">Struct</a></li>
+<li><a href="/types/struct_declaration.html">Struct Declaration</a></li>
+<li><a href="/types/struct_fields.html">Struct Fields</a></li>
+<li><a href="/types/struct_generics.html">Struct Generics</a></li>
+<li><a href="/types/struct_pointers.html">Struct Pointers</a></li>
+<li><a href="/types/tbb_err_sentinel.html">Tbb Err Sentinel</a></li>
+<li><a href="/types/tbb_overview.html">Tbb Overview</a></li>
+<li><a href="/types/tbb_sticky_errors.html">Tbb Sticky Errors</a></li>
+<li><a href="/types/tbb16.html">Tbb16</a></li>
+<li><a href="/types/tbb32.html">Tbb32</a></li>
+<li><a href="/types/tbb64.html">Tbb64</a></li>
+<li><a href="/types/tbb8.html">Tbb8</a></li>
+<li><a href="/types/tbb8_new.html">Tbb8 New</a></li>
+<li><a href="/types/tensor.html">Tensor</a></li>
+<li><a href="/types/tfp32.html">Tfp32</a></li>
+<li><a href="/types/tfp32_tfp64.html">Tfp32 Tfp64</a></li>
+<li><a href="/types/tfp64.html">Tfp64</a></li>
+<li><a href="/types/trit.html">Trit</a></li>
+<li><a href="/types/trit_tryte.html">Trit Tryte</a></li>
+<li><a href="/types/tryte.html">Tryte</a></li>
+<li><a href="/types/type_suffix_reference.html">Type Suffix Reference</a></li>
+<li><a href="/types/uint1024_uint2048_uint4096.html">Uint1024 Uint2048 Uint4096</a></li>
+<li><a href="/types/uint128.html">Uint128</a></li>
+<li><a href="/types/uint128_uint256_uint512.html">Uint128 Uint256 Uint512</a></li>
+<li><a href="/types/uint16.html">Uint16</a></li>
+<li><a href="/types/uint256.html">Uint256</a></li>
+<li><a href="/types/uint32.html">Uint32</a></li>
+<li><a href="/types/uint32_uint64.html">Uint32 Uint64</a></li>
+<li><a href="/types/uint512.html">Uint512</a></li>
+<li><a href="/types/uint64.html">Uint64</a></li>
+<li><a href="/types/uint8.html">Uint8</a></li>
+<li><a href="/types/uint8_uint16.html">Uint8 Uint16</a></li>
+<li><a href="/types/vec2.html">Vec2</a></li>
+<li><a href="/types/vec3.html">Vec3</a></li>
+<li><a href="/types/vec9.html">Vec9</a></li>
+<li><a href="/types/void.html">Void</a></li>
+<li><a href="/types/zero_implicit_conversion.html">Zero Implicit Conversion</a></li>
+</ul>
+</div>
+    </nav>
+    <main>
+        <div class="breadcrumb"><a href="/">Home</a> / Specs</div>
+        <h1>Foreign Function Interface (FFI) Design - Technical Specification</h1>
+<strong>Document Type</strong>: Technical Specification
+<strong>Version</strong>: 1.0
+<strong>Last Updated</strong>: December 22, 2025
+<strong>Status</strong>: Design Phase (Implementation Pending Research)
+<hr>
+<h2>Table of Contents</h2>
+<p>
+1. <a href="#overview">Overview</a>
+2. <a href="#c-interop-basics">C Interop Basics</a>
+3. <a href="#type-marshalling">Type Marshalling</a>
+4. <a href="#memory-safety">Memory Safety</a>
+5. <a href="#calling-conventions">Calling Conventions</a>
+6. <a href="#nikola-integration">Nikola Integration</a>
+7. <a href="#best-practices">Best Practices</a>
+</p>
+<hr>
+<h2>Overview</h2>
+<p>
+Aria's FFI enables <strong>safe interoperation with C</strong> and <strong>C++</strong> libraries, critical for:
+</p>
+<p>
+| Use Case | Example | Importance |
+|----------|---------|------------|
+| <strong>System APIs</strong> | POSIX, Win32 | OS interaction |
+| <strong>Native Libraries</strong> | libcurl, OpenSSL | Reuse existing code |
+| <strong>Performance</strong> | SIMD, GPU kernels | Optimize hot paths |
+| <strong>Nikola Integration</strong> | Consciousness substrate | AI/consciousness research |
+</p>
+<strong>Design Goals</strong>:
+<p>
+1. <strong>Safety</strong>: Prevent undefined behavior at FFI boundary
+2. <strong>Ergonomics</strong>: Easy to call C from Aria
+3. <strong>Performance</strong>: Zero-cost abstractions
+4. <strong>Compatibility</strong>: Work with existing C/C++ codebases
+</p>
+<hr>
+<h2>C Interop Basics</h2>
+<h3>Declaring External Functions</h3>
+<strong>Syntax</strong>: <code>extern func:name = return_type(params)</code>
+<strong>Example</strong> (calling C stdlib):
+<pre><code>// Declare C function
+<p>
+extern func:malloc = wild byte*(size: u64);
+extern func:free = void(ptr: wild byte*);
+extern func:strlen = u64(s: wild byte*);
+</p>
+<p>
+// Use from Aria
+func:allocate_buffer = wild byte*(size: u64) {
+wild byte*:buf = malloc(size);
+pass(buf);
+}</code></pre>
+</p>
+<strong>Generated Code</strong>:
+<pre><code>// Aria compiler generates:
+<p>
+extern void* malloc(size_t size);
+extern void free(void* ptr);
+extern size_t strlen(const char* s);
+</p>
+<p>
+// Aria function compiles to:
+void* allocate_buffer(uint64_t size) {
+void* buf = malloc(size);
+return buf;
+}</code></pre>
+</p>
+<hr>
+<h3>Linking Against C Libraries</h3>
+<strong>Static Linking</strong>:
+<pre><code>// build.abc
+<p>
+{
+"dependencies": {
+"ffi:libcurl": {
+"type": "c_library",
+"static": "/usr/lib/libcurl.a"
+}
+}
+}</code></pre>
+</p>
+<strong>Dynamic Linking</strong>:
+<pre><code>{
+<p>
+"dependencies": {
+"ffi:libcurl": {
+"type": "c_library",
+"shared": "libcurl.so"
+}
+}
+}</code></pre>
+</p>
+<strong>Compiler Invocation</strong>:
+<pre><code>ariac main.aria -l curl</code></pre>
+<hr>
+<h3>Header Translation</h3>
+<strong>Manual Approach</strong> (explicit declarations):
+<pre><code>// Manually declare C API
+<p>
+extern func:curl_easy_init = wild void*();
+extern func:curl_easy_setopt = i32(handle: wild void<em>, option: i32, value: wild void</em>);
+extern func:curl_easy_perform = i32(handle: wild void*);
+extern func:curl_easy_cleanup = void(handle: wild void*);</code></pre>
+</p>
+<strong>Automated Approach</strong> (future: binding generator):
+<pre><code>$ aria-bindgen /usr/include/curl/curl.h -o curl_bindings.aria</code></pre>
+<strong>Generated</strong>:
+<pre><code>// Auto-generated from curl.h
+<p>
+extern struct:CURL = opaque;  // Opaque C type
+extern func:curl_easy_init = wild CURL*();
+extern func:curl_easy_setopt = i32(handle: wild CURL*, option: CURLoption, ...);
+// ...</code></pre>
+</p>
+<hr>
+<h2>Type Marshalling</h2>
+<h3>Primitive Types</h3>
+<strong>Direct Mapping</strong>:
+<p>
+| Aria Type | C Type | Size | ABI Compatible |
+|-----------|--------|------|----------------|
+| <code>i8</code> | <code>int8_t</code> | 1 byte | ✅ |
+| <code>u8</code> | <code>uint8_t</code> | 1 byte | ✅ |
+| <code>i16</code> | <code>int16_t</code> | 2 bytes | ✅ |
+| <code>u16</code> | <code>uint16_t</code> | 2 bytes | ✅ |
+| <code>i32</code> | <code>int32_t</code> | 4 bytes | ✅ |
+| <code>u32</code> | <code>uint32_t</code> | 4 bytes | ✅ |
+| <code>i64</code> | <code>int64_t</code> | 8 bytes | ✅ |
+| <code>u64</code> | <code>uint64_t</code> | 8 bytes | ✅ |
+| <code>f32</code> | <code>float</code> | 4 bytes | ✅ |
+| <code>f64</code> | <code>double</code> | 8 bytes | ✅ |
+| <code>bool</code> | <code>uint8_t</code> | 1 byte | ✅ (0/1) |
+| <code>wild T<em></code> | <code>T</em></code> | 8 bytes | ✅ |
+</p>
+<hr>
+<h3>Strings</h3>
+<strong>Problem</strong>: Aria strings are UTF-8 with length, C strings are null-terminated
+<strong>Aria String</strong>:
+<pre><code>struct aria_string {
+<p>
+char* data;
+size_t len;
+size_t capacity;
+};</code></pre>
+</p>
+<strong>C String</strong>:
+<pre><code>char* str;  // Null-terminated</code></pre>
+<hr>
+<strong>Conversion (Aria → C)</strong>:
+<pre><code>extern func:puts = i32(s: wild byte*);
+<p>
+func:print_to_c = void(s: string) {
+// Convert Aria string to C string (null-terminated)
+wild byte*:c_str = s.to_c_str();
+puts(c_str);
+free(c_str);  // Must free!
+}</code></pre>
+</p>
+<strong>Runtime</strong>:
+<pre><code>char* aria_string_to_c_str(aria_string s) {
+<p>
+// Allocate buffer with space for null terminator
+char* c_str = malloc(s.len + 1);
+memcpy(c_str, s.data, s.len);
+c_str[s.len] = '\0';  // Null-terminate
+return c_str;
+}</code></pre>
+</p>
+<hr>
+<strong>Conversion (C → Aria)</strong>:
+<pre><code>extern func:getenv = wild byte<em>(name: wild byte</em>);
+<p>
+func:get_env_var = result<string>(name: string) {
+wild byte*:c_name = name.to_c_str();
+wild byte*:c_value = getenv(c_name);
+free(c_name);
+</p>
+<p>
+if (c_value == null) {
+err("Environment variable not found");
+}
+</p>
+<p>
+// Convert C string to Aria string
+string:value = string.from_c_str(c_value);
+pass(value);
+}</code></pre>
+</p>
+<strong>Runtime</strong>:
+<pre><code>aria_string aria_string_from_c_str(const char* c_str) {
+<p>
+size_t len = strlen(c_str);
+aria_string s;
+s.data = malloc(len);
+memcpy(s.data, c_str, len);
+s.len = len;
+s.capacity = len;
+return s;
+}</code></pre>
+</p>
+<hr>
+<h3>Structs</h3>
+<strong>C Struct</strong>:
+<pre><code>// C header
+<p>
+struct Point {
+int x;
+int y;
+};
+</p>
+<p>
+void print_point(struct Point p);</code></pre>
+</p>
+<strong>Aria Declaration</strong>:
+<pre><code>// Declare C-compatible struct
+<p>
+extern struct:Point = {
+x: i32,
+y: i32,
+};
+</p>
+<p>
+extern func:print_point = void(p: Point);
+</p>
+<p>
+// Use from Aria
+func:main = i64() {
+Point:p = Point { x: 10, y: 20 };
+print_point(p);
+pass(0);
+}</code></pre>
+</p>
+<strong>Layout Compatibility</strong>: Compiler ensures Aria struct layout matches C
+<hr>
+<h3>Opaque Types</h3>
+<strong>Problem</strong>: C library uses opaque pointers (incomplete types)
+<strong>Example</strong> (C library):
+<pre><code>// C header (no definition visible)
+<p>
+typedef struct CURL CURL;  // Opaque
+</p>
+<p>
+CURL* curl_easy_init(void);
+void curl_easy_cleanup(CURL* handle);</code></pre>
+</p>
+<strong>Aria Declaration</strong>:
+<pre><code>// Declare opaque type (no fields)
+<p>
+extern struct:CURL = opaque;
+</p>
+<p>
+extern func:curl_easy_init = wild CURL*();
+extern func:curl_easy_cleanup = void(handle: wild CURL*);
+</p>
+<p>
+// Use opaque pointer
+func:download = void(url: string) {
+wild CURL*:handle = curl_easy_init();
+// ... use handle ...
+curl_easy_cleanup(handle);
+}</code></pre>
+</p>
+<strong>Compiler</strong>: Treats <code>CURL</code> as incomplete type, only allows pointers
+<hr>
+<h2>Memory Safety</h2>
+<h3>Unsafe Boundary</h3>
+<strong>Key Principle</strong>: <strong>FFI is inherently unsafe</strong> → mark it explicitly
+<strong>Syntax</strong>: <code>unsafe</code> block
+<pre><code>func:call_unsafe_c = i32() {
+<p>
+unsafe {
+// C code can do anything!
+wild byte*:buf = malloc(100);
+wild byte*:p = buf + 200;  // Out of bounds (undefined behavior)
+*p = 42;  // Crash or corruption
+free(buf);
+}
+pass(0);
+}</code></pre>
+</p>
+<strong>Compiler</strong>: Allows unchecked operations inside <code>unsafe</code> blocks
+<hr>
+<h3>Null Pointer Checks</h3>
+<strong>Problem</strong>: C functions often return null on error
+<strong>Example</strong> (C function):
+<pre><code>FILE<em> fopen(const char</em> path, const char* mode);
+<p>
+// Returns NULL on error</code></pre>
+</p>
+<strong>Safe Wrapper</strong> (Aria):
+<pre><code>extern func:fopen = wild FILE<em>(path: wild byte</em>, mode: wild byte*);
+<p>
+func:open_file = result<wild FILE*>(path: string, mode: string) {
+unsafe {
+wild byte*:c_path = path.to_c_str();
+wild byte*:c_mode = mode.to_c_str();
+</p>
+<p>
+wild FILE*:file = fopen(c_path, c_mode);
+</p>
+<p>
+free(c_path);
+free(c_mode);
+</p>
+<p>
+if (file == null) {
+err("Failed to open file");
+}
+</p>
+<p>
+pass(file);
+}
+}</code></pre>
+</p>
+<strong>Pattern</strong>: Wrap unsafe C calls in safe Aria functions that return <code>result<T></code>
+<hr>
+<h3>Memory Ownership</h3>
+<strong>Problem</strong>: Who owns allocated memory?
+<strong>Rule</strong>: <strong>Document ownership in function signatures</strong>
+<strong>Example</strong>:
+<pre><code>// Caller owns returned pointer (must free)
+<p>
+extern func:strdup = wild byte<em>(s: wild byte</em>) [caller_owns_return];
+</p>
+<p>
+// Callee owns parameter (don't free)
+extern func:puts = i32(s: wild byte*) [callee_borrows_param];
+</p>
+<p>
+// Transfer ownership to callee
+extern func:takes_ownership = void(ptr: wild byte*) [callee_owns_param];</code></pre>
+</p>
+<strong>Annotation</strong> (future extension): Compiler enforces ownership rules
+<hr>
+<h2>Calling Conventions</h2>
+<h3>Platform-Specific ABIs</h3>
+<strong>Linux/macOS (x86_64)</strong>: System V AMD64 ABI
+<ul><li>First 6 integer args in registers: <code>rdi, rsi, rdx, rcx, r8, r9</code></li>
+<li>First 8 float args in: <code>xmm0-xmm7</code></li>
+<li>Return value in: <code>rax</code> (integer), <code>xmm0</code> (float)</li>
+</ul>
+<strong>Windows (x86_64)</strong>: Microsoft x64 Calling Convention
+<ul><li>First 4 args in registers: <code>rcx, rdx, r8, r9</code></li>
+<li>First 4 float args in: <code>xmm0-xmm3</code></li>
+<li>Return value in: <code>rax</code> (integer), <code>xmm0</code> (float)</li>
+</ul>
+<strong>Aria Compiler</strong>: Automatically uses platform default
+<hr>
+<h3>Custom Calling Conventions</h3>
+<strong>Syntax</strong>: <code>extern "convention"</code>
+<strong>Example</strong> (Windows stdcall):
+<pre><code>extern "stdcall" func:MessageBoxA = i32(
+<p>
+hwnd: wild void*,
+text: wild byte*,
+caption: wild byte*,
+type: u32
+);</code></pre>
+</p>
+<strong>Conventions Supported</strong>:
+<ul><li><code>"C"</code> (default): Platform C calling convention</li>
+<li><code>"stdcall"</code>: Windows standard call (callee cleans stack)</li>
+<li><code>"fastcall"</code>: Pass args in registers</li>
+</ul>
+<hr>
+<h2>Nikola Integration</h2>
+<h3>Nikola C++ API</h3>
+<strong>Nikola</strong>: 9D Toroidal Wave Interference (9D-TWI) consciousness substrate
+<strong>C++ Interface</strong> (example):
+<pre><code>// nikola.h
+<p>
+namespace nikola {
+class ConsciousnessField {
+public:
+ConsciousnessField(size_t dimensions);
+~ConsciousnessField();
+</p>
+<p>
+void inject_wave(const double* wave_data, size_t length);
+void propagate(double time_step);
+void extract_state(double* output_buffer, size_t buffer_size);
+};
+}</code></pre>
+</p>
+<hr>
+<h3>C Wrapper for Nikola</h3>
+<strong>Problem</strong>: Aria FFI works with C, not C++
+<strong>Solution</strong>: Create C wrapper around C++ API
+<strong>C Wrapper</strong> (<code>nikola_c.cpp</code>):
+<pre><code>// nikola_c.h
+<p>
+#ifdef __cplusplus
+extern "C" {
+#endif
+</p>
+<p>
+typedef struct nikola_field nikola_field;
+</p>
+<p>
+nikola_field* nikola_create_field(size_t dimensions);
+void nikola_destroy_field(nikola_field* field);
+void nikola_inject_wave(nikola_field<em> field, const double</em> wave_data, size_t length);
+void nikola_propagate(nikola_field* field, double time_step);
+void nikola_extract_state(nikola_field<em> field, double</em> output_buffer, size_t buffer_size);
+</p>
+<p>
+#ifdef __cplusplus
+}
+#endif</code></pre>
+</p>
+<strong>Implementation</strong>:
+<pre><code>// nikola_c.cpp
+<p>
+#include "nikola.h"
+#include "nikola_c.h"
+</p>
+<p>
+extern "C" {
+nikola_field* nikola_create_field(size_t dimensions) {
+return reinterpret_cast<nikola_field*>(new nikola::ConsciousnessField(dimensions));
+}
+</p>
+<p>
+void nikola_destroy_field(nikola_field* field) {
+delete reinterpret_cast<nikola::ConsciousnessField*>(field);
+}
+</p>
+<p>
+void nikola_inject_wave(nikola_field<em> field, const double</em> wave_data, size_t length) {
+reinterpret_cast<nikola::ConsciousnessField*>(field)->inject_wave(wave_data, length);
+}
+</p>
+<p>
+// ... etc
+}</code></pre>
+</p>
+<hr>
+<h3>Aria Bindings for Nikola</h3>
+<strong>Declare C API</strong>:
+<pre><code>// nikola_ffi.aria
+<p>
+extern struct:nikola_field = opaque;
+</p>
+<p>
+extern func:nikola_create_field = wild nikola_field*(dimensions: u64);
+extern func:nikola_destroy_field = void(field: wild nikola_field*);
+extern func:nikola_inject_wave = void(
+field: wild nikola_field*,
+wave_data: wild f64*,
+length: u64
+);
+extern func:nikola_propagate = void(field: wild nikola_field*, time_step: f64);
+extern func:nikola_extract_state = void(
+field: wild nikola_field*,
+output_buffer: wild f64*,
+buffer_size: u64
+);</code></pre>
+</p>
+<hr>
+<strong>Safe Aria Wrapper</strong>:
+<pre><code>// nikola.aria
+<p>
+import:ffi = "nikola_ffi";
+</p>
+<p>
+struct:ConsciousnessField = {
+wild ffi.nikola_field*:handle,
+};
+</p>
+<p>
+func:ConsciousnessField.new = result<ConsciousnessField>(dimensions: u64) {
+unsafe {
+wild ffi.nikola_field*:handle = ffi.nikola_create_field(dimensions);
+</p>
+<p>
+if (handle == null) {
+err("Failed to create consciousness field");
+}
+</p>
+<p>
+pass(ConsciousnessField { handle: handle });
+}
+}
+</p>
+<p>
+func:ConsciousnessField.destroy = void(self: wild ConsciousnessField*) {
+unsafe {
+if (self->handle != null) {
+ffi.nikola_destroy_field(self->handle);
+self->handle = null;
+}
+}
+}
+</p>
+<p>
+func:ConsciousnessField.inject_wave = result<void>(
+self: wild ConsciousnessField*,
+wave_data: array<f64>
+) {
+unsafe {
+// Safety: Aria array guarantees valid pointer and length
+ffi.nikola_inject_wave(
+self->handle,
+wave_data.data(),
+wave_data.len()
+);
+pass();
+}
+}
+</p>
+<p>
+func:ConsciousnessField.propagate = void(self: wild ConsciousnessField*, time_step: f64) {
+unsafe {
+ffi.nikola_propagate(self->handle, time_step);
+}
+}
+</p>
+<p>
+func:ConsciousnessField.extract_state = result<array<f64>>(
+self: wild ConsciousnessField*,
+buffer_size: u64
+) {
+array<f64>:output = array<f64>(buffer_size);
+</p>
+<p>
+unsafe {
+ffi.nikola_extract_state(
+self->handle,
+output.data(),
+buffer_size
+);
+}
+</p>
+<p>
+pass(output);
+}</code></pre>
+</p>
+<hr>
+<strong>Usage</strong> (Aria application):
+<pre><code>import:nikola = "nikola";
+<p>
+async func:run_consciousness_simulation = result<void>() {
+// Create 9D consciousness field
+result<nikola.ConsciousnessField>:field = nikola.ConsciousnessField.new(9);
+if (field.is_err()) err(field.err());
+</p>
+<p>
+wild nikola.ConsciousnessField*:cf = field.ok();
+</p>
+<p>
+// Inject initial wave pattern
+array<f64>:initial_wave = generate_wave_pattern();
+cf.inject_wave(initial_wave)?;
+</p>
+<p>
+// Simulate propagation
+till(999, 1) {
+cf.propagate(0.001);  // 1ms time steps
+</p>
+<p>
+// Extract state periodically
+if ($ % 100 == 0) {
+array<f64>:state = cf.extract_state(9)?;
+</p>
+<p>
+// Output to 6-stream I/O (binary data)
+io.stddato.write(state.data(), state.len() * 8);
+}
+</p>
+<p>
+// Yield for async runtime
+await yield();
+}
+</p>
+<p>
+// Cleanup
+cf.destroy();
+</p>
+<p>
+pass();
+}</code></pre>
+</p>
+<hr>
+<h3>6-Stream Data Exchange</h3>
+<strong>Pattern</strong>: Use <code>stddati</code> and <code>stddato</code> for binary wave data
+<strong>Nikola Output</strong> (visualization):
+<pre><code>$ ./aria_nikola_sim 5> wave_data.bin
+<h1>Binary wave data streamed to file</code></pre></h1>
+<strong>External Processor</strong> (Python):
+<pre><code>$ ./aria_nikola_sim 5>&1 | python visualize_waves.py
+<h1>Python reads binary data from stddato, renders visualization</code></pre></h1>
+<hr>
+<h2>Best Practices</h2>
+<h3>1. Minimize Unsafe Code</h3>
+<strong>Pattern</strong>: Thin unsafe FFI layer, safe high-level API
+<strong>Bad</strong>:
+<pre><code>// Exposing unsafe C API directly
+<p>
+extern func:malloc = wild byte*(size: u64);
+// Users have to deal with raw pointers everywhere</code></pre>
+</p>
+<strong>Good</strong>:
+<pre><code>// Safe wrapper
+<p>
+func:allocate_buffer = result<array<byte>>(size: u64) {
+unsafe {
+wild byte*:buf = malloc(size);
+if (buf == null) {
+err("Allocation failed");
+}
+// Wrap in safe array
+pass(array.from_raw_parts(buf, size));
+}
+}</code></pre>
+</p>
+<hr>
+<h3>2. Document Ownership</h3>
+<strong>Comments</strong>:
+<pre><code>// Caller must free returned pointer
+<p>
+extern func:strdup = wild byte<em>(s: wild byte</em>);
+</p>
+<p>
+// C library retains ownership (don't free)
+extern func:get_static_string = wild byte*();</code></pre>
+</p>
+<hr>
+<h3>3. Validate Inputs</h3>
+<strong>Before Calling C</strong>:
+<pre><code>func:safe_c_function = result<void>(input: string) {
+<p>
+// Validate
+if (input.len() > 1024) {
+err("Input too long");
+}
+</p>
+<p>
+unsafe {
+wild byte*:c_str = input.to_c_str();
+c_function(c_str);
+free(c_str);
+}
+</p>
+<p>
+pass();
+}</code></pre>
+</p>
+<hr>
+<h3>4. Handle Errors</h3>
+<strong>C Functions Often Fail Silently</strong>:
+<pre><code>extern func:fwrite = u64(
+<p>
+ptr: wild void*,
+size: u64,
+count: u64,
+stream: wild FILE*
+);
+</p>
+<p>
+func:write_data = result<void>(data: array<byte>, file: wild FILE*) {
+unsafe {
+u64:written = fwrite(data.data(), 1, data.len(), file);
+</p>
+<p>
+if (written != data.len()) {
+err("Write failed: only wrote " + written + " bytes");
+}
+</p>
+<p>
+pass();
+}
+}</code></pre>
+</p>
+<hr>
+<h2>Related Documents</h2>
+<ul><li><strong><a href="./TYPE_SYSTEM.md">TYPE_SYSTEM</a></strong>: Wild pointers and type marshalling</li>
+<li><strong><a href="./MEMORY_MODEL.md">MEMORY_MODEL</a></strong>: Wild allocator for FFI</li>
+<li><strong><a href="./IO_TOPOLOGY.md">IO_TOPOLOGY</a></strong>: 6-stream binary data exchange</li>
+<li><strong><a href="../integration/NIKOLA_ARIA.md">NIKOLA_ARIA</a></strong>: Complete Nikola integration guide</li>
+<li><strong><a href="./ERROR_HANDLING.md">ERROR_HANDLING</a></strong>: Result<T> for FFI error handling</li>
+</ul>
+<hr>
+<strong>Document Version</strong>: 1.0
+<strong>Author</strong>: Aria Ecosystem Documentation
+<strong>Status</strong>: Design specification (research complete, implementation ready)
+<strong>Research Complete</strong> ✅ (December 22, 2025):
+<ul><li><strong>FFI design for C interop</strong>: Standard C ABI mapping, zero-cost primitives</li>
+<li><strong>Memory safety</strong>: Pinning operator (#) for GC objects passed to C</li>
+<li><strong>Ownership tracking</strong>: Appendage Theory enforces Host outlives Appendage</li>
+<li><strong>TBB preservation</strong>: Sticky error propagation across FFI boundary</li>
+<li><strong>Type mapping</strong>: Aria types → LLVM IR → C ABI deterministic mapping</li>
+<li><strong>Result pattern</strong>: AriaResult struct allocated on heap, caller frees</li>
+</ul>
+<strong>Key Findings</strong> (from language_advanced_research_task.txt):
+<ul><li><strong>Type Mapping Table</strong>:</li>
+</ul>  * int8/tbb8 → i8 → int8_t (1 byte)
+<p>
+* int64 → i64 → int64_t (8 bytes)
+* int128 → i128 → __int128 (16 bytes, x86-64 supported)
+<em> wild byte</em> → i8<em> → uint8_t</em> (8 bytes, raw pointer)
+<em> result<T> → {i8</em>, T} → AriaResult* (heap-allocated struct)
+</p>
+<ul><li><strong>TBB Sticky Errors</strong>: C code must check for sentinel (e.g., -128 for tbb8)</li>
+<li><strong>Runtime intrinsics</strong>: tbb8_add, tbb8_mul for C consumers</li>
+<li><strong>Pinning</strong>: # operator sets bit in object header, prevents GC movement</li>
+<li><strong>Borrow checker</strong>: Validates pointers to C derived from pinned references</li>
+<li><strong>W^X safety</strong>: aria_mem_protect_exec transitions wildx from Write to Execute</li>
+</ul>
+<strong>FFI Safety Rules</strong>:
+<p>
+1. Wild pointers: zero-cost, manual management (map directly to C pointers)
+2. GC pointers: require pinning (#) before passing to C
+3. Result<T>: caller must call aria_result_free() to prevent leaks
+4. TBB types: C code must preserve sentinel semantics or use intrinsics
+5. Extern blocks: manual symbol declaration, resolved at link time
+</p>
+    </main>
+</body>
+</html>
