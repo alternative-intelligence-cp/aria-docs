@@ -4531,8 +4531,9 @@ Triggered by:
 FAILSAFE SIGNATURE:
 
 MANDATORY function signature:
-func:failsafe = void(int32:err_code) {
+func:failsafe = int32(tbb32:err_code) {
     // Emergency cleanup and termination
+    exit(1); //exit call required, arg passed required and must be > 0
 };
 
 Parameters:
@@ -4550,15 +4551,17 @@ Return type:
 FAILSAFE IMPLEMENTATION:
 
 Minimum viable failsafe (embedded systems):
-func:failsafe = void(int32:err_code) {
+func:failsafe = int32(tbb32:err_code) {
     // Halt system, enter safe state
     disable_all_actuators();
     flash_error_led(err_code);
     halt_cpu();  // Infinite loop or WFI instruction
+    exit(22);
 };
 
 Desktop/server failsafe:
-func:failsafe = void(int32:err_code) {
+func:failsafe = int32(tbb32:err_code) {
+    int32:err = 2; //example, should be based on err_code 
     stderr.write("FATAL ERROR: ");
     stderr.write(err_code);
     stderr.write("\n");
@@ -4570,11 +4573,11 @@ func:failsafe = void(int32:err_code) {
     close_all_file_handles();
     
     // Terminate process
-    exit(err_code);
+    exit(err);
 };
 
 Safety-critical failsafe (aerospace, medical):
-func:failsafe = void(int32:err_code) {
+func:failsafe = int32(tbb32:err_code) {
     // 1. Enter safe mode
     enter_safe_mode();
     
@@ -4592,6 +4595,8 @@ func:failsafe = void(int32:err_code) {
     
     // 6. Halt (should never reach if redundancy worked)
     halt_system();
+
+    exit(100);
 };
 
 ---
@@ -4615,7 +4620,7 @@ func:main = int32() {
     
     // Use config (only reached if load succeeded)
     run_with_config(cfg);
-    pass(0);
+    exit(0);
 };
 
 Compare to regular unwrap (?):
@@ -4629,23 +4634,74 @@ When to use ?! vs ?:
 
 FAILSAFE ERROR CODES:
 
-Standard error code convention:
+The failsafe parameter is tbb32, giving usable range [-2147483647, +2147483647] with ERR sentinel.
 
-user defined error codes
-runtime calls from the system always use ERR as the code
+Special Values:
+  ERR  — Unknown/unclassifiable error (tbb32 sentinel, min value)
+  0    — No error / testing / forced failsafe with no fault
+
+System Error Codes (negative range: -1 to -2147483647):
+  Reserved for runtime, OS, and hardware-level errors.
+  Set by the Aria runtime or OS signal handlers — user code should not emit these.
+
+  -1   SYS_GENERAL          General system error (unspecified)
+  -2   SYS_OUT_OF_MEMORY    Memory allocation failed
+  -3   SYS_STACK_OVERFLOW   Stack overflow detected
+  -4   SYS_SEGFAULT         Segmentation fault / access violation
+  -5   SYS_ABORT            Abort signal (SIGABRT)
+  -6   SYS_FPE              Floating-point exception (SIGFPE)
+  -7   SYS_BUS_ERROR        Bus error (SIGBUS)
+  -8   SYS_ILLEGAL_INSN     Illegal instruction (SIGILL)
+  -9   SYS_PIPE             Broken pipe (SIGPIPE)
+  -10  SYS_ALARM            Alarm/timer expired (SIGALRM)
+  -11  SYS_TERMINATED       Process terminated by signal (SIGTERM)
+  -12  SYS_IO_ERROR         I/O error (disk, device)
+  -13  SYS_PERMISSION       Permission denied
+  -14  SYS_DEADLOCK         Deadlock detected
+  -15  SYS_THREAD_PANIC     Thread panic / unrecoverable thread error
+  -16  SYS_RESOURCE_LIMIT   System resource limit reached (fd, etc.)
+  -17 to -99                Reserved for future Aria runtime system codes
+  -100 to -999              Reserved for OS/platform-specific system codes
+  -1000+                    Available for future system-level extensions
+
+User Error Codes (positive range: 1 to 2147483647):
+  For application-level errors triggered by !!! code (failsafe invocation).
+
+  1    USR_GENERAL          General application error (unspecified)
+  2    USR_INVALID_CONFIG   Configuration invalid or missing
+  3    USR_INIT_FAILED      Initialization/startup failed
+  4    USR_DATA_CORRUPT     Data corruption detected
+  5    USR_DEPENDENCY       Required dependency unavailable
+  6    USR_NETWORK          Network error (connection lost, timeout)
+  7    USR_AUTH             Authentication/authorization failure
+  8    USR_HARDWARE         Hardware device error (sensor, GPU, etc.)
+  9    USR_TIMEOUT          Critical operation timed out
+  10   USR_ASSERTION        Assertion / invariant violation
+  11 to 49                  Reserved for future Aria standard user codes
+  50 to 99                  Reserved for framework/library standard codes
+  100+                      Application-specific / user-defined error codes
+
+Convention notes:
+  - System codes are negative, user codes are positive — easy to distinguish
+  - Runtime sets system codes on signals; user code calls !!! with positive values
+  - ERR (tbb sentinel) means "we don't know what happened" — always handle it
+  - Code 0 should never reach failsafe in normal operation but handle gracefully
+  - Libraries should document their error codes in the 100+ range
 
 Usage:
-func:failsafe = void(int32:err_code) {
-    if (err_code == FAILSAFE_OUT_OF_MEMORY) {
-        log_error("Out of memory - cannot recover");
-        halt();
-    } else if (err_code == FAILSAFE_SENSOR_OFFLINE) {
-        log_error("Critical sensor offline");
-        enter_limp_mode();
-    } else {
-        log_error("Unknown fatal error");
-        halt();
+func:failsafe = int32(tbb32:err) {
+    if (err == ERR) {
+        drop(println("Unknown fatal error"));
+        exit(1);
     }
+    if (err < 0) {
+        // System error — log and exit
+        drop(println("System error"));
+        exit(1);
+    }
+    // User error
+    drop(println("Application error"));
+    exit(1);
 };
 
 ---
