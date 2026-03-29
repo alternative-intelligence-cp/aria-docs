@@ -127,7 +127,7 @@ API_BASE_URL: string = "https://api.example.com";
 func:read_config = Result<Config>(string:path) {
     content: string = readFile(path)?;
     config: Config = parse_config(content)?;
-    pass(Ok(config));
+    pass(config);
 }
 
 // ❌ Don't panic for expected errors
@@ -150,7 +150,7 @@ func:load_user_data = Result<UserData>(int32:user_id) {
     profile: Profile = fetch_profile(user_id)
         .context(`Failed to fetch profile for user &{user_id}`)?;
     
-    pass(Ok(UserData { user, profile }));
+    pass(UserData { user, profile });
 }
 ```
 
@@ -169,7 +169,7 @@ func:process_file = Result<NIL>(string:path) {
     data: string = file.read_all()?;
     process(data);
     
-    pass(Ok());
+    pass();
 }
 ```
 
@@ -250,17 +250,17 @@ func:validate_user = Result<NIL>(User:user) {
     validate_name(user.name)?;
     validate_email(user.email)?;
     validate_age(user.age)?;
-    pass(Ok());
+    pass();
 }
 
 func:validate_name = Result<NIL>(string:name) {
     if name.len() == 0 {
-        pass(Err("Name cannot be empty"));
+        fail("Name cannot be empty");
     }
     if name.len() > 100 {
-        pass(Err("Name too long"));
+        fail("Name too long");
     }
-    pass(Ok());
+    pass();
 }
 ```
 
@@ -395,11 +395,11 @@ func:test_validate_email_invalid = NIL() {
 // ✅ Always validate user input
 func:create_user = Result<User>(string:name, int32:age) {
     if name.len() == 0 {
-        pass(Err("Name cannot be empty"));
+        fail("Name cannot be empty");
     }
     
     if age < 0 || age > 150 {
-        pass(Err("Invalid age"));
+        fail("Invalid age");
     }
     
     // Create user

@@ -1,0 +1,46 @@
+# Aria Project — Quick Reference Locations
+
+## Compiler & Runtime
+- **ariac source**:        REPOS/aria/                         (dev branch, merge to main for releases)
+- **ariac binary**:        REPOS/aria/build/ariac
+- **ariac tests**:         REPOS/aria/tests/
+- **bug regressions**:     REPOS/aria/tests/bug_regression/
+- **stdlib**:              REPOS/aria/stdlib/
+- **runtime threading**:   REPOS/aria/src/runtime/thread.cpp
+
+## Packages & Libraries
+- **aria-packages**:       REPOS/aria-packages/packages/       (package registry)
+- **aria-libc**:           REPOS/aria-libc/                    (FFI libc wrappers)
+- **aria-make**:           REPOS/aria-make/                    (build system)
+- **aria-specialist**:     REPOS/aria-specialist/              (ML training data + self-improve)
+
+## Documentation
+- **Programming guide**:   REPOS/aria-docs/guide/
+- **Language specs**:      REPOS/aria-docs/specs/aria_specs.txt
+- **RFCs**:                REPOS/aria-docs/specs/              (incl. TRAITS_AND_BORROW_SEMANTICS_RFC.md)
+- **Technical reference**: REPOS/aria-docs/reference/          (architecture, type system, philosophy)
+- **Community**:           REPOS/aria_community/
+
+## Key Language Features
+- **dbug.check()**:        REPOS/aria-docs/guide/debugging/dbug.md
+  Assert-like conditional checks with grouped logging and custom failure actions.
+  `dbug.check(group, fmt, data, condition, action?)` — triggers when condition is FALSE.
+  Based on: REPOS/educational/dbug-utility/ (JS proof-of-concept)
+- **dbug.print()**:        Same file — grouped debug logging to hex stream
+- **failsafe**:            Required in every program — global error handler
+
+## Bug Tracking & Roadmaps
+- **BUGS file**:           META/ARIA/BUGS                      (open bugs only)
+- **Known issues**:        META/ARIA/KNOWN_ISSUES.md
+- **Roadmaps**:            META/ARIA/ROADMAP/
+- **Patch series**:        META/ARIA/ROADMAP/0.2.46.md         (current patch series)
+- **Master roadmap**:      META/ARIA/MASTER_ROADMAP.md
+- **Handoffs**:            META/ARIA/handoffs/
+
+## ABI Gotchas (see also /memories/repo/aria_language_gotchas.md)
+- String params = `const char *`, NOT AriaString struct
+- String returns = AriaString `{char*, int64_t}` by value
+- flt32/flt64 both pass as `double` at C ABI
+- "free" in extern names → shadowed, use `_release`/`_destroy`
+- `failsafe` func required in every program
+- Reserved words: raw, ok, stream, is, end, max

@@ -37,7 +37,7 @@ thread2.join();
 async func:fetch_data = Result<Data>(string:url) {
     response: Response = await http.get(url)?;
     data: Data = await response.json()?;
-    pass(Ok(data));
+    pass(data);
 }
 
 async func:main = NIL() {

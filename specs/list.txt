@@ -1,0 +1,171 @@
+### Mandatory Functions ################################################################################################
+func:main = int32(argc,argv)        ** program entry, must call exit() **
+func:failsafe = int32(tbb32:err)    ** final safety net and chance to degrade gracefully, must call exit(code) with code > 0 **
+
+### Keywords ###########################################################################################################
+wild                    ** unmanaged memory **
+defer                   ** guarantees cleanup code runs when scope exits **
+async                   ** declare function async **
+const                   ** constant,  only in extern blocks **
+fixed                   ** Aria version of const **
+use                     ** import modules/files **
+mod                     ** define module **
+pub                     ** public visibility **
+extern                  ** external C functions **
+stack                   ** explicit stack allocation keyword  !! NOTE (March 2026): 'stack' and 'gc' are contextual - valid as variable names outside allocation contexts !! **
+gc                      ** explicit GC allocation keyword     !! NOTE (March 2026): 'stack' and 'gc' are contextual - valid as variable names outside allocation contexts !! **
+wildx                   ** executable memory allocation (for JIT) **
+sync                    ** Synchronization primitive marker (for lock-free patterns) **
+atomic                  ** Atomic operation marker (redundant with atomic<T> type but aids readability) **
+requires                ** Design by Contract: function preconditions **
+ensures                 ** Design by Contract: function postconditions **
+invariant               ** Design by Contract: loop invariants **
+result                  ** Special variable in 'ensures' clauses bound to function return value **
+limit<Rules>            ** utilize compile time and runtime checks to ensure values meet certain tolerances **
+
+### Builtin Helpers ####################################################################################################
+ok(unknownVal)          ** allow passing a variable that may have value 'unknown' down the chain **
+drop()                  ** bypass Result system and drop Result **
+raw()                   ** bypass Result system and return Result.value ** 
+fall(label)             ** used in pick for fallthrough **
+pass(T:retVal)          ** constructs and returns Result<T>{tbb8:err,T:value,bool:is_error} with value set to retVal and error set to NIL, not valid in main or failsafe
+fail(tbb8:errCode)      ** constructs and returns Result<T>{tbb8:err,T:value,bool:is_error} with value set to NIL and error set to errCode, not valid in main or failsafe
+exit(int32:errCode)     ** exit the program, only valid in main and failsafe functions **
+
+### Special Values #####################################################################################################
+ERR                     ** Tbb type sticky error sentinel **
+NIL                     ** No value / nothing, Aria equivalent of void **
+NULL                    ** No reference / no address / 0x00 **
+unknown                 ** Special sentinel value (like ERR, but for undefined states) **
+
+### Types ##############################################################################################################
+Result<T>                                           ** Result type, returned by ALL function in Aria, except those in extern blocks **
+any                                                 ** Aria equivalent of C void* **
+void                                                ** in extern blocks only **
+int[1,2,4,8,16,32,64,128,256,512,1024,2048,4096]    ** signed integers **
+uint[1,2,4,8,16,32,64,128,256,512,1024,2048,4096]   ** unsigned integers **
+tbb[8,16,32,64]                                     ** twisted balanced binary ** 
+flt[32,64,128,256,512]                              ** floating point **
+tfp[16,32]                                          ** twisted floating point **
+fix256                                              ** fixed point 128.128 **
+fix256<[Joules,Meters,Seconds,Newtonss,Kelvin]>     ** dimensional analysis types **
+frac[8,16,32,64]                                    ** fraction type with whole, numerator, denominator **
+bool                                                ** boolean **
+vec[2,3,9]                                          ** vector types in several widths **
+dyn                                                 ** dynamic type, can hold any value, not sure if this is implemented, if not remove from list and ignore **
+obj                                                 ** obj type, not sure if implemented nor what difference is vs struct, if not needed or not imlemented remove from list and ignore **
+struct                                              ** standard struct **
+enum                                                ** standard enum **
+string                                              ** Aria string **
+func                                                ** function defintion **
+array                                               ** standard array **
+trit                                                ** ternary equivalent to bit **
+tryte                                               ** ternary equivalent to byte **
+nit                                                 ** nonary equivalent to bit **
+nyte                                                ** nonary equivalent to byte **
+tensor                                              ** tensor type **
+matrix                                              ** matrix type **
+complex<T>                                          ** Generic complex number type where T is the component type (fix256, tfp64, etc.)  **
+atomic<T>                                           ** Generic atomic type for lock-free concurrent access where T is the wrapped type **
+simd<T,N>                                           ** Generic SIMD vector type where T is element type, N is lane count (power of 2) **
+Handle<T>                                           ** safe alternative to raw pointers for arena-allocated memory **
+
+### Control Flow ###
+if/else                 ** standard if/else construct **
+while                   ** standard while loop for advanced uses **
+for                     ** standard for for advanced uses **
+till(limit,step)        ** oop with automatic iteration tracking **
+loop(start,limit,step)  ** loop with automatic iteration tracking **
+when/then/end           ** better while with state tracking **
+pick                    ** Aria equivalent of switch/case constructs **
+
+### Operators ########################################################################################################## 
++                       ** add **
+-                       ** subtract **
+*                       ** multiply, also pointer and dereference syntax in extern blocks **
+/                       ** divide **
+%                       ** modulo **
+++                      ** increment **
+--                      ** decrement **
+=                       ** assignment **
+==                      ** equality check **
+<=>                     ** spaceship, comparison that returns -1/0/1 **
+is                      ** ternary conditional, example 'var = is a > b : true : false'
++=                      ** add and assign **
+-=                      ** subtract and assign **
+*=                      ** multiply and assign **
+/=                      ** divide and assign **
+%=                      ** modulo and assign **
+!                       ** logical not **
+||                      ** logical or **
+&&                      ** logical and **
+&                       ** bitwise and **
+|                       ** bitwise or ** 
+^                       ** bitwise xor **
+~                       ** bitwise not **
+<<                      ** bitwise left shift **
+>>                      ** bitwise right shift **
+!!!                     ** failsafe(err) shorthand, example: '!!! err' **
+->                      ** in type (pointer TO T) , member access (access field OF pointer) **
+<-                      ** dereference (value FROM pointer) **
+@                       ** address of **
+=>                      ** cast **
+$                       ** Safe iteration var, checked value in Rules declarations **
+<T>?                    ** Optional as in int64? **
+?                       ** Safe unwrap ** 
+??                      ** Null coalesce **
+?!                      ** Emphatic unwrap, calls failsafe if error **
+?.                      ** Safe navigation**
+|>                      ** Pipe forward **
+<|                      ** Pipe backward **
+..                      ** inclusive range **
+...                     ** exclusive range **
+:                       ** annotation in types, separator in ternary clause **
+::<T>                   ** turbofish type annotation **
+#                       ** pin **
+$$i                     ** immutable borrow **
+$$m                     ** mutable borrow **
+""                      ** string literal **
+''                      ** char literal **
+``                      ** template literal **
+&{ }                    ** template interpolation **
+//                      ** line comment **
+/*                      ** begin block comment **
+*/                      ** end block comment **
+\                       ** escape **
+
+### Aria STREAMS ###
+stdout                  ** text output stream **
+stderr                  ** error output stream **
+stddbg                  ** debug output stream **
+stdin                   ** text input stream **
+stddati                 ** data input stream **
+stddato                 ** data output stream **
+
+### Features (FEATURE - /home/randy/Workspace/REPOS/aria-docs/specs/aria_specs.txt line number) ########################
+LAYERED SAFETY SYSTEM : Result<T> + unknown + failsafe Defense Against Undefined Behavior - 9
+GENERATIONAL HANDLES (Handle<T>) : Safe Arena Pointer Alternative - 479
+LBIM TYPES (int1024/2048/4096) : Limb-Based Integral Model for Post-Quantum Crypto - 991
+fix256 TYPE : Q128.128 Deterministic Fixed-Point for Safety-Critical Systems - 1157
+MEMORY MODEL & CONCURRENCY SAFETY : Atomic Ordering, Fences, Data Race Prevention - 1304
+DESIGN BY CONTRACT : requires/ensures/invariant Formal Contracts - 1546
+RESULT<T> SYSTEM : Mandatory Error Handling - 2482
+TOS SAFETY VOCABULARY : Explicit Bypass Table (wild, drop, raw, ok, ?!) - 2844
+GENERIC FUNCTION SYNTAX - 2989
+TURBOFISH SYNTAX (::<T>) : EXPLICIT TYPE ARGUMENTS - 3051
+GENERIC CONSTRAINTS (TRAITS) - 3305
+CLOSURES AND LAMBDAS : ANONYMOUS FUNCTIONS - 3454
+DEFER STATEMENT : GUARANTEED CLEANUP - 3882
+FAILSAFE SYSTEM : Mandatory Unrecoverable Error Handler - 4503
+MODULE SYSTEM : use/mod/pub/extern Code Organization - 5111
+MEMORY ALLOCATION MODES : EXPLICIT ALLOCATION CONTROL - 5492
+STRING INTERPOLATION : TEMPLATE LITERALS - 5868
+Borrow Semantics - 7190
+Traits - 7215
+Type: System - 7237
+Channels - 7255
+Actors - 7278
+Enums - 7302
+RULES + LIMIT — Refinement Types - 7319
+RULES $.field — Member Access in Rules - 7345
+RULES Array & Null — Array Indexing, Multi-Type & Null/NIL - 7370

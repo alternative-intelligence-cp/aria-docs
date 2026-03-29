@@ -107,7 +107,7 @@ extern "C" {
 // Allocate
 ptr: *void = extern.malloc(1024);
 if ptr == NULL {
-    pass(Err("Allocation failed"));
+    fail("Allocation failed");
 }
 
 // Use ptr...
@@ -215,7 +215,7 @@ extern "C" {
 
 file: *void = extern.fopen("data.txt\0", "r\0");
 if file == NULL {
-    pass(Err("Failed to open file"));
+    fail("Failed to open file");
 }
 
 buffer: [u8; 1024];
@@ -239,7 +239,7 @@ extern "C" {
 
 file: *void = extern.fopen("output.txt\0", "w\0");
 if file == NULL {
-    pass(Err("Failed to open file"));
+    fail("Failed to open file");
 }
 
 data: *u8 = "Hello, File!\0";
@@ -280,7 +280,7 @@ extern "C" {
 file: *void = extern.fopen("nonexistent.txt\0", "r\0");
 if file == NULL {
     error: i32 = extern.errno;
-    pass(Err(`fopen failed with errno: &{error}`));
+    fail(`fopen failed with errno: &{error}`);
 }
 ```
 
@@ -295,7 +295,7 @@ extern "C" {
 
 ptr: *void = extern.malloc(1024);
 if ptr == NULL {
-    pass(Err("malloc failed - out of memory"));
+    fail("malloc failed - out of memory");
 }
 ```
 
@@ -313,15 +313,15 @@ extern "C" {
 
 pub func:safe_alloc = Result<*void>(uint64:size) {
     if size == 0 {
-        pass(Err("Invalid size"));
+        fail("Invalid size");
     }
     
     ptr: *void = extern.malloc(size);
     if ptr == NULL {
-        pass(Err("Allocation failed"));
+        fail("Allocation failed");
     }
     
-    pass(Ok(ptr));
+    pass(ptr);
 }
 
 pub func:safe_free = NIL(*void:ptr) {
@@ -342,10 +342,10 @@ extern "C" {
 
 pub func:safe_strlen = Result<uint64>(*u8:s) {
     if s == NULL {
-        pass(Err("Null string"));
+        fail("Null string");
     }
     
-    pass(Ok(extern.strlen(s)));
+    pass(extern.strlen(s));
 }
 ```
 
@@ -375,7 +375,7 @@ extern "C" {
 ```aria
 ptr: *void = extern.malloc(1024);
 if ptr == NULL {  // ✅ Always check!
-    pass(Err("Allocation failed"));
+    fail("Allocation failed");
 }
 ```
 

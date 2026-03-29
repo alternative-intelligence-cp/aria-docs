@@ -18,7 +18,7 @@
 async func:fetch = Result<Data>() {
     response: Response = await http.get("https://api.example.com")?;
     data: Data = await response.json()?;
-    pass(Ok(data));
+    pass(data);
 }
 ```
 
@@ -43,7 +43,7 @@ async func:sequential = Result<NIL>() {
     user: User = await fetch_user()?;       // Wait for user
     posts: []Post = await fetch_posts()?;   // Then wait for posts
     comments: []Comment = await fetch_comments()?;  // Then comments
-    pass(Ok());
+    pass();
 }
 ```
 
@@ -65,7 +65,7 @@ async func:concurrent = Result<NIL>() {
     posts: []Post = await posts_task?;
     comments: []Comment = await comments_task?;
     
-    pass(Ok());
+    pass();
 }
 ```
 
@@ -78,10 +78,10 @@ Total time: max(time(user), time(posts), time(comments))
 ```aria
 async func:with_error_handling = Result<Data>() {
     match await fetch_data() {
-        Ok(data) => return Ok(data),
+        Ok(data) => pass(data),
         Err(e) => {
             print(`Error: &{e}`);
-            pass(Err(e));
+            fail(e);
         }
     }
 }
@@ -96,7 +96,7 @@ async func:fetch_and_process = Result<Processed>() {
     data: Data = await fetch_data()?;     // Propagate error
     validated: Valid = await validate(data)?;
     processed: Processed = await process(validated)?;
-    pass(Ok(processed));
+    pass(processed);
 }
 ```
 
@@ -113,8 +113,8 @@ async func:with_timeout = Result<Data>() {
     });
     
     match await result {
-        Ok(data) => return Ok(data),
-        Err(Timeout) => return Err("Operation timed out"),
+        Ok(data) => pass(data),
+        Err(Timeout) => fail("Operation timed out"),
     }
 }
 ```
@@ -129,10 +129,10 @@ async func:with_timeout = Result<Data>() {
 async func:fetch_with_retry = Result<Data>(string:url, int32:retries) {
     till(retries - 1, 1) {
         match await fetch(url) {
-            Ok(data) => return Ok(data),
+            Ok(data) => pass(data),
             Err(e) => {
                 if $ == retries - 1 {
-                    pass(Err(e));
+                    fail(e);
                 }
                 await sleep(1000 * ($ + 1));  // Backoff
             }
@@ -155,7 +155,7 @@ async func:fetch_fastest = Result<Data>() {
     
     // Return whichever completes first
     Result: Data = await race([task1, task2, task3])?;
-    pass(Ok(result));
+    pass(result);
 }
 ```
 
@@ -173,7 +173,7 @@ async func:fetch_multiple = Result<[]Data>([]string:urls) {
     }
     
     results: []Data = await join_all(tasks)?;
-    pass(Ok(results));
+    pass(results);
 }
 ```
 
@@ -186,7 +186,7 @@ async func:fetch_multiple = Result<[]Data>([]string:urls) {
 ```aria
 async func:correct = Result<Data>() {
     data: Data = await fetch()?;  // ✅ In async function
-    pass(Ok(data));
+    pass(data);
 }
 ```
 
@@ -198,7 +198,7 @@ async func:with_error_check = Result<Data>() {
         Ok(data) => process(data),
         Err(e) => {
             log_error(e);
-            pass(Err(e));
+            fail(e);
         }
     }
 }

@@ -116,15 +116,15 @@ extern "C" {
 // Safe wrapper
 pub func:safe_function = Result<int32>(*Data:data) {
     if data == NULL {
-        pass(Err("Null pointer"));
+        fail("Null pointer");
     }
     
     Result: i32 = extern.unsafe_c_function(data);
     if result < 0 {
-        pass(Err("C function failed"));
+        fail("C function failed");
     }
     
-    pass(Ok(result));
+    pass(result);
 }
 ```
 

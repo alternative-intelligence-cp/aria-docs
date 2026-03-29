@@ -18,7 +18,7 @@
 async func:fetch_data = Result<string>(string:url) {
     response: Response = await http.get(url)?;
     text: string = await response.text()?;
-    pass(Ok(text));
+    pass(text);
 }
 ```
 
@@ -63,7 +63,7 @@ async func:get_number = int32() {
 
 async func:may_fail = Result<Data>() {
     data: Data = await fetch()?;
-    pass(Ok(data));
+    pass(data);
 }
 
 async func:optional_data = ?Data() {
@@ -104,7 +104,7 @@ async func:fetch_all = Result<NIL>() {
     data2: Data = await task2?;
     
     print(`Got &{data1} and &{data2}`);
-    pass(Ok());
+    pass();
 }
 ```
 
@@ -119,7 +119,7 @@ async func:sequential = Result<NIL>() {
     user: User = await fetch_user()?;
     posts: []Post = await fetch_posts(user.id)?;
     comments: []Comment = await fetch_comments(posts[0].id)?;
-    pass(Ok());
+    pass();
 }
 ```
 
@@ -139,7 +139,7 @@ async func:concurrent = Result<NIL>() {
     posts: []Post = await posts_task?;
     stats: Stats = await stats_task?;
     
-    pass(Ok());
+    pass();
 }
 ```
 
@@ -174,7 +174,7 @@ async func:read_files = Result<NIL>() {
     // Good - async I/O
     content1: string = await readFile("file1.txt")?;
     content2: string = await readFile("file2.txt")?;
-    pass(Ok());
+    pass();
 }
 ```
 

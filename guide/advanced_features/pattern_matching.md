@@ -218,9 +218,9 @@ func:process_tuple = NIL((i32, string, bool:t)) {
 ```aria
 func:safe_divide = Result<flt64>(flt64:a, flt64:b) {
     match b {
-        0.0 => return Err("Division by zero"),
-        b if b.is_nan() => return Err("Invalid divisor"),
-        _ => return Ok(a / b),
+        0.0 => fail("Division by zero"),
+        b if b.is_nan() => fail("Invalid divisor"),
+        _ => pass(a / b),
     }
 }
 ```
@@ -352,9 +352,9 @@ func:safe_match = int32(?i32:opt) {
 ```aria
 func:validate_age = Result<int32>(int32:age) {
     match age {
-        n if n < 0 => return Err("Age cannot be negative"),
-        n if n > 150 => return Err("Age too high"),
-        n => return Ok(n),
+        n if n < 0 => fail("Age cannot be negative"),
+        n if n > 150 => fail("Age too high"),
+        n => pass(n),
     }
 }
 ```

@@ -24,7 +24,7 @@ struct Server {
 impl Server {
     pub func:new = Result<Server>(int32:port) {
         listener: TcpListener = TcpListener.bind(`0.0.0.0:&{port}`)?;
-        pass(Ok(Server { listener }));
+        pass(Server { listener });
     }
     
     pub func:run = Result<NIL>() {
@@ -57,7 +57,7 @@ impl Server {
 func:main = Result<NIL>() {
     server: Server = Server.new(8080)?;
     server.run()?;
-    pass(Ok());
+    pass();
 }
 ```
 
@@ -98,7 +98,7 @@ impl JsonParser {
             '[' => return self.parse_array(),
             '{' => return self.parse_object(),
             _ if c.is_digit() || c == '-' => return self.parse_number(),
-            _ => return Err("Unexpected character"),
+            _ => fail("Unexpected character"),
         }
     }
     
@@ -116,7 +116,7 @@ impl JsonParser {
         value: string = self.input[start..self.pos];
         self.expect('"')?;
         
-        pass(Ok(Json.String(value)));
+        pass(Json.String(value));
     }
     
     func:parse_array = Result<Json>() {
@@ -126,7 +126,7 @@ impl JsonParser {
         self.skip_whitespace();
         if self.peek()? == ']' {
             self.advance();
-            pass(Ok(Json.Array(items)));
+            pass(Json.Array(items));
         }
         
         while true {
@@ -142,7 +142,7 @@ impl JsonParser {
             self.expect(',')?;
         }
         
-        pass(Ok(Json.Array(items)));
+        pass(Json.Array(items));
     }
 }
 
@@ -197,7 +197,7 @@ impl ConnectionPool {
         lock = self.connections.lock();
         conn: Connection = lock.pop()?;
         
-        pass(Ok(conn));
+        pass(conn);
     }
     
     pub func:release = NIL(Connection:conn) {
@@ -218,7 +218,7 @@ func:query_database = Result<[]Row>() {
     defer pool.release(conn);
     
     results: []Row = conn.execute("SELECT * FROM users")?;
-    pass(Ok(results));
+    pass(results);
 }
 ```
 
@@ -256,7 +256,7 @@ impl FileWatcher {
             }
         }
         
-        pass(Ok());
+        pass();
     }
 }
 
@@ -277,7 +277,7 @@ func:main = Result<NIL>() {
     });
     
     watcher.start()?;
-    pass(Ok());
+    pass();
 }
 ```
 
@@ -393,10 +393,10 @@ impl HttpClient {
         response: Response = await request.send()?;
         
         if !response.ok() {
-            pass(Err("HTTP &{response.status}"));
+            fail("HTTP &{response.status}");
         }
         
-        pass(Ok(response));
+        pass(response);
     }
     
     pub async func:post = Result<Response>(string:path, string:body) {
@@ -410,7 +410,7 @@ impl HttpClient {
             .build();
         
         response: Response = await request.send()?;
-        pass(Ok(response));
+        pass(response);
     }
 }
 
@@ -425,7 +425,7 @@ async func:main = Result<NIL>() {
         print(users[$].name);
     }
     
-    pass(Ok());
+    pass();
 }
 ```
 

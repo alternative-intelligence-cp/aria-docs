@@ -396,7 +396,7 @@ comptime func:derive_serialize = NIL(type:T) {
                 offset += @size_of(field.type);
             }
             
-            pass(Ok(result));
+            pass(result);
         }
     });
 }

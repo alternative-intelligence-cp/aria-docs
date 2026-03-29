@@ -221,7 +221,7 @@ struct File {
 impl File {
     pub func:open = Result<File>(string:path) {
         handle: *FileHandle = open_file(path)?;
-        pass(Ok(File { handle: handle }));
+        pass(File { handle: handle });
     }
 }
 
@@ -236,7 +236,7 @@ impl Drop for File {
 func:process = Result<NIL>() {
     file: File = File.open("data.txt")?;
     // Use file
-    pass(Ok());
+    pass();
 }  // File automatically closed
 ```
 

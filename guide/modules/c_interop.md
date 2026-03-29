@@ -319,7 +319,7 @@ extern "C" {
 
 Result: i32 = extern.c_operation();
 if result != 0 {
-    pass(Err(`Operation failed with code: &{result}`));
+    fail(`Operation failed with code: &{result}`);
 }
 ```
 
@@ -336,7 +336,7 @@ extern "C" {
 Result: i32 = extern.some_operation();
 if result == -1 {
     error_code: i32 = extern.errno;
-    pass(Err(`Error code: &{error_code}`));
+    fail(`Error code: &{error_code}`);
 }
 ```
 
@@ -377,7 +377,7 @@ extern "C" {
 
 file: *void = extern.fopen("data.txt\0", "r\0");
 if file == NULL {
-    pass(Err("Failed to open file"));
+    fail("Failed to open file");
 }
 
 buffer: [u8; 1024];
@@ -432,7 +432,7 @@ c_string: *u8 = "Hello\0";  // ✅ Null terminator
 
 ```aria
 if ptr == NULL {
-    pass(Err("Null pointer from C"));
+    fail("Null pointer from C");
 }
 ```
 

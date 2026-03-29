@@ -170,7 +170,7 @@ impl Parser {
             body: body,
         });
         
-        pass(Ok(node));
+        pass(node);
     }
 }
 ```
@@ -199,13 +199,13 @@ impl ASTVisitor for TypeChecker {
         right_type: Type = node.right.type?;
         
         if left_type != right_type {
-            pass(Err("Type mismatch in binary expression"));
+            fail("Type mismatch in binary expression");
         }
         
         // Set node type
         node.base.type = Some(left_type);
         
-        pass(Ok());
+        pass();
     }
 }
 ```
@@ -292,7 +292,7 @@ func:type_check = Result<NIL>(*Program:ast) {
         checker.visit_declaration(ast.declarations[$])?;
     }
     
-    pass(Ok());
+    pass();
 }
 ```
 
@@ -367,7 +367,7 @@ trait ASTVisitor {
 func:validate_ast = Result<NIL>(*Program:ast) {
     validator: ASTValidator = ASTValidator.new();
     validator.check(ast)?;
-    pass(Ok());
+    pass();
 }
 ```
 

@@ -389,7 +389,7 @@ func:process = Result() {
     defer file.close();  // Runs on unwind
     
     data: Data = pass parse(file);  // Error here
-    pass(Ok(data));
+    pass(data);
 }
 // file.close() called during unwind
 ```

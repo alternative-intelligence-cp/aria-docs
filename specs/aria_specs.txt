@@ -137,9 +137,10 @@ Every Aria program MUST define failsafe() or compilation fails.
 Cannot be empty - must at least accept error code and take action.
 
 Signature:
-func:failsafe = void(int32:err_code) {
+func:failsafe = int32(tbb32:err_code) {
     // Emergency cleanup and controlled termination
     // MUST be defined by every program
+    // MUST call exit(retVal) with retVal > 0
 };
 
 When failsafe() is called:
@@ -4630,20 +4631,8 @@ FAILSAFE ERROR CODES:
 
 Standard error code convention:
 
-// System error codes (negative)
-const:FAILSAFE_OUT_OF_MEMORY = -1;
-const:FAILSAFE_STACK_OVERFLOW = -2;
-const:FAILSAFE_DIVISION_BY_ZERO = -3;
-const:FAILSAFE_NULL_DEREFERENCE = -4;
-const:FAILSAFE_CONTRACT_VIOLATION = -5;
-const:FAILSAFE_HARDWARE_FAILURE = -6;
-
-// Application error codes (positive)
-const:FAILSAFE_CONFIG_LOAD_ERROR = 1;
-const:FAILSAFE_SENSOR_OFFLINE = 2;
-const:FAILSAFE_ACTUATOR_STUCK = 3;
-const:FAILSAFE_WATCHDOG_TIMEOUT = 4;
-const:FAILSAFE_CALIBRATION_FAILED = 5;
+user defined error codes
+runtime calls from the system always use ERR as the code
 
 Usage:
 func:failsafe = void(int32:err_code) {
@@ -6069,7 +6058,7 @@ func:divide = Result<tfp64>(tfp64:a, tfp64:b) {
         fail("Division by zero");
     }
     pass(a / b);
-};
+};%= ** modulo and assign **
 
 Result<tfp64>:result = divide(10.0, 0.0);
 if (result.is_error) {

@@ -179,7 +179,7 @@ mod database {
 
 pub func:connect_to_database = Result<NIL>() {
     database.connect_internal()?;  // Use private items
-    pass(Ok());
+    pass();
 }
 ```
 

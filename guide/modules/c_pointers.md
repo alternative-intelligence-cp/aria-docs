@@ -231,7 +231,7 @@ extern "C" {
 // Allocate
 ptr: *void = extern.malloc(1024);
 if ptr == NULL {
-    pass(Err("Allocation failed"));
+    fail("Allocation failed");
 }
 
 // Use ptr...
@@ -289,7 +289,7 @@ mut_ptr: *mut i32 = const_ptr as *mut i32;
 ```aria
 ptr: *void = extern.c_function();
 if ptr == NULL {
-    pass(Err("Null pointer"));  // ✅
+    fail("Null pointer");  // ✅
 }
 ```
 
@@ -399,12 +399,12 @@ extern.register_callback(my_callback);
 ```aria
 pub func:safe_read = Result<int32>(*i32:ptr) {
     if ptr == NULL {
-        pass(Err("Null pointer"));
+        fail("Null pointer");
     }
     
     // Additional validation...
     
-    pass(Ok(*ptr));
+    pass(*ptr);
 }
 ```
 

@@ -17,7 +17,7 @@ Error propagation handles errors **cleanly** without deeply nested error checkin
 func:read_file = Result<string>(string:path) {
     file: File = open(path)?;  // Returns Err if open fails
     content: string = file.read_all()?;  // Returns Err if read fails
-    pass(Ok(content));
+    pass(content);
 }
 
 // Without ?
@@ -25,11 +25,11 @@ func:read_file_verbose = Result<string>(string:path) {
     match open(path) {
         Ok(file) => {
             match file.read_all() {
-                Ok(content) => return Ok(content),
-                Err(e) => return Err(e),
+                Ok(content) => pass(content),
+                Err(e) => fail(e),
             }
         }
-        Err(e) => return Err(e),
+        Err(e) => fail(e),
     }
 }
 ```
@@ -45,7 +45,7 @@ func:process_user_file = Result<Data>(int32:user_id) {
     content: string = file.read_all()?;         // Read error?
     data: Data = parse_content(content)?;       // Parse error?
     validated: Data = validate(data)?;          // Validation error?
-    pass(Ok(validated));
+    pass(validated);
 }
 ```
 
@@ -64,7 +64,7 @@ func:load_config = Result<Config>(string:path) {
     validated: Config = validate_config(config)
         .context("Invalid configuration")?;
     
-    pass(Ok(validated));
+    pass(validated);
 }
 ```
 
@@ -75,22 +75,22 @@ func:load_config = Result<Config>(string:path) {
 ```aria
 func:validate_user = Result<NIL>(User:user) {
     if user.name == "" {
-        pass(Err("Name cannot be empty"));
+        fail("Name cannot be empty");
     }
     
     if user.age < 0 {
-        pass(Err("Age cannot be negative"));
+        fail("Age cannot be negative");
     }
     
     if user.age > 150 {
-        pass(Err("Age too high"));
+        fail("Age too high");
     }
     
     if !user.email.contains("@") {
-        pass(Err("Invalid email"));
+        fail("Invalid email");
     }
     
-    pass(Ok());
+    pass();
 }
 ```
 
@@ -104,7 +104,7 @@ func:fetch_all_data = Result<AllData>() {
     posts: []Post = fetch_posts()?;
     comments: []Comment = fetch_comments()?;
     
-    return Ok(AllData {
+    pass(AllData {
         user: user,
         posts: posts,
         comments: comments,
@@ -147,7 +147,7 @@ func:process_file = Result<NIL>(string:input_path, string:output_path) {
     // Write output
     writeFile(output_path, processed)?;
     
-    pass(Ok());
+    pass();
 }
 ```
 
@@ -165,7 +165,7 @@ async func:fetch_user_posts = Result<[]Post>(int32:user_id) {
     posts_resp: Response = await http.get(`/posts?user=&{user_id}`)?;
     posts: []Post = await posts_resp.json()?;
     
-    pass(Ok(posts));
+    pass(posts);
 }
 ```
 
@@ -194,7 +194,7 @@ func:create_user = Result<User>(string:name, string:email) {
     
     // Fetch created user
     user: User = get_user(user_id)?;
-    pass(Ok(user));
+    pass(user);
 }
 ```
 
@@ -216,7 +216,7 @@ func:register_user = Result<User>(UserData:data) {
     // Create user
     user: User = create_user(data)?;
     
-    pass(Ok(user));
+    pass(user);
 }
 ```
 
@@ -236,7 +236,7 @@ func:copy_file = Result<NIL>(string:src, string:dst) {
     content: []u8 = src_file.read_all()?;
     dst_file.write_all(content)?;
     
-    pass(Ok());
+    pass();
 }
 ```
 
@@ -253,7 +253,7 @@ func:fetch_data = Result<Data,()CustomError> {
     data: Data = parse_response(response)
         .map_err(|e| CustomError.ParseError(e))?;
     
-    pass(Ok(data));
+    pass(data);
 }
 ```
 
@@ -269,7 +269,7 @@ func:process_files = Result<NIL>([]string:paths) {
         processed: string = process(content)?;
         writeFile(paths[$] ++ ".processed", processed)?;
     }
-    pass(Ok());
+    pass();
 }
 ```
 
@@ -286,7 +286,7 @@ func:fetch_all_users = Result<[]User>([]i32:ids) {
         users.push(user);
     }
     
-    pass(Ok(users));
+    pass(users);
 }
 
 // Or collect all results
@@ -312,7 +312,7 @@ func:load_and_process = Result<Data>() {
     config: Config = load_config()?;
     input: Input = load_input()?;
     data: Data = process(config, input)?;
-    pass(Ok(data));
+    pass(data);
 }
 ```
 
@@ -326,7 +326,7 @@ func:load_user_data = Result<UserData>(int32:user_id) {
     profile: Profile = fetch_profile(user_id)
         .context(`Failed to fetch profile for user &{user_id}`)?;
     
-    pass(Ok(UserData { user, profile }));
+    pass(UserData { user, profile });
 }
 ```
 
@@ -335,14 +335,14 @@ func:load_user_data = Result<UserData>(int32:user_id) {
 ```aria
 func:validate = Result<NIL>(Data:data) {
     if data.is_empty() {
-        pass(Err("Data cannot be empty"));
+        fail("Data cannot be empty");
     }
     
     if !data.is_valid() {
-        pass(Err("Invalid data format"));
+        fail("Invalid data format");
     }
     
-    pass(Ok());
+    pass();
 }
 ```
 
@@ -357,7 +357,7 @@ func:bad_process = NIL() {
 // ✅ Good - handle or propagate
 func:good_process = Result<NIL>() {
     risky_operation()?;  // Propagate error
-    pass(Ok());
+    pass();
 }
 
 // ✅ Or explicitly handle
@@ -380,7 +380,7 @@ func:bad = NIL() {
 // ✅ Good - return Result
 func:good = Result<string>() {
     content: string = readFile("file.txt")?;
-    pass(Ok(content));
+    pass(content);
 }
 ```
 

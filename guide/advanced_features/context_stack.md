@@ -52,7 +52,7 @@ func:process_file = Result<Data>(string:path) {
     data: Data = parse(content)
         .context(`Failed to parse content from &{path}`)?;
     
-    pass(Ok(data));
+    pass(data);
 }
 
 /*
@@ -85,17 +85,17 @@ func:debug_stack = NIL() {
 
 ```aria
 func:level3 = Result<NIL>() {
-    pass(Err("Error at level3"));
+    fail("Error at level3");
 }
 
 func:level2 = Result<NIL>() {
     level3()?;  // Unwinds on error
-    pass(Ok());
+    pass();
 }
 
 func:level1 = Result<NIL>() {
     level2()?;  // Unwinds on error
-    pass(Ok());
+    pass();
 }
 
 func:main = NIL() {
@@ -169,7 +169,7 @@ func:load_config = Result<Config>() {
     validate_config(config)
         .context("Config validation failed")?;
     
-    pass(Ok(config));
+    pass(config);
 }
 
 /*
@@ -268,7 +268,7 @@ func:process = Result<NIL>() {
     data: string = file.read_all()?;
     process_data(data)?;
     
-    pass(Ok());
+    pass();
     // Deferred cleanup runs in reverse order:
     // 1. lock.unlock()
     // 2. file.close()
@@ -299,7 +299,7 @@ func:load_user = Result<User>(int32:id) {
     user: User = database.find(id)
         .context(`Failed to load user &{id}`)?;
     
-    pass(Ok(user));
+    pass(user);
 }
 ```
 
@@ -313,7 +313,7 @@ func:safe_resource_use = Result<NIL>() {
     // Use resource
     resource.do_work()?;
     
-    pass(Ok());
+    pass();
     // resource.release() called automatically
 }
 ```
@@ -377,14 +377,14 @@ func:check_depth = int32() {
 
 func:recursive = Result<NIL>(int32:n, int32:max_depth) {
     if check_depth() > max_depth {
-        pass(Err("Stack too deep"));
+        fail("Stack too deep");
     }
     
     if n > 0 {
         pass(recursive(n - 1, max_depth));
     }
     
-    pass(Ok());
+    pass();
 }
 ```
 

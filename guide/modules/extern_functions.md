@@ -250,16 +250,16 @@ extern "C" {
 // Safe Aria wrapper
 pub func:safe_process = Result<int32>([]u8:data) {
     if data.len() == 0 {
-        pass(Err("Empty data"));
+        fail("Empty data");
     }
     
     Result: i32 = extern.unsafe_c_function($data[0], data.len());
     
     if result < 0 {
-        pass(Err("C function failed"));
+        fail("C function failed");
     }
     
-    pass(Ok(result));
+    pass(result);
 }
 ```
 

@@ -17,7 +17,7 @@ Async/await provides **non-blocking concurrency** with **readable, sequential-lo
 async func:fetch_user = Result<User>(int32:id) {
     response: Response = await http.get(`/users/&{id}`)?;
     user: User = await response.json()?;
-    pass(Ok(user));
+    pass(user);
 }
 ```
 
@@ -46,7 +46,7 @@ func:fetch_user_callback = NIL(int32:id, fn(Result<User>:callback)) {
 async func:fetch_user = Result<User>(int32:id) {
     response: Response = await http.get(`/users/&{id}`)?;
     user: User = await response.json()?;
-    pass(Ok(user));
+    pass(user);
 }
 // Clean and readable!
 ```
@@ -63,7 +63,7 @@ async func:process_user = Result<NIL>(int32:id) {
     comments: []Comment = await fetch_comments(posts[0].id)?;
     
     await save_to_cache(user, posts, comments)?;
-    pass(Ok());
+    pass();
 }
 ```
 
@@ -83,7 +83,7 @@ async func:fetch_dashboard = Result<Dashboard>(int32:user_id) {
     posts: []Post = await posts_future?;
     notifications: []Notification = await notifications_future?;
     
-    return Ok(Dashboard {
+    pass(Dashboard {
         user: user,
         posts: posts,
         notifications: notifications,
@@ -122,11 +122,11 @@ async func:api_request = Result<Data>(string:endpoint) {
     response: Response = await http.get(endpoint)?;
     
     if !response.ok() {
-        pass(Err(`HTTP &{response.status}`));
+        fail(`HTTP &{response.status}`);
     }
     
     data: Data = await response.json()?;
-    pass(Ok(data));
+    pass(data);
 }
 ```
 
@@ -139,7 +139,7 @@ async func:fetch_user_with_posts = Result<UserWithPosts>(int32:id) {
     user: User = await db.query("SELECT * FROM users WHERE id = ?", id)?;
     posts: []Post = await db.query("SELECT * FROM posts WHERE user_id = ?", id)?;
     
-    return Ok(UserWithPosts {
+    pass(UserWithPosts {
         user: user,
         posts: posts,
     });
@@ -155,7 +155,7 @@ async func:process_file = Result<NIL>(string:path) {
     content: string = await readFile(path)?;
     processed: string = await process_content(content)?;
     await writeFile(path ++ ".processed", processed)?;
-    pass(Ok());
+    pass();
 }
 ```
 
@@ -193,7 +193,7 @@ async func:fetch_all_users = Result<[]User>([]i32:ids) {
     }
     
     users: []User = await join_all(tasks)?;
-    pass(Ok(users));
+    pass(users);
 }
 ```
 
@@ -210,7 +210,7 @@ async func:fetch_fastest = Result<Data>() {
     
     // Return whichever completes first
     Result: Data = await race([primary, backup])?;
-    pass(Ok(result));
+    pass(result);
 }
 ```
 
@@ -225,8 +225,8 @@ async func:fetch_with_timeout = Result<Data>(string:url) {
     result = timeout(5000, fetch(url));  // 5 second timeout
     
     match await result {
-        Ok(data) => return Ok(data),
-        Err(Timeout) => return Err("Request timed out"),
+        Ok(data) => pass(data),
+        Err(Timeout) => fail("Request timed out"),
     }
 }
 ```
@@ -241,11 +241,11 @@ async func:fetch_with_retry = Result<Data>(string:url, int32:max_retries) {
     
     loop {
         match await fetch(url) {
-            Ok(data) => return Ok(data),
+            Ok(data) => pass(data),
             Err(e) => {
                 retries += 1;
                 if retries >= max_retries {
-                    pass(Err("Max retries exceeded"));
+                    fail("Max retries exceeded");
                 }
                 
                 await sleep(1000 * retries);  // Exponential backoff
@@ -272,7 +272,7 @@ async func:io_operations = Result<NIL>() {
     // Database I/O
     users: []User = await db.query("SELECT * FROM users")?;
     
-    pass(Ok());
+    pass();
 }
 ```
 
@@ -288,7 +288,7 @@ async func:concurrent_tasks = Result<NIL>() {
     result1 = await task1?;
     result2 = await task2?;
     
-    pass(Ok());
+    pass();
 }
 ```
 
@@ -297,7 +297,7 @@ async func:concurrent_tasks = Result<NIL>() {
 ```aria
 async func:robust_fetch = Result<Data>() {
     match await fetch_data() {
-        Ok(data) => return Ok(data),
+        Ok(data) => pass(data),
         Err(e) => {
             log_error(e);
             pass(await fetch_from_cache());

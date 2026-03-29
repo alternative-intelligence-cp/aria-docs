@@ -164,14 +164,14 @@ func:scoping_example = NIL() {
 ```aria
 func:validate = Result<int32>(int32:x) {
     if x < 0 {
-        pass(Err("Negative value"));
+        fail("Negative value");
     }
     
     if x > 100 {
-        pass(Err("Value too large"));
+        fail("Value too large");
     }
     
-    pass(Ok(x));
+    pass(x);
 }
 ```
 
@@ -208,7 +208,7 @@ func:process_file = Result<NIL>(string:path) {
         process(data);
     }  // file.close() called here
     
-    pass(Ok());
+    pass();
 }
 ```
 
@@ -273,7 +273,7 @@ if condition {
 
 // ✅ Even for single statements
 if error {
-    pass(Err("Failed"));
+    fail("Failed");
 }
 ```
 

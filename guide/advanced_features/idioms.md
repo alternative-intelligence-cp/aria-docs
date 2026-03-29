@@ -18,7 +18,7 @@ Idioms are language-specific patterns that make code more **expressive** and **r
 func:load_config = Result<Config>() {
     content: string = readFile("config.toml")?;
     config: Config = parse(content)?;
-    pass(Ok(config));
+    pass(config);
 }
 
 // ❌ Not idiomatic
@@ -26,11 +26,11 @@ func:load_config_verbose = Result<Config>() {
     match readFile("config.toml") {
         Ok(content) => {
             match parse(content) {
-                Ok(config) => return Ok(config),
-                Err(e) => return Err(e),
+                Ok(config) => pass(config),
+                Err(e) => fail(e),
             }
         }
-        Err(e) => return Err(e),
+        Err(e) => fail(e),
     }
 }
 ```
@@ -60,26 +60,26 @@ match find_user(id) {
 // ✅ Idiomatic
 func:validate = Result<NIL>(User:user) {
     if user.name == "" {
-        pass(Err("Name required"));
+        fail("Name required");
     }
     
     if user.age < 0 {
-        pass(Err("Invalid age"));
+        fail("Invalid age");
     }
     
-    pass(Ok());
+    pass();
 }
 
 // ❌ Nested
 func:validate_nested = Result<NIL>(User:user) {
     if user.name != "" {
         if user.age >= 0 {
-            pass(Ok());
+            pass();
         } else {
-            pass(Err("Invalid age"));
+            fail("Invalid age");
         }
     } else {
-        pass(Err("Name required"));
+        fail("Name required");
     }
 }
 ```
@@ -189,7 +189,7 @@ func:process = Result<NIL>() {
     defer lock.unlock();
     
     // Work with resources
-    pass(Ok());
+    pass();
 }
 
 // ❌ Manual cleanup
@@ -201,7 +201,7 @@ func:process_manual = Result<NIL>() {
     
     lock.unlock();
     file.close();
-    pass(Ok());
+    pass();
 }
 ```
 

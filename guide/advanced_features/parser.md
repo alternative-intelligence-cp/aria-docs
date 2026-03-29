@@ -73,9 +73,9 @@ impl Parser {
     
     func:expect = Result<Token>(TokenType:type, string:message) {
         if self.check(type) {
-            pass(Ok(self.advance()));
+            pass(self.advance());
         }
-        pass(Err(message));
+        fail(message);
     }
 }
 ```
@@ -95,7 +95,7 @@ impl Parser {
             declarations.push(decl);
         }
         
-        pass(Ok(Program { declarations }));
+        pass(Program { declarations });
     }
     
     // declaration → function_decl | var_decl | struct_decl
@@ -108,7 +108,7 @@ impl Parser {
             pass(self.parse_variable());
         }
         
-        pass(Err("Expected declaration"));
+        fail("Expected declaration");
     }
 }
 ```
@@ -137,7 +137,7 @@ impl Parser {
         
         body: Block = self.parse_block()?;
         
-        return Ok(FunctionDecl {
+        pass(FunctionDecl {
             name: name.lexeme,
             parameters: params,
             return_type: return_type,
@@ -166,7 +166,7 @@ impl Parser {
             }
         }
         
-        pass(Ok(params));
+        pass(params);
     }
 }
 ```
@@ -209,24 +209,24 @@ impl Parser {
             };
         }
         
-        pass(Ok(left));
+        pass(left);
     }
     
     func:parse_primary = Result<Expression>() {
         if self.check(TokenType.Integer) {
             value: Token = self.advance();
-            pass(Ok(IntegerLiteral { value: value.value }));
+            pass(IntegerLiteral { value: value.value });
         } else if self.check(TokenType.Identifier) {
             name: Token = self.advance();
-            pass(Ok(Variable { name: name.lexeme }));
+            pass(Variable { name: name.lexeme });
         } else if self.check(TokenType.LParen) {
             self.advance();
             expr: Expression = self.parse_expression()?;
             self.expect(TokenType.RParen, "Expected ')'")?;
-            pass(Ok(expr));
+            pass(expr);
         }
         
-        pass(Err("Expected expression"));
+        fail("Expected expression");
     }
 }
 ```
@@ -261,7 +261,7 @@ impl Parser {
         
         self.expect(TokenType.Semicolon, "Expected ';'")?;
         
-        pass(Ok(ReturnStatement { value }));
+        pass(ReturnStatement { value });
     }
     
     func:parse_if = Result<IfStatement>() {
@@ -276,7 +276,7 @@ impl Parser {
             else_block = Some(self.parse_block()?);
         }
         
-        return Ok(IfStatement {
+        pass(IfStatement {
             condition: condition,
             then_block: then_block,
             else_block: else_block,
@@ -331,13 +331,13 @@ impl Parser {
 func:expect = Result<Token>(TokenType:type, string:message) {
     if !self.check(type) {
         token: Token = self.peek();
-        return Err(
+        fail(
             "Parse error at &{token.line}:&{token.column}\n" ++
             `  &{message}\n` ++
             "  Found: &{token.lexeme}"
         );
     }
-    pass(Ok(self.advance()));
+    pass(self.advance());
 }
 ```
 
@@ -359,10 +359,10 @@ func:parse_program = Result<Program>() {
     }
     
     if errors.len() > 0 {
-        pass(Err(errors.join("\n")));
+        fail(errors.join("\n"));
     }
     
-    pass(Ok(Program { declarations }));
+    pass(Program { declarations });
 }
 ```
 
