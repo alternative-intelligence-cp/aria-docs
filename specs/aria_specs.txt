@@ -1551,7 +1551,7 @@ STATUS: ✅ IMPLEMENTED AND TESTED
 - Runtime enforcement: COMPLETE (preconditions + postconditions with error checking)
 - Type checking: COMPLETE (validates boolean expressions at compile-time)
 - Integration: COMPLETE (works with Result<T> error system, sticky error propagation)
-- SMT/Static verification: Deferred to post-freeze (future enhancement)
+- SMT/Static verification: COMPLETE (Z3 verifier, v0.3.4 — see Z3 VERIFIER section below)
 
 SYNTAX:
 func:function_name = returnType(params)
@@ -1694,12 +1694,17 @@ PERFORMANCE:
 - Zero overhead path: When contracts pass (branch predictor optimizes)
 - Failed contract: Returns immediately (no stack unwinding overhead)
 
-FUTURE ENHANCEMENTS (Post-freeze):
-- Static verification via SMT solver (Z3 or similar)
-- If proof succeeds: Eliminate runtime checks entirely (zero overhead)
-- If proof fails: Compile-time error with counterexample
+STATIC VERIFICATION (v0.3.4 — IMPLEMENTED):
+- Z3 SMT solver statically verifies contracts at compile time
+- If proof succeeds: Contract proven for ALL inputs (can eliminate runtime check)
+- If proof fails: Compile-time warning with counterexample
 - If proof indeterminate: Keep runtime checks (fail-stop safety)
+- Enable with: --verify-contracts flag
+- See Z3 VERIFIER section for full details
+
+FUTURE ENHANCEMENTS:
 - Loop invariants (invariant clause) - syntax reserved, not yet implemented
+- Automatic runtime check elimination when Z3 proves contract
 
 WHY CONTRACTS MATTER FOR NIKOLA:
 - Physics laws as compile-time/runtime guarantees
@@ -1707,6 +1712,229 @@ WHY CONTRACTS MATTER FOR NIKOLA:
 - Dimensional safety: Type system + contracts prevent unit errors
 - Concurrent geometry: Atomics + contracts maintain manifold validity
 - "Thermodynamic Constitutionalism": Laws of physics enforced syntactically
+
+*/
+
+/* LIMIT<RULES> — COMPILE-TIME AND RUNTIME VALUE CONSTRAINTS (v0.2.45+)
+
+STATUS: ✅ IMPLEMENTED (Phase 1 complete, Z3 verification integrated)
+
+PURPOSE:
+limit<Rules> constrains variables to only hold values that satisfy a set of
+conditions. Think of it as "types with extra requirements" — a uint8 that must
+also be even, less than 100, and non-zero. Rules are reusable, composable, and
+verified at compile-time when possible (via Z3 SMT solver).
+
+SYNTAX:
+
+Defining Rules:
+  Rules<Type1, Type2, ...>:rule_name = { condition1, condition2, ... };
+
+  - Type parameters specify which types this rule set applies to
+  - $ is the placeholder for the value being checked
+  - Conditions are comma-separated (logical AND — ALL must be true)
+
+Applying Rules:
+  limit<rule_name> Type:variable = value;
+
+  - limit<rule_name> precedes the type declaration
+  - At compile time: Z3 attempts to prove the value satisfies all conditions
+  - At runtime: If compile-time proof not possible, checked dynamically
+
+RULES DEFINITION EXAMPLES:
+
+// Single-condition rules
+Rules<int8, uint8>:r_8_lt100 = { $ < 100 };
+Rules<int8, uint8>:r_8_isEven = { $ % 2 == 0 };
+Rules<string>:r_strlen_gt1 = { $.length > 1 };
+Rules<int32>:r_positive = { $ > 0 };
+Rules<flt64>:r_unit_range = { $ >= 0.0, $ <= 1.0 };
+
+// Multi-condition rules (all must hold)
+Rules<int32>:r_valid_port = { $ >= 1, $ <= 65535 };
+Rules<flt64>:r_probability = { $ >= 0.0, $ <= 1.0 };
+
+CASCADING RULES (composition):
+
+Rules can include other rules via limit<> for a cascading effect:
+Rules<int8, uint8>:r_8_custom = { limit<r_8_lt100>, limit<r_8_isEven>, $ != 0 };
+
+This means r_8_custom enforces:
+  1. All conditions from r_8_lt100 ($ < 100)
+  2. All conditions from r_8_isEven ($ % 2 == 0)
+  3. Its own condition ($ != 0)
+
+USAGE EXAMPLES:
+
+// Literal values — verified at compile time by Z3
+limit<r_8_lt100> uint8:lt100 = 99;    // ✅ Proven: 99 < 100
+limit<r_8_lt100> uint8:lt100 = 100;   // ❌ Disproven: 100 < 100 is false
+limit<r_8_isEven> uint8:even = 20;    // ✅ Proven: 20 % 2 == 0
+limit<r_8_isEven> uint8:even = 21;    // ❌ Disproven: 21 % 2 != 0
+limit<r_strlen_gt1> string:name = "randy";  // ✅ Proven: "randy".length > 1
+limit<r_strlen_gt1> string:name = "r";      // ❌ Disproven: "r".length == 1
+
+// Cascaded rules
+limit<r_8_custom> uint8:val = 42;     // ✅ 42 < 100, 42 % 2 == 0, 42 != 0
+limit<r_8_custom> uint8:val = 101;    // ❌ Fails: 101 < 100 is false
+limit<r_8_custom> uint8:val = 0;      // ❌ Fails: 0 != 0 is false
+
+// Function parameters with limits
+func:set_port = NIL(limit<r_valid_port> int32:port) {
+    // port is guaranteed to be 1-65535
+    bind_socket(port);
+    pass(NIL);
+};
+
+TYPE SAFETY:
+- Rules have type parameters: Rules<int8, uint8> only applies to int8 and uint8
+- Applying a rule to a mismatched type is a compile-time error:
+    Rules<uint8>:r_small = { $ < 50 };
+    limit<r_small> int32:x = 10;  // ❌ COMPILE ERROR: r_small requires uint8, got int32
+
+CONDITION SYNTAX:
+- Binary comparisons: <, <=, >, >=, ==, !=
+- Arithmetic: +, -, *, /, %
+- Field access: $.length, $.field_name
+- Unary negation: -$
+- NIL/NULL checks: $ != NIL, $ != NULL
+- The $ placeholder always refers to the constrained value
+
+VERIFICATION BEHAVIOR:
+- Literal initializers: Verified at compile time by Z3 (zero runtime cost)
+- Symbolic values: Z3 attempts range-based proof; if indeterminate, runtime check emitted
+- Runtime checks return error Result on violation (integrates with sticky error propagation)
+
+RELATIONSHIP TO CONTRACTS:
+- limit<Rules> constrains VALUES at declaration/assignment sites
+- requires/ensures constrains FUNCTIONS at call/return sites
+- Both are verified by the Z3 SMT solver when --verify flags are used
+- Rules are reusable (define once, apply to many variables)
+- Contracts are per-function (specific to that function's logic)
+
+*/
+
+/* Z3 SMT VERIFIER — STATIC FORMAL VERIFICATION (v0.3.4)
+
+STATUS: ✅ IMPLEMENTED (Phases 1-3 complete)
+
+PURPOSE:
+The Z3 verifier uses the Z3 SMT (Satisfiability Modulo Theories) solver to
+mathematically prove properties about Aria programs at compile time. When a
+property can be proven, the runtime check can be eliminated entirely — the
+compiler has PROVEN it holds for ALL possible inputs.
+
+This is not testing (which checks specific inputs). This is formal verification
+(which proves properties hold universally).
+
+COMPILER FLAGS:
+  --verify              Enable Z3 verification of Rules/limit constraints
+  --verify-report       Emit detailed proof results to stdout (implies --verify)
+  --verify-contracts    Verify requires/ensures function contracts
+  --verify-overflow     Verify integer arithmetic cannot overflow
+
+All flags require the compiler to be built with Z3 support (ARIA_HAS_Z3).
+
+VERIFICATION STRATEGY — PROOF BY CONTRADICTION:
+
+To prove a property P holds for all inputs:
+  1. Assert NOT(P) to Z3
+  2. Ask: "Is NOT(P) satisfiable?"
+  3. Results:
+     - UNSAT (unsatisfiable)  → P is PROVEN for all inputs ✅
+     - SAT (satisfiable)      → P is DISPROVEN, counterexample found ❌
+     - UNKNOWN                → Solver timeout or formula too complex ⚠️
+
+Z3 context is configured with a 5-second timeout per query.
+
+PHASE 1: RULES/LIMIT VERIFICATION (--verify)
+
+Verifies that limit<Rules> constraints are satisfied:
+
+  verifyLimitInt(value, conditions)   — Prove integer literal satisfies rules
+  verifyLimitFloat(value, conditions) — Prove float literal satisfies rules
+  verifyRulesConsistency(conditions)  — Check rules aren't self-contradictory
+  verifyLimitRange(lo, hi, conditions) — Prove constraint holds for value range
+
+Example:
+  Rules<uint8>:r_small = { $ < 100, $ % 2 == 0 };
+  limit<r_small> uint8:x = 42;
+
+  Compiler (with --verify):
+    Condition: $ < 100      → Assert NOT(42 < 100)  → UNSAT → PROVEN ✅
+    Condition: $ % 2 == 0   → Assert NOT(42 % 2 == 0) → UNSAT → PROVEN ✅
+
+  limit<r_small> uint8:y = 101;
+    Condition: $ < 100      → Assert NOT(101 < 100) → SAT (101 is counterexample) → DISPROVEN ❌
+
+PHASE 2: DESIGN-BY-CONTRACT VERIFICATION (--verify-contracts)
+
+Verifies requires/ensures clauses on functions:
+
+  verifyFunctionContract(func)         — Prove ensures follow from requires + body
+  verifyCallSiteRequires(call, args)   — Prove caller satisfies callee preconditions
+
+Example:
+  func:divide = int64(int64:a, int64:b)
+      requires b != 0
+      ensures result == a / b
+  { pass(a / b); };
+
+  // At call site:
+  int64:x = divide(10, 5)?;
+
+  Compiler (with --verify-contracts):
+    Precondition b != 0: Assert NOT(5 != 0) → UNSAT → PROVEN ✅
+    (The call is provably safe — no runtime check needed)
+
+PHASE 3: ARITHMETIC OVERFLOW VERIFICATION (--verify-overflow)
+
+Verifies that integer arithmetic cannot overflow given operand ranges:
+
+  verifyNoOverflow(op, lhs_range, rhs_range, bitwidth, signed)
+
+Example:
+  int8:a = 50;   // Range: [50, 50]
+  int8:b = 30;   // Range: [30, 30]
+  int8:c = a + b; // Can 50 + 30 overflow int8 (max 127)?
+
+  Compiler (with --verify-overflow):
+    Assert NOT(50 + 30 <= 127 AND 50 + 30 >= -128) → UNSAT → No overflow PROVEN ✅
+
+VERIFICATION RESULTS:
+
+Results are reported as:
+  PROVEN      — Property mathematically proven for all inputs
+  DISPROVEN   — Counterexample found (constraint CAN be violated)
+  UNKNOWN     — Solver timeout or formula too complex (5s limit)
+
+When --verify-report is enabled, the compiler emits:
+  [Z3-PROVEN]    rules 'r_small' condition '$ < 100' for value 42 at line 5
+  [Z3-DISPROVEN] rules 'r_small' condition '$ < 100' for value 101 at line 8
+  [Z3-UNKNOWN]   ...
+
+Summary printed at end of compilation:
+  Z3 Verification Summary: 15 proven, 0 disproven, 2 unknown
+
+CONDITION ENCODING:
+- $ placeholder → Z3 variable (bitvector for ints, real for floats)
+- Binary ops: <, <=, >, >=, ==, != → Z3 comparisons
+- Arithmetic: +, -, *, /, % → Z3 bitvector/real arithmetic
+- Unary minus: -$ → Z3 negation
+- Field access: $.length → Z3 variable (symbolic)
+- Supports both signed (bitvector) and unsigned integer sorts
+
+IMPLEMENTATION FILES:
+  include/analysis/z3_verifier.h    — Z3Verifier class, VerifyResult enum, VerifyOutcome struct
+  src/analysis/z3_verifier.cpp      — Full implementation (~600 LOC)
+  src/main.cpp                      — CLI flag handling + AST walk for verification
+
+WHY THIS MATTERS:
+- Proven properties have ZERO runtime overhead (check can be eliminated)
+- Catches bugs at compile time that testing might miss
+- Formal guarantee, not probabilistic — if proven, it holds for ALL inputs
+- Essential for safety-critical Nikola code (physics constraints must be proven, not tested)
+- Integrates with both limit<Rules> (value constraints) and contracts (function constraints)
 
 */
 
