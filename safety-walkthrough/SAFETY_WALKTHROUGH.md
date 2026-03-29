@@ -17,10 +17,11 @@
 7. [Feature 5: Borrow Semantics — Compile-Time Memory Safety](#7-feature-5-borrow-semantics--compile-time-memory-safety)
 8. [Feature 6: Emergency Operators — ?! and !!!](#8-feature-6-emergency-operators---and-)
 9. [Feature 7: wild — Controlled Unsafe Access](#9-feature-7-wild--controlled-unsafe-access)
-10. [Putting It Together: The Complete Pump Controller](#10-putting-it-together-the-complete-pump-controller)
-11. [Z3 Verification in Practice](#11-z3-verification-in-practice)
-12. [Comparison with Other Approaches](#12-comparison-with-other-approaches)
-13. [Summary](#13-summary)
+10. [Feature 8: sys() — Tiered Syscall Safety](#10-feature-8-sys--tiered-syscall-safety)
+11. [Putting It Together: The Complete Pump Controller](#11-putting-it-together-the-complete-pump-controller)
+12. [Z3 Verification in Practice](#12-z3-verification-in-practice)
+13. [Comparison with Other Approaches](#13-comparison-with-other-approaches)
+14. [Summary](#14-summary)
 
 ---
 
@@ -79,6 +80,7 @@ directory:
 | `05_borrow_safety.aria` | Borrow semantics ($$i/$$m) |
 | `06_emergency_operators.aria` | ?! and !!! operators |
 | `07_infusion_pump.aria` | Complete pump controller |
+| `08_syscall_safety.aria` | sys() tiered syscall safety |
 
 ---
 
@@ -672,7 +674,58 @@ to keep the demonstrations portable and compilable without hardware.
 
 ---
 
-## 10. Putting It Together: The Complete Pump Controller
+## 10. Feature 8: sys() — Tiered Syscall Safety
+
+*(See `examples/08_syscall_safety.aria`)*
+
+Direct syscalls bypass libc — one wrong argument can corrupt memory or kill a
+process. Aria applies its TOS escalation model to make syscall danger visible
+and intentional.
+
+### The Three Tiers
+
+```aria
+sys(WRITE, 1i64, "safe\n", 5i64);      // Safe tier — curated whitelist
+sys!!(FORK);                            // Full tier — all syscalls allowed
+sys!!!(1i64, 1i64, "raw\n", 4i64);     // Raw tier — bare int64, no wrapping
+```
+
+| Tier | Return | Safety | Use Case |
+|------|--------|--------|----------|
+| `sys()` | `Result<int64>` | Compile-time whitelist (~55 safe syscalls) | Library code |
+| `sys!!()` | `Result<int64>` | All syscalls, named constants required | Process control |
+| `sys!!!()` | `int64` | No validation, any expression | Bare metal |
+
+### Compile-Time Enforcement
+
+The key innovation: `sys()` only accepts named constants from a curated
+whitelist. You cannot sneak a dangerous syscall through with a variable:
+
+```aria
+sys(WRITE, fd, buf, len);    // OK — WRITE is in safe set
+sys(FORK);                   // COMPILE ERROR: FORK not in safe set
+int64:nr = 57i64;
+sys(nr, 0i64);               // COMPILE ERROR: variables not allowed
+```
+
+The error message guides you to the right tier:
+> `error: 'FORK' is not in the safe syscall set. Use sys!!('FORK', ...) for full access.`
+
+### Why This Matters for Safety-Critical Systems
+
+1. **Auditable** — `aria-safety` flags every `sys!!` and `sys!!!` usage
+2. **Visible** — `grep 'sys!!!'` finds all raw syscall paths in a codebase
+3. **Intentional** — you cannot accidentally use the dangerous tiers
+4. **Lazy-safe** — the easiest path (`sys()`) is also the safest
+
+For the infusion pump: sensor reading and file logging use safe-tier `sys()`.
+If hardware control needed `IOCTL` (which *is* in the safe set), no escalation
+is required. Only truly dangerous operations like process spawning would need
+`sys!!` — and that would be immediately visible in review.
+
+---
+
+## 11. Putting It Together: The Complete Pump Controller
 
 *(See `examples/07_infusion_pump.aria`)*
 
@@ -789,7 +842,7 @@ safe mode — no drug is delivered.
 
 ---
 
-## 11. Z3 Verification in Practice
+## 12. Z3 Verification in Practice
 
 Aria v0.3.4 includes a built-in Z3 SMT solver integration that can verify
 limit\<Rules\> constraints and function contracts at compile time.
@@ -853,7 +906,7 @@ different from the source language.
 
 ---
 
-## 12. Comparison with Other Approaches
+## 13. Comparison with Other Approaches
 
 ### How Aria Compares to Safety-Critical Alternatives
 
@@ -886,7 +939,7 @@ different from the source language.
 
 ---
 
-## 13. Summary
+## 14. Summary
 
 Aria's safety model is built on a simple insight: **safety features that can be
 forgotten will be forgotten.** Every feature described in this walkthrough is

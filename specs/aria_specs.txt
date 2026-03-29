@@ -7707,6 +7707,98 @@ KEY PHILOSOPHY
    T[] matching: limit<r_arr> T[N]:var matches Rules<T[]> for any N.
    Rules<T> system complete as of v0.2.44.
 
+   ── SYS() SYSCALL SYSTEM — Direct Kernel Calls with TOS Safety (v0.4.0) ──
+
+   Three-tier direct Linux syscall builtin. No libc required.
+   Uses x86-64 syscall instruction (inline assembly).
+   Integrates with Aria's TOS escalation model for visible danger.
+
+   TIERS:
+
+     sys(CONST, args...)      Safe tier — curated subset, Result<int64>
+     sys!!(CONST, args...)    Full tier — all syscalls,    Result<int64>
+     sys!!!(expr, args...)    Raw tier  — bare int64,      no safety net
+
+   | Tier | Syntax     | Syscall Set      | Return       | Danger |
+   |------|------------|------------------|--------------|--------|
+   | Safe | sys(...)   | ~55 curated      | Result<int64>| Low    |
+   | Full | sys!!(...) | all ~370+        | Result<int64>| Medium |
+   | Raw  | sys!!!(..) | all ~370+        | int64        | High   |
+
+   SAFE TIER WHITELIST (sys() only allows these):
+     READ, WRITE, OPEN, CLOSE, LSEEK, PREAD64, PWRITE64,
+     OPENAT, READV, WRITEV, FSTAT, NEWFSTATAT,
+     MMAP, MUNMAP, MPROTECT, BRK, MREMAP,
+     GETDENTS64, GETCWD, CHDIR, MKDIR, RMDIR, RENAME, RENAMEAT2,
+     UNLINK, UNLINKAT, SYMLINK, READLINK,
+     FCHMOD, FCHOWN, UTIMENSAT, FACCESSAT,
+     GETPID, GETPPID, GETTID, GETUID, GETGID, GETEUID, GETEGID,
+     CLOCK_GETTIME, CLOCK_NANOSLEEP, NANOSLEEP,
+     SOCKET, BIND, LISTEN, ACCEPT4, CONNECT, SEND, RECV,
+     SENDTO, RECVFROM, SETSOCKOPT, GETSOCKOPT, SHUTDOWN,
+     POLL, PPOLL, EPOLL_CREATE1, EPOLL_CTL, EPOLL_WAIT,
+     SELECT, PSELECT6,
+     PIPE2, DUP, DUP2, DUP3, EVENTFD2,
+     IOCTL, FCNTL, FLOCK, FSYNC, FDATASYNC,
+     GETRANDOM
+
+   EXCLUDED FROM SAFE (require sys!! or sys!!!):
+     EXIT, EXIT_GROUP, KILL, TKILL, TGKILL,
+     EXECVE, EXECVEAT, FORK, CLONE, CLONE3,
+     PTRACE, MOUNT, UMOUNT2, REBOOT,
+     SETUID, SETGID, SETREUID, INIT_MODULE, DELETE_MODULE,
+     All *xattr operations
+
+   COMPILE-TIME ENFORCEMENT:
+     1. sys() first arg MUST be a named constant from the whitelist.
+        Variables and expressions are rejected — no sneaking excluded calls.
+     2. sys!!() first arg MUST be a named constant (any valid syscall).
+     3. sys!!!() first arg can be any int64 expression.
+     4. Remaining args: integer types, string, or pointer types.
+     5. Up to 6 arguments after the syscall constant (x86-64 ABI limit).
+
+   EXAMPLES:
+
+     use "sys.aria".*;  // stdlib syscall constants (SYS_READ=0, SYS_WRITE=1, etc.)
+
+     // Safe tier — most library code uses this
+     Result<int64>:written = sys(WRITE, 1i64, "Hello\n", 6i64);
+     int64:bytes = written ? 0i64;
+
+     // Full tier — for syscalls not in safe set
+     Result<int64>:pid = sys!!(FORK);
+
+     // Raw tier — bare metal, you handle error checking
+     int64:raw_result = sys!!!(1i64, 1i64, "Hi\n", 3i64);
+
+     // Compile error — FORK not in safe set:
+     // Result<int64>:bad = sys(FORK);
+     // error: 'FORK' is not in the safe syscall set. Use sys!!('FORK', ...) for full access.
+
+   RESULT WRAPPING (sys and sys!! only):
+     Negative return → fail(abs(return)) — errno as error code
+     Non-negative    → pass(return)      — success value
+
+   x86-64 SYSCALL ABI:
+     rax = syscall number
+     rdi = arg1, rsi = arg2, rdx = arg3, r10 = arg4, r8 = arg5, r9 = arg6
+     return in rax (negative = -errno on error)
+     rcx and r11 clobbered by kernel
+
+   SYSCALL CONSTANTS (stdlib/sys.aria):
+     373 constants auto-generated from /usr/include/x86_64-linux-gnu/asm/unistd_64.h
+     Format: int64:SYS_READ = 0; int64:SYS_WRITE = 1; ... int64:SYS_LSM_LIST_MODULES = 461;
+     The named constant (without SYS_ prefix) is what sys() accepts: WRITE, not SYS_WRITE.
+     Regenerate: scripts/gen-sys-constants.sh
+
+   TOS VISIBILITY:
+     sys!! and sys!!! appear in aria-safety audit output alongside wild, raw(), etc.
+     Escalating syntax is visually distinct in code review.
+     Grep for sys!!! to find all raw syscall usage in a codebase.
+
+   ARCHITECTURE:
+     Currently x86-64 Linux only. AArch64 (svc #0) planned for v0.4.1+.
+
 ═══════════════════════════════════════════════════════════════════════════ */
 
 

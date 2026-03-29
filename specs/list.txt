@@ -31,6 +31,9 @@ fall(label)             ** used in pick for fallthrough **
 pass(T:retVal)          ** constructs and returns Result<T>{tbb8:err,T:value,bool:is_error} with value set to retVal and error set to NIL, not valid in main or failsafe
 fail(tbb8:errCode)      ** constructs and returns Result<T>{tbb8:err,T:value,bool:is_error} with value set to NIL and error set to errCode, not valid in main or failsafe
 exit(int32:errCode)     ** exit the program, only valid in main and failsafe functions **
+sys(CONST, args...)     ** safe-tier direct syscall, curated whitelist (~55), returns Result<int64> **
+sys!!(CONST, args...)   ** full-tier direct syscall, all syscalls, returns Result<int64> **
+sys!!!(expr, args...)   ** raw-tier direct syscall, any int64 expression, returns bare int64 **
 
 ### Special Values #####################################################################################################
 ERR                     ** Tbb type sticky error sentinel **
@@ -169,3 +172,4 @@ Enums - 7302
 RULES + LIMIT — Refinement Types - 7319
 RULES $.field — Member Access in Rules - 7345
 RULES Array & Null — Array Indexing, Multi-Type & Null/NIL - 7370
+SYS() SYSCALL SYSTEM — Direct Kernel Calls with TOS Safety - 7712

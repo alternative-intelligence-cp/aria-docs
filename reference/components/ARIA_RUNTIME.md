@@ -20,7 +20,8 @@
 7. [Error Handling](#error-handling)
 8. [Collections](#collections)
 9. [Async Runtime](#async-runtime)
-10. [Platform Support](#platform-support)
+10. [Direct Syscalls (sys)](#direct-syscalls-sys)
+11. [Platform Support](#platform-support)
 
 ---
 
@@ -725,6 +726,36 @@ func:main = int64() {
 - **Windows**: IOCP (I/O Completion Ports)
 
 **Purpose**: Efficient I/O multiplexing for async operations
+
+---
+
+## Direct Syscalls (sys)
+
+As of v0.4.0, Aria supports direct kernel syscall invocation via the `sys()` compiler builtin, bypassing libc entirely. This is **not a runtime library feature** — the compiler emits inline `syscall` assembly instructions directly into the binary.
+
+### Three Tiers
+
+| Tier | Syntax | Safety | Return Type |
+|------|--------|--------|-------------|
+| Safe | `sys(CONST, ...)` | Compile-time whitelist (~55 syscalls) | `Result<int64>` |
+| Full | `sys!!(CONST, ...)` | All syscalls, named constants required | `Result<int64>` |
+| Raw | `sys!!!(expr, ...)` | No validation, any int64 expression | `int64` |
+
+### Relationship to Runtime
+
+The `sys()` builtin does **not** use `libaria_runtime.a`. It generates inline assembly that talks directly to the kernel. This makes it suitable for:
+
+- Building libc-free Aria programs
+- Porting `aria-libc` from C shims to pure Aria
+- Low-level system programming where runtime overhead is unacceptable
+
+### TOS Integration
+
+`sys!!` and `sys!!!` are TOS escalation constructs, reported by `aria-safety` alongside `wild`, `raw()`, and `?!`. Safe tier `sys()` requires no TOS acknowledgment.
+
+### Architecture
+
+Currently x86-64 Linux only (syscall instruction, rax/rdi/rsi/rdx/r10/r8/r9 ABI). AArch64 support (svc #0) planned for v0.4.1+.
 
 ---
 

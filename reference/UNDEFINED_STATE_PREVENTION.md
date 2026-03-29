@@ -244,4 +244,18 @@ You can be an expert swimmer, but the boat still needs emergency equipment. The 
 
 ---
 
+## Direct Syscalls and Safety (v0.4.0)
+
+The `sys()` builtin extends Aria's escalation model to kernel-level operations:
+
+| Construct | Danger | Analogy |
+|-----------|--------|---------|
+| `sys(WRITE, ...)` | Safe | Life jacket — curated whitelist, Result-wrapped |
+| `sys!!(KILL, ...)` | Medium | Emergency flare — all syscalls, still Result-wrapped |
+| `sys!!!(nr, ...)` | High | Abandoning ship — bare int64, no safety net |
+
+The safe tier cannot be bypassed with variables or expressions — only named constants from the compiler's whitelist. This prevents accidental escalation and makes dangerous syscall usage grep-able and auditable.
+
+---
+
 **Author's Note**: "I don't think one approach can cover it all. The unknown was the original idea, and I think it can cover most if we can somehow make things like divide by zero turn into unknown rather than undefined behind the scenes. Then they can actually handle that instead of crashing you know. But the failsafe was like... requiring people to have a life preserver on the boat even if they can swim. It's for when things don't go as planned."

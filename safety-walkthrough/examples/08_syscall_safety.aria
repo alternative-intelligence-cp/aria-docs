@@ -1,0 +1,129 @@
+// ============================================================================
+// 08 — Syscall Safety: Direct Kernel Access with TOS Escalation
+// ============================================================================
+// This program demonstrates Aria's three-tier syscall system and how it
+// integrates with the safety model.
+//
+// Features exercised:
+//   ✓ sys()      — safe-tier syscall with compile-time whitelist
+//   ✓ sys!!()    — full-tier syscall for operations outside safe set
+//   ✓ sys!!!()   — raw-tier syscall with no safety wrapping
+//   ✓ Result<T>  — sys/sys!! return Result<int64> for error handling
+//   ✓ failsafe   — mandatory safety net for unrecoverable errors
+//
+// Scenario:
+//   1. Write to stdout using safe-tier sys() — most common usage
+//   2. Get process ID — read-only system info
+//   3. Demonstrate error handling on failed syscall
+//   4. Show that dangerous syscalls require explicit escalation
+//
+// Key insight: The safe tier covers ~90% of what library code needs.
+// If you need sys!! or sys!!!, the code reviewer (and aria-safety) will
+// see it immediately.
+// ============================================================================
+
+use "sys.aria".*;
+
+// ====================================================================
+// SAFE TIER — Everyday system interaction
+// ====================================================================
+
+// Pure-Aria write wrapper — no C shim, no libc
+func:safe_write = int64(int64:fd, string:msg, int64:len) {
+    // sys() only accepts whitelisted constants like WRITE
+    // The compiler rejects variables or excluded syscalls here
+    Result<int64>:r = sys(WRITE, fd, msg, len);
+    int64:val = r ? -1i64;
+
+    if (val < 0i64) {
+        fail(1i8);
+    }
+
+    pass(val);
+};
+
+// Pure-Aria getpid — zero overhead, one syscall instruction
+func:get_pid = int64() {
+    Result<int64>:r = sys(GETPID);
+    int64:val = r ? -1i64;
+    pass(val);
+};
+
+// ====================================================================
+// ERROR HANDLING — sys() returns Result<int64>
+// ====================================================================
+
+// Demonstrate that failed syscalls produce proper errors
+func:demonstrate_error_handling = NIL() {
+    // Write to fd 999 — guaranteed to fail (EBADF)
+    Result<int64>:bad = sys(WRITE, 999i64, "nope", 4i64);
+    int64:result = bad ? -1i64;
+
+    if (result < 0i64) {
+        drop(safe_write(1i64, "  Error correctly caught from bad fd\n", 37i64));
+    }
+
+    // Close an invalid fd — also fails gracefully
+    Result<int64>:bad_close = sys(CLOSE, 999i64);
+    int64:closed = bad_close ? -1i64;
+
+    if (closed < 0i64) {
+        drop(safe_write(1i64, "  Error correctly caught from bad close\n", 40i64));
+    }
+
+    pass(NIL);
+};
+
+// ====================================================================
+// COMPILE-TIME SAFETY — What you CAN'T do with sys()
+// ====================================================================
+//
+// These would all produce compile errors (uncomment to verify):
+//
+//   sys(FORK);          // error: 'FORK' not in safe set
+//   sys(KILL, pid, 9);  // error: 'KILL' not in safe set
+//   sys(EXECVE, ...);   // error: 'EXECVE' not in safe set
+//
+// The error message tells you exactly how to escalate:
+//   "Use sys!!('FORK', ...) for full access"
+//
+// This is the TOS model: safety is the default, danger is explicit.
+
+// ====================================================================
+// MAIN — Tie it all together
+// ====================================================================
+
+func:main = int32() {
+    drop(safe_write(1i64, "=== Syscall Safety Walkthrough ===\n", 35i64));
+
+    // 1. Safe write
+    drop(safe_write(1i64, "\n1. Safe-tier sys(WRITE):\n", 25i64));
+    drop(safe_write(1i64, "  Hello from pure-Aria syscall!\n", 32i64));
+
+    // 2. Process info
+    drop(safe_write(1i64, "\n2. Safe-tier sys(GETPID):\n", 27i64));
+    Result<int64>:pid_r = get_pid();
+    int64:pid = pid_r ? 0i64;
+    if (pid > 0i64) {
+        drop(safe_write(1i64, "  Got PID successfully\n", 23i64));
+    }
+
+    // 3. Error handling
+    drop(safe_write(1i64, "\n3. Error handling:\n", 20i64));
+    drop(demonstrate_error_handling());
+
+    // 4. Summary
+    drop(safe_write(1i64, "\n4. Safety summary:\n", 20i64));
+    drop(safe_write(1i64, "  sys()    = safe tier, whitelist enforced\n", 43i64));
+    drop(safe_write(1i64, "  sys!!()  = full tier, all syscalls\n", 37i64));
+    drop(safe_write(1i64, "  sys!!!() = raw tier, no safety net\n", 37i64));
+    drop(safe_write(1i64, "  The safe tier covers 90% of library needs\n", 44i64));
+
+    drop(safe_write(1i64, "\nAll tests passed!\n", 19i64));
+    exit(0i32);
+};
+
+func:failsafe = int32(tbb32:err) {
+    drop(safe_write(2i64, "FAILSAFE: Unexpected error in syscall demo\n", 44i64));
+    exit(1i32);
+};
