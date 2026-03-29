@@ -209,7 +209,7 @@ func:read_sensor = int32() {
 // Calling and checking:
 Result<int32>:r = read_sensor();
 if (r.is_error) {
-    int64:code = r.error;    // safe — checked first
+    int32:code = r.error;    // safe — checked first
 } else {
     int32:val = r.value;     // safe — checked first
 }
@@ -250,7 +250,7 @@ func:main = int32() {
 
     Result<int32>:pres = read_pressure();
     if (pres.is_error) {
-        int64:code = pres.error;
+        int32:code = pres.error;
         print("Pressure sensor offline\n");
     } else {
         int32:p = pres.value;
