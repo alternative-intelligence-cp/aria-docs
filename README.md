@@ -1,5 +1,7 @@
 # aria-docs
 
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+
 Documentation, man pages, and examples for the [Aria programming language](https://github.com/alternative-intelligence-cp/aria) (v0.2.15).
 
 ## Contents
