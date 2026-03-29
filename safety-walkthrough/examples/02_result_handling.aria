@@ -1,0 +1,64 @@
+// ============================================================================
+// 02 — Result<T>: No Silent Failures
+// ============================================================================
+// Aria functions that can fail return Result<T> implicitly.  The caller
+// MUST check .is_error before accessing .value — the compiler enforces
+// this ("no-checky-no-val" rule, Phase 1 enforcement).
+//
+// There are no exceptions.  There are no null returns.  Every error path
+// is explicit and the compiler makes sure you handle it.
+// ============================================================================
+
+// --- Simulated sensor read: success path ---
+func:read_temperature = int32() {
+    // In a real system this would talk to hardware.
+    // Return the temperature in tenths of a degree (365 = 36.5 °C).
+    pass(365i32);
+};
+
+// --- Simulated sensor read: failure path ---
+func:read_pressure = int32() {
+    // Sensor offline — return error code 1 (USR_GENERAL).
+    fail(1i32);
+};
+
+// --- A function that ALWAYS succeeds ---
+func:get_default_temp = int32() {
+    pass(370i32);   // 37.0 °C body-temp default
+};
+
+func:failsafe = int32(tbb32:err) {
+    print("FAILSAFE: unrecoverable sensor error\n");
+    exit(1);
+};
+
+func:main = int32() {
+    // ------------------------------------------------------------------
+    // Pattern 1: Explicit check with .is_error / .value / .error
+    // ------------------------------------------------------------------
+    Result<int32>:temp = read_temperature();
+
+    if (temp.is_error) {
+        print("Temperature sensor failed\n");
+    } else {
+        int32:t = temp.value;
+        // t is now safe to use — the compiler saw the check.
+        print("Temperature OK\n");
+    }
+
+    // ------------------------------------------------------------------
+    // Pattern 2: Handling the error branch
+    // ------------------------------------------------------------------
+    Result<int32>:pres = read_pressure();
+
+    if (pres.is_error) {
+        int64:code = pres.error;
+        // code == -1  (SYS_GENERAL)
+        print("Pressure sensor offline — entering safe mode\n");
+    } else {
+        int32:p = pres.value;
+        print("Pressure nominal\n");
+    }
+
+    exit(0);
+};

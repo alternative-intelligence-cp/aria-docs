@@ -1,0 +1,95 @@
+// ============================================================================
+// 03 — TBB: Sticky Error Propagation
+// ============================================================================
+// TBB (Trusted Balanced Bitfield) types are integers that trap errors
+// in their sentinel value.  Once a tbb variable enters the ERR state,
+// it STAYS in ERR through every subsequent arithmetic operation.
+//
+// Sentinels:
+//   tbb8  → -128
+//   tbb16 → -32768
+//   tbb32 → -2147483648
+//   tbb64 → -9223372036854775808
+//
+// This means a bad value can NEVER silently become a good value:
+//   ERR + 1   = ERR        (not a valid number)
+//   ERR * 0   = ERR        (not zero — errors don't heal!)
+//   ERR - ERR = ERR        (not zero — errors don't cancel!)
+//
+// In safety-critical systems this prevents corrupted sensor data from
+// propagating through calculations and producing a plausible-looking
+// but wrong answer.
+// ============================================================================
+
+func:failsafe = int32(tbb32:err) {
+    print("FAILSAFE: TBB error escaped to top level\n");
+    exit(1);
+};
+
+func:main = int32() {
+    int32:failures = 0;
+
+    // ------------------------------------------------------------------
+    // Demonstrate: normal TBB arithmetic works as expected
+    // ------------------------------------------------------------------
+    tbb32:sensor_a = 100;
+    tbb32:sensor_b = 200;
+    tbb32:sum = sensor_a + sensor_b;    // 300 — normal
+    tbb32:expected_sum = 300;
+
+    if (sum != expected_sum) {
+        print("FAIL: normal TBB addition\n");
+        failures = failures + 1;
+    }
+
+    // ------------------------------------------------------------------
+    // Demonstrate: overflow produces ERR sentinel
+    // ------------------------------------------------------------------
+    tbb32:big = 2147483647;       // max tbb32 value
+    tbb32:one = 1;
+    tbb32:overflow = big + one;   // overflow → ERR (-2147483648)
+    tbb32:err_sentinel = -2147483648;
+
+    if (overflow != err_sentinel) {
+        print("FAIL: overflow did not produce ERR\n");
+        failures = failures + 1;
+    }
+
+    // ------------------------------------------------------------------
+    // Demonstrate: ERR is STICKY — it never heals
+    // ------------------------------------------------------------------
+    tbb32:corrupted = overflow;        // ERR
+    tbb32:zero = 0;
+
+    // ERR + normal = ERR
+    tbb32:still_bad = corrupted + sensor_a;
+    if (still_bad != err_sentinel) {
+        print("FAIL: ERR + normal healed\n");
+        failures = failures + 1;
+    }
+
+    // ERR * 0 = ERR  (NOT zero!)
+    tbb32:mul_zero = corrupted * zero;
+    if (mul_zero != err_sentinel) {
+        print("FAIL: ERR * 0 healed (CRITICAL)\n");
+        failures = failures + 1;
+    }
+
+    // ERR - ERR = ERR  (NOT zero!)
+    tbb32:self_sub = corrupted - corrupted;
+    if (self_sub != err_sentinel) {
+        print("FAIL: ERR - ERR healed (CRITICAL)\n");
+        failures = failures + 1;
+    }
+
+    // ------------------------------------------------------------------
+    // Result
+    // ------------------------------------------------------------------
+    if (failures == 0) {
+        print("All TBB sticky-error checks passed.\n");
+    } else {
+        print("TBB sticky-error tests had failures.\n");
+    }
+
+    exit(0);
+};

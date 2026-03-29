@@ -1,0 +1,266 @@
+// ============================================================================
+// 07 — Medical Infusion Pump Controller (Complete Application)
+// ============================================================================
+// This program demonstrates how Aria's safety features work together in a
+// realistic safety-critical application: a drug infusion pump controller.
+//
+// Features exercised:
+//   ✓ failsafe()        — mandatory emergency stop handler
+//   ✓ Result<T>         — explicit error handling, no silent failures
+//   ✓ TBB               — sticky error propagation in sensor data
+//   ✓ limit<Rules>      — compile/runtime dosage constraints
+//   ✓ Borrow ($$i/$$m)  — safe aliasing of patient data
+//   ✓ ?! operator       — local recovery with safe defaults
+//   ✓ Structs           — type-safe patient and dosage records
+//
+// Scenario:
+//   1. Load patient data and validate constraints
+//   2. Read sensors (temperature, pressure, flow)
+//   3. Calculate dosage with TBB arithmetic (errors can't hide)
+//   4. Apply limit<Rules> to constrain the final dose
+//   5. Deliver or enter safe mode
+// ============================================================================
+
+extern func:puts = int32(string:s);
+
+// ====================================================================
+// DATA TYPES
+// ====================================================================
+
+struct:Patient = {
+    int32:id;
+    int32:weight_kg;
+    int32:age_years;
+    int32:max_dose_mg;
+};
+
+struct:SensorPack = {
+    tbb32:temperature;     // tenths of °C (365 = 36.5 °C)
+    tbb32:line_pressure;   // mmHg
+    tbb32:flow_rate;       // mL/hr measured by flow sensor
+};
+
+// ====================================================================
+// CONSTRAINT RULES
+// ====================================================================
+
+// Dose must be 1–5000 mg
+Rules:r_safe_dose = {
+    $ > 0,
+    $ <= 5000
+};
+
+// Pediatric dose: inherits safe dose, further limited to 500 mg
+Rules:r_pediatric_dose = {
+    limit<r_safe_dose>,
+    $ <= 500
+};
+
+// Flow rate: 1–1000 mL/hr
+Rules:r_safe_flow = {
+    $ > 0,
+    $ <= 1000
+};
+
+// Patient weight: 1–300 kg
+Rules:r_valid_weight = {
+    $ >= 1,
+    $ <= 300
+};
+
+// Patient for drug delivery: must be ≥ 18 years, ≥ 30 kg
+Rules<Patient>:r_eligible_patient = {
+    $.age_years >= 18,
+    $.weight_kg >= 30
+};
+
+// ====================================================================
+// SENSOR SIMULATION (would be hardware reads in production)
+// ====================================================================
+
+func:read_temperature = int32() {
+    // Simulate a successful temperature reading: 36.5 °C
+    pass(365i32);
+};
+
+func:read_line_pressure = int32() {
+    // Simulate: line pressure normal at 120 mmHg
+    pass(120i32);
+};
+
+func:read_flow_rate = int32() {
+    // Simulate: flow sensor reports 0 — line may be occluded
+    fail(3i32);   // SYS_IO — I/O subsystem error
+};
+
+// ====================================================================
+// DOSAGE CALCULATION
+// ====================================================================
+
+// Calculate dose based on patient weight.
+// Uses TBB arithmetic so any sensor corruption propagates safely.
+func:calculate_dose = int32(int32:weight_kg, int32:base_dose_per_kg) {
+    // Simple weight-based dosing: dose = weight * base_rate
+    // If either input is corrupted (ERR sentinel from TBB overflow),
+    // the result will also be ERR — it cannot become a valid number.
+    tbb32:w = weight_kg;
+    tbb32:base = base_dose_per_kg;
+    tbb32:dose = w * base;
+
+    // Check for ERR propagation
+    tbb32:err_sentinel = -2147483648;
+    if (dose == err_sentinel) {
+        fail(-7);   // SYS_OVERFLOW
+    }
+
+    // Extract the int32 value — dose is known safe (not ERR) at this point
+    int32:dose_val = weight_kg * base_dose_per_kg;
+    pass(dose_val);
+};
+
+// ====================================================================
+// FAILSAFE — EMERGENCY STOP
+// ====================================================================
+
+func:failsafe = int32(tbb32:err) {
+    // In production this would:
+    //   1. Close all valves (hardware GPIO)
+    //   2. Sound audible alarm
+    //   3. Write black-box log to flash
+    //   4. Signal supervisory system via CAN bus
+    drop(puts("=== EMERGENCY STOP ==="));
+    drop(puts("Failsafe handler invoked."));
+    drop(puts("All valves closed.  Alarm sounding."));
+    exit(1);
+};
+
+// ====================================================================
+// MAIN — PUMP CONTROL LOOP (single iteration for demonstration)
+// ====================================================================
+
+func:main = int32() {
+    int32:errors = 0;
+
+    drop(puts("--- Infusion Pump Controller v1.0 ---"));
+    drop(puts(""));
+
+    // ----------------------------------------------------------------
+    // STEP 1: Load and validate patient data
+    // ----------------------------------------------------------------
+    drop(puts("[1] Loading patient data..."));
+
+    stack Patient:patient = Patient{
+        id: 1042,
+        weight_kg: 72,
+        age_years: 45,
+        max_dose_mg: 2000
+    };
+
+    // Validate patient eligibility (struct-level constraint)
+    limit<r_eligible_patient> Patient:checked_patient = patient;
+    drop(puts("    Patient eligible: age >= 18, weight >= 30 kg"));
+
+    // Validate weight independently (scalar constraint)
+    limit<r_valid_weight> int32:safe_weight = checked_patient.weight_kg;
+    drop(puts("    Weight validated: 1-300 kg range"));
+
+    // Use immutable borrows for safe read-only access to patient data
+    $$i int32:pat_weight = safe_weight;
+    int32:max_dose_val = checked_patient.max_dose_mg;
+    $$i int32:pat_max = max_dose_val;
+
+    // ----------------------------------------------------------------
+    // STEP 2: Read sensors with explicit error handling
+    // ----------------------------------------------------------------
+    drop(puts(""));
+    drop(puts("[2] Reading sensors..."));
+
+    // Temperature — expect success
+    Result<int32>:temp_result = read_temperature();
+    int32:temperature = temp_result ?! 370i32;   // default: 37.0 °C
+    if (temp_result.is_error) {
+        drop(puts("    WARN: temperature sensor failed, using default"));
+        errors = errors + 1;
+    } else {
+        drop(puts("    Temperature: OK"));
+    }
+
+    // Line pressure — expect success
+    Result<int32>:pres_result = read_line_pressure();
+    int32:pressure = pres_result ?! 100i32;   // default: 100 mmHg
+    if (pres_result.is_error) {
+        drop(puts("    WARN: pressure sensor failed, using default"));
+        errors = errors + 1;
+    } else {
+        drop(puts("    Line pressure: OK"));
+    }
+
+    // Flow rate — expect FAILURE (simulated occlusion)
+    Result<int32>:flow_result = read_flow_rate();
+    int32:flow = flow_result ?! 0i32;   // default: 0 mL/hr (safe stop)
+    if (flow_result.is_error) {
+        drop(puts("    WARN: flow sensor error — possible line occlusion"));
+        errors = errors + 1;
+    } else {
+        drop(puts("    Flow rate: OK"));
+    }
+
+    // ----------------------------------------------------------------
+    // STEP 3: Calculate dosage with TBB-safe arithmetic
+    // ----------------------------------------------------------------
+    drop(puts(""));
+    drop(puts("[3] Calculating dosage..."));
+
+    int32:base_rate = 3;   // 3 mg per kg body weight
+    Result<int32>:dose_result = calculate_dose(pat_weight, base_rate);
+
+    int32:raw_dose = dose_result ?! 0i32;   // 0 mg = no delivery on error
+
+    if (dose_result.is_error) {
+        drop(puts("    ERROR: dose calculation failed (TBB overflow)"));
+        errors = errors + 1;
+    } else {
+        drop(puts("    Raw dose calculated from patient weight"));
+    }
+
+    // ----------------------------------------------------------------
+    // STEP 4: Apply limit<Rules> to constrain the final dose
+    // ----------------------------------------------------------------
+    drop(puts(""));
+    drop(puts("[4] Applying dosage constraints..."));
+
+    // Clamp raw_dose to safe range before applying limit
+    int32:clamped = raw_dose;
+    if (clamped > pat_max) {
+        clamped = pat_max;
+        drop(puts("    Dose clamped to patient maximum"));
+    }
+    if (clamped <= 0) {
+        clamped = 1;  // minimum deliverable dose for the constraint
+    }
+
+    limit<r_safe_dose> int32:final_dose = clamped;
+    drop(puts("    Final dose within safe range (1-5000 mg)"));
+
+    // ----------------------------------------------------------------
+    // STEP 5: Delivery decision
+    // ----------------------------------------------------------------
+    drop(puts(""));
+    drop(puts("[5] Delivery decision..."));
+
+    if (errors >= 2) {
+        // Multiple sensor failures — do NOT deliver
+        drop(puts("    ABORT: multiple sensor errors detected"));
+        drop(puts("    Entering safe mode — no drug delivered"));
+        drop(puts(""));
+        drop(puts("--- Pump in SAFE MODE ---"));
+        exit(0);
+    }
+
+    // Single error or no errors — deliver with caution
+    drop(puts("    Delivering dose with active monitoring"));
+    drop(puts(""));
+    drop(puts("--- Infusion cycle complete ---"));
+
+    exit(0);
+};

@@ -1,0 +1,136 @@
+// ============================================================================
+// 04 — limit<Rules>: Compile-Time and Runtime Value Constraints
+// ============================================================================
+// Rules declarations define constraints on values.  When you annotate a
+// variable with limit<RuleName>, the compiler + runtime enforce those
+// constraints at every assignment.
+//
+// With Z3 verification (--verify), the compiler can PROVE at compile time
+// that constraints are satisfied — or report a counter-example if not.
+//
+// Syntax:
+//   Rules:name       = { $ op value };              — scalar
+//   Rules<T>:name    = { $.field op value };         — struct fields
+//   Rules:cascading  = { limit<other>, $ op value }; — composition
+// ============================================================================
+
+extern func:puts = int32(string:s);
+
+// ------------------------------------------------------------------
+// Rule definitions for a medical dosing system
+// ------------------------------------------------------------------
+
+// Dose in milligrams: must be positive and within safe range (1–5000 mg)
+Rules:r_safe_dose_mg = {
+    $ > 0,
+    $ <= 5000
+};
+
+// Flow rate in mL/hr: must be positive and within pump capability
+Rules:r_safe_flow_rate = {
+    $ > 0,
+    $ <= 1000
+};
+
+// Patient weight in kg: must be within realistic human range
+Rules:r_valid_weight = {
+    $ >= 1,
+    $ <= 300
+};
+
+// Cascading rule: a "pediatric dose" is a safe dose AND ≤ 500 mg
+Rules:r_pediatric_dose = {
+    limit<r_safe_dose_mg>,
+    $ <= 500
+};
+
+// Struct-level rules
+struct:Patient = {
+    int32:weight_kg;
+    int32:age_years;
+};
+
+Rules<Patient>:r_adult_patient = {
+    $.weight_kg >= 30,
+    $.age_years >= 18
+};
+
+func:failsafe = int32(tbb32:err) {
+    drop(puts("FAILSAFE: constraint violation — entering safe state"));
+    exit(1);
+};
+
+func:main = int32() {
+    int32:passed = 0;
+    int32:failed = 0;
+
+    // ------------------------------------------------------------------
+    // Test 1: Basic dose constraint — valid value
+    // ------------------------------------------------------------------
+    limit<r_safe_dose_mg> int32:dose = 250;
+    if (dose == 250) {
+        drop(puts("PASS: dose 250 mg within safe range"));
+        passed += 1;
+    } else {
+        drop(puts("FAIL: dose constraint"));
+        failed += 1;
+    }
+
+    // ------------------------------------------------------------------
+    // Test 2: Flow rate constraint — valid value
+    // ------------------------------------------------------------------
+    limit<r_safe_flow_rate> int32:rate = 100;
+    if (rate == 100) {
+        drop(puts("PASS: flow rate 100 mL/hr within range"));
+        passed += 1;
+    } else {
+        drop(puts("FAIL: flow rate constraint"));
+        failed += 1;
+    }
+
+    // ------------------------------------------------------------------
+    // Test 3: Patient weight — valid
+    // ------------------------------------------------------------------
+    limit<r_valid_weight> int32:weight = 70;
+    if (weight == 70) {
+        drop(puts("PASS: weight 70 kg within range"));
+        passed += 1;
+    } else {
+        drop(puts("FAIL: weight constraint"));
+        failed += 1;
+    }
+
+    // ------------------------------------------------------------------
+    // Test 4: Cascading rule — pediatric dose (inherits safe dose)
+    // ------------------------------------------------------------------
+    limit<r_pediatric_dose> int32:child_dose = 100;
+    if (child_dose == 100) {
+        drop(puts("PASS: pediatric dose 100 mg (cascade OK)"));
+        passed += 1;
+    } else {
+        drop(puts("FAIL: pediatric cascade"));
+        failed += 1;
+    }
+
+    // ------------------------------------------------------------------
+    // Test 5: Struct field constraints — adult patient
+    // ------------------------------------------------------------------
+    stack Patient:pat = Patient{weight_kg: 80, age_years: 35};
+    limit<r_adult_patient> Patient:adult = pat;
+    if (adult.weight_kg == 80) {
+        drop(puts("PASS: adult patient struct constraint"));
+        passed += 1;
+    } else {
+        drop(puts("FAIL: adult patient struct"));
+        failed += 1;
+    }
+
+    // ------------------------------------------------------------------
+    // Summary
+    // ------------------------------------------------------------------
+    if (failed == 0) {
+        drop(puts("All limit<Rules> constraint checks passed."));
+    }
+
+    exit(0);
+};

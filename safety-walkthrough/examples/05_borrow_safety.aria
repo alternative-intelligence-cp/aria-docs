@@ -1,0 +1,80 @@
+// ============================================================================
+// 05 — Borrow Semantics: Compile-Time Memory Safety
+// ============================================================================
+// Aria uses borrow annotations to prevent data races and use-after-free
+// at compile time, similar in spirit to Rust's borrow checker but with
+// explicit syntax:
+//
+//   $$i Type:ref = var;   — immutable borrow (read-only alias)
+//   $$m Type:ref = var;   — mutable borrow   (read-write alias)
+//
+// Rules enforced by the compiler:
+//   1. Any number of $$i borrows may coexist on the same variable.
+//   2. At most ONE $$m borrow may exist, and NO $$i borrows may
+//      coexist with it on the same variable.
+//   3. Writes through $$m are visible to the original variable.
+//
+// These rules eliminate entire classes of safety bugs:
+//   - No data races from concurrent read/write aliases
+//   - No dangling references (borrows cannot outlive the source)
+//   - Mutation is always explicit and tracked
+// ============================================================================
+
+func:failsafe = int32(tbb32:err) {
+    print("FAILSAFE: memory safety violation\n");
+    exit(1);
+};
+
+func:main = int32() {
+    int32:failures = 0;
+
+    // ------------------------------------------------------------------
+    // Pattern 1: Multiple immutable borrows — ALLOWED
+    // ------------------------------------------------------------------
+    int32:sensor_reading = 42;
+
+    $$i int32:view_a = sensor_reading;   // read-only alias #1
+    $$i int32:view_b = sensor_reading;   // read-only alias #2
+
+    // Both see the same value
+    int32:check1 = view_a + view_b;   // 42 + 42 = 84
+    if (check1 != 84) {
+        print("FAIL: immutable borrows disagree\n");
+        failures = failures + 1;
+    }
+
+    // ------------------------------------------------------------------
+    // Pattern 2: Single mutable borrow — write through alias
+    // ------------------------------------------------------------------
+    int32:actuator_position = 0;
+
+    $$m int32:control = actuator_position;   // mutable alias
+    control = 100;   // write through the borrow
+
+    // Original variable reflects the mutation
+    if (actuator_position != 100) {
+        print("FAIL: mutable borrow write not visible\n");
+        failures = failures + 1;
+    }
+
+    // ------------------------------------------------------------------
+    // Pattern 3: Borrow prevents accidental aliasing
+    // ------------------------------------------------------------------
+    // In C/C++ you could have two pointers to the same int and mutate
+    // through one while reading through the other — undefined behavior
+    // in concurrent code.  Aria's borrow rules make this a compile error.
+    //
+    // The following would NOT compile:
+    //   $$m int32:mut_ref = sensor_reading;   // ERROR: $$i borrows active
+    //
+    // You must ensure no $$i borrows are live when taking a $$m borrow.
+
+    // ------------------------------------------------------------------
+    // Result
+    // ------------------------------------------------------------------
+    if (failures == 0) {
+        print("All borrow safety checks passed.\n");
+    }
+
+    exit(0);
+};
