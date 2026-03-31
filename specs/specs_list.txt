@@ -165,32 +165,5 @@ stdin                   ** text input stream **
 stddati                 ** data input stream **
 stddato                 ** data output stream **
 
-### Features (FEATURE - /home/randy/Workspace/REPOS/aria-docs/specs/aria_specs.txt line number) ########################
-LAYERED SAFETY SYSTEM : Result<T> + unknown + failsafe Defense Against Undefined Behavior - 9
-GENERATIONAL HANDLES (Handle<T>) : Safe Arena Pointer Alternative - 479
-LBIM TYPES (int1024/2048/4096) : Limb-Based Integral Model for Post-Quantum Crypto - 991
-fix256 TYPE : Q128.128 Deterministic Fixed-Point for Safety-Critical Systems - 1157
-MEMORY MODEL & CONCURRENCY SAFETY : Atomic Ordering, Fences, Data Race Prevention - 1304
-DESIGN BY CONTRACT : requires/ensures/invariant Formal Contracts - 1546
-RESULT<T> SYSTEM : Mandatory Error Handling - 2482
-TOS SAFETY VOCABULARY : Explicit Bypass Table (wild, drop, raw, ok, ?!) - 2844
-GENERIC FUNCTION SYNTAX - 2989
-TURBOFISH SYNTAX (::<T>) : EXPLICIT TYPE ARGUMENTS - 3051
-GENERIC CONSTRAINTS (TRAITS) - 3305
-CLOSURES AND LAMBDAS : ANONYMOUS FUNCTIONS - 3454
-DEFER STATEMENT : GUARANTEED CLEANUP - 3882
-FAILSAFE SYSTEM : Mandatory Unrecoverable Error Handler - 4503
-MODULE SYSTEM : use/mod/pub/extern Code Organization - 5111
-MEMORY ALLOCATION MODES : EXPLICIT ALLOCATION CONTROL - 5492
-STRING INTERPOLATION : TEMPLATE LITERALS - 5868
-Borrow Semantics - 7190
-Traits - 7215
-Type: System - 7237
-Channels - 7255
-Actors - 7278
-Enums - 7302
-RULES + LIMIT — Refinement Types - 7319
-RULES $.field — Member Access in Rules - 7345
-RULES Array & Null — Array Indexing, Multi-Type & Null/NIL - 7370
-SYS() SYSCALL SYSTEM — Direct Kernel Calls with TOS Safety - 7712
-USER STACK (astack/apush/apop/apeek) : Per-Scope Implicit LIFO Scratch Pad - 6109
+### MORE INFO ##########################################################################################################
+aria-docs/guide
