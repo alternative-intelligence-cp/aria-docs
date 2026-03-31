@@ -48,7 +48,7 @@ func:main = int64() {
     int64:r3 = asm_call_i64(double_op, 21);         // 42
     
     // Verify all results
-    int64:all_correct = (r1 == 42 && r2 == 42 && r3 == 42) ? 1 : 0;
+    int64:all_correct = is (r1 == 42 && r2 == 42 && r3 == 42) : 1 : 0;
     
     // Cleanup
     asm_free(add_op);

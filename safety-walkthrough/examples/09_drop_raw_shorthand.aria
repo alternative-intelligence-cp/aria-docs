@@ -10,20 +10,20 @@ use std.io;
 func:failsafe = nil(tbb8:err) {
     println("failsafe: error code " + err);
     exit(1i32);
-}
+};
 
 // A function that always succeeds
 func:safe_add = Result<int64>(int64:a, int64:b) {
     pass(a + b);
-}
+};
 
 // A function that might fail
 func:risky_divide = Result<int64>(int64:a, int64:b) {
-    if b == 0i64 then
-        fail(1t8);
-    end
+    if (b == 0i64){
+        fail(1tbb8);
+    }
     pass(a / b);
-}
+};
 
 func:main = int32() {
     // === _? shorthand (drop) ===
@@ -48,14 +48,14 @@ func:main = int32() {
     // === Mixing both styles ===
     // Use verbose where readability matters:
     Result<int64>:r = risky_divide(100i64, 4i64);
-    if r.err == NULL then
+    if (r.err == NULL){
         int64:val = raw(r);
         drop(println("divide result: " + val));
-    end
+    }
 
     // Use terse in compact code:
     int64:q = _!safe_add(1i64, 1i64);
     _?println("quick: " + q);
 
     exit(0i32);
-}
+};

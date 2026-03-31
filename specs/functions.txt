@@ -118,3 +118,64 @@ For application-level errors triggered by `!!! code` (failsafe invocation).
 - ERR (tbb sentinel) means "we don't know what happened" — always handle it
 - Code 0 should never reach failsafe in normal operation, but handle it gracefully
 - Libraries should document their error codes in the 100+ range and avoid collisions
+
+
+## User Stack Builtins (v0.4.3)
+
+Per-scope implicit LIFO scratch pad for type-safe intra-function value passing.
+Separate from the hardware call stack and the `stack` memory allocation keyword.
+
+### `astack(capacity?)`
+Initialize one implicit stack per function scope.
+- `capacity`: optional `int64`, default 256 slots if omitted
+- No handle returned — the stack is implicit to the current scope
+- Must be called before `apush`/`apop`/`apeek` in the same scope
+
+```aria
+astack(64i64);   // 64-slot stack
+astack();        // 256-slot default
+```
+
+### `apush(value)`
+Push a typed value onto the implicit stack.
+- Accepts: int8, int16, int32, int64, flt32, flt64, bool, string, pointer
+- Type tag stored automatically (no manual tag management)
+- Fatal `exit(1)` with diagnostic to stderr on overflow
+- No return value
+
+```aria
+apush(42i64);
+apush(3.14f64);
+apush(true);
+```
+
+### `apop()`
+Pop the top value. Destination type inferred from assignment context.
+- Zero arguments
+- Runtime type-tag checking: fatal `exit(1)` on mismatch or underflow
+- Returns value directly (not wrapped in `Result<T>`)
+
+```aria
+int64:n = apop();    // pops as int64
+flt64:f = apop();    // pops as flt64
+bool:b = apop();     // pops as bool
+```
+
+### `apeek()`
+Non-destructive read of the top value.
+- Same context-typed semantics as `apop()`
+- Value remains on stack
+
+```aria
+int64:top = apeek();  // reads top without removing
+```
+
+### Error Model
+Fatal errors (not Result<T>):
+- Stack overflow on push → stderr diagnostic + `exit(1)`
+- Stack underflow on pop/peek → stderr diagnostic + `exit(1)`
+- Type mismatch on pop/peek → stderr diagnostic + `exit(1)`
+
+### Auto-Cleanup
+Stack is automatically destroyed on function return (explicit return or fallthrough).
+No manual cleanup needed.

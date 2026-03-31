@@ -3,6 +3,15 @@ func:main = int32(argc,argv)        ** program entry, must call exit() **
 func:failsafe = int32(tbb32:err)    ** final safety net and chance to degrade gracefully, must call exit(code) with code > 0 **
 
 ### Keywords ###########################################################################################################
+return Result<T>        ** exit from function with given value. value must be a Result<T> instance where T matches function return type a or Result literal. example: return Result{ error: err, value:NIL,is_error:true};
+ok maybeUnknownVal      ** allow passing a variable that may have value 'unknown' down the chain **
+drop myFunc()           ** bypass Result system and drop Result **
+raw myFunc()            ** bypass Result system and return Result.value **
+defaults value          ** use default value if error in proceeding expression chain ** examples: a = func(a() + 2 +c(2 + d() defaults 3) defaults 2);   //     b = func(2) + 10 + func() defaults unknown;
+fall label              ** used in pick for fallthrough **
+pass T:retVal           ** constructs and returns Result<T>{tbb8:err,T:value,bool:is_error} with value set to retVal and error set to NIL, not valid in main or failsafe
+fail tbb8:errCode       ** constructs and returns Result<T>{tbb8:err,T:value,bool:is_error} with value set to NIL and error set to errCode, not valid in main or failsafe
+exit int32:errCode      ** exit the program, only valid in main and failsafe functions **
 wild                    ** unmanaged memory **
 defer                   ** guarantees cleanup code runs when scope exits **
 async                   ** declare function async **
@@ -24,15 +33,21 @@ result                  ** Special variable in 'ensures' clauses bound to functi
 limit<Rules>            ** utilize compile time and runtime checks to ensure values meet certain tolerances **
 
 ### Builtin Helpers ####################################################################################################
-ok(unknownVal)          ** allow passing a variable that may have value 'unknown' down the chain **
-drop()                  ** bypass Result system and drop Result **
-_?                      ** prefix shorthand for drop() — desugars at parse time **
-raw()                   ** bypass Result system and return Result.value **
-_!                      ** prefix shorthand for raw() — desugars at parse time ** 
-fall(label)             ** used in pick for fallthrough **
-pass(T:retVal)          ** constructs and returns Result<T>{tbb8:err,T:value,bool:is_error} with value set to retVal and error set to NIL, not valid in main or failsafe
-fail(tbb8:errCode)      ** constructs and returns Result<T>{tbb8:err,T:value,bool:is_error} with value set to NIL and error set to errCode, not valid in main or failsafe
-exit(int32:errCode)     ** exit the program, only valid in main and failsafe functions **
+astack(capacity?)       ** initialize per-scope implicit user stack, optional capacity (default 256), Returns opaque handle **
+apush(handle,value)     ** push typed value onto implicit user stack, fatal exit(1) on overflow **
+apop(handle)            ** pop top value, type inferred from assignment context, fatal exit(1) on mismatch/underflow **
+apeek(handle)           ** non-destructive peek at top value, same context-typed semantics as apop **
+acap(handle)            ** return size of stack in bytes of scope stack **
+asize(handle)           ** return number of bytes used in scope stack **
+afits(handle,val)       ** boolean, true if the val will fit on the stack without overflow **
+atype(handle)           ** returns type of item on top of stack, could be useful for avoiding type mismatch error **
+ahash(cap)              ** (int64) → int64` | Create hash table with byte budget `cap`. Returns opaque handle. 0 = unbounded. **
+ahsize(handle)          ** (int64) → int64` | Current size in bytes of all stored entries. **
+ahget(handle, key)      ** (int64, str) → T` | Retrieve value at key. Returns `NIL` if key not found. Type of receiving var determines expected type — mismatch triggers failsafe. **
+ahset(handle, key, val) ** (int64, str, T) → int32` | Set key to value. Returns 0 on success, -1 on overflow (capacity exceeded). **
+ahcount(handle)          ** (int64) → int64` | Return number of keys in table. **
+ahfits(handle, val)     ** (int64, T) → int64` | Returns 1 if `val` can fit within remaining capacity, 0 otherwise. Always 1 if capacity is unbounded. **
+ahtype(handle, key)     ** (int64, str) → int32` | Returns type tag of value at key, or -1 if key not found. ** 
 sys(CONST, args...)     ** safe-tier direct syscall, curated whitelist (~55), returns Result<int64> **
 sys!!(CONST, args...)   ** full-tier direct syscall, all syscalls, returns Result<int64> **
 sys!!!(expr, args...)   ** raw-tier direct syscall, any int64 expression, returns bare int64 **
@@ -75,7 +90,7 @@ atomic<T>                                           ** Generic atomic type for l
 simd<T,N>                                           ** Generic SIMD vector type where T is element type, N is lane count (power of 2) **
 Handle<T>                                           ** safe alternative to raw pointers for arena-allocated memory **
 
-### Control Flow ###
+### Control Flow #######################################################################################################
 if/else                 ** standard if/else construct **
 while                   ** standard while loop for advanced uses **
 for                     ** standard for for advanced uses **
@@ -121,6 +136,9 @@ $                       ** Safe iteration var, checked value in Rules declaratio
 ??                      ** Null coalesce **
 ?!                      ** Emphatic unwrap, calls failsafe if error **
 ?.                      ** Safe navigation**
+?|                      ** shorthand for defaults keyword — desugars at parse time **
+_?                      ** shorthand for drop keyword — desugars at parse time **
+_!                      ** shorthand for raw keyword — desugars at parse time **
 |>                      ** Pipe forward **
 <|                      ** Pipe backward **
 ..                      ** inclusive range **
@@ -139,7 +157,7 @@ $$m                     ** mutable borrow **
 */                      ** end block comment **
 \                       ** escape **
 
-### Aria STREAMS ###
+### Aria STREAMS #######################################################################################################
 stdout                  ** text output stream **
 stderr                  ** error output stream **
 stddbg                  ** debug output stream **
@@ -175,3 +193,4 @@ RULES + LIMIT — Refinement Types - 7319
 RULES $.field — Member Access in Rules - 7345
 RULES Array & Null — Array Indexing, Multi-Type & Null/NIL - 7370
 SYS() SYSCALL SYSTEM — Direct Kernel Calls with TOS Safety - 7712
+USER STACK (astack/apush/apop/apeek) : Per-Scope Implicit LIFO Scratch Pad - 6109

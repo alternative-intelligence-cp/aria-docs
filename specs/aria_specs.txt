@@ -5,9 +5,17 @@ ARIA LANGUAGE PRIORITIY ORDER: NON NEGOTIABLE - SAFETY ABOVE ALL ELSE FOR SAFETY
 4. Performance
 5. Developer Comfort/Convenience
 
-/* ═══════════════════════════════════════════════════════════════════════════
+/*
+NOTE - 
+Condensed list of features at: 
+  /home/randy/Workspace/REPOS/aria-docs/specs/list.txt
+It may be more up to date at times than this full specs sheet as it is smaller
+and easier to maintain. 
+- END NOTE
+
+═══════════════════════════════════════════════════════════════════════════
    LAYERED SAFETY SYSTEM - ARIA'S DEFENSE AGAINST UNDEFINED BEHAVIOR
-   ═══════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════
 
 !! CRITICAL DESIGN PHILOSOPHY !!
 "Never reach undefined state that causes immediate crash"
@@ -3104,6 +3112,8 @@ Using them means you explicitly accept responsibility for correctness.
 │ ?           │ Unwrap with default value (safe - provides fallback)            │
 │ ??          │ Null-coalescing for NIL optionals (safe - provides fallback)    │
 │ ?!          │ Emphatic unwrap (triggers failsafe on error - safe-ish)         │
+│ ?|          │ Defaults operator — scoped fallback for Result chain            │
+│ defaults    │ Keyword form of ?| — scoped fallback for Result chain           │
 │ !!!         │ Direct failsafe() call / panic                                  │
 └─────────────┴─────────────────────────────────────────────────────────────────┘
 
@@ -3223,6 +3233,40 @@ Shorthand (_!):
 
   ⚠️  _! carries the same risks as raw(). If the Result is an error,
   you get back whatever ERR sentinel the type carries.
+
+---
+
+Defaults Operator (?| and defaults keyword):
+  The ?| operator provides a scoped fallback for Result<T> expressions.
+  If ANY intermediate Result in the expression chain errors, the entire
+  expression short-circuits to the default value.
+
+  Syntax:
+    expr ?| fallback_value
+    expr defaults fallback_value
+
+  Both forms are equivalent. ?| is the symbolic form, defaults is the keyword form.
+
+  Examples:
+    int64:x = add(3i64, 4i64) ?| 0i64;       // x = 7 (add succeeds)
+    int64:y = add(10i64, 20i64) defaults 0i64; // y = 30 (keyword form)
+    int64:z = risky() ?| safe_value;           // z = safe_value if risky() errors
+
+  Nesting:
+    int64:n = func(a() + 2i64 ?| 3i64) ?| 5i64;
+    // Inner: a() + 2 ?| 3 — if a() errors, use 3
+    // Outer: func(...) ?| 5 — if func() errors, use 5
+
+  Semantics:
+    - Wraps the expression in a fallback scope
+    - If any sub-expression returns Result<T> with is_error=true, branches to fallback
+    - Fallback value must match the expected type
+    - Complementary to ?! (force-unwrap) and ? (single Result assignment)
+
+  Implementation:
+    - Parser: precedence 1 (lowest), creates DefaultsExpr AST node
+    - Codegen: defaults_fallback_stack_ with PHI merge blocks
+    - ERR check branches to fallback block, normal path continues to merge
 
 ---
 
@@ -6104,6 +6148,307 @@ Choose based on requirements:
 "Explicit allocation modes = predictable performance = safety-critical readiness"
 
 */
+
+
+/* USER STACK — PER-SCOPE IMPLICIT LIFO SCRATCH PAD (v0.4.3 - March 2026)
+
+!! DISTINCT FROM CALL STACK AND MEMORY MODE 'stack' !!
+The user stack is a compiler-managed typed LIFO scratch pad for passing values
+between computation steps within a function. It is NOT the hardware call stack
+and is NOT related to the 'stack' memory allocation keyword.
+
+PHILOSOPHY: "Safe by default, opt-in to danger."
+The user stack provides zero-ceremony type-safe value passing. The compiler
+manages handles, type tags, and cleanup automatically. For cases where raw
+speed is the priority, plain variables are always available. For cases where
+a library needs custom stack semantics, extern C stacks are linkable.
+The user stack exists for ergonomics and safety — the same task can always
+be done with plain variables (faster) or library stacks (more flexible).
+
+---
+
+BUILTIN FUNCTIONS:
+
+All astack builtins support both keyword syntax and parenthesized syntax:
+  astack 64i64;    OR  astack(64i64);
+  apush 42i64;     OR  apush(42i64);
+  int64:x = apop;  OR  int64:x = apop();
+  int64:x = apeek;  OR  int64:x = apeek();
+  // etc.
+
+astack capacity  /  astack(capacity)
+  Initialize one implicit stack per function scope.
+  - capacity: optional int64, default 256 slots if omitted
+  - No handle returned — the stack is implicit to the current scope
+  - Each slot is 16 bytes (8 value + 8 type tag)
+  - Backed by mmap for lazy page allocation
+  - Must be called before apush/apop/apeek in the same scope
+  - Only one user stack per function scope
+
+apush value  /  apush(value)
+  Push a typed value onto the implicit stack.
+  - Accepts: int8, int16, int32, int64, flt32, flt64, bool, string, pointer
+  - Type tag stored automatically per slot (no manual tag management)
+  - Fatal exit(1) with diagnostic to stderr on overflow
+  - No return value (fire-and-forget)
+
+apop  /  apop()
+  Pop the top value from the implicit stack.
+  - Zero arguments — destination type inferred from assignment context
+  - Example: flt32:f = apop();  // compiler knows to pop as flt32
+  - Example: int64:n = apop();  // compiler knows to pop as int64
+  - Runtime type-tag checking: fatal exit(1) on type mismatch
+  - Fatal exit(1) on underflow (empty stack)
+  - Returns the value directly (not wrapped in Result<T>)
+
+apeek  /  apeek()
+  Read the top value without removing it.
+  - Same context-typed semantics as apop()
+  - Non-destructive — value remains on stack
+  - Same fatal error model (type mismatch, underflow)
+
+---
+
+AUTO-CLEANUP:
+
+The user stack is automatically destroyed on function return:
+  - On explicit return statements
+  - On fallthrough at end of function body
+  - No manual cleanup needed (unlike wild/extern stacks)
+
+Implementation: hidden __aria_ustack_handle alloca with scope-based destruction.
+
+---
+
+ERROR MODEL:
+
+The user stack uses a FATAL error model, not Result<T>:
+  - Push overflow → stderr diagnostic + exit(1)
+  - Pop underflow → stderr diagnostic + exit(1)
+  - Pop type mismatch → stderr diagnostic + exit(1)
+  - This is intentional: stack misuse is a programming error, not a runtime condition
+
+---
+
+EXAMPLE — Basic push/pop:
+
+func:example = NIL() {
+    astack(64i64);                  // 64-slot stack
+
+    apush(42i64);                   // push int64
+    apush(3.14f64);                 // push flt64
+    apush(true);                    // push bool
+
+    bool:b = apop();               // pops true (bool)
+    flt64:pi = apop();             // pops 3.14 (flt64)
+    int64:n = apop();              // pops 42 (int64)
+
+    pass(NIL);
+};
+
+EXAMPLE — Computation accumulator:
+
+func:compute = int64() {
+    astack();                       // default 256 slots
+
+    int64:i = 0i64;
+    int64:sum = 0i64;
+
+    while (i < 1000i64) {
+        apush(i * 3i64 + 1i64);
+        apush(i * 7i64 + 2i64);
+
+        int64:b = apop();
+        int64:a = apop();
+        sum = sum + a + b;
+
+        i = i + 1i64;
+    }
+
+    pass(sum);
+};
+
+EXAMPLE — Mixed types:
+
+func:mixed = NIL() {
+    astack(16i64);
+
+    apush(100i32);
+    apush(2.718f32);
+    apush(999i64);
+
+    int64:big = apop();            // 999
+    flt32:e = apop();              // 2.718
+    int32:small = apop();          // 100
+
+    pass(NIL);
+};
+
+---
+
+SUPPORTED TYPE TAGS:
+
+| Tag | Type   | Width  |
+|-----|--------|--------|
+| 0   | int8   | 8-bit  |
+| 1   | int16  | 16-bit |
+| 2   | int32  | 32-bit |
+| 3   | int64  | 64-bit |
+| 4   | flt32  | 32-bit |
+| 5   | flt64  | 64-bit |
+| 6   | bool   | 1-bit  |
+| 7   | string | ptr    |
+| 8   | pointer| ptr    |
+
+Float values are stored via bitcast (float → int64 bits → stored; pop reverses).
+This preserves exact IEEE 754 representation through the int64 storage slot.
+
+---
+
+PERFORMANCE CHARACTERISTICS:
+
+Benchmarked at 10M iterations (push-two, pop-two, accumulate):
+  - Plain variables: ~20ms (baseline — no stack overhead)
+  - Library C stack (extern, gcc -O2): ~90ms (~4x baseline)
+  - Builtin user stack (astack/apush/apop): ~185ms (~8-9x baseline)
+
+The builtin is slower than a hand-optimized C library stack because:
+  1. Type tag checking on every pop (the library version also checks, but gcc -O2 optimizes better)
+  2. mmap-backed storage vs malloc
+  3. LLVM codegen for the builtin path is not yet optimized
+
+WHEN TO USE:
+  ✅ Type-safe inter-step value passing within a function
+  ✅ When ergonomics and safety matter more than raw speed
+  ✅ Prototyping and exploration (zero ceremony)
+  ✅ When you need dynamic depth (unknown number of values)
+  ✅ Mixed-type scratch storage (int + float + bool in same stack)
+
+WHEN NOT TO USE:
+  ❌ Hot inner loops where nanoseconds matter (use plain variables)
+  ❌ Cross-function value passing (use parameters/returns)
+  ❌ Large data (use arrays, structs, or heap)
+  ❌ Thread-shared data (use channels or atomics)
+
+---
+
+RELATIONSHIP TO OTHER FEATURES:
+
+- 'stack' keyword: Memory placement qualifier (stack vs gc vs wild). UNRELATED.
+- Call stack: Hardware stack for function frames. UNRELATED.
+- Handle<T>: Safe arena pointers. Different use case (long-lived allocation).
+- Channels: Thread-safe message passing. Different use case (cross-thread).
+- User stack: Per-scope LIFO scratch pad for intra-function value juggling.
+
+"The user stack is a safety and ergonomics feature, not a performance feature.
+ There are no solutions, only tradeoffs." — Aria Design Philosophy
+
+*/
+
+
+/* AHASH — BUILT-IN ASSOCIATIVE HASH TABLE (v0.4.5 - April 2026)
+
+The ahash system provides compiler-managed typed hash tables as a built-in
+collection type. Like astack, ahash uses keyword syntax with optional
+parentheses and automatic cleanup on scope exit.
+
+PHILOSOPHY: "Type-safe by default, fast-path when proven safe."
+When the Z3 SMT verifier can prove all values in a hash table are the same
+type (homogeneous), the compiler emits fast-path runtime calls that skip
+per-entry type tag checking.
+
+---
+
+BUILTIN FUNCTIONS:
+
+All ahash builtins support parenthesized syntax:
+
+ahash(capacity)
+  Create a new hash table with the given initial capacity.
+  - capacity: int64 — number of buckets to allocate
+  - Returns an opaque handle (int64) for the hash table
+  - Automatically destroyed on scope exit
+
+ahset(handle, key, value)
+  Insert or update a key-value pair.
+  - handle: int64 — hash table handle from ahash()
+  - key: string — the key to insert
+  - value: any supported type (int8-int64, flt32, flt64, bool, string)
+  - Type tag stored automatically per entry
+  - Overwrites existing value if key exists
+
+ahget(handle, key)
+  Retrieve a value by key.
+  - handle: int64 — hash table handle
+  - key: string — the key to look up
+  - Return type inferred from assignment context (like apop)
+  - Returns NIL/zero if key not found
+  - Runtime type-tag checking (unless fast-path mode)
+
+ahcount(handle)
+  Return the number of entries in the hash table.
+  - handle: int64 — hash table handle
+  - Returns: int64 — number of key-value pairs stored
+  - NOTE: Returns the count of entries, NOT a list of keys
+
+ahsize(handle)
+  Return the total capacity of the hash table.
+  - handle: int64 — hash table handle
+  - Returns: int64 — number of buckets allocated
+
+ahfits(handle, value)
+  Check if a value can be inserted without resizing.
+  - handle: int64 — hash table handle
+  - value: the value to check
+  - Returns: bool — true if there is room
+
+ahtype(handle, key)
+  Return the type tag of the value stored at a key.
+  - handle: int64 — hash table handle
+  - key: string — the key to check
+  - Returns: int64 — type tag number (see type tag table)
+  - Not available in fast-path mode (no type tags in homogeneous tables)
+
+---
+
+AUTO-CLEANUP:
+
+Hash tables are automatically destroyed on function return:
+  - On explicit return statements
+  - On fallthrough at end of function body
+  - No manual cleanup needed
+
+---
+
+FAST-PATH MODE:
+
+When the Z3 SMT verifier proves that all values inserted into a hash table
+are the same type (e.g., all int64), the compiler sets uhash_fast_mode and
+emits _fast runtime calls that skip type-tag computation and checking.
+
+Fast-path functions: ahash, ahset, ahget, ahcount, ahsize, ahfits, destroy
+NOT available in fast-path: ahtype (type tags don't exist in homogeneous tables)
+
+---
+
+EXAMPLE — Basic hash table:
+
+func:example = NIL() {
+    int64:ht = ahash(64i64);
+
+    ahset(ht, "name", "Alice");
+    ahset(ht, "age", 30i64);
+
+    string:name = ahget(ht, "name");
+    int64:age = ahget(ht, "age");
+    int64:count = ahcount(ht);
+
+    println(name);     // Alice
+    pass(NIL);
+};
+
+*/
+
 
 // STRUCT DECLARATIONS (CRITICAL: Consistent syntax with func and var declarations)
 // !! SYNTAX: struct:name = { type:field; type:field; }; !!
