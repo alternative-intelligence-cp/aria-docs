@@ -4,7 +4,8 @@
 
 ```aria
 wild int32:raw = 42;
-wild uint8->:buffer = wild_alloc(4096);
+wild int8->:buffer = alloc(1024);
+wild int64->:ptr = alloc<int64>();
 ```
 
 Wild memory is **not tracked** by stack cleanup or GC. You are responsible for cleanup.
@@ -14,11 +15,13 @@ Wild memory is **not tracked** by stack cleanup or GC. You are responsible for c
 Use `defer` to ensure cleanup runs when scope exits:
 
 ```aria
-wild int32->:ptr = wild_alloc(sizeof(int32));
-defer wild_free(ptr);    // guaranteed to run on scope exit
+wild int8->:buffer = alloc(1024);
+defer {
+    free(buffer);
+}
 
-// ... use ptr ...
-// wild_free(ptr) runs automatically here
+// ... use buffer ...
+// free(buffer) runs automatically at scope exit
 ```
 
 `defer` executes in LIFO (last-in, first-out) order for multiple defers.
@@ -29,11 +32,15 @@ defer wild_free(ptr);    // guaranteed to run on scope exit
 
 ```aria
 wildx uint8->:code = wildx_alloc(4096);   // 4KB executable page
-defer wildx_free(code);
+defer {
+    wildx_free(code);
+}
 
 // Write machine code into 'code' buffer
 // Execute via function pointer cast
 ```
+
+**Note:** `wildx` is specified but has no passing tests yet.
 
 ## When to Use Wild
 

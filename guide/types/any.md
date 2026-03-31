@@ -2,62 +2,56 @@
 
 ## Overview
 
-`any` is Aria's dynamically-typed value container (equivalent to C's `void*`). It can hold
-any type, with the actual type tracked at runtime. Internally implemented as a fat pointer
-`{ptr, i64}` with a type tag.
+`any` is Aria's dynamically-typed value container. It can hold any type, with the actual
+type tracked at runtime. Internally implemented as a fat pointer `{ptr, i64}` with a type tag.
 
-Also available as `dyn` (alias).
+> **Note:** `dyn` is NOT an alias for `any`. `dyn` is used exclusively for trait object
+> dispatch (`dyn TraitName` in function parameters). See [traits](../advanced_features/traits.md).
 
 ## Declaration
 
 ```aria
-any:value = 42;
-value = "hello";    // reassign to different type — legal with any
-value = 3.14;
+any:box = 42i64;
 ```
 
-## Type Checking
+## Access Methods
 
-!!! NOTE:
-incorrect syntax for when use.
-Correct form:
-when(condition){
-    //loops
-}then{
-    //happy path
-}end{
-    //error path
-} is correct form
-incorrect use of is. example use of is ternary: int8:a = is 2 > 1 : 4 : 5;
-!!! END NOTE
+Use turbofish syntax to read, write, and resolve `any` values:
 
 ```aria
-when value is int32 then { 
-    println("It's an integer");
-}
+// Read with get::<T>()
+int64:val = box.get::<int64>();
 
-// Pattern match with binding
-when value is int32(n) then {
-    println(`Integer value: &{n}`);
-}
+// Write with set::<T>(value)
+box.set::<int64>(100i64);
+
+// Resolve — consuming transform to concrete pointer
+int64->:ptr = box.resolve::<int64>();
 ```
 
 ## Casting
 
-!!! NOTE:
-I am not aware of as being used to cast, we have some kind of cast<>() thing and => for casting
-any type should have some methods attached that function in the way you are using as here. 
-We just need to look them up and see what they are.
-!!! END NOTE 
+`any` does not use `as` for casting. Aria has three cast forms:
 
 ```aria
-int32:num = value as int32;   // unsafe cast — panics on type mismatch
+// Infix arrow cast
+int32:num = some_value => int32;
+
+// Checked builtin
+int32:num = @cast<int32>(some_value);
+
+// Unchecked builtin (wraps/truncates on overflow)
+int8:truncated = @cast_unchecked<int8>(large_value);
 ```
+
+For `any`, use `.get::<T>()` or `.resolve::<T>()` to extract the concrete value.
 
 ## Heterogeneous Collections
 
 ```aria
-any[]:items = [42, "hello", 3.14, true];
+any[5]:items;
+items[0] = 42i64;
+items[1] = "hello";
 ```
 
 ## Performance

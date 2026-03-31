@@ -18,9 +18,17 @@ Trit values: `T` (−1), `0` (0), `1` (+1).
 
 ## Status
 
-**⚠️ These are specified but minimally implemented.** They exist in the type system
-for research and exotic computing use cases (balanced ternary computing, nonary
-architectures).
+Basic initialization and comparison operations compile and pass tests:
+
+```aria
+trit:a = 1;
+trit:b = 0;
+tryte:ta = 1;
+nit:n1 = 3;
+nyte:ny1 = 7;
+```
+
+These types are functional for basic operations. Advanced arithmetic is limited.
 
 ## Related
 

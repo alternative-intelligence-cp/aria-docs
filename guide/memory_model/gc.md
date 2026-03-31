@@ -2,10 +2,17 @@
 
 ## Declaration
 
+GC allocation is **implicit** — variables that are not marked `wild` or `stack` are
+garbage collected:
+
 ```aria
-gc string:shared_data = "persistent";
-gc []int32:heap_array = [1, 2, 3, 4, 5];
+Point:p1;
+p1.x = 10i32;
+p1.y = 20i32;
 ```
+
+The `gc` keyword exists in the lexer but is not used as a prefix in practice.
+Absence of `wild` = GC-managed.
 
 ## When to Use
 

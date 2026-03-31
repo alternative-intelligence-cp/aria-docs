@@ -16,13 +16,13 @@ Handle<T> = { uint64:index, uint32:generation }
 
 ```aria
 // Create arena and allocate
-Handle<Point>:h = arena.alloc(Point{ x = 1.0, y = 2.0 });
+Handle<Point>:h = arena.alloc(Point{x: 1.0, y: 2.0});
 
 // Access (checks generation — returns ERR if stale)
 Point:p = arena.get(h) ? default_point;
 
 // Update
-arena.set(h, Point{ x = 3.0, y = 4.0 });
+arena.set(h, Point{x: 3.0, y: 4.0});
 
 // Free (increments generation — future gets return ERR)
 arena.free(h);

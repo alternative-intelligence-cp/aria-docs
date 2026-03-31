@@ -14,8 +14,6 @@ println(`DEBUG: x = &{x}, y = &{y}`);
 
 - `atype(handle)` — type tag of top astack element
 - `ahtype(handle, key)` — type tag of ahash entry
-- `@typeof(expr)` — type of expression
-- `@sizeof(type)` — size in bytes
 
 ## Common Issues
 

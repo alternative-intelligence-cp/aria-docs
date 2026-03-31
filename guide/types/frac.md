@@ -43,8 +43,15 @@ frac32: 1/3 = {0, 1, 3}        (exact, zero drift)
 
 ## Status
 
-**⚠️ Specified but not yet implemented in the compiler.** The type system design and
-LLVM IR layout are defined. Implementation is planned.
+`frac8`, `frac16`, and `frac32` compile with `{whole, num, denom}` initializer syntax:
+
+```aria
+frac8:half = {0, 1, 2};       // 0 + 1/2
+frac16:third = {0, 1, 3};     // 0 + 1/3
+frac32:mixed = {1, 1, 3};     // 1 + 1/3
+```
+
+`frac64` can be declared but does not yet support initialization.
 
 ## Related
 

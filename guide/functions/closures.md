@@ -1,26 +1,36 @@
 # Closures & Lambdas
 
-## Anonymous Functions
+## Function Pointer Variables
+
+Lambda expressions are assigned to typed variables using function pointer syntax:
 
 ```aria
-func:apply = int32(func:f, int32:x) {
-    pass raw f(x);
-}
+(int32)(int32):identity = int32(int32:x) { pass x; };
 
-// Lambda passed as argument
-int32:result = raw apply(func(int32:x) { pass (x * 2); }, 21);
+(int32)(int32, int32):add = int32(int32:a, int32:b) {
+    int32:sum = a + b;
+    pass sum;
+};
 ```
 
-## Closures
+The variable type is `(ReturnType)(ParamTypes)` — return type first, then parameter types.
 
-Closures capture variables from the enclosing scope:
+## Passing as Arguments
+
+Higher-order functions accept function pointers as parameters:
 
 ```aria
-int32:multiplier = 3;
-func:scale = int32(int32:x) {
-    pass (x * multiplier);    // captures 'multiplier'
-}
+func:apply = int32((int32)(int32):f, int32:x) {
+    int32:result = f(x) ? -1i32;
+    pass result;
+};
+
+(int32)(int32):dbl = int32(int32:x) { int32:v = x + x; pass v; };
+int32:r = apply(dbl, 21i32) ? -1i32;
 ```
+
+**Note:** Lambdas must be assigned to a named variable first, then passed by name.
+There are no anonymous inline lambdas at call sites.
 
 ## Related
 

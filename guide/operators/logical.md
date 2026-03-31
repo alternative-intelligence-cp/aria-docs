@@ -25,7 +25,11 @@ if (is_ready && has_data) {
     process();
 }
 
-when (!done) then {
+when (!done) {
     work();
+} then {
+    // completed normally
+} end {
+    // condition was false initially
 }
 ```

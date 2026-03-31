@@ -6,11 +6,15 @@
 
 ```aria
 wildx uint8->:code_page = wildx_alloc(4096);   // 4KB executable
-defer wildx_free(code_page);
+defer {
+    wildx_free(code_page);
+}
 
 // Write machine code bytes into code_page
 // Cast to function pointer and call
 ```
+
+**Note:** `wildx` is specified in the language but has limited test coverage.
 
 ## Safety
 

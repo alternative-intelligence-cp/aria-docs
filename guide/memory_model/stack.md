@@ -23,7 +23,7 @@ func:example = NIL() {
         int32:inner = 2;   // only exists in this if-block
     }
     // 'inner' is gone here
-    pass(NIL);
+    pass NIL;
 }
 ```
 

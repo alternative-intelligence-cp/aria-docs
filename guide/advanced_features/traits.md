@@ -6,28 +6,49 @@ Traits define shared behavior that types can implement. They serve as constraint
 for generic type parameters.
 
 ```aria
-trait Printable {
-    func:to_string = string(Self->:self);
-}
+trait:Describable = {
+    func:describe = int32(int32:self);
+};
 ```
 
 ## Implementation
 
 ```aria
-impl Printable for Point {
-    func:to_string = string(Point->:self) {
-        pass `(&{self.x}, &{self.y})`;
-    }
-}
+impl:Describable:for:int32 = {
+    func:describe = int32(int32:self) {
+        pass self + 100;
+    };
+};
+```
+
+For struct types:
+
+```aria
+trait:Measurable = {
+    func:area = int32(Rect2D:self);
+};
+
+impl:Measurable:for:Rect2D = {
+    func:area = int32(Rect2D:self) {
+        pass self.w * self.h;
+    };
+};
 ```
 
 ## As Generic Constraints
 
 ```aria
-func:display = NIL(T:value) requires Printable<T> {
-    println(raw value.to_string());
-    pass(NIL);
-}
+func<T: Addable>:apply_trait = int32(T:val) {
+    pass val;
+};
+```
+
+## Dynamic Dispatch — `dyn`
+
+```aria
+func:process = int32(dyn Describable:item) {
+    pass item.describe();
+};
 ```
 
 ## Status

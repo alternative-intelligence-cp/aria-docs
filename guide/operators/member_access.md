@@ -2,31 +2,31 @@
 
 | Operator | Meaning | Example |
 |----------|---------|---------|
-| `.` | Field access | `person.name` |
+| `.` | Field access / enum member | `person.name`, `Color.RED` |
 | `->` | Pointer member access | `ptr->field` |
-| `::` | Scope resolution / namespace | `Color::RED`, `vec2::ZERO` |
 | `?.` | Safe navigation (NIL-safe) | `ptr?.field` |
 
 ## Field Access
 
 ```aria
-Person:p = { name = "Alice", age = 30 };
-println(p.name);    // "Alice"
-println(p.age);     // 30
+stack Point:p = Point{x: 10, y: 20};
+int32:px = p.x;
+int32:py = p.y;
 ```
 
 ## Pointer Access
 
 ```aria
-Person->:ptr = @person;
-println(ptr->name);
+stack Point->:ptr = @p;
+int32:x_val = ptr->x;
+ptr->x = 100;
 ```
 
-## Scope Resolution
+## Enum Member Access
 
 ```aria
-Color:c = Color::RED;          // enum variant
-vec2:v = vec2::ZERO;           // type constructor
+Color:c = Color.RED;           // dot notation for enum members
+int64:r = Color.RED;
 ```
 
 ## Turbofish — `::<T>`

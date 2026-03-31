@@ -4,17 +4,18 @@
 
 Multi-dimensional array type for numerical computing and AI workloads.
 
-```aria
-tensor:t = tensor_new([3, 3]);  // 3×3 tensor
-```
-
 ## matrix
 
-2D matrix type. Semantically a rank-2 tensor with matrix-specific operations
-(multiplication, transpose, determinant).
+2D matrix type. Semantically a rank-2 tensor with matrix-specific operations.
+
+## Status
+
+**⚠️ Not yet implemented.** The types are registered in the parser and can be declared,
+but have no constructors or operations. Also registered as `tmatrix` and `ttensor`.
 
 ```aria
-matrix:m = matrix_new(3, 3);
+matrix:mat;   // compiles (declaration only)
+tensor:tens;  // compiles (declaration only)
 ```
 
 ## Related

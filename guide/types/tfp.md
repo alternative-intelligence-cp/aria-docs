@@ -1,6 +1,6 @@
 # Twisted Floating Point — `tfp`
 
-**Widths:** `tfp16`, `tfp32`
+**Widths:** `tfp32`, `tfp64`
 
 ## Overview
 
@@ -9,13 +9,19 @@ TBB-style sticky error propagation. They are to floats what TBB is to integers.
 
 | Type | Bytes | Notes |
 |------|-------|-------|
-| tfp16 | 2 | Half-precision with ERR sentinel |
 | tfp32 | 4 | Single-precision with ERR sentinel |
+| tfp64 | 8 | Double-precision with ERR sentinel |
 
 ## Status
 
-**⚠️ Specified but not yet implemented in the compiler.** These types are part of the
-language specification and reserved for future implementation.
+`tfp32` and `tfp64` compile with `{exponent, mantissa}` initializer syntax:
+
+```aria
+tfp32:pi_approx = {1, 14159};
+tfp64:e_approx = {2, 71828};
+```
+
+Basic initialization works. Full arithmetic operations are in progress.
 
 ## Related
 

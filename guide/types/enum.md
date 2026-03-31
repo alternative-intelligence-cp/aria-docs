@@ -17,11 +17,23 @@ enum:Mixed = { A, B = 10, C };                            // C = 11 (continues f
 
 ```aria
 Color:my_color = Color.RED;
+int64:val = Color.GREEN;     // enums convert to int64
 
 pick (my_color) {
-    Color.RED   => { println("Red"); }
-    Color.GREEN => { println("Green"); }
-    Color.BLUE  => { println("Blue"); }
+    (Color.RED)   { drop println("Red"); },
+    (Color.GREEN) { drop println("Green"); },
+    (Color.BLUE)  { drop println("Blue"); },
+    (*) {}
+}
+```
+
+Enum comparison:
+
+```aria
+Color:a = Color.RED;
+Color:b = Color.BLUE;
+if (a != b) {
+    drop println("Different colors");
 }
 ```
 

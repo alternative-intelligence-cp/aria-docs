@@ -12,14 +12,16 @@
 
 ## Spaceship Operator
 
-Three-way comparison returning `-1` (less), `0` (equal), or `1` (greater):
+Three-way comparison returning `-1` (less), `0` (equal), or `1` (greater).
+Result type is `int64`.
 
 ```aria
-int32:cmp = (a <=> b);
+int64:cmp = (a <=> b);
 pick (cmp) {
-    -1 => { println("a < b"); }
-    0  => { println("a == b"); }
-    1  => { println("a > b"); }
+    (-1i64) { println("a < b"); },
+    (0i64)  { println("a == b"); },
+    (1i64)  { println("a > b"); },
+    (*) {}
 }
 ```
 
@@ -28,11 +30,11 @@ pick (cmp) {
 Aria uses `is` for ternary expressions:
 
 ```aria
-int32:max = is a > b : a : b;
-string:msg = is count == 0 : "empty" : "has items";
+int32:max = is (a > b) : a : b;
+string:msg = is (count == 0) : "empty" : "has items";
 ```
 
-Syntax: `is condition : true_value : false_value`
+Syntax: `is (condition) : true_value : false_value`
 
 ## Float Comparison
 

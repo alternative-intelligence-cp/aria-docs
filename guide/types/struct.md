@@ -2,58 +2,91 @@
 
 ## Overview
 
-Structs are composite types that group named fields. Methods are defined separately
-from the struct declaration.
+Structs are composite types that group named fields. Methods are defined via trait
+implementations.
 
 ## Declaration
 
 ```aria
-struct Point {
-    flt64:x,
-    flt64:y
-}
+struct:Point = {
+    int32:x;
+    int32:y;
+};
 
-struct Person {
-    string:name,
-    int32:age
-}
+struct:Person = {
+    string:name;
+    int32:age;
+};
 ```
 
 ## Instantiation and Access
 
-```aria
-Point:p = { x = 1.0, y = 2.0 };
-println(p.x);    // 1.0
-println(p.y);    // 2.0
+Struct literal syntax with named fields:
 
-Person:alice = { name = "Alice", age = 30 };
+```aria
+stack Point:p = Point{x: 10, y: 20};
+println(p.x);    // 10
+println(p.y);    // 20
+
+stack Person:alice = Person{name: "Alice", age: 30};
 ```
 
-## Methods
-
-Methods are defined as functions with a `->` self parameter:
+Positional arguments (order must match declaration):
 
 ```aria
-func:area = flt64(Rectangle->:self) {
-    pass (self.width * self.height);
-}
+Point:p = Point{10i32, 20i32};
 ```
 
-## Nested Structs
+Constructor syntax (desugars to `Type_create(args)`):
 
 ```aria
-struct Employee {
-    string:name,
-    Address:address
-}
+Counter:c = raw instance<Counter>(10i32);
+```
 
-struct Address {
-    string:city,
-    string:zip
-}
+Fields can also be assigned after declaration:
 
-Employee:emp = { name = "Bob", address = { city = "Austin", zip = "78701" } };
-println(emp.address.city);  // "Austin"
+```aria
+Point:p;
+p.x = 10i32;
+p.y = 20i32;
+```
+
+## Methods (via Trait Impls)
+
+Methods are defined through trait implementations:
+
+```aria
+trait:HasArea = {
+    func:area: int32(Rect2D:self);
+};
+
+struct:Rect2D = {
+    int32:w;
+    int32:h;
+};
+
+impl:HasArea:for:Rect2D = {
+    func:area = int32(Rect2D:self) {
+        pass self.w * self.h;
+    };
+};
+
+// Call via UFCS (Uniform Function Call Syntax)
+Rect2D:rect;
+rect.w = 10i32;
+rect.h = 5i32;
+Result<int32>:a = rect.area();
+```
+
+## Passing Structs
+
+```aria
+func:add_coords = int32(Point:p) {
+    pass p.x + p.y;
+};
+
+Point:origin = Point{ x: 0, y: 0 };
+int32:sum = raw add_coords(origin);
 ```
 
 ## Related

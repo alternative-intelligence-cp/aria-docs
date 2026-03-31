@@ -29,14 +29,15 @@ flt64:pi = identity::<flt64>(3.14);
 
 ## Generic Constraints
 
-Constraints limit which types can be used (requires traits — see
-[advanced_features/traits.md](../advanced_features/traits.md)):
+Constraints limit which types can be used via trait bounds:
 
 ```aria
-func:sum = T(T:a, T:b) requires Addable<T> {
+func<T: Addable>:sum = int32(T:a, T:b) {
     pass (a + b);
-}
+};
 ```
+
+See [advanced_features/traits.md](../advanced_features/traits.md) for trait definitions.
 
 ## Related
 

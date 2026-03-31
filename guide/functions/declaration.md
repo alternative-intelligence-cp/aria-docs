@@ -11,7 +11,7 @@ func:add = int32(int32:a, int32:b) {
 
 func:greet = NIL(string:name) {
     println(`Hello, &{name}!`);
-    pass(NIL);
+    pass NIL;
 }
 ```
 
@@ -21,7 +21,7 @@ func:greet = NIL(string:name) {
 - Return type comes before the parameter list
 - Parameters use `type:name` syntax
 - `NIL` return type for functions that return nothing
-- NIL-returning functions must end with `pass(NIL);`
+- NIL-returning functions must end with `pass NIL;`
 - ALL functions return `Result<T>` implicitly (except extern functions)
 
 ## Calling Functions

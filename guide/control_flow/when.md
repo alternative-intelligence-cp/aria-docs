@@ -3,35 +3,41 @@
 ## Syntax
 
 ```aria
-when (condition) then {
+when (condition) {
     // body — executes while condition is true
-} end
+} then {
+    // runs when loop completed normally (condition became false)
+} end {
+    // runs when condition was initially false, or break was used
+}
 ```
 
 ## Example
 
 ```aria
-int32:retries = 3;
-when (retries > 0) then {
-    bool:success = raw try_connection();
-    if (success) {
-        retries = 0;    // exit loop
-    } else {
-        retries--;
-    }
-} end
+int32:i = 0i32;
+int32:result = 0i32;
+when (i < 3i32) {
+    i = i + 1i32;
+} then {
+    result = 1i32;     // loop completed normally
+} end {
+    result = 2i32;     // condition was initially false or break
+}
 ```
 
 ## vs while
 
-`when/then/end` is semantically similar to `while` but intended for state-machine
-patterns where the loop tracks a changing condition. Use `while` for simple loops,
-`when` for state-driven loops.
+`when/then/end` is semantically similar to `while` but also tracks *how* the loop
+terminated. `then` runs on normal completion (condition became false). `end` runs if
+the condition was initially false or `break` was used. Use `while` for simple loops,
+`when` for state-driven loops where termination reason matters.
 
 ## Notes
 
-- No trailing semicolon after `end`
-- `end` keyword terminates the block (not just `}`)
+- The loop body goes in the `when (cond) { }` block
+- `then { }` is the normal-completion handler
+- `end { }` is the false-or-break handler
 
 ## Related
 

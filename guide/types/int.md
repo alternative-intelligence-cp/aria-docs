@@ -28,9 +28,8 @@ Aria provides two's complement signed integers in powers of 2 from 1-bit to 4096
 ## Declaration
 
 ```aria
-int32:x = 42;           // explicit type
-x := 100;               // inferred as int32
-int64:big = 9999999i64;  // suffix selects width
+int32:x = 42;                 // explicit type
+int64:big = 9999999i64;       // suffix selects width
 int128:huge = 99999999999999999999i128;  // suffix required for large literals
 ```
 

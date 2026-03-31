@@ -5,13 +5,22 @@
 Rules define compile-time and runtime constraints on types:
 
 ```aria
-Rules<int32> PositiveInt {
-    $ > 0;          // $ is the checked value
-}
+Rules<int32>:r_positive = {
+    $ > 0
+};
 
-Rules<string> NonEmpty {
-    string_length($) > 0;
-}
+Rules<int32>:r_small_positive = {
+    limit<r_positive>,
+    $ < 100
+};
+```
+
+Multi-type rules (value validated against multiple widths):
+
+```aria
+Rules<int32,int64>:r_positive_wide = {
+    $ > 0
+};
 ```
 
 ## limit<Rules>
@@ -19,38 +28,32 @@ Rules<string> NonEmpty {
 Apply Rules as a type annotation:
 
 ```aria
-func:process = NIL(limit<PositiveInt> int32:count) {
+func:process = NIL(limit<r_positive> int32:count) {
     // 'count' is guaranteed > 0
-    pass(NIL);
+    pass NIL;
 }
 ```
 
 ## Member Access in Rules — $.field
 
 ```aria
-Rules<Person> ValidPerson {
-    $.age > 0;
-    $.age < 200;
-    string_length($.name) > 0;
-}
+Rules<Person>:r_adult = {
+    $.age >= 18
+};
 ```
 
-## Array & Null Rules
+## Array Rules
 
 ```aria
-Rules<[]int32> NonEmptyArray {
-    $.length > 0;
-}
-
-Rules<int32?> NotNull {
-    $ != NIL;
-}
+Rules<int32[]>:arr_first_positive = { $[0] > 0 };
+Rules<int32[]>:arr_min_length = { $.length >= 4 };
 ```
 
 ## Notes
 
 - `$` is the value being checked
 - `$.field` accesses struct members
+- `$[n]` accesses array elements
 - Rules are file-scoped — not importable via `use`
 
 ## Related

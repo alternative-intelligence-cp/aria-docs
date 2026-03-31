@@ -12,9 +12,12 @@ Aria has borrow operators for safe reference passing:
 ## Usage
 
 ```aria
-$$i:ref = value;        // immutable borrow
-$$m:mut_ref = value;    // mutable borrow
+$$i int32:ref = value;        // immutable borrow
+$$m int32:mut_ref = value;    // mutable borrow
 ```
+
+Multiple immutable borrows are allowed simultaneously. Only one mutable borrow at a time.
+The compiler enforces the 1-mut XOR N-immut rule.
 
 ## Pin
 

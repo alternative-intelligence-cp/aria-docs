@@ -2,13 +2,17 @@
 
 ## Overview
 
-Standard contiguous arrays with compile-time or runtime sizing.
+Standard contiguous arrays with compile-time sizing.
 
 ## Declaration
 
 ```aria
-[]int32:numbers = [1, 2, 3, 4, 5];
-[]string:names = ["Alice", "Bob", "Carol"];
+int32[5]:numbers;
+numbers[0] = 10i32;
+numbers[1] = 20i32;
+numbers[2] = 30i32;
+numbers[3] = 40i32;
+numbers[4] = 50i32;
 ```
 
 ## Access
@@ -16,12 +20,17 @@ Standard contiguous arrays with compile-time or runtime sizing.
 ```aria
 int32:first = numbers[0];     // zero-indexed
 int32:last = numbers[4];
+if (numbers[2] != 30i32) {
+    // handle error
+}
 ```
 
 ## Slicing
 
 ```aria
-[]int32:sub = numbers[1..3];  // inclusive range: [2, 3, 4]
+int64[5]:nums;
+int64[]:slice = nums[0..4];    // inclusive range
+int64[]:slice2 = nums[0...2];  // exclusive range
 ```
 
 ## Related

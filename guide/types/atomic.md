@@ -7,9 +7,17 @@ T ≤ 64 bits; locked (mutex-backed) for larger types.
 
 ## Declaration
 
+Two forms are supported:
+
 ```aria
-atomic<int64>:counter = atomic_new(0);
+stack atomic<int32>:counter;                       // uninitialized stack allocation
+atomic<int32>:counter = atomic_new(0i32);           // initialized with value
+stack atomic<bool>:flag;                            // boolean atomic
 ```
+
+**Type constraint:** `atomic<T>` requires lock-free compatible types:
+`int8`–`int64`, `uint8`–`uint64`, `bool`, `tbb8`–`tbb64`.
+Floats, strings, and arrays are **rejected** at compile time.
 
 ## Memory Ordering
 
@@ -25,12 +33,12 @@ Weaker orderings require `unsafe { }`:
 ## Operations
 
 ```aria
-int64:val = counter.load();              // read
-counter.store(42);                        // write
-int64:old = counter.swap(99);            // exchange
-bool:ok = counter.compare_exchange(99, 100);  // CAS
-int64:prev = counter.fetch_add(1);       // atomic increment
-int64:prev = counter.fetch_sub(1);       // atomic decrement
+int32:val = counter.load();                         // read
+counter.store(42i32);                               // write
+int32:old = counter.swap(100i32);                   // exchange
+bool:ok = counter.compare_exchange(99i32, 100i32);  // CAS
+int32:prev = counter.fetch_add(1i32);               // atomic increment
+int32:prev = counter.fetch_sub(1i32);               // atomic decrement
 ```
 
 Weak CAS (`compare_exchange_weak`) may spuriously fail — use in a loop.
@@ -41,7 +49,8 @@ The TBB ERR sentinel value remains atomic — ERR propagation works through atom
 
 ## Status
 
-Partial implementation: basic operations complete, advanced orderings in progress.
+Basic operations (load, store, swap, CAS, fetch_add, fetch_sub) are implemented.
+Advanced memory orderings are in progress.
 
 ## Related
 

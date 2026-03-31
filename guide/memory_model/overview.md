@@ -25,16 +25,17 @@ names outside allocation contexts.
 ## GC Allocation
 
 ```aria
-gc string:data = "hello";
+string:data = "hello";     // no wild/stack prefix = GC-managed
 ```
 
 GC-allocated values are tracked by the garbage collector and freed when no longer
-referenced.
+referenced. This is implicit — absence of `wild` or `stack` means GC mode.
 
 ## Wild (Unmanaged)
 
 ```aria
 wild int32:raw_val = 42;
+wild int8->:buf = alloc(1024);
 ```
 
 No automatic cleanup. Combine with `defer` for manual resource management.

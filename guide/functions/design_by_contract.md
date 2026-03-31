@@ -10,36 +10,40 @@ where possible and at runtime otherwise.
 
 ```aria
 func:divide = flt64(int32:a, int32:b)
-    requires (b != 0)
+    requires b != 0
 {
     pass (a / b);
 }
 ```
 
+Multiple conditions are comma-separated:
+
+```aria
+func:clamp_to_byte = int32(int32:val)
+    requires val >= 0, val <= 255
+{
+    pass val;
+}
+```
+
 ## Ensures — Postconditions
 
-The special `result` variable is bound to the return value in `ensures` clauses:
-
 ```aria
-func:abs = int32(int32:x)
-    ensures (result >= 0)
+func:check_order = int32(int32:lo, int32:hi)
+    requires lo >= 0, hi > lo
+    ensures hi > 0
 {
-    if (x < 0) {
-        pass (0 - x);
-    }
-    pass x;
+    pass hi - lo;
 }
 ```
 
-## Invariant — Loop Invariants
+Contract clauses go between the closing `)` of the signature and the opening `{` of
+the body. Compiled with `--verify-contracts` flag (uses Z3 SMT solver).
 
-```aria
-int32:sum = 0;
-loop(0, 10, 1) {
-    invariant (sum >= 0);
-    sum = (sum + $);
-}
-```
+## Invariant
+
+Loop invariants are specified in the language design but have limited compiler test
+coverage.
 
 ## Related
 
