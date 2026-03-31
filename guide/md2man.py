@@ -45,7 +45,7 @@ def markdown_to_man(md_content, title, section=7, description=""):
     
     # Man page header
     today = date.today().strftime("%B %Y")
-    man_lines.append(f'.TH {title.upper()} {section} "{today}" "Aria v0.0.7" "Aria Programming Guide"')
+    man_lines.append(f'.TH {title.upper()} {section} "{today}" "Aria v0.4.7" "Aria Programming Guide"')
     
     # Name section
     man_lines.append('.SH NAME')
@@ -181,21 +181,31 @@ def convert_all_guides(guide_dir, output_dir):
     guide_path = Path(guide_dir)
     output_path = Path(output_dir)
     
-    # Find all .md files
-    md_files = list(guide_path.rglob('*.md'))
+    # Find all .md files (skip README, html dir, man dir)
+    md_files = [f for f in guide_path.rglob('*.md')
+                if f.name != 'README.md'
+                and 'html' not in f.relative_to(guide_path).parts
+                and 'man' not in f.relative_to(guide_path).parts]
     
     print(f"Converting {len(md_files)} markdown files to man pages...")
     print(f"Output directory: {output_path}")
     
+    # Detect duplicate stems to prefix with category
+    from collections import Counter
+    stems = Counter(f.stem for f in md_files)
+    
     for md_file in md_files:
-        # Calculate relative path for organization
         rel_path = md_file.relative_to(guide_path)
+        stem = rel_path.stem.replace('_', '-')
         
-        # Convert to man page name (section 7 for documentation)
-        # e.g., types/int32.md → aria-int32.7
-        man_name = f"aria-{rel_path.stem.replace('_', '-')}.7"
+        # Prefix with category if stem appears more than once
+        if stems[rel_path.stem] > 1 and len(rel_path.parts) > 1:
+            category = rel_path.parts[0].replace('_', '-')
+            man_name = f"aria-{category}-{stem}.7"
+        else:
+            man_name = f"aria-{stem}.7"
+        
         man_file = output_path / 'man7' / man_name
-        
         convert_file(md_file, man_file)
     
     # Create main aria.7 overview
@@ -232,20 +242,21 @@ Aria is a modern systems programming language featuring symmetric signed integer
 
 Access detailed documentation with:
 
-- **Types**: man aria-int32, man aria-tbb8, man aria-handle
-- **Control Flow**: man aria-if-else, man aria-for, man aria-pick
-- **Functions**: man aria-lambda, man aria-generics
-- **I/O**: man aria-io-overview, man aria-six-stream-topology
-- **Memory**: man aria-borrowing, man aria-gc
-- **Operators**: man aria-range, man aria-add
+- **Types**: man aria-int, man aria-tbb, man aria-result, man aria-string
+- **Control Flow**: man aria-if-else, man aria-for, man aria-pick, man aria-when
+- **Functions**: man aria-declaration, man aria-generics, man aria-extern
+- **I/O**: man aria-print, man aria-file-io, man aria-sys
+- **Memory**: man aria-borrow, man aria-gc, man aria-wild
+- **Operators**: man aria-arithmetic, man aria-result-operators, man aria-cast
+- **Collections**: man aria-astack, man aria-ahash
 
 ## ONLINE DOCUMENTATION
 
-https://aria.docs.ai-liberation-platform.org/
+https://ai-liberation-platform.org/aria/docs/
 
 ## VERSION
 
-Aria v0.0.7-dev (February 2026)
+Aria v0.4.7 (July 2026)
 """
     
     man_content = markdown_to_man(content, 'aria', section=7, description='Aria Programming Language')

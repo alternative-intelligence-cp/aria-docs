@@ -18,12 +18,21 @@ value = 3.14;
 
 ## Type Checking
 
-NOTE:
-//incorrect syntax for when use: when(condition){//loops}then{//happy path}end{//error path} is correct form
-//incorrect use of is. example use of is ternary: int8:a = is 2 > 1 : 4 : 5;
+!!! NOTE:
+incorrect syntax for when use.
+Correct form:
+when(condition){
+    //loops
+}then{
+    //happy path
+}end{
+    //error path
+} is correct form
+incorrect use of is. example use of is ternary: int8:a = is 2 > 1 : 4 : 5;
+!!! END NOTE
 
 ```aria
-when value is int32 then { //incorrect syntax for when use: when(condition){//loops}then{//happy path}end{//error path} is correct form
+when value is int32 then { 
     println("It's an integer");
 }
 
@@ -34,6 +43,12 @@ when value is int32(n) then {
 ```
 
 ## Casting
+
+!!! NOTE:
+I am not aware of as being used to cast, we have some kind of cast<>() thing and => for casting
+any type should have some methods attached that function in the way you are using as here. 
+We just need to look them up and see what they are.
+!!! END NOTE 
 
 ```aria
 int32:num = value as int32;   // unsafe cast — panics on type mismatch

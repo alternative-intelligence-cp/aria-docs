@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result<T> — Mandatory Error Handling - Aria Programming Guide</title>
+    <style>
+        :root {
+            --bg-main: #1e1e1e;
+            --bg-code: #2d2d2d;
+            --bg-sidebar: #252526;
+            --text-main: #d4d4d4;
+            --text-dim: #808080;
+            --accent: #4ec9b0;
+            --accent-hover: #6fdfca;
+            --link: #569cd6;
+            --border: #3e3e42;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+        }
+        
+        /* Sidebar navigation */
+        nav {
+            width: 280px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        nav h2 {
+            color: var(--accent);
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        
+        nav .category {
+            margin-bottom: 20px;
+        }
+        
+        nav .category h3 {
+            color: var(--text-dim);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+        
+        nav ul {
+            list-style: none;
+        }
+        
+        nav a {
+            color: var(--text-main);
+            text-decoration: none;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            transition: all 0.2s;
+        }
+        
+        nav a:hover {
+            background: var(--bg-code);
+            color: var(--accent-hover);
+        }
+        
+        nav a.active {
+            background: var(--accent);
+            color: var(--bg-main);
+            font-weight: 500;
+        }
+        
+        /* Main content */
+        main {
+            margin-left: 280px;
+            padding: 40px 60px;
+            max-width: 900px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: var(--accent);
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 15px;
+        }
+        
+        h2 {
+            color: var(--accent);
+            font-size: 1.8em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        
+        h3 {
+            color: var(--text-main);
+            font-size: 1.3em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+        
+        code {
+            background: var(--bg-code);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            color: var(--accent);
+        }
+        
+        pre {
+            background: var(--bg-code);
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 3px solid var(--accent);
+        }
+        
+        pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-main);
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        a {
+            color: var(--link);
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid var(--border);
+        }
+        
+        th {
+            background: var(--bg-code);
+            color: var(--accent);
+            font-weight: 600;
+        }
+        
+        blockquote {
+            border-left: 4px solid var(--accent);
+            padding-left: 20px;
+            margin: 20px 0;
+            color: var(--text-dim);
+            font-style: italic;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 30px 0;
+        }
+        
+        .breadcrumb {
+            color: var(--text-dim);
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+        
+        .breadcrumb a {
+            color: var(--text-dim);
+        }
+        
+        .breadcrumb a:hover {
+            color: var(--accent);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                display: none;
+            }
+            main {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <h2>Aria Guide</h2>
+        <div class="category">
+<h3>Advanced Features</h3>
+<ul>
+<li><a href="/advanced_features/concurrency.html">Concurrency</a></li>
+<li><a href="/advanced_features/ffi_advanced.html">Ffi Advanced</a></li>
+<li><a href="/advanced_features/jit.html">Jit</a></li>
+<li><a href="/advanced_features/rules.html">Rules</a></li>
+<li><a href="/advanced_features/safety_layers.html">Safety Layers</a></li>
+<li><a href="/advanced_features/traits.html">Traits</a></li>
+<li><a href="/advanced_features/wasm.html">Wasm</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Collections</h3>
+<ul>
+<li><a href="/collections/ahash.html">Ahash</a></li>
+<li><a href="/collections/astack.html">Astack</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Control Flow</h3>
+<ul>
+<li><a href="/control_flow/break_continue.html">Break Continue</a></li>
+<li><a href="/control_flow/error_flow.html">Error Flow</a></li>
+<li><a href="/control_flow/for.html">For</a></li>
+<li><a href="/control_flow/if_else.html">If Else</a></li>
+<li><a href="/control_flow/loop_till.html">Loop Till</a></li>
+<li><a href="/control_flow/pick.html">Pick</a></li>
+<li><a href="/control_flow/when.html">When</a></li>
+<li><a href="/control_flow/while.html">While</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Debugging</h3>
+<ul>
+<li><a href="/debugging/debugging.html">Debugging</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Functions</h3>
+<ul>
+<li><a href="/functions/async.html">Async</a></li>
+<li><a href="/functions/closures.html">Closures</a></li>
+<li><a href="/functions/declaration.html">Declaration</a></li>
+<li><a href="/functions/design_by_contract.html">Design By Contract</a></li>
+<li><a href="/functions/extern.html">Extern</a></li>
+<li><a href="/functions/generics.html">Generics</a></li>
+<li><a href="/functions/main_failsafe.html">Main Failsafe</a></li>
+<li><a href="/functions/result_system.html">Result System</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Io System</h3>
+<ul>
+<li><a href="/io_system/file_io.html">File Io</a></li>
+<li><a href="/io_system/print.html">Print</a></li>
+<li><a href="/io_system/stdin.html">Stdin</a></li>
+<li><a href="/io_system/sys.html">Sys</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Memory Model</h3>
+<ul>
+<li><a href="/memory_model/borrow.html">Borrow</a></li>
+<li><a href="/memory_model/gc.html">Gc</a></li>
+<li><a href="/memory_model/handle.html">Handle</a></li>
+<li><a href="/memory_model/overview.html">Overview</a></li>
+<li><a href="/memory_model/stack.html">Stack</a></li>
+<li><a href="/memory_model/wild.html">Wild</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Modules</h3>
+<ul>
+<li><a href="/modules/mod.html">Mod</a></li>
+<li><a href="/modules/packages.html">Packages</a></li>
+<li><a href="/modules/stdlib.html">Stdlib</a></li>
+<li><a href="/modules/use_import.html">Use Import</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Operators</h3>
+<ul>
+<li><a href="/operators/arithmetic.html">Arithmetic</a></li>
+<li><a href="/operators/assignment.html">Assignment</a></li>
+<li><a href="/operators/bitwise.html">Bitwise</a></li>
+<li><a href="/operators/cast.html">Cast</a></li>
+<li><a href="/operators/comparison.html">Comparison</a></li>
+<li><a href="/operators/logical.html">Logical</a></li>
+<li><a href="/operators/member_access.html">Member Access</a></li>
+<li><a href="/operators/pipe_range.html">Pipe Range</a></li>
+<li><a href="/operators/result_operators.html">Result Operators</a></li>
+<li><a href="/operators/string_ops.html">String Ops</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Standard Library</h3>
+<ul>
+<li><a href="/standard_library/math.html">Math</a></li>
+<li><a href="/standard_library/overview.html">Overview</a></li>
+<li><a href="/standard_library/string_utils.html">String Utils</a></li>
+</ul>
+</div>
+<div class="category">
+<h3>Types</h3>
+<ul>
+<li><a href="/types/any.html">Any</a></li>
+<li><a href="/types/array.html">Array</a></li>
+<li><a href="/types/atomic.html">Atomic</a></li>
+<li><a href="/types/bool.html">Bool</a></li>
+<li><a href="/types/complex.html">Complex</a></li>
+<li><a href="/types/enum.html">Enum</a></li>
+<li><a href="/types/exotic.html">Exotic</a></li>
+<li><a href="/types/fix256.html">Fix256</a></li>
+<li><a href="/types/flt.html">Flt</a></li>
+<li><a href="/types/frac.html">Frac</a></li>
+<li><a href="/types/int.html">Int</a></li>
+<li><a href="/types/pointer.html">Pointer</a></li>
+<li><a href="/types/result.html">Result</a></li>
+<li><a href="/types/simd.html">Simd</a></li>
+<li><a href="/types/string.html">String</a></li>
+<li><a href="/types/struct.html">Struct</a></li>
+<li><a href="/types/tbb.html">Tbb</a></li>
+<li><a href="/types/tensor_matrix.html">Tensor Matrix</a></li>
+<li><a href="/types/tfp.html">Tfp</a></li>
+<li><a href="/types/uint.html">Uint</a></li>
+<li><a href="/types/vec.html">Vec</a></li>
+</ul>
+</div>
+    </nav>
+    <main>
+        <div class="breadcrumb"><a href="/">Home</a> / Types</div>
+        <h1>Result<T> — Mandatory Error Handling</h1>
+<h2>Overview</h2>
+<strong>Every function in Aria returns <code>Result<T></code></strong> (except extern functions). The compiler
+<p>
+forces you to handle the result — unhandled Results are compile errors. This is the
+core of Aria's safety model at the function level.
+</p>
+<h2>Structure</h2>
+<pre><code>Result<T> = { T|NULL:value, tbb8:error, bool:is_error }</code></pre>
+<ul><li>Success: <code>value</code> is set, <code>error</code> is NIL, <code>is_error</code> is false</li>
+<li>Error: <code>value</code> is NIL, <code>error</code> is set, <code>is_error</code> is true</li>
+</ul>
+<h2>Creating Results</h2>
+<p>
+Inside functions (not <code>main</code> or <code>failsafe</code>):
+</p>
+<pre><code>func:divide = flt64(int32:a, int32:b) {
+<p>
+if (b == 0) {
+fail 1;              // return error Result
+}
+pass (a / b);            // return success Result
+}</code></pre>
+</p>
+<ul><li><code>pass value</code> — return success, wraps value in Result</li>
+<li><code>fail errcode</code> — return error, wraps tbb8 error code in Result</li>
+<li>Both support paren syntax: <code>pass(value)</code>, <code>fail(errcode)</code></li>
+</ul>
+<h2>Handling Results</h2>
+<pre><code>// Safe unwrap with fallback
+<p>
+flt64:val = divide(10, 3) ? 0.0;
+</p>
+<p>
+// Null coalesce
+flt64:val = divide(10, 0) ?? default_value;
+</p>
+<p>
+// Emphatic unwrap — calls failsafe on error
+flt64:val = divide(10, 3)?!;
+</p>
+<p>
+// Defaults keyword — scoped fallback for chains
+flt64:val = a() + b() + c() defaults 0.0;
+// Shorthand: flt64:val = a() + b() + c() ?| 0.0;
+</p>
+<p>
+// Drop (discard result entirely)
+drop divide(10, 3);
+// Shorthand: _? divide(10, 3);
+</p>
+<p>
+// Raw (extract value, ignore error)
+flt64:val = raw divide(10, 3);
+// Shorthand: flt64:val = _! divide(10, 3);
+</p>
+<p>
+// Discard assignment
+_ = divide(10, 3);</code></pre>
+</p>
+<h2>Operator Summary</h2>
+<p>
+| Operator | Keyword | Meaning |
+|----------|---------|---------|
+| <code>?</code> | — | Safe unwrap with fallback value |
+| <code>??</code> | — | Null coalesce |
+| <code>?!</code> | — | Emphatic unwrap (failsafe on error) |
+| <code>?\|</code> | <code>defaults</code> | Scoped fallback for expression chains |
+| <code>_?</code> | <code>drop</code> | Discard Result entirely |
+| <code>_!</code> | <code>raw</code> | Extract value, bypass error checking |
+</p>
+<h2>Auto-Unwrap in Argument Position</h2>
+<p>
+When passing a Result<T> as an argument to a function expecting T, it auto-unwraps:
+</p>
+<pre><code>func:add = int32(int32:a, int32:b) { pass (a + b); }
+<p>
+func:get_val = int32() { pass 42; }
+</p>
+<p>
+// get_val() returns Result<int32>, but add() expects int32
+// Result auto-unwraps in argument position
+int32:sum = raw add(get_val(), get_val());</code></pre>
+</p>
+<p>
+This does <strong>not</strong> apply to variable assignment — you must explicitly unwrap.
+</p>
+<h2>The <code>ok</code> Keyword</h2>
+<code>ok</code> allows passing a variable whose value may be <code>unknown</code>:
+<pre><code>ok maybe_unknown_value;</code></pre>
+<h2>main and failsafe</h2>
+<code>main</code> and <code>failsafe</code> are special — they use <code>exit</code> instead of <code>pass</code>/<code>fail</code>:
+<pre><code>func:main = int32() {
+<p>
+exit 0;   // exit program with code 0
+}
+</p>
+<p>
+func:failsafe = int32(tbb32:err) {
+exit 1;   // must exit with code > 0
+}</code></pre>
+</p>
+<h2>Related</h2>
+<ul><li><a href="tbb.md">tbb.md</a> — TBB error propagation (value-level)</li>
+<li><a href="../functions/main_failsafe.md">functions/main_failsafe.md</a> — mandatory functions</li>
+<li><a href="../functions/result_system.md">functions/result_system.md</a> — pass/fail patterns</li>
+</ul>
+    </main>
+</body>
+</html>
