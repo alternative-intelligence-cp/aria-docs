@@ -165,5 +165,64 @@ stdin                   ** text input stream **
 stddati                 ** data input stream **
 stddato                 ** data output stream **
 
+### Compiler Flags (ariac) #############################################################################################
+
+## Output
+-o <file>               ** write output to <file> **
+--emit-llvm             ** emit LLVM IR text (.ll) **
+--emit-llvm-bc          ** emit LLVM bitcode (.bc) **
+--emit-asm              ** emit assembly (.s) **
+--emit-deps             ** emit JSON dependency manifest (for aria_make) **
+--emit-ptx              ** emit PTX assembly for GPU execution **
+--emit-wasm             ** compile to WebAssembly (.wasm) **
+
+## Compilation Modes
+-c                      ** compile library (no failsafe required) **
+--shared                ** compile to shared library (.so) **
+--static                ** link as fully static executable **
+
+## Optimization & Debug
+-O<0-3>                 ** optimization level (0=none, 3=max) **
+-g                      ** emit DWARF debug info (for aria-dap) **
+-v, --verbose           ** verbose compiler output **
+
+## Verification (Z3 SMT Solver)
+--verify                ** enable Z3 static verification of Rules/limit constraints **
+--verify-report         ** emit detailed proof results (implies --verify) **
+--verify-contracts      ** verify requires/ensures function contracts **
+--verify-overflow       ** verify integer arithmetic cannot overflow **
+--verify-concurrency    ** detect data races and deadlocks in concurrent code **
+--verify-memory         ** detect use-after-free bugs in wild pointer code **
+--smt-opt               ** enable SMT-guided optimizations (eliminates proven-safe checks) **
+--smt-timeout=N         ** per-query Z3 solver timeout in milliseconds (default: 5000) **
+--prove-report          ** emit Proven/Disproven/Unknown for every check (implies --verify) **
+
+## GPU Target (NVIDIA CUDA/PTX)
+--target=<arch>         ** target architecture: cpu, gpu, gpu+cpu, wasm32-wasi, wasm32-unknown-unknown **
+--gpu-arch=<sm>         ** CUDA compute capability (default: sm_50). Examples: sm_50, sm_75, sm_86, sm_89, sm_90 **
+--gpu-opt=<0-3>         ** GPU optimization level (default: 3) **
+--gpu-debug             ** embed debug info in PTX **
+
+## Input & Linking
+-I <dir>                ** add directory to module search path **
+-l<library>             ** link against library (e.g., -lm, -lpthread) **
+-L<path>                ** add library search path **
+-Wl,<option>            ** pass option to linker **
+
+## Warnings
+-Wall                   ** enable all warnings **
+-Werror                 ** treat warnings as errors **
+-W<warning>             ** enable specific warning **
+-Wno-<warning>          ** disable specific warning **
+
+## Diagnostics
+--ast-dump              ** dump AST and exit **
+--tokens                ** dump tokens and exit **
+-E                      ** preprocess only (output to stdout) **
+
+## General
+--version               ** show version **
+--help, -h              ** show help text **
+
 ### MORE INFO ##########################################################################################################
 aria-docs/guide

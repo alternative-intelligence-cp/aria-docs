@@ -1,7 +1,7 @@
 # Aria Programming Guide
 
-**Version:** 0.4.7  
-**Last Updated:** 2026-03-31
+**Version:** 0.5.5  
+**Last Updated:** 2026-04-01
 
 ## Sections
 
@@ -16,7 +16,7 @@
 | [collections/](collections/) | User stack (astack) and hash tables (ahash) |
 | [io_system/](io_system/) | Print, file I/O, stdin, sys() syscalls, streams |
 | [standard_library/](standard_library/) | Standard library overview and builtins |
-| [advanced_features/](advanced_features/) | Generics, traits, design by contract, closures, concurrency, JIT |
+| [advanced_features/](advanced_features/) | Generics, traits, design by contract, closures, concurrency, verification, JIT |
 | [debugging/](debugging/) | Debugging tools and strategies |
 
 ## Building HTML
