@@ -1,5 +1,7 @@
 # Standard Library Overview
 
+The standard library contains **59 modules** in `REPOS/aria/stdlib/`.
+
 ## Import Pattern
 
 ```aria
@@ -25,7 +27,12 @@ The standard library lives in `REPOS/aria/stdlib/` and provides:
 - Standard math functions via extern libm
 
 ### Threading
-- Thread pool, channels, atomics, mutexes (via stdlib wrappers)
+- Thread pool, channels, atomics, mutexes, condvars, rwlocks, barriers, actors (via stdlib wrappers on aria-libc)
+
+### Concurrency Modules (v0.11.0)
+- `thread.aria`, `mutex.aria`, `condvar.aria`, `rwlock.aria` — via aria_libc_process
+- `channel.aria`, `actor.aria`, `thread_pool.aria` — built on above
+- `shm.aria` — POSIX shared memory via aria_libc_posix
 
 ## Related
 
