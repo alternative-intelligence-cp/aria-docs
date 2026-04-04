@@ -24,13 +24,40 @@ extern                  ** external C functions **
 stack                   ** explicit stack allocation keyword  !! NOTE (March 2026): 'stack' and 'gc' are contextual - valid as variable names outside allocation contexts !! **
 gc                      ** explicit GC allocation keyword     !! NOTE (March 2026): 'stack' and 'gc' are contextual - valid as variable names outside allocation contexts !! **
 wildx                   ** executable memory allocation (for JIT) **
-sync                    ** Synchronization primitive marker (for lock-free patterns) **
-atomic                  ** Atomic operation marker (redundant with atomic<T> type but aids readability) **
 requires                ** Design by Contract: function preconditions **
 ensures                 ** Design by Contract: function postconditions **
 invariant               ** Design by Contract: loop invariants **
 result                  ** Special variable in 'ensures' clauses bound to function return value **
 limit<Rules>            ** utilize compile time and runtime checks to ensure values meet certain tolerances **
+break                   ** exit innermost loop (while, for, till, loop) **
+continue                ** skip to next iteration of innermost loop (while, for, till, loop) **
+macro                   ** compile-time macro. Declaration: macro:name = (params) { body; }; Invocation: name!(args) **
+comptime                ** compile-time evaluation. Usage: comptime(expr) or pub comptime func:name = ... **
+await                   ** suspend execution until async operation completes **
+catch                   ** error/exception handling keyword **
+in                      ** membership test in for loops and collections **
+as                      ** alias in imports: use "mod.aria".* as alias **
+cfg                     ** conditional compilation attribute **
+inline                  ** suggest function inlining to compiler **
+noinline                ** prevent function inlining **
+trait                   ** define a trait (interface) **
+impl                    ** implement trait for type **
+derive                  ** auto-derive trait implementations for a type **
+opaque                  ** opaque type declaration (hides internal representation) **
+Type                    ** type-level keyword for generic/existential type constraints **
+Rules                   ** compile-time constraint ruleset used with limit<Rules> **
+move                    ** explicit move semantics (transfer ownership) **
+prove                   ** formal verification assertion (checked by Z3 backend) **
+assert_static           ** compile-time static assertion (fails compilation if false) **
+relaxed                 ** memory ordering: no synchronization guarantees **
+acquire                 ** memory ordering: acquire fence (reads after this see prior writes) **
+release                 ** memory ordering: release fence (writes before this visible to acquirers) **
+acq_rel                 ** memory ordering: combined acquire + release fence **
+seq_cst                 ** memory ordering: sequentially consistent (strongest ordering) **
+stream                  ** reserved keyword for stream types (stdout, stderr, etc.) **
+pipe                    ** reserved keyword for pipe/IPC types **
+process                 ** reserved keyword for process types **
+debug                   ** reserved keyword for debug output mode **
 
 ### Builtin Helpers ####################################################################################################
 astack(capacity?)       ** initialize per-scope implicit user stack, optional capacity (default 256), Returns opaque handle **
@@ -66,14 +93,14 @@ int[1,2,4,8,16,32,64,128,256,512,1024,2048,4096]    ** signed integers **
 uint[1,2,4,8,16,32,64,128,256,512,1024,2048,4096]   ** unsigned integers **
 tbb[8,16,32,64]                                     ** twisted balanced binary ** 
 flt[32,64,128,256,512]                              ** floating point **
-tfp[16,32]                                          ** twisted floating point **
+tfp[32,64]                                          ** twisted floating point **
 fix256                                              ** fixed point 128.128 **
 fix256<[Joules,Meters,Seconds,Newtons,Kelvin]>     ** dimensional analysis types **
 frac[8,16,32,64]                                    ** fraction type with whole, numerator, denominator **
 bool                                                ** boolean **
 vec[2,3,9]                                          ** vector types in several widths **
-dyn                                                 ** dynamic type, can hold any value, not sure if this is implemented, if not remove from list and ignore **
-obj                                                 ** obj type, not sure if implemented nor what difference is vs struct, if not needed or not imlemented remove from list and ignore **
+dyn                                                 ** dynamic dispatch type for trait objects (e.g., dyn Trait) **
+obj                                                 ** object type for dynamic dispatch of trait-based values **
 struct                                              ** standard struct **
 enum                                                ** standard enum **
 string                                              ** Aria string **
@@ -84,7 +111,11 @@ tryte                                               ** ternary equivalent to byt
 nit                                                 ** nonary equivalent to bit **
 nyte                                                ** nonary equivalent to byte **
 tensor                                              ** tensor type **
+ttensor                                             ** ternary tensor type **
 matrix                                              ** matrix type **
+tmatrix                                             ** ternary matrix type **
+binary                                              ** binary data type **
+buffer                                              ** memory buffer type **
 complex<T>                                          ** Generic complex number type where T is the component type (fix256, tfp64, etc.)  **
 atomic<T>                                           ** Generic atomic type for lock-free concurrent access where T is the wrapped type **
 simd<T,N>                                           ** Generic SIMD vector type where T is element type, N is lane count (power of 2) **
@@ -94,7 +125,7 @@ Handle<T>                                           ** safe alternative to raw p
 if/else                 ** standard if/else construct **
 while                   ** standard while loop for advanced uses **
 for                     ** standard for for advanced uses **
-till(limit,step)        ** oop with automatic iteration tracking **
+till(limit,step)        ** loop with automatic iteration tracking **
 loop(start,limit,step)  ** loop with automatic iteration tracking **
 when/then/end           ** better while with state tracking **
 pick                    ** Aria equivalent of switch/case constructs **

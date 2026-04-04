@@ -43,8 +43,12 @@ func:main = int32() {
     limit<r_positive> int32:x = 42;      // Proven: 42 > 0
     limit<r_bounded>  int32:y = 500;     // Proven: 500 >= 0 AND 500 <= 1000
     limit<r_positive> int32:z = -1;      // Disproven: -1 > 0 is false
-    pass 0;
-};
+    exit 0;
+}
+
+func:failsafe = int32(tbb32:err) {
+    exit 1;
+}
 ```
 
 Compile with `--verify --prove-report`:
@@ -65,12 +69,17 @@ Rules<int32>:r_safe = { $ >= 0, $ <= 100 };
 
 func:process = int32(int32:val) {
     pass val * 2;     // overflow check eliminated if all callers use limit<r_safe>
-};
+}
 
 func:main = int32() {
     limit<r_safe> int32:a = 50;
-    pass raw process(a);
-};
+    int32:result = raw process(a);
+    exit 0;
+}
+
+func:failsafe = int32(tbb32:err) {
+    exit 1;
+}
 ```
 
 ### Rules Narrowing
@@ -295,6 +304,32 @@ ariac program.aria -o program --verify --smt-timeout=10000   # slower, fewer unk
 - `--prove-report` prints a summary of all Proven/Disproven/Unknown verdicts
 - Rules, contracts, and `prove`/`assert_static` compose — use them together
 - Disproven results include counterexamples when available
+
+## Best Practices
+
+1. **Start with contracts** — Add `requires`/`ensures` to public-facing functions first.
+   They document intent and catch bugs at call sites.
+
+2. **Use `limit<Rules>` at boundaries** — Apply Rules constraints where data enters
+   the system (user input, file reads, network data). The solver propagates them inward.
+
+3. **Prefer `prove` for critical invariants** — If a property MUST hold, use `prove()`.
+   A compile error on failure is better than a runtime surprise.
+
+4. **Use `assert_static` for desirable invariants** — When a property should hold but
+   isn't critical, `assert_static` gives a warning and keeps a runtime fallback.
+
+5. **Build with `--smt-opt` in release** — Let proven-safe checks be eliminated.
+   The ~3–25% runtime speedup is free after paying the compile-time cost.
+
+6. **Tune timeouts per project** — Small projects: `--smt-timeout=2000`. Large projects
+   with complex proofs: `--smt-timeout=10000` or higher.
+
+7. **Use `--prove-report` during development** — See exactly what's Proven vs Unknown.
+   Target Unknown results for optimization or stronger annotations.
+
+8. **Compose constraints** — Rules, contracts, and prove/assert_static work together.
+   A `limit<r>` binding inside a function with `requires` gives the solver more to work with.
 
 ## Related
 

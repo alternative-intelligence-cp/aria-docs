@@ -1,0 +1,181 @@
+# Aria Function Specification
+
+## Declaration Syntax
+All function declarations require a trailing semicolon.
+```
+func:nameOfFunc = <ReturnType>(<ArgType>:argName){
+    // Always returns Result<ReturnType> implicitly — main and failsafe are exceptions
+    // Can return Result object, Result literal, or use pass/fail sugar functions
+    // exit() is NOT valid from normal functions
+};
+```
+
+### Examples: pass/fail/return usage
+```aria
+func:thisFails = uint8(int32:arg) {
+    tbb8:err = 1;
+    // stuff happens
+    fail(err); // sugar for: return Result{error:err, value:NIL, is_error:true};
+};
+
+func:thisPasses = uint8(int32:arg) {
+    uint8:retVal = 33;
+    // stuff happens
+    pass(retVal); // sugar for: return Result{error:NIL, value:retVal, is_error:false};
+};
+
+func:longForm = flt32() {
+    flt32:retVal = 1.2;
+    // do stuff
+    return Result{error:NIL, value:retVal, is_error:false};
+};
+```
+
+## main and failsafe — Both MANDATORY to compile an executable
+### Examples: exit() usage
+```aria
+func:main = int32(int32:argc, int8[]->:argv) {
+    // pass()/fail() are INVALID in main
+    // exit() call required; normal control flow semantics apply otherwise
+    exit(0);
+};
+
+func:main = int32() {
+    // zero-argument form also valid
+    exit(0);
+};
+
+func:failsafe = int32(tbb32:err) {
+    // Handle graceful shutdown
+    // pass()/fail() are INVALID in failsafe
+    // exit() call required; err code must be > 0
+    exit(1);
+};
+```
+Note: `int8[]->` is Aria's equivalent to C's `char**` for argv compatibility.
+
+## Exit Code Conventions
+- Traditional conventions apply: 0 = no error, > 0 = error
+
+## FAILSAFE ERROR CODES (for `err` in `failsafe(tbb32:err)`)
+
+The failsafe parameter is tbb32, giving range [-2147483647, +2147483647] with ERR sentinel.
+
+### Special Values
+| Code | Meaning |
+|------|---------|
+| ERR  | Unknown/unclassifiable error (tbb32 sentinel, min value) |
+| 0    | No error / testing / forced failsafe with no fault |
+
+### System Error Codes (negative range: -1 to -2147483647)
+Reserved for runtime, OS, and hardware-level errors. These are set by the
+Aria runtime or OS signal handlers — user code should not emit these.
+
+| Code | Name | Meaning |
+|------|------|---------|
+| -1   | SYS_GENERAL          | General system error (unspecified) |
+| -2   | SYS_OUT_OF_MEMORY    | Memory allocation failed |
+| -3   | SYS_STACK_OVERFLOW   | Stack overflow detected |
+| -4   | SYS_SEGFAULT         | Segmentation fault / access violation |
+| -5   | SYS_ABORT            | Abort signal (SIGABRT) |
+| -6   | SYS_FPE              | Floating-point exception (SIGFPE) |
+| -7   | SYS_BUS_ERROR        | Bus error (SIGBUS) |
+| -8   | SYS_ILLEGAL_INSN     | Illegal instruction (SIGILL) |
+| -9   | SYS_PIPE             | Broken pipe (SIGPIPE) |
+| -10  | SYS_ALARM            | Alarm/timer expired (SIGALRM) |
+| -11  | SYS_TERMINATED       | Process terminated by signal (SIGTERM) |
+| -12  | SYS_IO_ERROR         | I/O error (disk, device) |
+| -13  | SYS_PERMISSION       | Permission denied |
+| -14  | SYS_DEADLOCK         | Deadlock detected |
+| -15  | SYS_THREAD_PANIC     | Thread panic / unrecoverable thread error |
+| -16  | SYS_RESOURCE_LIMIT   | System resource limit reached (file descriptors, etc.) |
+| -17 to -99   | (reserved)  | Reserved for future Aria runtime system codes |
+| -100 to -999 | (reserved)  | Reserved for OS/platform-specific system codes |
+| -1000 to -2147483647 | (unassigned) | Available for future system-level extensions |
+
+### User Error Codes (positive range: 1 to 2147483647)
+For application-level errors triggered by `!!! code` (failsafe invocation).
+
+| Code | Name | Meaning |
+|------|------|---------|
+| 1    | USR_GENERAL          | General application error (unspecified) |
+| 2    | USR_INVALID_CONFIG   | Configuration invalid or missing |
+| 3    | USR_INIT_FAILED      | Initialization/startup failed |
+| 4    | USR_DATA_CORRUPT     | Data corruption detected |
+| 5    | USR_DEPENDENCY       | Required dependency unavailable |
+| 6    | USR_NETWORK          | Network error (connection lost, timeout) |
+| 7    | USR_AUTH             | Authentication/authorization failure |
+| 8    | USR_HARDWARE         | Hardware device error (sensor, GPU, etc.) |
+| 9    | USR_TIMEOUT          | Critical operation timed out |
+| 10   | USR_ASSERTION        | Assertion / invariant violation |
+| 11 to 49    | (reserved)  | Reserved for future Aria standard user codes |
+| 50 to 99    | (reserved)  | Reserved for framework/library standard codes |
+| 100+        | (user-defined) | Application-specific error codes |
+
+### Usage Notes
+- System codes are **negative**, user codes are **positive** — easy to distinguish in handlers
+- Runtime sets system codes automatically on signals; user code calls `!!! code` with positive values
+- ERR (tbb sentinel) means "we don't know what happened" — always handle it
+- Code 0 should never reach failsafe in normal operation, but handle it gracefully
+- Libraries should document their error codes in the 100+ range and avoid collisions
+
+
+## User Stack Builtins (v0.4.3)
+
+Per-scope implicit LIFO scratch pad for type-safe intra-function value passing.
+Separate from the hardware call stack and the `stack` memory allocation keyword.
+
+### `astack(capacity?)`
+Initialize one implicit stack per function scope.
+- `capacity`: optional `int64`, default 256 slots if omitted
+- No handle returned — the stack is implicit to the current scope
+- Must be called before `apush`/`apop`/`apeek` in the same scope
+
+```aria
+astack(64i64);   // 64-slot stack
+astack();        // 256-slot default
+```
+
+### `apush(value)`
+Push a typed value onto the implicit stack.
+- Accepts: int8, int16, int32, int64, flt32, flt64, bool, string, pointer
+- Type tag stored automatically (no manual tag management)
+- Fatal `exit(1)` with diagnostic to stderr on overflow
+- No return value
+
+```aria
+apush(42i64);
+apush(3.14f64);
+apush(true);
+```
+
+### `apop()`
+Pop the top value. Destination type inferred from assignment context.
+- Zero arguments
+- Runtime type-tag checking: fatal `exit(1)` on mismatch or underflow
+- Returns value directly (not wrapped in `Result<T>`)
+
+```aria
+int64:n = apop();    // pops as int64
+flt64:f = apop();    // pops as flt64
+bool:b = apop();     // pops as bool
+```
+
+### `apeek()`
+Non-destructive read of the top value.
+- Same context-typed semantics as `apop()`
+- Value remains on stack
+
+```aria
+int64:top = apeek();  // reads top without removing
+```
+
+### Error Model
+Fatal errors (not Result<T>):
+- Stack overflow on push → stderr diagnostic + `exit(1)`
+- Stack underflow on pop/peek → stderr diagnostic + `exit(1)`
+- Type mismatch on pop/peek → stderr diagnostic + `exit(1)`
+
+### Auto-Cleanup
+Stack is automatically destroyed on function return (explicit return or fallthrough).
+No manual cleanup needed.
