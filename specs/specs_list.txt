@@ -224,6 +224,7 @@ stddato                 ** data output stream **
 --verify-overflow       ** verify integer arithmetic cannot overflow **
 --verify-concurrency    ** detect data races and deadlocks in concurrent code **
 --verify-memory         ** detect use-after-free bugs in wild pointer code **
+--verify-level=N        ** verification depth: 0=none, 1=fast(rules), 2=standard(+contracts,overflow), 3=thorough(all) **
 --smt-opt               ** enable SMT-guided optimizations (eliminates proven-safe checks) **
 --smt-timeout=N         ** per-query Z3 solver timeout in milliseconds (default: 5000) **
 --prove-report          ** emit Proven/Disproven/Unknown for every check (implies --verify) **

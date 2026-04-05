@@ -1,5 +1,9 @@
 # Verification in Aria — Formal Proofs with Z3
 
+> **Expanded guide available:** See `guide/verification/` for the full 6-section
+> verification guide covering Rules, contracts, optimizations, concurrency, and
+> troubleshooting in depth.
+
 ## Overview
 
 Aria integrates the Z3 SMT solver to verify program properties at compile time.
@@ -22,6 +26,7 @@ When **Unknown** (solver timeout), the runtime check is preserved.
 | `--verify-memory` | Detect use-after-free bugs |
 | `--smt-opt` | Enable SMT-guided optimizations (implies `--verify`) |
 | `--smt-timeout=N` | Per-query Z3 timeout in milliseconds (default: 5000) |
+| `--verify-level=N` | Verification depth: 0=none, 1=fast, 2=standard, 3=thorough (v0.14.3+) |
 | `--prove-report` | Print Proven/Disproven/Unknown for every check (implies `--verify`) |
 
 Use `--verify` alone to enable everything, or combine individual flags:
@@ -269,10 +274,12 @@ When `--smt-opt` is passed, the compiler uses Z3 proofs to perform additional
 optimizations beyond safety checking:
 
 - **Overflow check elimination** — proven-safe arithmetic skips runtime overflow guards
+- **Division-by-zero check elimination** — proven non-zero divisor skips zero check (v0.14.4)
 - **Null check elimination** — `Optional` from non-null sources skips nil checks
 - **Loop-invariant hoisting** — expressions proven constant across iterations
 - **Defaults fallback elimination** — infallible functions skip `?|` fallback code
 - **Rules propagation** — inter-procedural constraint propagation
+- **Range inference cascade** — intermediate ranges propagate through assignments (v0.14.1)
 
 ### Performance Impact
 
@@ -337,3 +344,5 @@ ariac program.aria -o program --verify --smt-timeout=10000   # slower, fewer unk
 - [../functions/design_by_contract.md](../functions/design_by_contract.md) — requires/ensures
 - [safety_layers.md](safety_layers.md) — Aria's safety model
 - [concurrency.md](concurrency.md) — threading and mutexes
+- [../verification/01_why_verification.md](../verification/01_why_verification.md) — full verification guide
+- [../../reference/SMT_INFO.md](../../reference/SMT_INFO.md) — internal SMT architecture reference
