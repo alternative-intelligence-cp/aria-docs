@@ -1,6 +1,6 @@
 ---
 title: "Aria Programming Manual"
-subtitle: "Version 1.0 — Based on Aria v0.13.7"
+subtitle: "Version 1.1 — Based on Aria v0.16.11"
 date: "April 2026"
 author: "Alternative Intelligence"
 geometry: "margin=1in"
@@ -14,9 +14,10 @@ header-includes:
   - \usepackage{fancyhdr}
   - \pagestyle{fancy}
   - \fancyhead[L]{Aria Programming Manual}
-  - \fancyhead[R]{v1.0}
+  - \fancyhead[R]{v1.1}
   - \usepackage{listings}
-  - \lstset{basicstyle=\ttfamily\small,breaklines=true}
+  - \lstset{basicstyle=\ttfamily\small,breaklines=true,breakatwhitespace=true}
+  - \usepackage{xurl}
 ---
 
 
@@ -25,20 +26,20 @@ header-includes:
 ## Language Specification Cheat Sheet
 
 ```
-### Mandatory Functions ################################################################################################
-func:main = int32(argc,argv)        ** program entry, must call exit() **
-func:failsafe = int32(tbb32:err)    ** final safety net and chance to degrade gracefully, must call exit(code) with code > 0 **
+### Mandatory Functions ########################################
+func:main = int32(argc,argv)     ** program entry, must exit() **
+func:failsafe = int32(tbb32:err) ** safety net, must exit(>0) **
 
-### Keywords ###########################################################################################################
-return Result<T>        ** exit from function with given value. value must be a Result<T> instance where T matches function return type a or Result literal. example: return Result{ error: err, value:NIL,is_error:true};
-ok maybeUnknownVal      ** allow passing a variable that may have value 'unknown' down the chain **
+### Keywords ###################################################
+return Result<T>        ** exit function with Result<T> value **
+ok maybeUnknownVal      ** allow passing unknown **
 drop myFunc()           ** bypass Result system and drop Result **
 raw myFunc()            ** bypass Result system and return Result.value **
-defaults value          ** use default value if error in proceeding expression chain ** examples: a = func(a() + 2 +c(2 + d() defaults 3) defaults 2);   //     b = func(2) + 10 + func() defaults unknown;
+defaults value          ** default if error in chain **
 fall label              ** used in pick for fallthrough **
-pass T:retVal           ** constructs and returns Result<T>{tbb8:err,T:value,bool:is_error} with value set to retVal and error set to NIL, not valid in main or failsafe
-fail tbb8:errCode       ** constructs and returns Result<T>{tbb8:err,T:value,bool:is_error} with value set to NIL and error set to errCode, not valid in main or failsafe
-exit int32:errCode      ** exit the program, only valid in main and failsafe functions **
+pass T:retVal           ** return Result<T> with value **
+fail tbb8:errCode       ** return Result<T> with error **
+exit int32:errCode      ** exit program (main/failsafe) **
 wild                    ** unmanaged memory **
 defer                   ** guarantees cleanup code runs when scope exits **
 async                   ** declare function async **
@@ -48,18 +49,18 @@ use                     ** import modules/files **
 mod                     ** define module **
 pub                     ** public visibility **
 extern                  ** external C functions **
-stack                   ** explicit stack allocation keyword  !! NOTE (March 2026): 'stack' and 'gc' are contextual - valid as variable names outside allocation contexts !! **
-gc                      ** explicit GC allocation keyword     !! NOTE (March 2026): 'stack' and 'gc' are contextual - valid as variable names outside allocation contexts !! **
+stack                   ** explicit stack allocation **
+gc                      ** explicit GC allocation **
 wildx                   ** executable memory allocation (for JIT) **
 requires                ** Design by Contract: function preconditions **
 ensures                 ** Design by Contract: function postconditions **
 invariant               ** Design by Contract: loop invariants **
-result                  ** Special variable in 'ensures' clauses bound to function return value **
-limit<Rules>            ** utilize compile time and runtime checks to ensure values meet certain tolerances **
+result                  ** return value in ensures clause **
+limit<Rules>            ** value constraint checks **
 break                   ** exit innermost loop (while, for, till, loop) **
-continue                ** skip to next iteration of innermost loop (while, for, till, loop) **
-macro                   ** compile-time macro. Declaration: macro:name = (params) { body; }; Invocation: name!(args) **
-comptime                ** compile-time evaluation. Usage: comptime(expr) or pub comptime func:name = ... **
+continue                ** skip to next loop iteration **
+macro                   ** compile-time macro **
+comptime                ** compile-time evaluation **
 await                   ** suspend execution until async operation completes **
 catch                   ** error/exception handling keyword **
 in                      ** membership test in for loops and collections **
@@ -69,65 +70,65 @@ inline                  ** suggest function inlining to compiler **
 noinline                ** prevent function inlining **
 trait                   ** define a trait (interface) **
 impl                    ** implement trait for type **
-derive                  ** auto-derive trait implementations for a type **
+derive                  ** auto-derive trait impls **
 opaque                  ** opaque type declaration (hides internal representation) **
-Type                    ** type-level keyword for generic/existential type constraints **
+Type                    ** generic/existential constraint **
 Rules                   ** compile-time constraint ruleset used with limit<Rules> **
 move                    ** explicit move semantics (transfer ownership) **
 prove                   ** formal verification assertion (checked by Z3 backend) **
-assert_static           ** compile-time static assertion (fails compilation if false) **
+assert_static           ** compile-time assertion **
 relaxed                 ** memory ordering: no synchronization guarantees **
-acquire                 ** memory ordering: acquire fence (reads after this see prior writes) **
-release                 ** memory ordering: release fence (writes before this visible to acquirers) **
-acq_rel                 ** memory ordering: combined acquire + release fence **
-seq_cst                 ** memory ordering: sequentially consistent (strongest ordering) **
-stream                  ** reserved keyword for stream types (stdout, stderr, etc.) **
+acquire                 ** memory ordering: acquire **
+release                 ** memory ordering: release **
+acq_rel                 ** memory ordering: acq+rel **
+seq_cst                 ** memory ordering: seq cst **
+stream                  ** reserved: stream types **
 pipe                    ** reserved keyword for pipe/IPC types **
 process                 ** reserved keyword for process types **
 debug                   ** reserved keyword for debug output mode **
 
-### Builtin Helpers ####################################################################################################
-astack(capacity?)       ** initialize per-scope implicit user stack, optional capacity (default 256), Returns opaque handle **
-apush(handle,value)     ** push typed value onto implicit user stack, fatal exit(1) on overflow **
-apop(handle)            ** pop top value, type inferred from assignment context, fatal exit(1) on mismatch/underflow **
-apeek(handle)           ** non-destructive peek at top value, same context-typed semantics as apop **
+### Builtin Helpers ############################################
+astack(capacity?)       ** init scope stack (default 256) **
+apush(handle,value)     ** push value onto stack **
+apop(handle)            ** pop top value from stack **
+apeek(handle)           ** peek at top value **
 acap(handle)            ** return size of stack in bytes of scope stack **
 asize(handle)           ** return number of bytes used in scope stack **
-afits(handle,val)       ** boolean, true if the val will fit on the stack without overflow **
-atype(handle)           ** returns type of item on top of stack, could be useful for avoiding type mismatch error **
-ahash(cap)              ** (int64) → int64` | Create hash table with byte budget `cap`. Returns opaque handle. 0 = unbounded. **
-ahsize(handle)          ** (int64) → int64` | Current size in bytes of all stored entries. **
-ahget(handle, key)      ** (int64, str) → T` | Retrieve value at key. Returns `NIL` if key not found. Type of receiving var determines expected type — mismatch triggers failsafe. **
-ahset(handle, key, val) ** (int64, str, T) → int32` | Set key to value. Returns 0 on success, -1 on overflow (capacity exceeded). **
-ahcount(handle)          ** (int64) → int64` | Return number of keys in table. **
-ahfits(handle, val)     ** (int64, T) → int64` | Returns 1 if `val` can fit within remaining capacity, 0 otherwise. Always 1 if capacity is unbounded. **
-ahtype(handle, key)     ** (int64, str) → int32` | Returns type tag of value at key, or -1 if key not found. ** 
-sys(CONST, args...)     ** safe-tier direct syscall, curated whitelist (~55), returns Result<int64> **
-sys!!(CONST, args...)   ** full-tier direct syscall, all syscalls, returns Result<int64> **
-sys!!!(expr, args...)   ** raw-tier direct syscall, any int64 expression, returns bare int64 **
+afits(handle,val)       ** true if val fits on stack **
+atype(handle)           ** type of item on top of stack **
+ahash(cap)              ** create hash table, cap bytes **
+ahsize(handle)          ** hash table size in bytes **
+ahget(handle, key)      ** get value at key (or NIL) **
+ahset(handle, key, val) ** set key to value **
+ahcount(handle)         ** number of keys in table **
+ahfits(handle, val)     ** 1 if val fits, 0 otherwise **
+ahtype(handle, key)     ** type tag at key, -1 if none **
+sys(CONST, args...)     ** safe syscall, Result<int64> **
+sys!!(CONST, args...)   ** full syscall, Result<int64> **
+sys!!!(expr, args...)   ** raw syscall, bare int64 **
 
-### Special Values #####################################################################################################
+### Special Values #############################################
 ERR                     ** Tbb type sticky error sentinel **
 NIL                     ** No value / nothing, Aria equivalent of void **
 NULL                    ** No reference / no address / 0x00 **
-unknown                 ** Special sentinel value (like ERR, but for undefined states) **
+unknown                 ** special sentinel for undefined **
 
-### Types ##############################################################################################################
-Result<T>                                           ** Result type, returned by ALL function in Aria, except those in extern blocks **
-any                                                 ** Aria equivalent of C void* **
-void                                                ** in extern blocks only **
-int[1,2,4,8,16,32,64,128,256,512,1024,2048,4096]    ** signed integers **
-uint[1,2,4,8,16,32,64,128,256,512,1024,2048,4096]   ** unsigned integers **
+### Types ######################################################
+Result<T>               ** Result type, all functions **
+any                     ** Aria equivalent of C void* **
+void                    ** in extern blocks only **
+int[1..4096]            ** signed integers **
+uint[1..4096]           ** unsigned integers **
 tbb[8,16,32,64]                                     ** twisted balanced binary ** 
 flt[32,64,128,256,512]                              ** floating point **
 tfp[32,64]                                          ** twisted floating point **
 fix256                                              ** fixed point 128.128 **
-fix256<[Joules,Meters,Seconds,Newtons,Kelvin]>     ** dimensional analysis types **
-frac[8,16,32,64]                                    ** fraction type with whole, numerator, denominator **
+fix256<[Joules,Meters,...]>  ** dimensional types **
+frac[8,16,32,64]        ** fraction type **
 bool                                                ** boolean **
-vec[2,3,9]                                          ** vector types in several widths **
-dyn                                                 ** dynamic dispatch type for trait objects (e.g., dyn Trait) **
-obj                                                 ** object type for dynamic dispatch of trait-based values **
+vec[2,3,9]              ** vector types **
+dyn                     ** trait object dispatch **
+obj                     ** dynamic dispatch values **
 struct                                              ** standard struct **
 enum                                                ** standard enum **
 string                                              ** Aria string **
@@ -143,12 +144,12 @@ matrix                                              ** matrix type **
 tmatrix                                             ** ternary matrix type **
 binary                                              ** binary data type **
 buffer                                              ** memory buffer type **
-complex<T>                                          ** Generic complex number type where T is the component type (fix256, tfp64, etc.)  **
-atomic<T>                                           ** Generic atomic type for lock-free concurrent access where T is the wrapped type **
-simd<T,N>                                           ** Generic SIMD vector type where T is element type, N is lane count (power of 2) **
-Handle<T>                                           ** safe alternative to raw pointers for arena-allocated memory **
+complex<T>              ** complex number type **
+atomic<T>               ** lock-free atomic type **
+simd<T,N>               ** SIMD vector type **
+Handle<T>               ** safe arena pointer **
 
-### Control Flow #######################################################################################################
+### Control Flow ################################################
 if/else                 ** standard if/else construct **
 while                   ** standard while loop for advanced uses **
 for                     ** standard for for advanced uses **
@@ -157,10 +158,10 @@ loop(start,limit,step)  ** loop with automatic iteration tracking **
 when/then/end           ** better while with state tracking **
 pick                    ** Aria equivalent of switch/case constructs **
 
-### Operators ########################################################################################################## 
+### Operators ##################################################
 +                       ** add **
 -                       ** subtract **
-*                       ** multiply, also pointer and dereference syntax in extern blocks **
+*                       ** multiply (also ptr in extern) **
 /                       ** divide **
 %                       ** modulo **
 ++                      ** increment **
@@ -168,7 +169,7 @@ pick                    ** Aria equivalent of switch/case constructs **
 =                       ** assignment **
 ==                      ** equality check **
 <=>                     ** spaceship, comparison that returns -1/0/1 **
-is                      ** ternary conditional, example 'var = is a > b : true : false'
+is                      ** ternary: is a > b : T : F **
 +=                      ** add and assign **
 -=                      ** subtract and assign **
 *=                      ** multiply and assign **
@@ -184,19 +185,19 @@ is                      ** ternary conditional, example 'var = is a > b : true :
 <<                      ** bitwise left shift **
 >>                      ** bitwise right shift **
 !!!                     ** failsafe(err) shorthand, example: '!!! err' **
-->                      ** in type (pointer TO T) , member access (access field OF pointer) **
+->                      ** pointer-to / member access **
 <-                      ** dereference (value FROM pointer) **
 @                       ** address of **
 =>                      ** cast **
-$                       ** Safe iteration var, checked value in Rules declarations **
+$                       ** iteration var / Rules value **
 <T>?                    ** Optional as in int64? **
 ?                       ** Safe unwrap ** 
 ??                      ** Null coalesce **
 ?!                      ** Emphatic unwrap, calls failsafe if error **
 ?.                      ** Safe navigation**
-?|                      ** shorthand for defaults keyword — desugars at parse time **
-_?                      ** shorthand for drop keyword — desugars at parse time **
-_!                      ** shorthand for raw keyword — desugars at parse time **
+?|                      ** defaults shorthand **
+_?                      ** drop shorthand **
+_!                      ** raw shorthand **
 |>                      ** Pipe forward **
 <|                      ** Pipe backward **
 ..                      ** inclusive range **
@@ -215,7 +216,7 @@ $$m                     ** mutable borrow **
 */                      ** end block comment **
 \                       ** escape **
 
-### Aria STREAMS #######################################################################################################
+### Aria STREAMS ###############################################
 stdout                  ** text output stream **
 stderr                  ** error output stream **
 stddbg                  ** debug output stream **
@@ -223,7 +224,7 @@ stdin                   ** text input stream **
 stddati                 ** data input stream **
 stddato                 ** data output stream **
 
-### Compiler Flags (ariac) #############################################################################################
+### Compiler Flags (ariac) #####################################
 
 ## Output
 -o <file>               ** write output to <file> **
@@ -245,19 +246,19 @@ stddato                 ** data output stream **
 -v, --verbose           ** verbose compiler output **
 
 ## Verification (Z3 SMT Solver)
---verify                ** enable Z3 static verification of Rules/limit constraints **
+--verify                ** Z3 verification of Rules/limit **
 --verify-report         ** emit detailed proof results (implies --verify) **
 --verify-contracts      ** verify requires/ensures function contracts **
 --verify-overflow       ** verify integer arithmetic cannot overflow **
 --verify-concurrency    ** detect data races and deadlocks in concurrent code **
 --verify-memory         ** detect use-after-free bugs in wild pointer code **
---smt-opt               ** enable SMT-guided optimizations (eliminates proven-safe checks) **
---smt-timeout=N         ** per-query Z3 solver timeout in milliseconds (default: 5000) **
---prove-report          ** emit Proven/Disproven/Unknown for every check (implies --verify) **
+--smt-opt               ** SMT-guided optimizations **
+--smt-timeout=N         ** Z3 timeout in ms (default 5000) **
+--prove-report          ** Proven/Disproven per check **
 
 ## GPU Target (NVIDIA CUDA/PTX)
---target=<arch>         ** target architecture: cpu, gpu, gpu+cpu, wasm32-wasi, wasm32-unknown-unknown **
---gpu-arch=<sm>         ** CUDA compute capability (default: sm_50). Examples: sm_50, sm_75, sm_86, sm_89, sm_90 **
+--target=<arch>         ** cpu, gpu, gpu+cpu, wasm32-* **
+--gpu-arch=<sm>         ** CUDA CC (default sm_50) **
 --gpu-opt=<0-3>         ** GPU optimization level (default: 3) **
 --gpu-debug             ** embed debug info in PTX **
 
@@ -282,8 +283,26 @@ stddato                 ** data output stream **
 --version               ** show version **
 --help, -h              ** show help text **
 
-### MORE INFO ##########################################################################################################
+### MORE INFO ##################################################
 aria-docs/guide```
+
+\newpage
+
+## Version History
+
+| Version | Aria | Key Changes |
+|---------|------|-------------|
+| v1.1 | v0.16.11 | Layout fixes, content update |
+| v1.0 | v0.13.7 | Initial release |
+
+### Since v1.0
+
+- **v0.14.x**: Expanded Z3 SMT solver coverage, bitvector-accurate
+  proofs, Rules consistency checking, solver-guided optimizations
+- **v0.15.x**: Self-hosting foundation — 5 compiler modules ported
+  to Aria (3,070 lines), C-bridge FFI shim pattern
+- **v0.16.x**: Code review series — dead code removal (~46K lines),
+  TODO/FIXME audit, debug cleanup, guide and example fixes
 
 \newpage
 
@@ -862,7 +881,8 @@ frac32:mixed = {1, 1, 3};     // 1 + 1/3
 
 ##### Signed Integers — `int`
 
-**Widths:** `int1`, `int2`, `int4`, `int8`, `int16`, `int32`, `int64`, `int128`, `int256`, `int512`, `int1024`, `int2048`, `int4096`
+**Widths:** `int1`, `int2`, `int4`, `int8`, `int16`, `int32`, `int64`,
+`int128`, `int256`, `int512`, `int1024`, `int2048`, `int4096`
 
 #### Overview
 
@@ -1449,7 +1469,8 @@ Basic initialization works. Full arithmetic operations are in progress.
 
 ##### Unsigned Integers — `uint`
 
-**Widths:** `uint1`, `uint2`, `uint4`, `uint8`, `uint16`, `uint32`, `uint64`, `uint128`, `uint256`, `uint512`, `uint1024`, `uint2048`, `uint4096`
+**Widths:** `uint1`, `uint2`, `uint4`, `uint8`, `uint16`, `uint32`, `uint64`,
+`uint128`, `uint256`, `uint512`, `uint1024`, `uint2048`, `uint4096`
 
 #### Overview
 
@@ -3820,7 +3841,8 @@ func:failsafe = int32(tbb32:err) {
 
 ```aria
 extern func:aria_shim_pool_create = int64(int32:num_workers);
-extern func:aria_shim_pool_submit = int32(int64:handle, int64:func_ptr, int64:arg);
+extern func:aria_shim_pool_submit = int32(
+    int64:handle, int64:func_ptr, int64:arg);
 extern func:aria_shim_pool_shutdown = int32(int64:handle);
 extern func:aria_shim_pool_wait_idle = int32(int64:handle);
 extern func:aria_shim_pool_active_tasks = int64(int64:handle);
@@ -3911,7 +3933,8 @@ func:failsafe = int32(tbb32:err) {
 Wait on multiple channels simultaneously:
 
 ```aria
-extern func:aria_shim_channel_select2 = int32(int64:ch0, int64:ch1, int64:timeout_ms);
+extern func:aria_shim_channel_select2 = int32(
+    int64:ch0, int64:ch1, int64:timeout_ms);
 
 // Returns index of ready channel (0 or 1), or -1 on timeout
 int32:ready = aria_shim_channel_select2(ch_a, ch_b, 5000i64);
@@ -3951,7 +3974,8 @@ extern func:aria_shim_mutex_destroy = int32(int64:handle);
 ```aria
 extern func:aria_shim_condvar_create = int64();
 extern func:aria_shim_condvar_wait = int32(int64:cv, int64:mutex);
-extern func:aria_shim_condvar_timedwait = int32(int64:cv, int64:mutex, int64:timeout_ns);
+extern func:aria_shim_condvar_timedwait = int32(
+    int64:cv, int64:mutex, int64:timeout_ns);
 extern func:aria_shim_condvar_signal = int32(int64:handle);
 extern func:aria_shim_condvar_broadcast = int32(int64:handle);
 extern func:aria_shim_condvar_destroy = int32(int64:handle);
@@ -3976,9 +4000,12 @@ Low-level atomic operations with explicit memory ordering:
 ```aria
 extern func:aria_shim_atomic_int64_create = int64(int64:initial);
 extern func:aria_shim_atomic_int64_load = int64(int64:handle, int32:order);
-extern func:aria_shim_atomic_int64_store = int32(int64:handle, int64:value, int32:order);
-extern func:aria_shim_atomic_int64_fetch_add = int64(int64:handle, int64:value, int32:order);
-extern func:aria_shim_atomic_int64_exchange = int64(int64:handle, int64:value, int32:order);
+extern func:aria_shim_atomic_int64_store = int32(
+    int64:handle, int64:value, int32:order);
+extern func:aria_shim_atomic_int64_fetch_add = int64(
+    int64:handle, int64:value, int32:order);
+extern func:aria_shim_atomic_int64_exchange = int64(
+    int64:handle, int64:value, int32:order);
 extern func:aria_shim_atomic_int64_destroy = int32(int64:handle);
 ```
 
@@ -4753,12 +4780,13 @@ When **Unknown** (solver timeout), the runtime check is preserved.
 | `--verify-memory` | Detect use-after-free bugs |
 | `--smt-opt` | Enable SMT-guided optimizations (implies `--verify`) |
 | `--smt-timeout=N` | Per-query Z3 timeout in milliseconds (default: 5000) |
-| `--prove-report` | Print Proven/Disproven/Unknown for every check (implies `--verify`) |
+| `--prove-report` | Proven/Disproven/Unknown per check |
 
 Use `--verify` alone to enable everything, or combine individual flags:
 
 ```bash
-ariac program.aria -o program --verify-contracts --verify-overflow --prove-report
+ariac program.aria -o program \
+    --verify-contracts --verify-overflow --prove-report
 ```
 
 #### 1. Rules & Limit Verification
@@ -4799,7 +4827,8 @@ propagates those constraints to the callee and eliminates redundant checks:
 Rules<int32>:r_safe = { $ >= 0, $ <= 100 };
 
 func:process = int32(int32:val) {
-    pass val * 2;     // overflow check eliminated if all callers use limit<r_safe>
+    pass val * 2;  // overflow check eliminated
+               // if all callers use limit<r_safe>
 }
 
 func:main = int32() {
@@ -4897,8 +4926,8 @@ func:safe_add = int32() {
 func:risky_mul = int32() {
     limit<SmallPos> int32:m = 999;
     limit<SmallPos> int32:n = 999;
-    int32:big = m * n;       // Unknown: 999*999 = 998001 fits, but solver can't prove all cases
-    pass big;                // overflow check KEPT
+    int32:big = m * n;  // Unknown: can't prove all
+    pass big;           // overflow check KEPT
 };
 ```
 
@@ -4933,13 +4962,25 @@ func:safe_writer = int64(int64:arg) {
 
 ```aria
 // UNSAFE — cyclic lock ordering
-func:lock_ab = NIL() { lock(mtx_a); lock(mtx_b); unlock(mtx_b); unlock(mtx_a); };
-func:lock_ba = NIL() { lock(mtx_b); lock(mtx_a); unlock(mtx_a); unlock(mtx_b); };
+func:lock_ab = NIL() {
+    lock(mtx_a); lock(mtx_b);
+    unlock(mtx_b); unlock(mtx_a);
+};
+func:lock_ba = NIL() {
+    lock(mtx_b); lock(mtx_a);
+    unlock(mtx_a); unlock(mtx_b);
+};
 // Disproven: potential deadlock — A→B then B→A
 
 // SAFE — consistent ordering
-func:lock_ab2 = NIL() { lock(mtx_a); lock(mtx_b); unlock(mtx_b); unlock(mtx_a); };
-func:lock_ab3 = NIL() { lock(mtx_a); lock(mtx_b); unlock(mtx_b); unlock(mtx_a); };
+func:lock_ab2 = NIL() {
+    lock(mtx_a); lock(mtx_b);
+    unlock(mtx_b); unlock(mtx_a);
+};
+func:lock_ab3 = NIL() {
+    lock(mtx_a); lock(mtx_b);
+    unlock(mtx_b); unlock(mtx_a);
+};
 // Proven: deadlock-free
 ```
 
@@ -4992,7 +5033,7 @@ func:example = NIL() {
 | Directive | On Proven | On Disproven | On Unknown |
 |-----------|-----------|--------------|------------|
 | `prove(expr)` | Erased | Compile error | Compile error |
-| `assert_static(expr)` | Erased | Warning + runtime assert | Warning + runtime assert |
+| `assert_static(expr)` | Erased | Warn+assert | Warn+assert |
 
 #### SMT-Guided Optimizations (--smt-opt)
 
@@ -5023,8 +5064,10 @@ The default per-query timeout is 5000ms. Reduce for faster compilation at the co
 of more Unknown results; increase for complex proofs:
 
 ```bash
-ariac program.aria -o program --verify --smt-timeout=2000    # faster, more unknowns
-ariac program.aria -o program --verify --smt-timeout=10000   # slower, fewer unknowns
+ariac program.aria -o program \
+    --verify --smt-timeout=2000   # faster
+ariac program.aria -o program \
+    --verify --smt-timeout=10000  # slower
 ```
 
 #### Notes
@@ -5158,13 +5201,13 @@ Store in variable first:
 3. [Feature 1: failsafe — The Mandatory Safety Net](#3-feature-1-failsafe--the-mandatory-safety-net)
 4. [Feature 2: Result\<T\> — No Silent Failures](#4-feature-2-resultt--no-silent-failures)
 5. [Feature 3: TBB — Sticky Error Propagation](#5-feature-3-tbb--sticky-error-propagation)
-6. [Feature 4: limit\<Rules\> — Value Constraints with Z3 Verification](#6-feature-4-limitrules--value-constraints-with-z3-verification)
-7. [Feature 5: Borrow Semantics — Compile-Time Memory Safety](#7-feature-5-borrow-semantics--compile-time-memory-safety)
+6. [Feature 4: limit\<Rules\> — Z3 Verification](#6-feature-4-limitrules--value-constraints-with-z3-verification)
+7. [Feature 5: Borrow Semantics](#7-feature-5-borrow-semantics--compile-time-memory-safety)
 8. [Feature 6: Emergency Operators — ?! and !!!](#8-feature-6-emergency-operators---and-)
 9. [Feature 7: wild — Controlled Unsafe Access](#9-feature-7-wild--controlled-unsafe-access)
 10. [Feature 8: sys() — Tiered Syscall Safety](#10-feature-8-sys--tiered-syscall-safety)
-11. [Feature 9: _? and _! — Ergonomic Drop & Raw Shorthand](#11-feature-9-_-and-_--ergonomic-drop--raw-shorthand)
-12. [Putting It Together: The Complete Pump Controller](#12-putting-it-together-the-complete-pump-controller)
+11. [Feature 9: _? and _! Shorthand](#11-feature-9-_-and-_--ergonomic-drop--raw-shorthand)
+12. [Complete Pump Controller](#12-putting-it-together-the-complete-pump-controller)
 13. [Z3 Verification in Practice](#13-z3-verification-in-practice)
 14. [Comparison with Other Approaches](#14-comparison-with-other-approaches)
 15. [Summary](#15-summary)
@@ -7042,7 +7085,8 @@ public:
 void TypeChecker::checkTypeDecl(TypeDeclStmt* stmt) {
     // 1. Validate required components
     if (!stmt->createFunc) {
-        addError("Type '" + stmt->typeName + "' missing required 'create' function");
+        addError("Type '" + stmt->typeName +
+                 "' missing required 'create' function");
     }
     
     // 2. Merge internal + interface into combined struct
@@ -7500,7 +7544,7 @@ No manual cleanup needed.
 #### Aria Reserved Words — Complete List
 
 > Generated from `src/frontend/lexer/lexer.cpp` keyword table (151 keywords)
-> v0.13.4 — Authoritative reference
+> v0.16.11 — Authoritative reference
 
 All words listed below are reserved by the Aria compiler and **cannot be used as
 variable names, function names, or identifiers** (except `stack` and `gc` which are
@@ -8025,7 +8069,9 @@ All Z3 work happens in **Phase 3.25** of compilation, between type checking
 and borrow checking, before IR generation.
 
 ```
-Parse → Type Check → Z3 Verification (Phase 3.25) → Borrow Check → Result Elision (Phase 3.75) → IR Gen → LLVM → Link
+Parse → Type Check → Z3 (3.25) →
+  Borrow Check → Result Elision (3.75) →
+  IR Gen → LLVM → Link
 ```
 
 #### Files
@@ -9515,16 +9561,16 @@ While it presently lacks the static formal verification ecosystem of Ada/SPARK 7
 1. aria\_specs.txt  
 2. Should I choose Ada, SPARK, or Rust over C/C++? (2024) | Hacker News, accessed March 28, 2026, [https://news.ycombinator.com/item?id=45486829](https://news.ycombinator.com/item?id=45486829)  
 3. Fixed-Point Arithmetic Unit with a Scaling Mechanism for FPGA-Based Embedded Systems, accessed March 28, 2026, [https://www.mdpi.com/2079-9292/10/10/1164](https://www.mdpi.com/2079-9292/10/10/1164)  
-4. IAEA Safety Standards Deterministic Safety Analysis for Nuclear Power Plants \- Scientific, technical publications in the nuclear field | IAEA, accessed March 28, 2026, [https://www-pub.iaea.org/MTCD/Publications/PDF/PUB1851\_web.pdf](https://www-pub.iaea.org/MTCD/Publications/PDF/PUB1851_web.pdf)  
+4. IAEA Safety Standards — Deterministic Safety Analysis for Nuclear Power Plants, accessed March 28, 2026, [IAEA PUB1851](https://www-pub.iaea.org/MTCD/Publications/PDF/PUB1851_web.pdf)  
 5. Should I choose Ada, SPARK, or Rust over C/C++? \- AdaCore, accessed March 28, 2026, [https://www.adacore.com/blog/should-i-choose-ada-spark-or-rust-over-c-c](https://www.adacore.com/blog/should-i-choose-ada-spark-or-rust-over-c-c)  
 6. Bringing Rust to Safety-Critical Systems in Space \- arXiv, accessed March 28, 2026, [https://arxiv.org/html/2405.18135v1](https://arxiv.org/html/2405.18135v1)  
-7. What's The Best Language For Safety Critical Software? : r/programming \- Reddit, accessed March 28, 2026, [https://www.reddit.com/r/programming/comments/te5rb/whats\_the\_best\_language\_for\_safety\_critical/](https://www.reddit.com/r/programming/comments/te5rb/whats_the_best_language_for_safety_critical/)  
+7. What's The Best Language For Safety Critical Software? — Reddit, accessed March 28, 2026, [r/programming](https://www.reddit.com/r/programming/comments/te5rb/whats_the_best_language_for_safety_critical/)  
 8. Programming Languages in Safety-Critical Applications \- adesso SE, accessed March 28, 2026, [https://www.adesso.de/en/news/blog/programming-languages-in-safety-critical-applications.jsp](https://www.adesso.de/en/news/blog/programming-languages-in-safety-critical-applications.jsp)  
 9. Rust is DO-178C Certifiable \- Pictorus, accessed March 28, 2026, [https://blog.pictor.us/rust-is-do-178-certifiable/](https://blog.pictor.us/rust-is-do-178-certifiable/)  
 10. Functional Safety in Automotive: ISO 26262 Testing Best Practices | QA Systems, accessed March 28, 2026, [https://www.qa-systems.com/blog/iso-26262-testing-best-practices/](https://www.qa-systems.com/blog/iso-26262-testing-best-practices/)  
 11. Meeting ISO 26262 Guidelines \- Black Duck, accessed March 28, 2026, [https://www.blackduck.com/resources/white-papers/ISO26262-guidelines.html](https://www.blackduck.com/resources/white-papers/ISO26262-guidelines.html)  
-12. Master Thesis, accessed March 28, 2026, [https://www.ils.uni-stuttgart.de/dokumente/2025-08-04\_Masterarbeit\_Comparison\_Ada\_C\_Rust\_V0.pdf](https://www.ils.uni-stuttgart.de/dokumente/2025-08-04_Masterarbeit_Comparison_Ada_C_Rust_V0.pdf)  
-13. DO-178C Compliance in Static Analysis for Aerospace Software Development \- Parasoft, accessed March 28, 2026, [https://www.parasoft.com/learning-center/do-178c/static-analysis/](https://www.parasoft.com/learning-center/do-178c/static-analysis/)  
+12. Master Thesis — Comparison Ada C Rust, accessed March 28, 2026, [ILS Stuttgart](https://www.ils.uni-stuttgart.de/dokumente/2025-08-04_Masterarbeit_Comparison_Ada_C_Rust_V0.pdf)  
+13. DO-178C Compliance in Static Analysis — Parasoft, accessed March 28, 2026, [Parasoft](https://www.parasoft.com/learning-center/do-178c/static-analysis/)  
 14. The Most Memory Safe Native Programming Language, accessed March 28, 2026, [https://vale.dev/memory-safe](https://vale.dev/memory-safe)  
 15. Ask HN: What if a language's structure determined memory lifetime? | Hacker News, accessed March 28, 2026, [https://news.ycombinator.com/item?id=46488290](https://news.ycombinator.com/item?id=46488290)  
 16. The Compiler as Sentinel: A Comprehensive Analysis of Compiler-Oriented Software Security | by Vipul Kumar | Medium, accessed March 28, 2026, [https://medium.com/@vipulkc/the-compiler-as-sentinel-a-comprehensive-analysis-of-compiler-oriented-software-security-f75428dbe820](https://medium.com/@vipulkc/the-compiler-as-sentinel-a-comprehensive-analysis-of-compiler-oriented-software-security-f75428dbe820)  
