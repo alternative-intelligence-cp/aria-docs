@@ -157,8 +157,9 @@ is                      ** ternary conditional, example 'var = is a > b : true :
 <<                      ** bitwise left shift **
 >>                      ** bitwise right shift **
 !!!                     ** failsafe(err) shorthand, example: '!!! err' **
-->                      ** in type (pointer TO T) , member access (access field OF pointer) **
-<-                      ** dereference (value FROM pointer) **
+.                       ** direct member access on struct values, e.g. my_struct.field **
+->                      ** in type: pointer TO T. In expression: dereference pointer then access field, e.g. ptr->field **
+<-                      ** dereference entire pointer (value FROM pointer), e.g. int32:val = <-ptr **
 @                       ** address of **
 =>                      ** cast **
 $                       ** Safe iteration var, checked value in Rules declarations **

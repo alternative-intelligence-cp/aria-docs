@@ -1,4 +1,4 @@
-# Pointers — `wild`, `wildx`, `->`, `@`
+# Pointers — `wild`, `wildx`, `->`, `<-`, `.`, `@`
 
 ## Overview
 
@@ -10,9 +10,38 @@ and `extern` blocks.
 | Operator | Meaning |
 |----------|---------|
 | `@` | Address-of (get pointer to variable) |
-| `->` | In type: pointer to T. In expression: member access through pointer |
-| `<-` | Dereference (get value from pointer) |
+| `.` | Direct member access on struct values |
+| `->` | In type: pointer to T. In expression: dereference pointer then access field |
+| `<-` | Dereference (get entire value from pointer) |
 | `?.` | Safe navigation (NIL-safe member access) |
+
+## Member Access: `.` vs `->`
+
+`.` accesses a field on a **struct value** directly. It does not auto-dereference pointers.
+
+`->` dereferences a **pointer to a struct**, then accesses the field. Equivalent to
+`(<-ptr).field`.
+
+`<-` dereferences a pointer and returns the **entire value**.
+
+```aria
+struct:Point = { int32:x; int32:y; };
+
+// Direct struct — use .
+Point:p = Point { x: 10, y: 20 };
+int32:px = p.x;                     // direct member access
+
+// Pointer to struct — use -> for fields, <- for whole value
+Point->:ptr = @p;
+int32:px2 = ptr->x;                 // dereference + field access
+Point:copy = <-ptr;                 // dereference entire struct
+
+// Pointer indexing then . access
+// [0] on a pointer dereferences at offset 0, yielding a struct value
+// then . accesses the field on that value
+HashMap->:map = get_map();
+int64:len = map[0].length;          // index deref + direct field access
+```
 
 ## Wild Pointers
 

@@ -1,6 +1,6 @@
 # Safety-Critical Development in Aria: A Walkthrough
 
-**Version:** 0.3.4  
+**Version:** 0.16.7  
 **Date:** 2026-04-10  
 **Status:** Living document  
 

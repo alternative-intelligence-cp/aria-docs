@@ -5,22 +5,19 @@
 // _! desugars to raw() at parse time.
 // Both forms are fully interchangeable with their verbose counterparts.
 
-use std.io;
-
-func:failsafe = nil(tbb8:err) {
-    println("failsafe: error code " + err);
-    exit(1i32);
+func:failsafe = int32(tbb32:err) {
+    exit(1);
 };
 
 // A function that always succeeds
-func:safe_add = Result<int64>(int64:a, int64:b) {
+func:safe_add = int64(int64:a, int64:b) {
     pass(a + b);
 };
 
 // A function that might fail
-func:risky_divide = Result<int64>(int64:a, int64:b) {
-    if (b == 0i64){
-        fail(1tbb8);
+func:risky_divide = int64(int64:a, int64:b) {
+    if (b == 0i64) {
+        fail(1i64);
     }
     pass(a / b);
 };
@@ -38,24 +35,24 @@ func:main = int32() {
 
     // === _! shorthand (raw) ===
     // Verbose form:
-    int64:a = raw(safe_add(10i64, 32i64));
-    println("verbose raw: " + a);
+    int64:a = raw safe_add(10i64, 32i64);
+    drop(println("verbose raw"));
 
     // Shorthand — identical behavior:
     int64:b = _!safe_add(20i64, 22i64);
-    println("shorthand raw: " + b);
+    drop(println("shorthand raw"));
 
     // === Mixing both styles ===
     // Use verbose where readability matters:
     Result<int64>:r = risky_divide(100i64, 4i64);
-    if (r.err == NULL){
-        int64:val = raw(r);
-        drop(println("divide result: " + val));
+    if (!r.is_error) {
+        int64:val = raw r;
+        drop(println("divide result ok"));
     }
 
     // Use terse in compact code:
     int64:q = _!safe_add(1i64, 1i64);
-    _?println("quick: " + q);
+    _?println("quick done");
 
-    exit(0i32);
+    exit(0);
 };
