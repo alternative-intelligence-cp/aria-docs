@@ -31,17 +31,17 @@ extern func:aria_shim_thread_current_id = int64();
 func:worker = int64(int64:arg) {
     // Worker body — arg is user-provided data
     pass arg * 2i64;
-}
+};
 
 func:main = int32() {
     int64:handle = aria_shim_thread_spawn(@worker, 42i64);
     drop aria_shim_thread_join(handle);
     exit 0;
-}
+};
 
 func:failsafe = int32(tbb32:err) {
     exit 1;
-}
+};
 ```
 
 ---
@@ -58,7 +58,7 @@ extern func:aria_shim_pool_pending_tasks = int64(int64:handle);
 
 func:task = int64(int64:arg) {
     pass arg + 1i64;
-}
+};
 
 func:main = int32() {
     int32:cores = aria_shim_thread_hardware_concurrency();
@@ -73,11 +73,11 @@ func:main = int32() {
     drop aria_shim_pool_wait_idle(pool);
     drop aria_shim_pool_shutdown(pool);
     exit 0;
-}
+};
 
 func:failsafe = int32(tbb32:err) {
     exit 1;
-}
+};
 ```
 
 ---
@@ -109,7 +109,7 @@ func:producer = int64(int64:ch) {
     }
     drop aria_shim_channel_close(ch);
     pass 0i64;
-}
+};
 
 func:consumer = int64(int64:ch) {
     int64:sum = 0i64;
@@ -118,7 +118,7 @@ func:consumer = int64(int64:ch) {
         sum = sum + val;
     }
     pass sum;
-}
+};
 
 func:main = int32() {
     int64:ch = aria_shim_channel_create(16i32);
@@ -129,11 +129,11 @@ func:main = int32() {
     drop aria_shim_thread_join(cons);
     drop aria_shim_channel_destroy(ch);
     exit 0;
-}
+};
 
 func:failsafe = int32(tbb32:err) {
     exit 1;
-}
+};
 ```
 
 ### Channel Select
@@ -232,7 +232,7 @@ The `async` keyword declares functions that can suspend and resume:
 async func:fetch_data = string(string:url) {
     // Async operations
     pass data;
-}
+};
 ```
 
 Use `await` to suspend until the async operation completes:

@@ -34,11 +34,11 @@ func:main = int32() {
     int64:count = ahcount(ht);           // 3
 
     println(name);
-    println(age);
+    println(`&{age}`);
     exit 0;
-}
+};
 
-func:failsafe = int32(tbb32:err) { exit 1; }
+func:failsafe = int32(tbb32:err) { exit 1; };
 ```
 
 ## Fast-Path Mode

@@ -4,7 +4,7 @@
 
 ```aria
 for (int32:i = 0; i < 10; i++) {
-    println(i);
+    println(`&{i}`);
 }
 ```
 

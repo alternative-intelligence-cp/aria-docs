@@ -5,7 +5,7 @@
 ```aria
 print("no newline");
 println("with newline");
-println(42);                        // prints integer
+println(`&{42}`);                   // prints integer via interpolation
 println(`Value: &{expression}`);    // interpolation
 ```
 

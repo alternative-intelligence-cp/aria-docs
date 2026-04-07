@@ -10,7 +10,7 @@ Program entry point. Must call `exit()` (not `pass`/`fail`):
 func:main = int32() {
     println("Hello, world!");
     exit 0;
-}
+};
 ```
 
 - Signature: `func:main = int32()` — takes no arguments (argc/argv via sys)
@@ -26,7 +26,7 @@ Mandatory unrecoverable error handler. Called when `?!` unwrap fails:
 func:failsafe = int32(tbb32:err) {
     println("Fatal error occurred");
     exit 1;
-}
+};
 ```
 
 - Signature: `func:failsafe = int32(tbb32:err)` — receives error code

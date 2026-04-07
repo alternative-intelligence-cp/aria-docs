@@ -31,7 +31,7 @@ Apply Rules as a type annotation:
 func:process = NIL(limit<r_positive> int32:count) {
     // 'count' is guaranteed > 0
     pass NIL;
-}
+};
 ```
 
 ## Member Access in Rules — $.field

@@ -25,7 +25,7 @@ func:divide = flt64(int32:a, int32:b) {
         fail 1;              // return error Result
     }
     pass (a / b);            // return success Result
-}
+};
 ```
 
 - `pass value` — return success, wraps value in Result
@@ -76,8 +76,8 @@ _ = divide(10, 3);
 When passing a Result<T> as an argument to a function expecting T, it auto-unwraps:
 
 ```aria
-func:add = int32(int32:a, int32:b) { pass (a + b); }
-func:get_val = int32() { pass 42; }
+func:add = int32(int32:a, int32:b) { pass (a + b); };
+func:get_val = int32() { pass 42; };
 
 // get_val() returns Result<int32>, but add() expects int32
 // Result auto-unwraps in argument position
@@ -101,11 +101,11 @@ ok maybe_unknown_value;
 ```aria
 func:main = int32() {
     exit 0;   // exit program with code 0
-}
+};
 
 func:failsafe = int32(tbb32:err) {
     exit 1;   // must exit with code > 0
-}
+};
 ```
 
 ## Related

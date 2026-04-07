@@ -44,6 +44,6 @@ The `$` symbol is the automatic iteration variable in `loop` and `till`:
 
 ```aria
 loop(0, 10, 1) {
-    println($);       // prints 0 through 9
+    println(`&{$}`);       // prints 0 through 9
 }
 ```

@@ -65,11 +65,11 @@ extern "libc" {
 func:main = int32() {
     drop printf("Hello from C!\n");
     exit 0;
-}
+};
 
 func:failsafe = int32(tbb32:err) {
     exit 1;
-}
+};
 ```
 
 ## Related

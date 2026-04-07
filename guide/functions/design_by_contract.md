@@ -13,7 +13,7 @@ func:divide = flt64(int32:a, int32:b)
     requires b != 0
 {
     pass (a / b);
-}
+};
 ```
 
 Multiple conditions are comma-separated:
@@ -23,7 +23,7 @@ func:clamp_to_byte = int32(int32:val)
     requires val >= 0, val <= 255
 {
     pass val;
-}
+};
 ```
 
 ## Ensures — Postconditions
@@ -34,7 +34,7 @@ func:check_order = int32(int32:lo, int32:hi)
     ensures hi > 0
 {
     pass hi - lo;
-}
+};
 ```
 
 Contract clauses go between the closing `)` of the signature and the opening `{` of

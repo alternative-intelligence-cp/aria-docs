@@ -19,18 +19,18 @@ use "stdlib_file.aria".*;              // stdlib import (bare filename)
 // file: math_utils.aria
 pub func:square = int32(int32:x) {
     pass (x * x);
-}
+};
 
 // file: main.aria
 use "math_utils.aria".*;
 
 func:main = int32() {
     int32:val = raw square(5);
-    println(val);    // 25
+    println(`&{val}`);    // 25
     exit 0;
-}
+};
 
-func:failsafe = int32(tbb32:err) { exit 1; }
+func:failsafe = int32(tbb32:err) { exit 1; };
 ```
 
 ## Notes

@@ -18,17 +18,21 @@ complex<flt64>:z = { real = 3.0, imag = 4.0 };  // 3 + 4i
 
 ## Arithmetic
 
-Standard complex arithmetic: `+`, `-`, `*`, `/` with proper mathematical formulas.
+Standard complex arithmetic via stdlib functions:
 
 ```aria
-complex<flt64>:a = { real = 1.0, imag = 2.0 };
-complex<flt64>:b = { real = 3.0, imag = 4.0 };
-complex<flt64>:sum = (a + b);  // {4.0, 6.0}
+use "complex.aria".*;
+
+complex<flt64>:a = raw complex_new(1.0, 2.0);
+complex<flt64>:b = raw complex_new(3.0, 4.0);
+complex<flt64>:sum = raw complex_add(a, b);       // {4.0, 6.0}
+complex<flt64>:prod = raw complex_mul(a, b);       // {-5.0, 10.0}
+complex<flt64>:conj = raw complex_conjugate(a);    // {1.0, -2.0}
 ```
 
-- `conjugate()` — implemented
-- `magnitude()` — future
-- `phase()` — future
+Functions: `complex_new`, `complex_add`, `complex_sub`, `complex_mul`, `complex_div`,
+`complex_conjugate`, `complex_magnitude`, `complex_from_real`, `complex_from_imag`,
+`complex_is_err`, `complex_err`.
 
 ## ERR Propagation
 
@@ -41,7 +45,8 @@ Interleaved layout for SIMD: `[real₀, imag₀, real₁, imag₁, ...]`
 
 ## Status
 
-**⚠️ Not yet implemented in the compiler.** Consider the `aria-entangled` package.
+Implemented in stdlib (`complex.aria`, 510 lines). Generic over all `Numeric` trait
+types. 10+ test files covering basic operations, generics, and turbofish syntax.
 
 ## Related
 

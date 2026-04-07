@@ -13,12 +13,12 @@ Results:
 ```aria
 func:square = int32(int32:x) {
     pass (x * x);
-}
+};
 
 func:greet = NIL(string:name) {
     println(`Hello, &{name}!`);
     pass(NIL);           // NIL-returning functions must pass NIL
-}
+};
 ```
 
 `pass` wraps the value in `Result<T>{value=val, error=NIL, is_error=false}`.
@@ -31,7 +31,7 @@ func:divide = flt64(int32:a, int32:b) {
         fail 1;          // error code 1 — division by zero
     }
     pass (a / b);
-}
+};
 ```
 
 `fail` wraps the error code in `Result<T>{value=NIL, error=code, is_error=true}`.

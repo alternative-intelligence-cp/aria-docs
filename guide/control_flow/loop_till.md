@@ -6,11 +6,11 @@ Counted loop with automatic iteration variable `$`:
 
 ```aria
 loop(0, 10, 1) {
-    println($);       // prints 0, 1, 2, ..., 9
+    println(`&{$}`);       // prints 0, 1, 2, ..., 9
 }
 
 loop(0, 100, 2) {
-    println($);       // prints 0, 2, 4, ..., 98
+    println(`&{$}`);       // prints 0, 2, 4, ..., 98
 }
 ```
 
@@ -25,7 +25,7 @@ Shorthand when starting from 0:
 
 ```aria
 till(10, 1) {
-    println($);       // prints 0, 1, 2, ..., 9
+    println(`&{$}`);       // prints 0, 1, 2, ..., 9
 }
 ```
 
@@ -38,7 +38,7 @@ int32:sum = 0;
 loop(1, 101, 1) {
     sum = (sum + $);   // sum of 1 to 100
 }
-println(sum);          // 5050
+println(`&{sum}`);          // 5050
 ```
 
 ## Notes

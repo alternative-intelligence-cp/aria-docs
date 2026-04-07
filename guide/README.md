@@ -1,7 +1,7 @@
 # Aria Programming Guide
 
-**Version:** 0.5.5  
-**Last Updated:** 2026-04-01
+**Version:** 0.16.8  
+**Last Updated:** 2026-04-07
 
 ## Sections
 

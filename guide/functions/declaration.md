@@ -7,12 +7,12 @@ Aria functions use the `func:name = return_type(params)` syntax:
 ```aria
 func:add = int32(int32:a, int32:b) {
     pass (a + b);
-}
+};
 
 func:greet = NIL(string:name) {
     println(`Hello, &{name}!`);
     pass NIL;
-}
+};
 ```
 
 ## Key Rules
@@ -37,11 +37,11 @@ drop greet("Alice");                    // discard Result
 ```aria
 pub func:public_func = int32() {      // visible to other modules
     pass 42;
-}
+};
 
 func:private_func = int32() {          // file-private (default)
     pass 99;
-}
+};
 ```
 
 ## Type Inference for Literals
@@ -49,7 +49,7 @@ func:private_func = int32() {          // file-private (default)
 Bare integer literals default to `int32`. Use suffixes for other widths:
 
 ```aria
-func:process = NIL(int64:val) { pass(NIL); }
+func:process = NIL(int64:val) { pass(NIL); };
 // WRONG: process(42);       // 42 is int32, function wants int64
 // RIGHT: process(42i64);    // explicit int64 suffix
 ```

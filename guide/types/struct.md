@@ -25,8 +25,8 @@ Struct literal syntax with named fields:
 
 ```aria
 stack Point:p = Point{x: 10, y: 20};
-println(p.x);    // 10
-println(p.y);    // 20
+println(`&{p.x}`);    // 10
+println(`&{p.y}`);    // 20
 
 stack Person:alice = Person{name: "Alice", age: 30};
 ```

@@ -13,7 +13,7 @@ while (condition) {
 ```aria
 int32:count = 0;
 while (count < 10) {
-    println(count);
+    println(`&{count}`);
     count++;
 }
 ```

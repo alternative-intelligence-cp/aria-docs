@@ -5,14 +5,14 @@
 ```aria
 func:identity = T(T:value) {
     pass value;
-}
+};
 
 func:max = T(T:a, T:b) {
     if (a > b) {
         pass a;
     }
     pass b;
-}
+};
 ```
 
 Generic type parameters are monomorphized at compile time — one specialized version

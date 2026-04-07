@@ -1,6 +1,6 @@
 # Standard Library Overview
 
-The standard library contains **59 modules** in `REPOS/aria/stdlib/`.
+The standard library contains **72 modules** in `REPOS/aria/stdlib/`.
 
 ## Import Pattern
 

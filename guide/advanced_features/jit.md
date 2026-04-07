@@ -69,23 +69,33 @@ The assembler supports 45+ x86-64 instructions across multiple categories:
 The JIT includes a linear scan register allocator for automatic register assignment:
 
 ```aria
-use jit;
+extern func:asm_create = int64();
+extern func:asm_vreg_new_gpr = int64(int64:ctx);
+extern func:asm_mov_r64_imm64 = NIL(int64:ctx, int64:reg, int64:val);
+extern func:asm_add_r64_r64 = NIL(int64:ctx, int64:dst, int64:src);
+extern func:asm_mov_r64_r64 = NIL(int64:ctx, int64:dst, int64:src);
+extern func:asm_ret = NIL(int64:ctx);
+extern func:asm_finalize = int64(int64:ctx);
+extern func:asm_execute = int64(int64:guard);
 
-fn jit_example() {
-    let a = jit.asm_create();
-    let v0 = jit.asm_vreg_new_gpr(a);  // virtual register
-    let v1 = jit.asm_vreg_new_gpr(a);
+func:main = int32() {
+    int64:a = asm_create();
+    int64:v0 = asm_vreg_new_gpr(a);
+    int64:v1 = asm_vreg_new_gpr(a);
 
-    jit.asm_mov_r64_imm64(a, v0, 10);
-    jit.asm_mov_r64_imm64(a, v1, 32);
-    jit.asm_add_r64_r64(a, v0, v1);
-    jit.asm_mov_r64_r64(a, jit.REG_RAX, v0);
-    jit.asm_ret(a);
+    drop asm_mov_r64_imm64(a, v0, 10i64);
+    drop asm_mov_r64_imm64(a, v1, 32i64);
+    drop asm_add_r64_r64(a, v0, v1);
+    drop asm_mov_r64_r64(a, 0i64, v0);   // REG_RAX = 0
+    drop asm_ret(a);
 
-    let guard = jit.asm_finalize(a);
-    let result = jit.asm_execute(guard);
+    int64:guard = asm_finalize(a);
+    int64:result = asm_execute(guard);
     // result == 42
-}
+    exit 0;
+};
+
+func:failsafe = int32(tbb32:err) { exit 1; };
 ```
 
 **Features:**

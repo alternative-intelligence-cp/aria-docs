@@ -49,11 +49,11 @@ func:main = int32() {
     limit<r_bounded>  int32:y = 500;     // Proven: 500 >= 0 AND 500 <= 1000
     limit<r_positive> int32:z = -1;      // Disproven: -1 > 0 is false
     exit 0;
-}
+};
 
 func:failsafe = int32(tbb32:err) {
     exit 1;
-}
+};
 ```
 
 Compile with `--verify --prove-report`:
@@ -74,17 +74,17 @@ Rules<int32>:r_safe = { $ >= 0, $ <= 100 };
 
 func:process = int32(int32:val) {
     pass val * 2;     // overflow check eliminated if all callers use limit<r_safe>
-}
+};
 
 func:main = int32() {
     limit<r_safe> int32:a = 50;
     int32:result = raw process(a);
     exit 0;
-}
+};
 
 func:failsafe = int32(tbb32:err) {
     exit 1;
-}
+};
 ```
 
 ### Rules Narrowing

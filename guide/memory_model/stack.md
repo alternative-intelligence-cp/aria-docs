@@ -24,7 +24,7 @@ func:example = NIL() {
     }
     // 'inner' is gone here
     pass NIL;
-}
+};
 ```
 
 ## Performance

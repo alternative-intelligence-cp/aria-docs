@@ -21,7 +21,7 @@ loop(0, 10, 1) {
     if ($ == 5) {
         continue;    // skip 5
     }
-    println($);
+    println(`&{$}`);
 }
 ```
 

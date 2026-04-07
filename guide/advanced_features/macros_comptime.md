@@ -31,11 +31,11 @@ func:main = int32() {
     int32:val = double_it!(5i32);
     // val == 10 (expanded to: 5i32 + 5i32)
     exit val;
-}
+};
 
 func:failsafe = int32(tbb32:err) {
     exit 1;
-}
+};
 ```
 
 ### Multiple Parameters
@@ -49,11 +49,11 @@ func:main = int32() {
     int32:result = add3!(1i32, 2i32, 3i32);
     // result == 6
     exit result;
-}
+};
 
 func:failsafe = int32(tbb32:err) {
     exit 1;
-}
+};
 ```
 
 ### How It Works
@@ -89,11 +89,11 @@ func:main = int32() {
     int32:size = comptime(4 * 1024);
     // size == 4096, computed at compile time
     exit 0;
-}
+};
 
 func:failsafe = int32(tbb32:err) {
     exit 1;
-}
+};
 ```
 
 ### comptime Function
@@ -106,17 +106,17 @@ comptime func:factorial = int64(int64:n) {
         pass 1i64;
     }
     pass n * raw factorial(n - 1i64);
-}
+};
 
 func:main = int32() {
     int64:val = comptime(raw factorial(10i64));
     // val == 3628800, computed entirely at compile time
     exit 0;
-}
+};
 
 func:failsafe = int32(tbb32:err) {
     exit 1;
-}
+};
 ```
 
 ### pub comptime Function
@@ -126,7 +126,7 @@ Export a compile-time function for use in other modules:
 ```aria
 pub comptime func:align_up = int64(int64:val, int64:align) {
     pass ((val + align - 1i64) / align) * align;
-}
+};
 ```
 
 ### comptime Block
@@ -142,11 +142,11 @@ func:main = int32() {
     };
 
     exit 0;
-}
+};
 
 func:failsafe = int32(tbb32:err) {
     exit 1;
-}
+};
 ```
 
 ---
@@ -170,11 +170,11 @@ func:main = int32() {
     string:repr = raw a.to_string();
 
     exit 0;
-}
+};
 
 func:failsafe = int32(tbb32:err) {
     exit 1;
-}
+};
 ```
 
 ### Available Derive Traits
@@ -200,12 +200,12 @@ Attributes modify declarations at compile time:
 #[inline]
 func:hot_path = int32(int32:x) {
     pass x * 2;
-}
+};
 
 #[noinline]
 func:cold_path = int32(int32:x) {
     pass x / 2;
-}
+};
 
 #[align(64)]
 struct:CacheLine = {

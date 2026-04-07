@@ -6,7 +6,7 @@
 async func:fetch_data = string(string:url) {
     // ... async operations
     pass data;
-}
+};
 ```
 
 The `async` keyword marks a function as asynchronous. Async functions return

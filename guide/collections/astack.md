@@ -33,12 +33,12 @@ func:main = int32() {
     // string:s = apop(stk);            // paren form
 
     int32:n = apop(stk);                // pop int32: 42
-    println(n);
+    println(`&{n}`);
 
     exit 0;
-}
+};
 
-func:failsafe = int32(tbb32:err) { exit 1; }
+func:failsafe = int32(tbb32:err) { exit 1; };
 ```
 
 ## Syntax Forms (v0.4.6+)

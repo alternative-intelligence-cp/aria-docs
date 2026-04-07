@@ -22,13 +22,17 @@ Floats, strings, and arrays are **rejected** at compile time.
 ## Memory Ordering
 
 Default ordering is **Sequential Consistency** (SeqCst) — the safest option.
-Weaker orderings require `unsafe { }`:
+For specialized use, specify ordering keywords directly:
 
 | Ordering | Safety | Use Case |
 |----------|--------|----------|
-| SeqCst | Safe (default) | General purpose |
-| Acquire/Release | Requires unsafe | Producer/consumer patterns |
-| Relaxed | Requires unsafe | Counters where ordering doesn't matter |
+| `seq_cst` | Safest (default) | General purpose |
+| `acquire`/`release` | Standard | Producer/consumer patterns |
+| `relaxed` | Weakest | Counters where ordering doesn't matter |
+
+Memory orderings are language keywords (`relaxed`, `acquire`, `release`, `acq_rel`,
+`seq_cst`) — see [concurrency](../advanced_features/concurrency.md) for usage with
+the shim-level atomic API.
 
 ## Operations
 
