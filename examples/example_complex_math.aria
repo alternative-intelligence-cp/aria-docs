@@ -121,3 +121,7 @@ func:main = int32() {
     
     exit(0);  // Success - all operations complete!
 };
+
+func:failsafe = int32(tbb32:err) {
+    exit 1;
+};

@@ -4,67 +4,61 @@
 // Demonstrates:
 // - Function definitions: func:name = returnType(type:param) { body };
 // - Function parameters with type:name syntax
-// - Function calls
-// - pass() for successful return
+// - Function calls with raw keyword for value extraction
+// - pass for successful return (space-separated, no parens)
 // - Multiple parameters
-// - result type with {err, val} fields (implicit)
+// - Result<T> type with ? unwrap operator
 // ============================================================================
 
 // Simple function with no parameters
-func:greet = int8(){
-    print("Hello from Aria!");
-    pass(0);
+func:greet = int32() {
+    println("Hello from Aria!");
+    pass 0i32;
 };
 
 // Function with parameters and return value
-func:add = int32(int32:a, int32:b){
-    pass(a + b);
+func:add = int32(int32:a, int32:b) {
+    pass a + b;
 };
 
 // Function with multiple parameters
-func:multiply = flt64(flt64:x, flt64:y){
-    pass(x * y);
+func:multiply = flt64(flt64:x, flt64:y) {
+    pass x * y;
 };
 
 // Function that returns boolean
-func:is_even = bool(int32:n){
-    pass((n % 2) == 0);
+func:is_even = int32(int32:n) {
+    if (n % 2 == 0i32) {
+        pass 1i32;
+    }
+    pass 0i32;
 };
 
-// Function that prints (returns int8 for status)
-func:print_sum = int8(int32:a, int32:b){
+// Function that prints (returns int32 for status)
+func:print_sum = int32(int32:a, int32:b) {
     int32:result = a + b;
-    print("Sum: ");
-    print(`&{result}`);
-    pass(0);
+    println(`Sum: &{result}`);
+    pass 0i32;
 };
 
-func:main = int32(){
-    result:r;
-    
-    r = greet();
-    
-    r = add(10, 20);
-    int32:sum = r.val;
-    print("10 + 20 = ");
-    print(`&{sum}`);
-    
-    r = multiply(3.5, 2.0);
-    flt64:product = r.val;
-    print("3.5 * 2.0 = ");
-    print(`&{product}`);
-    
-    r = is_even(42);
-    bool:even = r.val;
-    print("Is 42 even? ");
-    print(`&{even}`);
-    
-    print_sum(15, 25);
-    
-    exit(0);
+func:main = int32() {
+    // raw keyword extracts the value directly from Result<T>
+    int32:r = raw greet();
+
+    int32:sum = raw add(10i32, 20i32);
+    println(`10 + 20 = &{sum}`);
+
+    flt64:product = raw multiply(3.5, 2.0);
+    println(`3.5 * 2.0 = &{product}`);
+
+    int32:even = raw is_even(42i32);
+    println(`Is 42 even? &{even}`);
+
+    drop raw print_sum(15i32, 25i32);
+
+    exit 0;
 };
 
 func:failsafe = int32(tbb32:err) {
-    // Error handling
-    exit(1);
+    exit 1;
 };

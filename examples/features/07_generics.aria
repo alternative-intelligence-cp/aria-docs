@@ -5,85 +5,48 @@
 // - Generic function definitions with func<T>:name syntax
 // - * prefix to mark generic type usage in function body
 // - Type parameters with monomorphization (zero-cost)
-// - Generic types in parameters (*T:param) and return values (*T)
-// - Type inference with generics
+// - Type inference from arguments
+// - Turbofish syntax ::<Type> for explicit type parameters
+// - ? unwrap operator for Result<T> with default value
 // ============================================================================
 
-// Generic function with single type parameter
-// Syntax: func<T>:name = *T(*T:param) { body };
-// The * prefix marks generic type usage
-func<T>:identity = *T(*T:value){
-    pass(value);
+// Generic identity function — returns its argument unchanged
+// Works with any type T through monomorphization
+func<T>:identity = *T(*T:value) {
+    pass value;
 };
 
-// Generic function with multiple type parameters
-func<T,U>:pair = int8(*T:first, *U:second){
-    print("First: ");
-    print(`&{first}`);
-    print("Second: ");
-    print(`&{second}`);
-    pass(0);
+// Generic function that doubles a value
+func<T>:double_val = *T(*T:x) {
+    pass x + x;
 };
 
-// Generic function with comparison operations
-func<T>:max = *T(*T:a, *T:b){
-    if(a > b){
-        pass(a);
-    }else{
-        pass(b);
-    }
-};
+func:main = int32() {
+    // Type inference — compiler deduces T from argument type
+    // ? unwrap operator provides a default if Result is an error
+    int32:int_val = identity(42i32) ? -1i32;
+    println(`Integer identity: &{int_val}`);
 
-// Generic function for arrays
-func<T>:first = *T(*T[]:items, int64:len){
-    if(len > 0){
-        pass(items[0]);
-    }
-    fail(1);
-};
+    flt64:float_val = identity(3.14) ? -1.0;
+    println(`Float identity: &{float_val}`);
 
-func:main = int32(){
-    result:r;
-    
-    // Generic function calls with explicit type parameters
-    r = identity<int32>(42);
-    int32:int_val = r.val;
-    
-    r = identity<flt64>(3.14);
-    flt64:float_val = r.val;
-    
-    r = identity<string>("hello");
-    string:string_val = r.val;
-    
-    print(`Integer: &{int_val}`);
-    print(`Float: &{float_val}`);
-    print(`String: &{string_val}`);
-    
-    // Multiple type parameters
-    pair<int32,string>(10, "ten");
-    pair<flt64,bool>(3.14, true);
-    
-    // Generic comparison with type inference
-    r = max<int32>(10, 20);
-    int32:max_int = r.val;
-    
-    r = max<flt64>(3.14, 2.71);
-    flt64:max_float = r.val;
-    
-    print(`Max int: &{max_int}`);
-    print(`Max float: &{max_float}`);
-    
-    // Type inference example (T inferred from arguments)
-    int32:val1 = identity<int32>(100) ? 0;
-    string:val2 = identity<string>("test") ? "";
-    
-    print(`Inferred int: &{val1}`);
-    print(`Inferred string: &{val2}`);
-    
-    exit(0);
+    int64:big_val = identity(999i64) ? -1i64;
+    println(`Int64 identity: &{big_val}`);
+
+    // Turbofish syntax — explicitly specify type parameter
+    int32:explicit = raw identity::<int32>(100i32);
+    println(`Turbofish explicit: &{explicit}`);
+
+    // Generic arithmetic — double_val works with any numeric type
+    int32:doubled_int = double_val(21i32) ? 0i32;
+    println(`21 doubled: &{doubled_int}`);
+
+    flt64:doubled_flt = double_val(1.5) ? 0.0;
+    println(`1.5 doubled: &{doubled_flt}`);
+
+    exit 0;
 };
 
 func:failsafe = int32(tbb32:err) {
-    // Error handling
-    exit(1);
+    exit 1;
 };

@@ -2,37 +2,44 @@
 // Example 09: 6-Stream I/O System
 // ============================================================================
 // Demonstrates:
-// - stdout_write() for standard output
-// - stderr_write() for error messages
-// - stddbg_write() for debug information
-// - stdin_read_line() for reading user input
-// - Separation of data, error, and debug channels
+// - Aria's 6-stream I/O architecture concept
+// - stdout (text output), stderr (errors), stddbg (debug)
+// - stdin (text input), stddati (data input), stddato (data output)
+// - print() and println() for standard output
+// - Stream separation for clean program I/O
 // ============================================================================
 
-func:main = int64(){
-    // Write to different output streams
-    stdout_write("This goes to standard output\n");
-    stderr_write("This goes to standard error\n");
-    stddbg_write("This goes to debug output\n");
-    
-    // Read from standard input
-    stdout_write("Enter your name: ");
-    string:name = stdin_read_line();
-    
-    // Use the input
-    stdout_write("Hello, ");
-    stdout_write(name);
-    stdout_write("\n");
-    
-    // Demonstrate stream separation
-    stdout_write("Data output\n");
-    stderr_write("Error output\n");
-    stddbg_write("Debug output\n");
-    
-    pass(0);
+func:main = int32() {
+    // print() writes to stdout without a trailing newline
+    print("Line 1 (no newline)");
+    print(" - continued on same line");
+
+    // println() writes to stdout with a trailing newline
+    println(" - now with newline");
+    println("Line 2 (with newline)");
+    println("Line 3 (with newline)");
+
+    // String interpolation works with both print/println
+    int32:count = 3;
+    println(`Total lines: &{count}`);
+
+    // Aria's 6-stream I/O concept:
+    // Stream 0: stdin   — text input from user
+    // Stream 1: stdout  — text output (print/println)
+    // Stream 2: stderr  — error messages
+    // Stream 3: stddbg  — debug output (filtered by debug level)
+    // Stream 4: stddati — binary/data input
+    // Stream 5: stddato — binary/data output
+    //
+    // This separation ensures clean pipelines:
+    // - Data flows through stddati/stddato (FD 4/5)
+    // - Debug info never contaminates program output
+    // - Error messages stay on their own channel
+
+    println("Stream I/O demo complete");
+    exit 0;
 };
 
 func:failsafe = int32(tbb32:err) {
-    // Error handling
-    exit(1);
+    exit 1;
 };

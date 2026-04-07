@@ -7,7 +7,7 @@
 //   - Specific spot-check lookups into the sieve array
 //   - sqrt approximation via integer step (outer loop up to ~32)
 //
-// Algorithm (sieve of Eratosthenes, limit=1000):
+// Algorithm (sieve of Eratosthenes, lim=1000):
 //   1. Allocate composite[0..1000] = all 0
 //   2. For p = 2..31: if composite[p]==0, mark p*p, p*p+p, ... as composite
 //   3. Count i in 2..1000 where composite[i]==0  → expect 168
@@ -24,25 +24,25 @@ extern func:free   = void(wild int64*:ptr);
 func:failsafe = int32(tbb32:err) { exit(1); };
 
 // ── Sieve ─────────────────────────────────────────────────────────────────────
-// Returns count of primes in [2, limit].
+// Returns count of primes in [2, lim].
 // composite[i] == 0 means i is prime; 1 means composite.
 // Uses one int64 per slot (proven array pattern).
-func:run_sieve = int64(int64:limit, int64->:composite) {
+func:run_sieve = int64(int64:lim, int64->:composite) {
     // Initialise: everything not-composite
     int64:i = 0i64;
-    while (i <= limit) {
+    while (i <= lim) {
         composite[i] = 0i64;
         i = i + 1i64;
     }
 
-    // Mark multiples: outer loop p = 2 .. sqrt(limit)
+    // Mark multiples: outer loop p = 2 .. sqrt(lim)
     // sqrt(1000) < 32, so stopping at 32 is safe
     int64:p = 2i64;
     while (p <= 32i64) {
         if (composite[p] == 0i64) {
             // p is prime — mark all multiples starting at p*p
             int64:j = p * p;
-            while (j <= limit) {
+            while (j <= lim) {
                 composite[j] = 1i64;
                 j = j + p;
             }
@@ -53,7 +53,7 @@ func:run_sieve = int64(int64:limit, int64->:composite) {
     // Count primes
     int64:count = 0i64;
     int64:n = 2i64;
-    while (n <= limit) {
+    while (n <= lim) {
         if (composite[n] == 0i64) {
             count = count + 1i64;
         }
@@ -117,7 +117,7 @@ func:main = int32() {
         fail_count = fail_count + 1i64;
     }
 
-    // ── Test 4: re-run with limit=10 — primes are 2,3,5,7 → count=4 ──
+    // ── Test 4: re-run with lim=10 — primes are 2,3,5,7 → count=4 ──
     int64:count10 = raw(run_sieve(10i64, composite));
     if (count10 == 4i64) {
         drop(printlnString("[PASS] Test 4: prime count in [2,10] = 4"));

@@ -4,102 +4,86 @@
 // Demonstrates:
 // - if/else statements
 // - while loops
-// - till loops with $ iteration variable
-// - loop(start, limit, step) with $ variable
-// - pick (switch) with fall() for fallthrough
-// - when/then/end loops
+// - loop(start, limit, step) with $ iteration variable
+// - pick (switch) with wildcard default
 // - break and continue
 // - Comparison operators
+// - Nested loops
 // ============================================================================
 
-func:main = int32(){
+func:main = int32() {
     // If-else statement
     int32:x = 10;
-    if(x > 5){
-        print("x is greater than 5");
-    }else{
-        print("x is less than or equal to 5");
+    if (x > 5) {
+        println("x is greater than 5");
+    } else {
+        println("x is less than or equal to 5");
     }
-    
+
     // If-else if-else chain
     int32:score = 85;
-    if(score >= 90){
-        print("Grade: A");
-    }else if(score >= 80){
-        print("Grade: B");
-    }else if(score >= 70){
-        print("Grade: C");
-    }else{
-        print("Grade: F");
+    if (score >= 90) {
+        println("Grade: A");
+    } else if (score >= 80) {
+        println("Grade: B");
+    } else if (score >= 70) {
+        println("Grade: C");
+    } else {
+        println("Grade: F");
     }
-    
+
     // While loop
     int32:counter = 0;
-    while(counter < 5){
-        print(`Counter: &{counter}`);
+    while (counter < 5) {
+        println(`Counter: &{counter}`);
         counter = counter + 1;
     }
-    
-    // till loop - counts from 0 to limit by step
-    // Positive step: counts UP from 0
-    till(10,1){
-        if($ % 2 == 0){
-            print(`Even: &{$}`);
-        }
-    }
-    
+
     // loop(start, limit, step) - $ holds current iteration value
-    // Direction determined by start vs limit, step is always magnitude
-    loop(0,10,1){
-        print(`Iteration: &{$}`);
+    loop(0, 10, 1) {
+        int64:i = $;
+        println(`Iteration: &{i}`);
     }
-    
+
     // Break and continue
     int32:n = 0;
-    while(n < 20){
+    while (n < 20) {
         n = n + 1;
-        
-        if(n % 2 == 1){
-            continue;  // Skip odd numbers
+
+        if (n % 2 == 1) {
+            continue;
         }
-        
-        if(n > 10){
-            break;     // Stop at 10
+
+        if (n > 10) {
+            break;
         }
-        
-        print(`&{n}`);
+
+        println(`&{n}`);
     }
-    
+
     // Nested loops
-    loop(0,3,1){
-        int32:i = $;
-        loop(0,3,1){
-            int32:j = $;
-            print(`i=&{i} j=&{j}`);
+    loop(0, 3, 1) {
+        int64:i = $;
+        loop(0, 3, 1) {
+            int64:j = $;
+            println(`i=&{i} j=&{j}`);
         }
     }
-    
+
     // pick statement (switch/match)
     int32:value = 9;
-    pick(value){
-        (<9){
-            print("Less than 9");
+    pick(value) {
+        (9) {
+            println("Exactly 9");
         },
-        (>9){
-            print("Greater than 9");
-        },
-        (9){
-            print("Exactly 9");
-        },
-        (*){
-            print("Default case");
+        (*) {
+            println("Not 9");
         }
     }
-    
-    exit(0);
+
+    exit 0;
 };
 
 func:failsafe = int32(tbb32:err) {
-    // Error handling
-    exit(1);
+    exit 1;
 };

@@ -238,7 +238,7 @@ func:main = int32() {
     drop(print_board(board));
     // Intermediate check: no winner yet
     int32:w3 = raw(check_winner(board));
-    if (w3 != 0i32) { pass(10i32); }  // unexpected early win = test failure
+    if (w3 != 0i32) { exit 10; }  // unexpected early win = test failure
     drop(println("  (no winner yet)"));
     drop(println(""));
 
@@ -256,7 +256,7 @@ func:main = int32() {
     drop(print_board(board));
     // Intermediate check: no winner yet
     int32:w5 = raw(check_winner(board));
-    if (w5 != 0i32) { pass(11i32); }  // unexpected early win = test failure
+    if (w5 != 0i32) { exit 11; }  // unexpected early win = test failure
     drop(println("  (no winner yet)"));
     drop(println(""));
 
@@ -297,7 +297,7 @@ func:main = int32() {
     drop(println(""));
 
     // Test assertion: this scripted game must end in X winning
-    if (winner != 1i32) { pass(1i32); }
+    if (winner != 1i32) { exit 1; }
 
     exit(0);
 };

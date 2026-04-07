@@ -26,6 +26,9 @@ examples/json_parser/json_tokenizer
 examples/transformer/transformer_experiment
 examples/http_server/http_server
 
+# Local symlinks
+stdlib
+
 # Editor
 .vscode/
 *.swp

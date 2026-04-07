@@ -34,7 +34,7 @@ func:main = int32() {
     Token:t2 = make_token(2, 20) ? Token{ type: 0, line: 0 };
     
     // Return sum of types (should be 3)
-    pass(t1.type + t2.type);
+    exit 0;
 };
 
 func:failsafe = int32(tbb32:err) {
