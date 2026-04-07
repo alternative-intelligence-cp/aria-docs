@@ -26,7 +26,7 @@ Welcome! This guide will walk you through everything you need to set up the Aria
 
 Aria is a compiled systems programming language. Think of it like C or Rust, but with its own unique syntax. You write `.aria` files, compile them with the `ariac` compiler, and get a native executable you can run directly. It compiles down to machine code via LLVM — so the programs are fast.
 
-Aria is under active development (version 0.3.3), so **you may find bugs**. That's exactly what we need your help with! When something doesn't work the way you'd expect, that's valuable information.
+Aria is under active development (version 0.17.x), so **you may find bugs**. That's exactly what we need your help with! When something doesn't work the way you'd expect, that's valuable information.
 
 ---
 
@@ -158,6 +158,28 @@ Common issues:
 - **"LLVM not found"**: Make sure `llvm-20-dev` is installed (`sudo apt install llvm-20-dev`)
 - **"uring.h not found"**: Make sure `liburing-dev` is installed (`sudo apt install liburing-dev`)
 - **Other errors**: Copy the full error output and send it to us (see [How to Report Bugs](#12-how-to-report-bugs))
+
+### Alternative: Install from .deb (Debian/Ubuntu/Mint)
+
+If you'd rather skip building from source, you can install a pre-built package:
+
+```bash
+cd aria
+./packaging/build-deb.sh
+sudo dpkg -i packaging/aria-lang_*_amd64.deb
+```
+
+To uninstall: `sudo dpkg --purge aria-lang`
+
+### Alternative: Install from .rpm (Fedora/RHEL)
+
+```bash
+cd aria
+./packaging/build-rpm.sh
+sudo rpm -ivh ~/rpmbuild/RPMS/x86_64/aria-lang-*.x86_64.rpm
+```
+
+See [INSTALL.md](https://github.com/alternative-intelligence-cp/aria/blob/main/INSTALL.md) for all installation methods.
 
 ---
 
