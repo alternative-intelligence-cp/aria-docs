@@ -53,7 +53,7 @@ These examples cover fundamental language concepts:
 
 ### 05_memory.aria
 - Ownership semantics
-- Borrowing with `$x` (immutable) and `$mut x` (mutable)
+- Borrowing with `$$i` (immutable) and `$$m` (mutable) qualifiers
 - Move semantics
 - Memory safety guarantees
 

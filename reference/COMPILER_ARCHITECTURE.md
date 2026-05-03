@@ -456,11 +456,12 @@ Explicit stack allocation:
 ### Borrow Checker Integration
 
 The borrow checker enforces safety across all strategies:
-- `$x` creates an immutable borrow (safe reference / loan)
-- `$mut x` creates a mutable borrow (planned, RFC complete)
+- `$$i T:name = value` creates an immutable borrow/alias
+- `$$m T:name = value` creates a mutable borrow/alias
 - `#x` pins an object (prevents GC relocation)
 - Scope-based lifetimes — no explicit `'a` annotations needed
-- Move semantics: variables are moved by default, use `$` to borrow
+- Move semantics: variables are moved by default; declare `$$i`/`$$m` borrow
+        intent at declarations and parameters
 
 ---
 

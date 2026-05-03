@@ -179,8 +179,8 @@ Literal prefixes: `0t` for ternary (T = −1), `0n` for nonary (A–D = −1..�
 | `<-ptr` | Dereference — pull value **from** pointer |
 | `ptr->member` | Member access through pointer (arrow points **to** the field) |
 | `#var` | Pin — prevents GC from moving `var` in memory; restricts mutable borrows |
-| `$var` | Mutable borrow reference |
-| `!$var` | Immutable borrow reference |
+| `$$m T:name = var` | Mutable borrow/alias declaration |
+| `$$i T:name = var` | Immutable borrow/alias declaration |
 
 > C-style `*` pointer syntax is **only** used inside `extern { }` blocks for FFI compatibility.
 

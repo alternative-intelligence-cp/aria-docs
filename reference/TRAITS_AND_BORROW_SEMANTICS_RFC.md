@@ -139,9 +139,9 @@ func:write_any = NIL(dyn Encodable:item) {
 
 ### Design Goals
 
-- **Make the existing borrow checker user-facing** — the infrastructure is already there (`$` operator, AccessPath, loan tracking)
+- **Make the existing borrow checker user-facing** — the infrastructure is already there (AccessPath and loan tracking)
 - **Rust's safety without Rust's learning curve** — Aria should guide, not punish
-- **Explicit borrows** — no implicit reference creation, you always see `$`
+- **Explicit borrows** — borrow intent is declared with `$$i` / `$$m` qualifiers
 - **Compatible with move-by-default** — borrows are a controlled exception to the consume-on-use rule
 
 ### Syntax
@@ -150,63 +150,63 @@ func:write_any = NIL(dyn Encodable:item) {
 
 ```aria
 int32:x = 42i32;
-int32$:ref = $x;          // borrow x (immutable)
+$$i int32:ref = x;         // borrow x immutably
 print(ref);                // use the borrow — x is still alive
 print(x);                  // x is still usable — it wasn't moved
 ```
 
-- `$x` creates an immutable borrow of `x`
-- `int32$` is the borrow type (already in the type system as `SafeRefType`)
+- `$$i` creates an immutable borrow of `x`
 - Multiple immutable borrows allowed simultaneously
 
 #### Mutable borrow
 
 ```aria
 int32:x = 42i32;
-int32$:ref = $mut x;       // mutable borrow
+$$m int32:ref = x;         // mutable borrow
 ref = 99i32;                // mutate through the borrow
 // x is now 99
 // cannot use x while ref is alive (enforced by borrow checker)
 ```
 
-- `$mut x` creates a mutable borrow
+- `$$m` creates a mutable borrow
 - Only one mutable borrow at a time (borrow checker already enforces this)
 - Original variable is frozen while mutably borrowed
 
 #### Passing borrows to functions
 
 ```aria
-func:print_value = NIL(int32$:val) {
+func:print_value = NIL($$i int32:val) {
     print(val);
     pass(NIL);
 };
 
-func:increment = NIL(int32$ mut:val) {
+func:increment = NIL($$m int32:val) {
     val = val + 1i32;
     pass(NIL);
 };
 
 func:main = int32() {
     int32:x = 10i32;
-    print_value($x);       // pass immutable borrow — x survives
-    increment($mut x);     // pass mutable borrow — x is modified
+    print_value(x);        // pass immutable borrow — x survives
+    increment(x);          // pass mutable borrow — x is modified
     print(x);              // prints 11
     pass(0i32);
 };
 ```
 
-- `int32$` in a parameter = accepts an immutable borrow
-- `int32$ mut` in a parameter = accepts a mutable borrow
-- The caller uses `$x` or `$mut x` at the call site — always explicit
+- `$$i T:name` in a parameter = accepts an immutable borrow
+- `$$m T:name` in a parameter = accepts a mutable borrow
+- The parameter declaration carries the borrow contract; call sites pass normal
+  addressable identifiers
 
 #### Structs and handles
 
 ```aria
 // The Nikola use case: pass a DB handle to multiple functions
 int32:db = aria_sqlite_open(":memory:");
-setup_tables($mut db);      // borrows db, doesn't consume it
-insert_data($mut db);       // borrows db again — previous borrow ended
-query_data($db);            // immutable borrow — read-only access
+setup_tables(db);           // $$m param borrows db, doesn't consume it
+insert_data(db);            // borrows db again — previous borrow ended
+query_data(db);             // $$i param — read-only access
 aria_sqlite_close(db);      // final use — db is moved/consumed here
 ```
 
@@ -219,8 +219,8 @@ aria_sqlite_close(db);      // final use — db is moved/consumed here
 ```aria
 struct:Pair = { int32:a; int32:b; };
 Pair:p = Pair{a: 1i32, b: 2i32};
-int32$:ref_a = $p.a;       // borrow field a
-int32$:ref_b = $p.b;       // borrow field b — disjoint, allowed
+$$m int32:ref_a = p.a;     // borrow field a
+$$m int32:ref_b = p.b;     // borrow field b — disjoint, allowed
 // Both refs alive simultaneously — the borrow checker tracks access paths
 ```
 
@@ -239,7 +239,7 @@ These restrictions eliminate the need for lifetime parameters while covering 90%
 
 ```aria
 Vector<int32>:vec = Vector{};
-vec.push(vec.len());    // Works! push($mut vec, vec.len($vec))
+vec.push(vec.len());    // Works: push has a $$m receiver while len reads vec
                         // Phase 1: reserve mutable borrow for push
                         // Phase 2: activate after len() completes
 ```
@@ -265,30 +265,30 @@ ffi_read(pinned, 1024);    // safe to pass to C — address is stable
 
 ```aria
 trait:Printable = {
-    func:display = NIL(Self$:self);      // takes immutable borrow of self
+    func:display = NIL($$i Self:self);      // takes immutable borrow of self
 };
 
 trait:Resettable = {
-    func:reset = NIL(Self$ mut:self);    // takes mutable borrow of self
+    func:reset = NIL($$m Self:self);        // takes mutable borrow of self
 };
 ```
 
-- Trait methods declare whether they borrow self immutably (`Self$`) or mutably (`Self$ mut`)
+- Trait methods declare whether they borrow self immutably (`$$i Self`) or mutably (`$$m Self`)
 - This lets the compiler enforce at the call site: `obj.display()` auto-borrows immutably, `obj.reset()` auto-borrows mutably
 - If a method needs to consume self (like `drop`), it takes `Self:self` (owned)
 
 ### Generic bounds with borrow-friendliness
 
 ```aria
-func<T: Printable>:print_twice = NIL(T$:item) {
+func<T: Printable>:print_twice = NIL($$i T:item) {
     item.display();     // first call borrows the borrow (re-borrow)
     item.display();     // second call — fine, immutable borrow
     pass(NIL);
 };
 ```
 
-- Passing `T$` (borrowed) means the function doesn't consume the value
-- The caller retains ownership: `print_twice($my_value);`
+- Passing `$$i T` (borrowed) means the function doesn't consume the value
+- The caller retains ownership: `print_twice(my_value);`
 
 ---
 
@@ -302,8 +302,8 @@ func<T: Printable>:print_twice = NIL(T$:item) {
 | Trait bound | `<T: Trait>` | `func<T: Ordered>:sort = ...` |
 | Multiple bounds | `<T: A & B>` | `func<T: Hashable & Equatable>:lookup = ...` |
 | Dynamic dispatch | `dyn Trait` | `func:f = NIL(dyn Encodable:x)` |
-| Immutable borrow | `$x` / `Type$` | `int32$:ref = $x;` |
-| Mutable borrow | `$mut x` / `Type$ mut` | `int32$ mut:ref = $mut x;` |
+| Immutable borrow | `$$i Type:name` | `$$i int32:ref = x;` |
+| Mutable borrow | `$$m Type:name` | `$$m int32:ref = x;` |
 | Pin | `#x` / `Type#` | `int8#:pinned = #buffer;` |
 
 ---
@@ -314,7 +314,7 @@ func<T: Printable>:print_twice = NIL(T$:item) {
 2. **Associated types?** `trait:Iterator = { type Item; func:next = Item$(...); };` — needed for iterators but complex. Propose: defer to v2.
 3. **Trait objects in collections?** `dyn Encodable[]:items` for heterogeneous arrays. Needs vtable + fat pointer arrays. Propose: defer to v2.
 4. **Operator overloading via traits?** `+` → `Addable.add()`. Propose: yes, include in v1 (natural, expected).
-5. **Auto-borrow at call sites?** Should `obj.method()` auto-create `$obj` if method takes `Self$`? Propose: yes, for ergonomics (Rust does this).
+5. **Auto-borrow at call sites?** Should `obj.method()` auto-satisfy `$$i Self` / `$$m Self` method receivers from `obj`? Propose: yes, for ergonomics.
 
 ---
 
@@ -325,7 +325,7 @@ func<T: Printable>:print_twice = NIL(T$:item) {
 - `impl Trait for Type` parsing and AST
 - Trait bound resolution in type checker
 - Monomorphization in IR codegen
-- User-facing `$x` / `$mut x` borrow syntax
+- User-facing `$$i` / `$$m` borrow qualifiers
 - Standard traits: `Equatable`, `Displayable`, `Copyable`
 
 ### Phase 2 (v0.2.6): Operator Traits + Dynamic Dispatch
