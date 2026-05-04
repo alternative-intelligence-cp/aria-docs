@@ -2,6 +2,11 @@
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
+> 🚧 **Rebrand in progress:** Aria is becoming **Nitpick**. This documentation
+> repo still uses Aria names while the migration is underway. Existing docs,
+> examples, man pages, and history are being preserved; source and file-extension
+> renames will happen in later coordinated slices.
+
 Documentation, man pages, and examples for the [Aria programming language](https://github.com/alternative-intelligence-cp/aria) (v0.17.3).
 
 ## Contents
