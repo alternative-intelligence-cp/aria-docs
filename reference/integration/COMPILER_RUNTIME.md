@@ -34,7 +34,7 @@ The Nitpick compiler (`npkc`) and runtime library (`libaria_runtime.a`) form a t
 ### Compilation Pipeline
 
 ```
-Source Code (.aria)
+Source Code (.npk)
     ↓
 [Lexer] → Tokens
     ↓

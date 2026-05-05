@@ -226,7 +226,7 @@ Link phase:
 ```
 
 **Incremental Compilation**:
-- Build system tracks .aria source timestamps
+- Build system tracks .npk source timestamps
 - Recompiles only changed modules
 - Preserves object cache
 - Parallel compilation across cores

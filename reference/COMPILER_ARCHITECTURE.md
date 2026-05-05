@@ -30,7 +30,7 @@
 
 ```
                    ┌─────────────┐
-   .aria source ──►│ Preprocessor │
+   .npk source ──►│ Preprocessor │
                    └──────┬──────┘
                           ▼
                    ┌──────────┐

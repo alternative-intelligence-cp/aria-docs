@@ -1,0 +1,53 @@
+// ============================================================================
+// Example 06: Modules
+// ============================================================================
+// Demonstrates:
+// - Module declarations with 'mod'
+// - Public/private visibility with 'pub'
+// - Module hierarchies and nesting
+// - use statements for file-based imports
+// ============================================================================
+
+// Module declaration — groups related functions
+mod math_helpers {
+    // Public function (accessible outside module)
+    pub func:square = int32(int32:x) {
+        pass x * x;
+    };
+
+    // Public function
+    pub func:cube = int32(int32:x) {
+        pass x * x * x;
+    };
+
+    // Private function (only accessible within module)
+    func:internal_helper = int32(int32:x) {
+        pass x + 1;
+    };
+}
+
+// Nested module hierarchy
+mod network {
+    pub mod http {
+        pub func:status_ok = int32() {
+            pass 200i32;
+        };
+    }
+}
+
+// Note: Cross-module function calls use Module.function() syntax
+// File-based imports use: use "path/to/module".npk".*;
+
+func:main = int32() {
+    // Module functions called with Module.function() syntax
+    // (when symbol resolution supports it)
+    println("Module declarations compiled successfully");
+    println("math_helpers: square(), cube(), internal_helper()");
+    println("network.http: status_ok()");
+
+    exit 0;
+};
+
+func:failsafe = int32(tbb32:err) {
+    exit 1;
+};

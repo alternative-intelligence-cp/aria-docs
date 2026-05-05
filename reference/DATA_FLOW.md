@@ -743,7 +743,7 @@ TIME: t0 - Developer opens VSCode
 ─────────────────────────────────────────────────────────────────
 VSCode starts
   ↓
-VSCode Extension: Detects .aria files
+VSCode Extension: Detects .npk files
   ↓
 VSCode Extension: Launches aria-lsp
   ↓

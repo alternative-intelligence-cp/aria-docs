@@ -548,7 +548,7 @@ aria-doc/
 ```
 VSCode Extension/
 ├── Language Support/
-│   ├── Syntax Highlighting (.aria files)
+│   ├── Syntax Highlighting (.npk files)
 │   ├── Bracket Matching
 │   ├── Comment Toggling
 │   └── Indentation Rules
@@ -670,7 +670,7 @@ AriaX/
 │   │
 │   └── Package Structure/
 │       ├── Metadata (name, version, deps, etc.)
-│       ├── Source Files (.aria)
+│       ├── Source Files (.npk)
 │       ├── Precompiled Libraries (.a, .so)
 │       └── Documentation
 │
