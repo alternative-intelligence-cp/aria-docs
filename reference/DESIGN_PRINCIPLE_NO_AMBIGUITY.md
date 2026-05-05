@@ -12,11 +12,11 @@ int* a, b;            // a is pointer, b is int (WTF?)
 
 One symbol, **FOUR different meanings** depending on context. You have to mentally parse the entire expression to know what `*` means. This is cognitive overhead that serves **zero** purpose.
 
-## Aria's Principle: One Symbol, One Meaning
+## Nitpick's Principle: One Symbol, One Meaning
 
 **If two different things should happen, use different symbols.**
 
-### Aria's Clear Syntax
+### Nitpick's Clear Syntax
 
 ```aria
 // Arithmetic
@@ -40,7 +40,7 @@ int *a, b, c;  // a is int*, b and c are int (SURPRISE!)
 int* a, b, c;  // Same thing, but looks like all are pointers
 ```
 
-**Aria's Clarity:**
+**Nitpick's Clarity:**
 ```aria
 int32:a = 10i32;              // Type on left, name on right
 wild int32->:ptr = @a;        // Pointer is part of TYPE
@@ -63,7 +63,7 @@ const int* const ptr3;      // Can't change either
 int const x = 10;           // Same as const int (position matters!)
 ```
 
-**Aria's Solution:**
+**Nitpick's Solution:**
 ```aria
 fixed int32:x = 10i32;      // Can't change x. Period. Done.
 ```
@@ -81,7 +81,7 @@ int (*arr)[10];             // Pointer to array
 
 You read it "inside-out" and "clockwise" and do mental gymnastics.
 
-**Aria's Solution:**
+**Nitpick's Solution:**
 ```aria
 func:callback = int32(int32, int32);  // Function type, clear
 wild int32->:arr[10];                  // Array of pointers, clear
@@ -99,7 +99,7 @@ int* ptr = &x;     // Address-of
 int y = x & y;     // Wait, which one?
 ```
 
-**Aria's Solution:**
+**Nitpick's Solution:**
 ```aria
 int32:x = 5i32 & 3i32;        // & ONLY for bitwise AND
 wild int32->:ptr = @x;        // @ ONLY for address-of
@@ -166,7 +166,7 @@ One keyword. One meaning. Delivered.
 
 ## Design Philosophy: Informed Consent
 
-**Aria is opinionated, but the final choice is yours.**
+**Nitpick is opinionated, but the final choice is yours.**
 
 The language doesn't remove power - it makes you **acknowledge when you use it**.
 
@@ -298,7 +298,7 @@ If something goes wrong and you used `wild` or `wildx`, you **signed the TOS**. 
 
 **Python/Rust approach:** "We'll make everything safe by removing choices"  
 **C approach:** "Everything is dangerous by default, good luck"  
-**Aria approach:** "Safe by default, unsafe by explicit choice"
+**Nitpick approach:** "Safe by default, unsafe by explicit choice"
 
 ### Surgical Precision: Unsafe Only Where Needed
 
@@ -352,7 +352,7 @@ func:display_results = void(Matrix:m) {
 - One mistake anywhere = security hole
 - Can't "go back safe" because there is no safe
 
-**Aria:**
+**Nitpick:**
 - Solve the hard problems (raw performance when needed)
 - Keep the easy problems safe (most of your code)
 - **Unsafe doesn't contaminate** - it's scoped
@@ -374,7 +374,7 @@ You're not stuck with `wild` - you use it surgically, then return to safety.
 - But you CAN remove the guards if you need to
 - And when you do, everyone knows you did it deliberately
 
-**Aria does the same for code.**
+**Nitpick does the same for code.**
 
 ## Implementation Rules
 
@@ -432,9 +432,9 @@ auto x = arr;  // x is int*, not int[5]
 
 `auto` sometimes decays arrays to pointers. Context-dependent type deduction.
 
-## Aria's Promise
+## Nitpick's Promise
 
-**In Aria:**
+**In Nitpick:**
 - A keyword means what it says
 - It means the same thing everywhere
 - You read it once, understand it forever

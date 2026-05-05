@@ -21,7 +21,7 @@
 
 ## Overview
 
-The Aria compiler (`ariac`) and runtime library (`libaria_runtime.a`) form a tightly integrated pair. Understanding their interface is critical for:
+The Nitpick compiler (`npkc`) and runtime library (`libaria_runtime.a`) form a tightly integrated pair. Understanding their interface is critical for:
 
 - **Compiler Developers**: Implementing code generation
 - **Runtime Developers**: Providing correct functionality
@@ -57,11 +57,11 @@ Executable (a.out)
 
 ### Automatic Linking
 
-**Default Behavior**: `ariac` automatically links against `libaria_runtime.a`
+**Default Behavior**: `npkc` automatically links against `libaria_runtime.a`
 
 **Example**:
 ```bash
-$ ariac hello.aria
+$ npkc hello.npk
 # Equivalent to:
 # clang hello.o -L/usr/local/lib/aria -laria_runtime -o a.out
 ```
@@ -77,12 +77,12 @@ $ ariac hello.aria
 
 **Custom Runtime Location**:
 ```bash
-$ ariac hello.aria --runtime-path=/path/to/custom/runtime
+$ npkc hello.npk --runtime-path=/path/to/custom/runtime
 ```
 
 **Skip Runtime Linking** (for bare-metal):
 ```bash
-$ ariac hello.aria --no-runtime
+$ npkc hello.npk --no-runtime
 # Produces object file only, no executable
 ```
 
@@ -92,12 +92,12 @@ $ ariac hello.aria --no-runtime
 
 ### What are Builtins?
 
-**Builtins**: High-level Aria constructs that map to runtime functions
+**Builtins**: High-level Nitpick constructs that map to runtime functions
 
 **Example**: `io.stdout.write(text)`
 
 ```aria
-// Aria code
+// Nitpick code
 io.stdout.write("Hello, World!\n");
 ```
 
@@ -113,7 +113,7 @@ aria_stdout_write("Hello, World!\n", 14);
 
 **I/O Builtins**:
 
-| Aria Code | Runtime Function | Signature |
+| Nitpick Code | Runtime Function | Signature |
 |-----------|------------------|-----------|
 | `io.stdin.read_line()` | `aria_stdin_read_line()` | `result_string(void)` |
 | `io.stdout.write(text)` | `aria_stdout_write(text, len)` | `void(const char*, size_t)` |
@@ -124,7 +124,7 @@ aria_stdout_write("Hello, World!\n", 14);
 
 **Memory Allocation Builtins**:
 
-| Aria Code | Runtime Function | Signature |
+| Nitpick Code | Runtime Function | Signature |
 |-----------|------------------|-----------|
 | `alloc<T>()` | `aria_malloc(sizeof(T))` | `void*(size_t)` |
 | `alloc_array<T>(n)` | `aria_malloc(sizeof(T) * n)` | `void*(size_t)` |
@@ -133,7 +133,7 @@ aria_stdout_write("Hello, World!\n", 14);
 
 **String Builtins**:
 
-| Aria Code | Runtime Function | Signature |
+| Nitpick Code | Runtime Function | Signature |
 |-----------|------------------|-----------|
 | `string("hello")` | `aria_string_from_literal(text, len)` | `aria_string(const char*, size_t)` |
 | `s1 + s2` | `aria_string_concat(s1, s2)` | `aria_string(aria_string, aria_string)` |
@@ -141,7 +141,7 @@ aria_stdout_write("Hello, World!\n", 14);
 
 **Array Builtins**:
 
-| Aria Code | Runtime Function | Signature |
+| Nitpick Code | Runtime Function | Signature |
 |-----------|------------------|-----------|
 | `array<T>(n)` | `aria_array_alloc_<T>(n)` | `aria_array_T(size_t)` |
 | `arr[i]` | `aria_array_get_<T>(arr, i)` | `T(aria_array_T, size_t)` |
@@ -149,7 +149,7 @@ aria_stdout_write("Hello, World!\n", 14);
 
 **Result<T> Builtins**:
 
-| Aria Code | Runtime Function | Signature |
+| Nitpick Code | Runtime Function | Signature |
 |-----------|------------------|-----------|
 | `pass(value)` | `aria_result_ok_<T>(value)` | `result_T(T)` |
 | `err(message)` | `aria_result_err_<T>(msg, len)` | `result_T(const char*, size_t)` |
@@ -159,7 +159,7 @@ aria_stdout_write("Hello, World!\n", 14);
 
 **TBB Builtins**:
 
-| Aria Code | Runtime Function | Signature |
+| Nitpick Code | Runtime Function | Signature |
 |-----------|------------------|-----------|
 | `i32[L..U]` assignment | `aria_tbb_assign_i32(val, L, U)` | `int32_t(int32_t, int32_t, int32_t)` |
 | `TBB_ERR` constant | `ARIA_TBB_ERR_I32` | `#define ARIA_TBB_ERR_I32 INT32_MIN` |
@@ -168,7 +168,7 @@ aria_stdout_write("Hello, World!\n", 14);
 
 ### IR Generation Example
 
-**Aria Code**:
+**Nitpick Code**:
 ```aria
 func:main = i64() {
     io.stdout.write("Hello\n");
@@ -205,7 +205,7 @@ declare void @aria_stdout_write(i8*, i64)
 - **macOS x86_64**: Same as Linux (System V)
 - **Windows x86_64**: Microsoft x64 calling convention
 
-**Aria Convention**: Follow platform default (no custom ABI)
+**Nitpick Convention**: Follow platform default (no custom ABI)
 
 ---
 
@@ -255,9 +255,9 @@ func:distance = f64(p1: point, p2: point) {
 
 ## Type Mapping
 
-### Aria Type → C Type
+### Nitpick Type → C Type
 
-| Aria Type | C Type | Size (bytes) |
+| Nitpick Type | C Type | Size (bytes) |
 |-----------|--------|--------------|
 | `i8` | `int8_t` | 1 |
 | `u8` | `uint8_t` | 1 |
@@ -394,7 +394,7 @@ int aria_stdout_write_v2(const char* text, size_t len);
 
 ### Type Information
 
-**Aria Types → DWARF Types**:
+**Nitpick Types → DWARF Types**:
 
 **Primitives**:
 ```
@@ -462,5 +462,5 @@ Address           Line  Source
 ---
 
 **Document Version**: 1.0  
-**Author**: Aria Ecosystem Documentation  
+**Author**: Nitpick Ecosystem Documentation  
 **Status**: Reference guide (implementation in progress)

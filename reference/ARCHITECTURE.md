@@ -1,6 +1,6 @@
-# Aria Compiler Architecture
+# Nitpick Compiler Architecture
 
-**Purpose**: The Aria language compiler - transforms Aria source code into executable binaries via LLVM.
+**Purpose**: The Nitpick language compiler - transforms Nitpick source code into executable binaries via LLVM.
 
 ---
 
@@ -27,7 +27,7 @@
 ## High-Level Architecture
 
 ```
-Aria Source Code (.aria)
+Nitpick Source Code (.npk)
     ↓
 [Preprocessor] - Handles #include, conditional compilation
     ↓
@@ -146,7 +146,7 @@ Aria Source Code (.aria)
 #### Code Generation Strategy
 1. **Function-at-a-time** - Process each function independently
 2. **SSA Form** - Static Single Assignment via LLVM
-3. **Type Lowering** - Aria types → LLVM types
+3. **Type Lowering** - Nitpick types → LLVM types
 4. **Optimization** - Leverage LLVM's optimization passes
 
 ---
@@ -179,10 +179,10 @@ Aria Source Code (.aria)
 - **CMake 3.20+** - Build system
 - **C++17** - Compiler implementation language
 
-### Internal (Aria Ecosystem)
+### Internal (Nitpick Ecosystem)
 - **aria_lang_specs** - Language specification (source of truth)
 - **aria_ecosystem** - Architecture documentation
-- **AriaBuild** - Build system integration (planned)
+- **NpkBld** - Build system integration (planned)
 - **AriaX** - Package management (planned)
 
 ---
@@ -207,7 +207,7 @@ IR_SOURCES = ir_generator.cpp, codegen_expr.cpp, codegen_stmt.cpp, ...
 RUNTIME_SOURCES = gc.cpp, streams.cpp, ...
 
 # Main Executable
-ariac = LEX + PARSER + SEMA + IR + RUNTIME + LLVM
+npkc = LEX + PARSER + SEMA + IR + RUNTIME + LLVM
 ```
 
 ### Build Commands
@@ -216,7 +216,7 @@ ariac = LEX + PARSER + SEMA + IR + RUNTIME + LLVM
 cmake -B build -DCMAKE_BUILD_TYPE=Debug
 
 # Build compiler
-cmake --build build --target ariac
+cmake --build build --target npkc
 
 # Run tests
 cmake --build build --target test
@@ -257,7 +257,7 @@ aria/
 │
 ├── tests/               # Test suite
 │   ├── unit/           # Unit tests (C++)
-│   ├── integration/    # Integration tests (Aria code)
+│   ├── integration/    # Integration tests (Nitpick code)
 │   ├── safety/         # Safety feature tests
 │   └── runtime/        # Runtime library tests
 │
@@ -347,7 +347,7 @@ func:main = int8() {
 
 7. **Code Generation**:
    - Platform-specific assembly
-   - Link against Aria runtime
+   - Link against Nitpick runtime
    - Produce executable binary
 
 ---
@@ -385,8 +385,8 @@ func:main = int8() {
 - Mock dependencies
 - Fast feedback (~1 second)
 
-### Integration Tests (Aria)
-- Test actual Aria programs
+### Integration Tests (Nitpick)
+- Test actual Nitpick programs
 - Verify end-to-end compilation
 - Check runtime behavior
 
@@ -441,7 +441,7 @@ func:main = int8() {
 
 **Key Questions**:
 - **Where do I start?** Read TASKS.md for beginner-friendly work.
-- **How do I test?** `cmake --build build && ./build/ariac tests/your_test.aria`
+- **How do I test?** `cmake --build build && ./build/npkc tests/your_test.npk`
 - **What's the code style?** Match existing code. We don't bikeshed formatting.
 - **Can I add a feature?** Only if it's in the specs. Want a new feature? Discuss in aria_ecosystem first.
 

@@ -1,4 +1,4 @@
-# Aria Debug Adapter Protocol (aria-dap)
+# Nitpick Debug Adapter Protocol (aria-dap)
 
 **Component Type**: Debug Adapter / Debugger Integration  
 **Language**: C++20 (planned)  
@@ -16,7 +16,7 @@
 2. [DAP Architecture](#dap-architecture)
 3. [Debugger Backend Integration](#debugger-backend-integration)
 4. [Core Features](#core-features)
-5. [Custom Formatters for Aria Types](#custom-formatters-for-aria-types)
+5. [Custom Formatters for Nitpick Types](#custom-formatters-for-aria-types)
 6. [Breakpoint Management](#breakpoint-management)
 7. [6-Stream I/O Debugging](#6-stream-io-debugging)
 8. [Integration Points](#integration-points)
@@ -25,7 +25,7 @@
 
 ## Overview
 
-The Aria Debug Adapter (aria-dap) provides debugging capabilities for Aria programs. It implements the Debug Adapter Protocol (DAP), enabling debugging in any DAP-compatible IDE (VSCode, Vim, Emacs, etc.).
+The Nitpick Debug Adapter (aria-dap) provides debugging capabilities for Nitpick programs. It implements the Debug Adapter Protocol (DAP), enabling debugging in any DAP-compatible IDE (VSCode, Vim, Emacs, etc.).
 
 ### Key Features
 
@@ -34,7 +34,7 @@ The Aria Debug Adapter (aria-dap) provides debugging capabilities for Aria progr
 - **Custom Formatters**: Pretty-printing for Result<T>, TBB, streams
 - **6-Stream Awareness**: Display stddbg, stddati, stddato separately
 - **LLDB Backend**: Leverages LLVM debugger for native code
-- **Source-Level Debugging**: Debug Aria source, not generated IR
+- **Source-Level Debugging**: Debug Nitpick source, not generated IR
 - **Multi-Process**: Debug shell + child processes simultaneously
 
 ---
@@ -71,7 +71,7 @@ The Aria Debug Adapter (aria-dap) provides debugging capabilities for Aria progr
 │  └────────────────────────────────────────────────────────────┘│
 │                           ↓                                     │
 │  ┌────────────────────────────────────────────────────────────┐│
-│  │ Custom Formatters (Aria Types)                             ││
+│  │ Custom Formatters (Nitpick Types)                             ││
 │  │  - Result<T> formatter (display Ok/Err)                    ││
 │  │  - TBB formatter (show range, ERR sentinel)                ││
 │  │  - Stream formatter (display FD, buffer state)             ││
@@ -79,7 +79,7 @@ The Aria Debug Adapter (aria-dap) provides debugging capabilities for Aria progr
 │                           ↓                                     │
 │  ┌────────────────────────────────────────────────────────────┐│
 │  │ Source Map Manager                                         ││
-│  │  - Map Aria source → LLVM IR → machine code                ││
+│  │  - Map Nitpick source → LLVM IR → machine code                ││
 │  │  - Line number → instruction address                       ││
 │  │  - Instruction → source location                           ││
 │  └────────────────────────────────────────────────────────────┘│
@@ -96,7 +96,7 @@ The Aria Debug Adapter (aria-dap) provides debugging capabilities for Aria progr
                          LLDB
                             ↕
 ┌─────────────────────────────────────────────────────────────────┐
-│                 DEBUGGEE (Aria Program)                         │
+│                 DEBUGGEE (Nitpick Program)                         │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -107,7 +107,7 @@ The Aria Debug Adapter (aria-dap) provides debugging capabilities for Aria progr
 ### Why LLDB?
 
 **Advantages**:
-1. **LLVM Integration**: Aria uses LLVM backend, LLDB understands LLVM IR
+1. **LLVM Integration**: Nitpick uses LLVM backend, LLDB understands LLVM IR
 2. **Modern Design**: Better C++ API than GDB
 3. **Extensibility**: Custom type formatters, Python scripting
 4. **Cross-Platform**: Linux, macOS, Windows (with some limitations)
@@ -128,7 +128,7 @@ lldb::SBLaunchInfo launch_info(nullptr);
 lldb::SBProcess process = target.Launch(launch_info, error);
 
 // Set breakpoint
-lldb::SBBreakpoint bp = target.BreakpointCreateByLocation("main.aria", 10);
+lldb::SBBreakpoint bp = target.BreakpointCreateByLocation("main.npk", 10);
 
 // Continue execution
 process.Continue();
@@ -152,7 +152,7 @@ std::string value = var.GetValue();
 {
   "type": "aria",
   "request": "launch",
-  "name": "Debug Aria App",
+  "name": "Debug Nitpick App",
   "program": "${workspaceFolder}/bin/my_app",
   "args": ["--input", "data.txt"],
   "cwd": "${workspaceFolder}",
@@ -179,7 +179,7 @@ std::string value = var.GetValue();
 **Example**:
 ```json
 {
-  "source": {"path": "/home/user/project/src/main.aria"},
+  "source": {"path": "/home/user/project/src/main.npk"},
   "breakpoints": [
     {"line": 10},
     {"line": 15, "condition": "age > 18"}
@@ -188,14 +188,14 @@ std::string value = var.GetValue();
 ```
 
 **aria-dap Processing**:
-1. Map `main.aria:10` → `main.aria:10` (source line in DWARF debug info)
-2. LLDB command: `breakpoint set --file main.aria --line 10`
+1. Map `main.npk:10` → `main.npk:10` (source line in DWARF debug info)
+2. LLDB command: `breakpoint set --file main.npk --line 10`
 3. Conditional breakpoint: `breakpoint modify --condition "age > 18"`
 4. Return breakpoint IDs to IDE
 
 **DWARF Debug Info**:
 - Compiler generates DWARF with source line mappings
-- LLDB reads DWARF to map Aria source → machine code
+- LLDB reads DWARF to map Nitpick source → machine code
 - Breakpoint on line 10 → instruction address in executable
 
 ---
@@ -288,9 +288,9 @@ func:main = int64() {
 
 **Stack Trace**:
 ```
-#0  helper (x=5)              main.aria:10
-#1  compute ()                main.aria:14
-#2  main ()                   main.aria:18
+#0  helper (x=5)              main.npk:10
+#1  compute ()                main.npk:14
+#2  main ()                   main.npk:18
 #3  __libc_start_main ()      (external)
 ```
 
@@ -301,21 +301,21 @@ func:main = int64() {
     {
       "id": 0,
       "name": "helper",
-      "source": {"path": "/path/to/main.aria"},
+      "source": {"path": "/path/to/main.npk"},
       "line": 10,
       "column": 4
     },
     {
       "id": 1,
       "name": "compute",
-      "source": {"path": "/path/to/main.aria"},
+      "source": {"path": "/path/to/main.npk"},
       "line": 14,
       "column": 4
     },
     {
       "id": 2,
       "name": "main",
-      "source": {"path": "/path/to/main.aria"},
+      "source": {"path": "/path/to/main.npk"},
       "line": 18,
       "column": 4
     }
@@ -348,7 +348,7 @@ func:main = int64() {
 2. LLDB returns: `50` (if age = 25)
 3. DAP returns to IDE: `{"result": "50", "type": "int64"}`
 
-**Aria-Specific Evaluation**:
+**Nitpick-Specific Evaluation**:
 ```
 Expression: data.ok()
 Type: string
@@ -361,7 +361,7 @@ Value: false
 
 ---
 
-## Custom Formatters for Aria Types
+## Custom Formatters for Nitpick Types
 
 ### Result<T> Formatter
 
@@ -459,22 +459,22 @@ After:  stream = Stream(stddbg)
 
 ### Source-Level Breakpoints
 
-**Mapping**: Aria source line → Machine code address
+**Mapping**: Nitpick source line → Machine code address
 
 **DWARF Debug Info**:
 ```
 .debug_line section:
-  main.aria:10 → 0x401234 (machine code address)
-  main.aria:11 → 0x401240
-  main.aria:12 → 0x401260
+  main.npk:10 → 0x401234 (machine code address)
+  main.npk:11 → 0x401240
+  main.npk:12 → 0x401260
 ```
 
 **aria-dap**:
-1. User sets breakpoint on `main.aria:10`
+1. User sets breakpoint on `main.npk:10`
 2. DAP queries DWARF: line 10 → address 0x401234
 3. LLDB sets breakpoint at 0x401234
 4. When hit, LLDB reports address 0x401234
-5. DAP maps back to `main.aria:10` for IDE display
+5. DAP maps back to `main.npk:10` for IDE display
 
 ---
 
@@ -494,7 +494,7 @@ After:  stream = Stream(stddbg)
 
 **LLDB Command**:
 ```
-breakpoint set --file main.aria --line 10
+breakpoint set --file main.npk --line 10
 breakpoint modify 1 --condition "age > 18"
 ```
 
@@ -522,7 +522,7 @@ breakpoint modify 1 --condition "age > 18"
 
 **LLDB Command**:
 ```
-breakpoint set --file main.aria --line 10
+breakpoint set --file main.npk --line 10
 breakpoint command add 1
   expr printf("Age is %d\n", age)
   continue
@@ -542,7 +542,7 @@ DONE
 
 Debugged process has 6 streams:
 - FD 0-2: Standard (stdin/stdout/stderr) → Terminal
-- FD 3-5: Aria-specific (stddbg/stddati/stddato) → Pipes or files
+- FD 3-5: Nitpick-specific (stddbg/stddati/stddato) → Pipes or files
 
 **Problem**: When debugging, how to see all 6 streams separately?
 
@@ -604,7 +604,7 @@ settings set target.process.stop-on-fork true
 
 ## Integration Points
 
-### With Aria Compiler
+### With Nitpick Compiler
 
 **Debug Symbols**:
 - Compiler generates DWARF debug info (`-g` flag)
@@ -617,7 +617,7 @@ settings set target.process.stop-on-fork true
 
 ---
 
-### With Aria Runtime
+### With Nitpick Runtime
 
 **Runtime Symbols**:
 - Runtime library compiled with debug symbols
@@ -634,7 +634,7 @@ settings set target.process.stop-on-fork true
 
 **Installation**:
 ```bash
-code --install-extension aria-lang.aria-vscode
+code --install-extension aria-lang.npk-vscode
 ```
 
 **Extension provides DAP configuration**:
@@ -643,7 +643,7 @@ code --install-extension aria-lang.aria-vscode
   "debuggers": [
     {
       "type": "aria",
-      "label": "Aria Debugger",
+      "label": "Nitpick Debugger",
       "program": "aria-dap",
       "configurationAttributes": {
         "launch": {
@@ -693,9 +693,9 @@ code --install-extension aria-lang.aria-vscode
 
 ## Related Components
 
-- **[Aria Compiler](ARIA_COMPILER.md)**: Generates debug symbols (DWARF)
+- **[Nitpick Compiler](ARIA_COMPILER.md)**: Generates debug symbols (DWARF)
 - **[aria-lsp](ARIA_LSP.md)**: Complementary IDE integration
-- **[Aria Runtime](ARIA_RUNTIME.md)**: Provides symbols for runtime debugging
+- **[Nitpick Runtime](ARIA_RUNTIME.md)**: Provides symbols for runtime debugging
 - **[aria_shell](ARIA_SHELL.md)**: Multi-process debugging with shell + children
 
 ---

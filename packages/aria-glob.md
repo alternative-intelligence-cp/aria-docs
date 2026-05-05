@@ -4,7 +4,7 @@
 **Category**: filesystem, pattern-matching
 **License**: MIT
 
-Glob pattern matching for file paths. Pure Aria implementation — supports
+Glob pattern matching for file paths. Pure Nitpick implementation — supports
 `*` (any non-/ chars), `**` (recursive, crosses /), `?` (single non-/ char),
 and literal matching via a backtracking algorithm.
 
@@ -14,7 +14,7 @@ and literal matching via a backtracking algorithm.
 - `**` recursive wildcard: matches any characters including `/`
 - `?` wildcard: matches exactly one non-`/` character
 - Pattern metadata: wildcard detection, recursive check, segment count
-- Two-bookmark backtracking for complex patterns like `**/*.aria`
+- Two-bookmark backtracking for complex patterns like `**/*.npk`
 
 ## API Reference
 
@@ -32,12 +32,12 @@ and literal matching via a backtracking algorithm.
 ## Quick Start
 
 ```aria
-use "aria_glob.aria".*;
+use "aria_glob.npk".*;
 
 func:main = int32() {
-    int64:g = raw glob_create("**/*.aria");
-    int64:m1 = raw glob_match(g, "src/pkg/main.aria");
-    int64:m2 = raw glob_match(g, "test.aria");
+    int64:g = raw glob_create("**/*.npk");
+    int64:m1 = raw glob_match(g, "src/pkg/main.npk");
+    int64:m2 = raw glob_match(g, "test.npk");
     int64:m3 = raw glob_match(g, "readme.md");
     // m1=1, m2=1, m3=0
     int64:rec = raw glob_is_recursive(g);

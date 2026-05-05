@@ -4,7 +4,7 @@
 **Category**: middleware, http, security
 **License**: MIT
 
-CORS (Cross-Origin Resource Sharing) middleware for Aria. Configure allowed
+CORS (Cross-Origin Resource Sharing) middleware for Nitpick. Configure allowed
 origins, methods, headers, credentials, and generate proper CORS response headers.
 
 ## API Reference
@@ -28,7 +28,7 @@ origins, methods, headers, credentials, and generate proper CORS response header
 ## Quick Start
 
 ```aria
-use "aria_cors.aria".*;
+use "aria_cors.npk".*;
 
 func:main = int32() {
     int64:cfg = raw cors_reset();

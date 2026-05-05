@@ -4,7 +4,7 @@
 
 With `--verify-concurrency`, the compiler detects data races and deadlocks at
 compile time. Introduced in v0.14.2, this is the most advanced verification domain
-in Aria.
+in Nitpick.
 
 ## Data Race Detection
 

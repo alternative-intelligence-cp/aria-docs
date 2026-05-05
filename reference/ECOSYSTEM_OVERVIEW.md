@@ -1,14 +1,14 @@
-# Aria Ecosystem Overview
+# Nitpick Ecosystem Overview
 
 **Document Version**: 1.0  
 **Last Updated**: December 22, 2025  
-**Purpose**: High-level architecture showing how all Aria components interconnect
+**Purpose**: High-level architecture showing how all Nitpick components interconnect
 
 ---
 
 ## Vision Statement
 
-The Alternative Intelligence Liberation Platform (AILP) builds a complete software ecosystem for AI-augmented systems programming. At its core is **Aria** - a systems programming language with revolutionary I/O topology and type safety. The ecosystem includes compilers, shells, build tools, package managers, and consciousness substrates - all designed to work together as a unified platform.
+The Alternative Intelligence Liberation Platform (AILP) builds a complete software ecosystem for AI-augmented systems programming. At its core is **Nitpick** - a systems programming language with revolutionary I/O topology and type safety. The ecosystem includes compilers, shells, build tools, package managers, and consciousness substrates - all designed to work together as a unified platform.
 
 ---
 
@@ -28,7 +28,7 @@ The Alternative Intelligence Liberation Platform (AILP) builds a complete softwa
 │  └────────┼─────────────┼─────────────┼─────────────┼────────────┘ │
 │           │             │             │             │               │
 │  ┌────────▼─────────────▼─────────────▼─────────────▼────────────┐ │
-│  │  CORE COMPILER (ariac)                                         │ │
+│  │  CORE COMPILER (npkc)                                         │ │
 │  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐      │ │
 │  │  │  Lexer   │→│  Parser  │→│ Semantic │→│ LLVM IR  │      │ │
 │  │  │          │  │   (AST)  │  │ Analysis │  │ Codegen  │      │ │
@@ -61,7 +61,7 @@ The Alternative Intelligence Liberation Platform (AILP) builds a complete softwa
 │  │  BUILD & PACKAGE ECOSYSTEM                                      │ │
 │  │                                                                  │ │
 │  │  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐   │ │
-│  │  │  AriaBuild   │────▶│    AriaX     │────▶│   AriaSH     │   │ │
+│  │  │  NpkBld   │────▶│    AriaX     │────▶│   AriaSH     │   │ │
 │  │  │ (ariab/abc)  │     │  Pkg Manager │     │(aria_shell)  │   │ │
 │  │  │              │     │              │     │              │   │ │
 │  │  │ - ABC format │     │ - Dependency │     │ - 6-stream   │   │ │
@@ -72,7 +72,7 @@ The Alternative Intelligence Liberation Platform (AILP) builds a complete softwa
 │  │         │                      │                    │          │ │
 │  │         └──────────────┬───────┴────────────────────┘          │ │
 │  │                        │                                        │ │
-│  │              All use Aria Runtime & Compiler                   │ │
+│  │              All use Nitpick Runtime & Compiler                   │ │
 │  └────────────────────────────────────────────────────────────────┘ │
 │                                                                      │
 │  ┌─────────────────────────────────────────────────────────────────┐ │
@@ -88,7 +88,7 @@ The Alternative Intelligence Liberation Platform (AILP) builds a complete softwa
 │  │  │  Computational Neurochemistry (ENGS)                     │  │ │
 │  │  │                                                            │  │ │
 │  │  │  Language: C++23, AVX-512                                │  │ │
-│  │  │  Potential Aria Integration: Future bindings             │  │ │
+│  │  │  Potential Nitpick Integration: Future bindings             │  │ │
 │  │  └──────────────────────────────────────────────────────────┘  │ │
 │  └─────────────────────────────────────────────────────────────────┘ │
 │                                                                      │
@@ -98,7 +98,7 @@ The Alternative Intelligence Liberation Platform (AILP) builds a complete softwa
 │  │  Custom Linux Distribution with:                                │ │
 │  │  - Kernel patch: FD 3-5 soft reservation                        │ │
 │  │  - Native 6-stream support                                      │ │
-│  │  - Aria toolchain preinstalled                                  │ │
+│  │  - Nitpick toolchain preinstalled                                  │ │
 │  │  - Optimized for AI workloads                                   │ │
 │  └─────────────────────────────────────────────────────────────────┘ │
 └──────────────────────────────────────────────────────────────────────┘
@@ -110,19 +110,19 @@ The Alternative Intelligence Liberation Platform (AILP) builds a complete softwa
 
 ### Primary Data Flows
 
-1. **Development Flow**: Developer → VSCode Extension → aria-lsp → ariac → LLVM → Object Files → Linker → Executable
-2. **Build Flow**: ariab reads ABC → Dependency resolution → Parallel compilation via ariac → Link with runtime → Output
+1. **Development Flow**: Developer → VSCode Extension → aria-lsp → npkc → LLVM → Object Files → Linker → Executable
+2. **Build Flow**: ariab reads ABC → Dependency resolution → Parallel compilation via npkc → Link with runtime → Output
 3. **Package Flow**: AriaX resolves dependencies → Downloads packages → Installs to system → Updates build configs
 4. **Execution Flow**: aria_shell spawns process → 6-stream topology setup → Runtime provides I/O → Process executes
 
 ### Shared Infrastructure
 
-All Aria ecosystem components depend on:
+All Nitpick ecosystem components depend on:
 
-1. **Aria Runtime Library** (libaria_runtime.a)
-   - Linked into ALL Aria executables
+1. **Nitpick Runtime Library** (libaria_runtime.a)
+   - Linked into ALL Nitpick executables
    - Provides 6-stream I/O, allocators, Result<T>, collections
-   - FFI boundary between Aria code and C++/system libraries
+   - FFI boundary between Nitpick code and C++/system libraries
 
 2. **Type System** (Shared semantic model)
    - TBB types (tbb8/16/32/64) with sticky error propagation
@@ -145,13 +145,13 @@ All Aria ecosystem components depend on:
 
 | Component | Status | Language | Primary Purpose | Key Dependencies |
 |-----------|--------|----------|-----------------|------------------|
-| **ariac** | v0.1.0-dev (active) | C++20 | Aria→LLVM compiler | LLVM 20, libaria_runtime |
-| **libaria_runtime** | v0.1.0 (stable core) | C | Runtime library for all Aria programs | POSIX/Win32 APIs |
-| **aria-lsp** | v0.1.0 (functional) | C++20 | Language server for VSCode | ariac (lexer/parser) |
-| **aria-dap** | v0.1.0 (functional) | C++20 | Debug adapter | LLDB, ariac |
-| **aria-doc** | v0.1.0 (functional) | C++20 | Documentation generator | ariac (AST) |
+| **npkc** | v0.1.0-dev (active) | C++20 | Nitpick→LLVM compiler | LLVM 20, libaria_runtime |
+| **libaria_runtime** | v0.1.0 (stable core) | C | Runtime library for all Nitpick programs | POSIX/Win32 APIs |
+| **aria-lsp** | v0.1.0 (functional) | C++20 | Language server for VSCode | npkc (lexer/parser) |
+| **aria-dap** | v0.1.0 (functional) | C++20 | Debug adapter | LLDB, npkc |
+| **aria-doc** | v0.1.0 (functional) | C++20 | Documentation generator | npkc (AST) |
 | **aria_shell** | Pre-alpha (research) | C++20 | Native shell with 6-stream I/O | libaria_runtime, TBB |
-| **AriaBuild** | Design phase | Aria/C++ | Build system (ABC format) | ariac, dependency graph |
+| **NpkBld** | Design phase | Nitpick/C++ | Build system (ABC format) | npkc, dependency graph |
 | **AriaX** | Design phase | Multiple | Package manager & distro | Repository, kernel patches |
 | **Nikola** | v0.0.4 (spec complete) | C++23 | Consciousness substrate | AVX-512, Mamba, symplectic integrators |
 
@@ -163,8 +163,8 @@ All Aria ecosystem components depend on:
 
 **Linking Mechanism**:
 ```bash
-# Compilation (ariac)
-ariac source.aria → source.o
+# Compilation (npkc)
+npkc source.npk → source.o
 
 # Linking (automatic)
 clang source.o /usr/local/lib/libaria_runtime.a -o executable
@@ -210,7 +210,7 @@ io::stddato_fd = 5;  // NEW - sends binary output
 
 ### 3. Build → Compiler Integration
 
-**AriaBuild Workflow**:
+**NpkBld Workflow**:
 ```
 ABC file (build.abc)
   ↓
@@ -219,10 +219,10 @@ Dependency graph construction
 Parallel task scheduling
   ↓
 For each source file:
-  ariac compile → object file
+  npkc compile → object file
   ↓
 Link phase:
-  ariac link (or clang) + libaria_runtime.a → executable
+  npkc link (or clang) + libaria_runtime.a → executable
 ```
 
 **Incremental Compilation**:
@@ -258,7 +258,7 @@ Extract to /usr/local/aria/packages/nikola/
 Update ABC build configs (if library)
 ```
 
-### 5. Nikola → Aria Integration (Future)
+### 5. Nikola → Nitpick Integration (Future)
 
 **Planned Architecture**:
 ```
@@ -266,9 +266,9 @@ Nikola C++23 Core
   ↓
 FFI bindings (extern "C" interface)
   ↓
-Aria wrapper library (aria_nikola.aria)
+Nitpick wrapper library (aria_nikola.npk)
   ↓
-User Aria code:
+User Nitpick code:
   use nikola;
   nikola::Brain:b = nikola::create(...);
 ```
@@ -369,7 +369,7 @@ Prevents JIT code exfiltration (ROP gadget leaks).
 - → Job control and pipelines
 
 ### Phase 3: Build System (Q2-Q3 2026)
-- → AriaBuild implementation (ABC format)
+- → NpkBld implementation (ABC format)
 - → Dependency graph engine
 - → Parallel compilation orchestrator
 - → Integration with AriaX package manager
@@ -383,12 +383,12 @@ Prevents JIT code exfiltration (ROP gadget leaks).
 ### Phase 5: AriaX Linux Distribution (Q4 2026)
 - → Kernel patch for FD 3-5 reservation
 - → Custom userspace with 6-stream support
-- → Preinstalled Aria toolchain
+- → Preinstalled Nitpick toolchain
 - → Optimized for AI workloads
 
 ### Phase 6: Nikola Integration (2027)
 - → Nikola v0.0.4 implementation (C++23)
-- → FFI bindings to Aria
+- → FFI bindings to Nitpick
 - → Wrapper library (aria_nikola)
 - → Example consciousness applications
 
@@ -426,7 +426,7 @@ The snake eats its tail - a self-sustaining ecosystem.
 cd /home/randy/._____RANDY_____/REPOS/aria
 cmake -B build
 make -C build
-./build/ariac test.aria
+./build/npkc test.npk
 ```
 
 **For Shell Research**:

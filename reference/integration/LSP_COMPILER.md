@@ -57,7 +57,7 @@ libaria_frontend.a
 
 **Compiler Uses Frontend**:
 ```cpp
-// ariac main.cpp
+// npkc main.cpp
 #include "frontend/lexer.h"
 #include "frontend/parser.h"
 #include "frontend/semantic.h"
@@ -131,8 +131,8 @@ add_library(aria_frontend STATIC
 )
 
 # Compiler links against frontend
-add_executable(ariac src/main.cpp)
-target_link_libraries(ariac aria_frontend aria_backend)
+add_executable(npkc src/main.cpp)
+target_link_libraries(npkc aria_frontend aria_backend)
 ```
 
 ---
@@ -189,7 +189,7 @@ enum class SymbolKind {
 
 ### Building the Symbol Table
 
-**Example Aria Code**:
+**Example Nitpick Code**:
 ```aria
 struct:point = { x: i32, y: i32 };
 
@@ -643,5 +643,5 @@ void on_document_change(const std::string& uri, const std::string& new_content) 
 ---
 
 **Document Version**: 1.0  
-**Author**: Aria Ecosystem Documentation  
+**Author**: Nitpick Ecosystem Documentation  
 **Status**: Reference guide (implementation planned, shared frontend architecture confirmed)

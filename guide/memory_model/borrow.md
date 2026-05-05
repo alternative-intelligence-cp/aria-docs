@@ -2,7 +2,7 @@
 
 ## Overview
 
-Aria has borrow operators for safe reference passing:
+Nitpick has borrow operators for safe reference passing:
 
 | Operator | Meaning |
 |----------|---------|

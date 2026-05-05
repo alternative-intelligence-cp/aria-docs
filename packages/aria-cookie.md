@@ -4,7 +4,7 @@
 **Category**: middleware, http
 **License**: MIT
 
-HTTP cookie parsing and building for Aria. Parse `Cookie` headers into
+HTTP cookie parsing and building for Nitpick. Parse `Cookie` headers into
 key-value pairs, and build `Set-Cookie` headers with full attribute support.
 
 ## Features
@@ -38,7 +38,7 @@ key-value pairs, and build `Set-Cookie` headers with full attribute support.
 ## Quick Start
 
 ```aria
-use "aria_cookie.aria".*;
+use "aria_cookie.npk".*;
 
 func:main = int32() {
     int64:jar = raw cookie_parse("session=abc123; theme=dark");

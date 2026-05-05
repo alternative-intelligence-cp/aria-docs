@@ -1,4 +1,4 @@
-# Aria Runtime Library (libaria_runtime.a)
+# Nitpick Runtime Library (libaria_runtime.a)
 
 **Component Type**: Static Runtime Library  
 **Language**: C (C11 standard)  
@@ -27,7 +27,7 @@
 
 ## Overview
 
-The Aria Runtime Library provides the core functionality needed by all Aria programs. It is **statically linked** into every Aria executable, providing:
+The Nitpick Runtime Library provides the core functionality needed by all Nitpick programs. It is **statically linked** into every Nitpick executable, providing:
 
 - **6-stream I/O**: stdin/stdout/stderr + stddbg/stddati/stddato (FDs 0-5)
 - **Memory allocators**: Arena, Pool, Slab, Wild, Garbage Collection
@@ -261,7 +261,7 @@ void aria_runtime_shutdown(void) {
 
 ### Philosophy: Explicit Memory Models
 
-Aria provides **multiple allocators** for different use cases. User code **explicitly chooses** which allocator to use.
+Nitpick provides **multiple allocators** for different use cases. User code **explicitly chooses** which allocator to use.
 
 ### Arena Allocator
 
@@ -701,7 +701,7 @@ AriaFuture* aria_async(void (*task_fn)(void*), void* arg);
 void* aria_await(AriaFuture* future);
 ```
 
-**Example Use** (conceptual Aria code):
+**Example Use** (conceptual Nitpick code):
 ```aria
 async func:fetch_data = result<string>(url: string) {
     // This runs asynchronously
@@ -731,7 +731,7 @@ func:main = int64() {
 
 ## Direct Syscalls (sys)
 
-As of v0.4.0, Aria supports direct kernel syscall invocation via the `sys()` compiler builtin, bypassing libc entirely. This is **not a runtime library feature** — the compiler emits inline `syscall` assembly instructions directly into the binary.
+As of v0.4.0, Nitpick supports direct kernel syscall invocation via the `sys()` compiler builtin, bypassing libc entirely. This is **not a runtime library feature** — the compiler emits inline `syscall` assembly instructions directly into the binary.
 
 ### Three Tiers
 
@@ -745,8 +745,8 @@ As of v0.4.0, Aria supports direct kernel syscall invocation via the `sys()` com
 
 The `sys()` builtin does **not** use `libaria_runtime.a`. It generates inline assembly that talks directly to the kernel. This makes it suitable for:
 
-- Building libc-free Aria programs
-- Porting `aria-libc` from C shims to pure Aria
+- Building libc-free Nitpick programs
+- Porting `aria-libc` from C shims to pure Nitpick
 - Low-level system programming where runtime overhead is unacceptable
 
 ### TOS Integration
@@ -785,9 +785,9 @@ Currently x86-64 Linux only (syscall instruction, rax/rdi/rsi/rdx/r10/r8/r9 ABI)
 
 ## Related Components
 
-- **[Aria Compiler](ARIA_COMPILER.md)**: Generates calls to runtime functions
+- **[Nitpick Compiler](ARIA_COMPILER.md)**: Generates calls to runtime functions
 - **[aria_shell](ARIA_SHELL.md)**: Uses runtime for process spawning
-- **[AriaBuild](ARIABUILD.md)**: Links applications with runtime
+- **[NpkBld](ARIABUILD.md)**: Links applications with runtime
 - **[AriaX](ARIAX.md)**: Distributes runtime library as system package
 
 ---

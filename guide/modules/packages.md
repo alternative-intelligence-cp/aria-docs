@@ -2,20 +2,20 @@
 
 ## Package Structure
 
-Aria packages follow a standard layout managed by `aria-make`:
+Nitpick packages follow a standard layout managed by `nitpick-build`:
 
 ```
 my-package/
 ├── src/
-│   ├── main.aria
-│   └── lib.aria
+│   ├── main.npk
+│   └── lib.npk
 ├── test/
-│   └── test_main.aria
-├── aria-make.toml
+│   └── test_main.npk
+├── nitpick-build.toml
 └── README.md
 ```
 
-## aria-make.toml
+## nitpick-build.toml
 
 ```toml
 [package]
@@ -29,9 +29,9 @@ aria-string = "0.1.0"
 ## Building
 
 ```bash
-aria-make build        # compile
-aria-make test         # run tests
-aria-make run          # build and run
+nitpick-build build        # compile
+nitpick-build test         # run tests
+nitpick-build run          # build and run
 ```
 
 ## Package Registry

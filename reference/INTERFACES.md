@@ -1,4 +1,4 @@
-# Aria Ecosystem - Interface Specifications
+# Nitpick Ecosystem - Interface Specifications
 
 **Document Version**: 1.0  
 **Last Updated**: December 22, 2025  
@@ -14,7 +14,7 @@
 4. [Build System ↔ Compiler Interface](#4-build-system--compiler-interface)
 5. [Package Manager ↔ System Interface](#5-package-manager--system-interface)
 6. [LSP/DAP ↔ Compiler Interface](#6-lspdap--compiler-interface)
-7. [Nikola ↔ Aria Interface (Future)](#7-nikola--aria-interface-future)
+7. [Nikola ↔ Nitpick Interface (Future)](#7-nikola--aria-interface-future)
 
 ---
 
@@ -67,7 +67,7 @@ $ clang source.o libaria_runtime.a -o executable
 
 **Memory Allocation Builtins**:
 
-| Aria Code | IR Intrinsic | Runtime Function | Return Type |
+| Nitpick Code | IR Intrinsic | Runtime Function | Return Type |
 |-----------|--------------|------------------|-------------|
 | `arena:a = arena_create(8192)` | `call @arena_create` | `aria_arena* arena_create(size_t)` | Opaque int64 handle |
 | `wild byte*:p = arena_alloc(a, 64)` | `call @arena_alloc` | `void* arena_alloc(arena, size)` | Pointer |
@@ -76,7 +76,7 @@ $ clang source.o libaria_runtime.a -o executable
 
 **I/O Builtins**:
 
-| Aria Code | IR Intrinsic | Runtime Function | Signature |
+| Nitpick Code | IR Intrinsic | Runtime Function | Signature |
 |-----------|--------------|------------------|-----------|
 | `io.stdin.read_line()` | `call @aria_stdin_read_line` | `AriaResult* aria_stdin_read_line()` | Result<String> |
 | `io.stdout.write(s)` | `call @aria_stdout_write` | `AriaResult* aria_stdout_write(char*, size_t)` | Result<void> |
@@ -96,7 +96,7 @@ $ clang source.o libaria_runtime.a -o executable
 
 **Primitive Type Mapping**:
 
-| Aria Type | LLVM IR Type | C ABI Type | Size | Alignment |
+| Nitpick Type | LLVM IR Type | C ABI Type | Size | Alignment |
 |-----------|--------------|------------|------|-----------|
 | `int8` | `i8` | `int8_t` | 1 byte | 1 byte |
 | `int64` | `i64` | `int64_t` | 8 bytes | 8 bytes |
@@ -108,7 +108,7 @@ $ clang source.o libaria_runtime.a -o executable
 
 **Composite Type Mapping**:
 
-| Aria Type | LLVM IR Type | C ABI Type |
+| Nitpick Type | LLVM IR Type | C ABI Type |
 |-----------|--------------|------------|
 | `struct Point { x: int32, y: int32 }` | `{i32, i32}` | `struct { int32_t x; int32_t y; }` |
 | `[int32; 10]` | `[10 x i32]` | `int32_t[10]` |
@@ -117,7 +117,7 @@ $ clang source.o libaria_runtime.a -o executable
 
 **Memory Qualifier Mapping**:
 
-| Aria Qualifier | LLVM IR Metadata | Runtime Behavior |
+| Nitpick Qualifier | LLVM IR Metadata | Runtime Behavior |
 |----------------|------------------|------------------|
 | Stack (default) | `alloca` | Automatic lifetime, no runtime call |
 | `wild` | Heap pointer | `aria_alloc()` / `aria_free()` calls |
@@ -503,13 +503,13 @@ void aria_runtime_init() {
 
 ### 4.1 Compilation Command Interface
 
-**AriaBuild invokes compiler**:
+**NpkBld invokes compiler**:
 ```bash
 # Basic compilation
-ariac source.aria -o output.o
+npkc source.npk -o output.o
 
 # With options
-ariac source.aria \
+npkc source.npk \
     --output output.o \
     --emit-llvm-ir \
     --optimize=2 \
@@ -518,7 +518,7 @@ ariac source.aria \
 
 **Compiler Exit Codes**:
 
-| Exit Code | Meaning | AriaBuild Action |
+| Exit Code | Meaning | NpkBld Action |
 |-----------|---------|------------------|
 | 0 | Success | Continue to next task |
 | 1 | Syntax/semantic error | Abort build, show errors |
@@ -540,24 +540,24 @@ ariac source.aria \
     "executable": {
       "type": "binary",
       "output": "bin/my_app",
-      "sources": ["src/main.aria", "src/utils.aria"],
+      "sources": ["src/main.npk", "src/utils.npk"],
       "dependencies": ["std.io", "std.collections"]
     }
   }
 }
 ```
 
-**AriaBuild Workflow**:
+**NpkBld Workflow**:
 1. Parse ABC file
 2. Resolve dependencies (query AriaX for missing packages)
 3. Build dependency graph (topological sort)
 4. For each source file (in parallel):
    - Check if object file is up-to-date (timestamp/hash)
-   - If not, invoke `ariac source.aria -o source.o`
+   - If not, invoke `npkc source.npk -o source.o`
    - Collect errors/warnings
 5. Link phase:
    - Collect all object files
-   - Invoke `ariac link` or `clang` with libaria_runtime.a
+   - Invoke `npkc link` or `clang` with libaria_runtime.a
    - Generate executable
 
 ---
@@ -576,7 +576,7 @@ clang main.o utils.o -laria_runtime -L/usr/local/lib -o my_app
 ```
 
 **Automatic Runtime Injection**:
-- AriaBuild automatically appends libaria_runtime.a to link command
+- NpkBld automatically appends libaria_runtime.a to link command
 - No need for explicit `-laria_runtime` in ABC config
 - Build system detects runtime location:
   - Development: `build/libaria_runtime.a`
@@ -639,30 +639,30 @@ ariax install std.io
 │   └── libaria_runtime.a        # System-wide runtime
 │
 └── bin/
-    ├── ariac                    # Compiler
+    ├── npkc                    # Compiler
     ├── ariab                    # Build system
     └── ariax                    # Package manager
 ```
 
 ---
 
-### 5.3 AriaX ↔ AriaBuild Integration
+### 5.3 AriaX ↔ NpkBld Integration
 
 **Automatic Dependency Fetching**:
 ```bash
 # User runs build
 ariab build
 
-# AriaBuild reads ABC, sees missing dependency
+# NpkBld reads ABC, sees missing dependency
 {
   "dependencies": ["std.collections"]
 }
 
-# AriaBuild queries AriaX
+# NpkBld queries AriaX
 ariax query std.collections
   → Not installed
 
-# AriaBuild triggers installation
+# NpkBld triggers installation
 ariax install std.collections --auto
 
 # Installation updates ABC search paths
@@ -732,7 +732,7 @@ for (auto& error : checker.errors()) {
 
 **Custom Type Formatters**:
 ```cpp
-// aria-dap implements custom formatters for Aria types
+// aria-dap implements custom formatters for Nitpick types
 class AriaTypeFormatter {
     std::string format_tbb8(int8_t value) {
         if (value == -128) {
@@ -754,7 +754,7 @@ class AriaTypeFormatter {
 
 ---
 
-## 7. Nikola ↔ Aria Interface (Future)
+## 7. Nikola ↔ Nitpick Interface (Future)
 
 ### 7.1 FFI Binding Layer
 
@@ -780,9 +780,9 @@ extern "C" {
 }
 ```
 
-**Aria Wrapper Library**:
+**Nitpick Wrapper Library**:
 ```aria
-// aria_nikola/src/nikola.aria
+// aria_nikola/src/nikola.npk
 mod nikola {
     // Foreign function declarations
     extern "C" func:nikola_brain_create = wild void*(uint64:grid_size);
@@ -791,7 +791,7 @@ mod nikola {
     extern "C" func:nikola_brain_step = void(wild void*:handle, float64:dt);
     extern "C" func:nikola_brain_destroy = void(wild void*:handle);
     
-    // Safe Aria wrapper
+    // Safe Nitpick wrapper
     pub struct Brain {
         handle: wild void*,
     }
@@ -824,7 +824,7 @@ mod nikola {
 
 **Training Pipeline**:
 ```aria
-// Aria orchestrator sends training data via stddato
+// Nitpick orchestrator sends training data via stddato
 use nikola;
 use io;
 

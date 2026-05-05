@@ -1,4 +1,4 @@
-# The Aria Philosophy - In the Creator's Words
+# The Nitpick Philosophy - In the Creator's Words
 
 ## The Origin Story
 
@@ -65,7 +65,7 @@ MOV → move
 RET → return  
 JMP → jump
 
-// In Aria:
+// In Nitpick:
 Result<T>  // It's a result that wraps T
 .is_error  // Boolean: is this an error?
 .value     // The value (if not error)
@@ -100,7 +100,7 @@ No mixing. No confusion.
 ### 5. Safety Through Design, Not Restriction
 
 **Bad approach:** "You can't do X because it's unsafe"  
-**Aria approach:** "You can do X, but the compiler will make sure you do it safely, or ask you to explicitly bypass (auditability)"
+**Nitpick approach:** "You can do X, but the compiler will make sure you do it safely, or ask you to explicitly bypass (auditability)"
 
 Examples:
 - Result<T> enforcement: Must check, but simple to do
@@ -149,7 +149,7 @@ This isn't about protecting developers from themselves.
 
 > "I wanted to not have to go hunt through man pages or online tutorials every five minutes to figure out what operators do. I wanted to know what was happening."
 
-**Aria: The language where things mean what they say.**
+**Nitpick: The language where things mean what they say.**
 
 - `MOV` moves
 - `Result<T>` is a result
@@ -165,6 +165,6 @@ Everything else?
 
 ---
 
-*This philosophy shapes every design decision in Aria. When in doubt, ask: "Does this make the AI model safer? Does this make meaning clearer? Does this reduce hunting through docs?" If yes to any, consider it. If yes to all, it's probably the right choice.*
+*This philosophy shapes every design decision in Nitpick. When in doubt, ask: "Does this make the AI model safer? Does this make meaning clearer? Does this reduce hunting through docs?" If yes to any, consider it. If yes to all, it's probably the right choice.*
 
 **Remember: The goal is safety. The gravy is that safety turns out to be powerful, performant, and pleasant to use.**

@@ -1,6 +1,6 @@
 ---
-title: "Aria Programming Manual"
-subtitle: "Version 1.1 — Based on Aria v0.16.11"
+title: "Nitpick Programming Manual"
+subtitle: "Version 1.1 — Based on Nitpick v0.16.11"
 date: "April 2026"
 author: "Alternative Intelligence"
 geometry: "margin=1in"
@@ -13,7 +13,7 @@ urlcolor: blue
 header-includes:
   - \usepackage{fancyhdr}
   - \pagestyle{fancy}
-  - \fancyhead[L]{Aria Programming Manual}
+  - \fancyhead[L]{Nitpick Programming Manual}
   - \fancyhead[R]{v1.1}
   - \usepackage{listings}
   - \lstset{basicstyle=\ttfamily\small,breaklines=true,breakatwhitespace=true}
@@ -44,7 +44,7 @@ wild                    ** unmanaged memory **
 defer                   ** guarantees cleanup code runs when scope exits **
 async                   ** declare function async **
 const                   ** constant,  only in extern blocks **
-fixed                   ** Aria version of const **
+fixed                   ** Nitpick version of const **
 use                     ** import modules/files **
 mod                     ** define module **
 pub                     ** public visibility **
@@ -64,7 +64,7 @@ comptime                ** compile-time evaluation **
 await                   ** suspend execution until async operation completes **
 catch                   ** error/exception handling keyword **
 in                      ** membership test in for loops and collections **
-as                      ** alias in imports: use "mod.aria".* as alias **
+as                      ** alias in imports: use "mod.npk".* as alias **
 cfg                     ** conditional compilation attribute **
 inline                  ** suggest function inlining to compiler **
 noinline                ** prevent function inlining **
@@ -109,13 +109,13 @@ sys!!!(expr, args...)   ** raw syscall, bare int64 **
 
 ### Special Values #############################################
 ERR                     ** Tbb type sticky error sentinel **
-NIL                     ** No value / nothing, Aria equivalent of void **
+NIL                     ** No value / nothing, Nitpick equivalent of void **
 NULL                    ** No reference / no address / 0x00 **
 unknown                 ** special sentinel for undefined **
 
 ### Types ######################################################
 Result<T>               ** Result type, all functions **
-any                     ** Aria equivalent of C void* **
+any                     ** Nitpick equivalent of C void* **
 void                    ** in extern blocks only **
 int[1..4096]            ** signed integers **
 uint[1..4096]           ** unsigned integers **
@@ -131,7 +131,7 @@ dyn                     ** trait object dispatch **
 obj                     ** dynamic dispatch values **
 struct                                              ** standard struct **
 enum                                                ** standard enum **
-string                                              ** Aria string **
+string                                              ** Nitpick string **
 func                                                ** function defintion **
 array                                               ** standard array **
 trit                                                ** ternary equivalent to bit **
@@ -156,7 +156,7 @@ for                     ** standard for for advanced uses **
 till(limit,step)        ** loop with automatic iteration tracking **
 loop(start,limit,step)  ** loop with automatic iteration tracking **
 when/then/end           ** better while with state tracking **
-pick                    ** Aria equivalent of switch/case constructs **
+pick                    ** Nitpick equivalent of switch/case constructs **
 
 ### Operators ##################################################
 +                       ** add **
@@ -216,7 +216,7 @@ $$m                     ** mutable borrow **
 */                      ** end block comment **
 \                       ** escape **
 
-### Aria STREAMS ###############################################
+### Nitpick STREAMS ###############################################
 stdout                  ** text output stream **
 stderr                  ** error output stream **
 stddbg                  ** debug output stream **
@@ -224,14 +224,14 @@ stdin                   ** text input stream **
 stddati                 ** data input stream **
 stddato                 ** data output stream **
 
-### Compiler Flags (ariac) #####################################
+### Compiler Flags (npkc) #####################################
 
 ## Output
 -o <file>               ** write output to <file> **
 --emit-llvm             ** emit LLVM IR text (.ll) **
 --emit-llvm-bc          ** emit LLVM bitcode (.bc) **
 --emit-asm              ** emit assembly (.s) **
---emit-deps             ** emit JSON dependency manifest (for aria_make) **
+--emit-deps             ** emit JSON dependency manifest (for npkbld) **
 --emit-ptx              ** emit PTX assembly for GPU execution **
 --emit-wasm             ** compile to WebAssembly (.wasm) **
 
@@ -290,7 +290,7 @@ aria-docs/guide```
 
 ## Version History
 
-| Version | Aria | Key Changes |
+| Version | Nitpick | Key Changes |
 |---------|------|-------------|
 | v1.1 | v0.16.11 | Layout fixes, content update |
 | v1.0 | v0.13.7 | Initial release |
@@ -300,7 +300,7 @@ aria-docs/guide```
 - **v0.14.x**: Expanded Z3 SMT solver coverage, bitvector-accurate
   proofs, Rules consistency checking, solver-guided optimizations
 - **v0.15.x**: Self-hosting foundation — 5 compiler modules ported
-  to Aria (3,070 lines), C-bridge FFI shim pattern
+  to Nitpick (3,070 lines), C-bridge FFI shim pattern
 - **v0.16.x**: Code review series — dead code removal (~46K lines),
   TODO/FIXME audit, debug cleanup, guide and example fixes
 
@@ -316,7 +316,7 @@ aria-docs/guide```
 
 #### Overview
 
-`any` is Aria's dynamically-typed value container. It can hold any type, with the actual
+`any` is Nitpick's dynamically-typed value container. It can hold any type, with the actual
 type tracked at runtime. Internally implemented as a fat pointer `{ptr, i64}` with a type tag.
 
 > **Note:** `dyn` is NOT an alias for `any`. `dyn` is used exclusively for trait object
@@ -345,7 +345,7 @@ int64->:ptr = box.resolve::<int64>();
 
 #### Casting
 
-`any` does not use `as` for casting. Aria has three cast forms:
+`any` does not use `as` for casting. Nitpick has three cast forms:
 
 ```aria
 // Infix arrow cast
@@ -801,7 +801,7 @@ flt64:from_f32 = small;        // flt32→flt64: safe widening
 #### ABI Note
 
 **`flt32` passes as `double` at the C ABI level.** If writing C shims for extern functions,
-the C side must declare parameters as `double`, then cast internally. This is an Aria
+the C side must declare parameters as `double`, then cast internally. This is a Nitpick
 codegen convention, not a bug.
 
 #### When NOT to Use Floats
@@ -886,7 +886,7 @@ frac32:mixed = {1, 1, 3};     // 1 + 1/3
 
 #### Overview
 
-Aria provides two's complement signed integers in powers of 2 from 1-bit to 4096-bit.
+Nitpick provides two's complement signed integers in powers of 2 from 1-bit to 4096-bit.
 `int32` (alias `i32`) is the **default integer type** — bare literals like `100` infer as `int32`.
 
 #### Width Table
@@ -967,7 +967,7 @@ Widths `int128` through `int4096` use the **Limb-Based Integral Model**:
 
 #### Overview
 
-Aria has three memory modes. Pointers are only directly used in `wild` (unmanaged) mode
+Nitpick has three memory modes. Pointers are only directly used in `wild` (unmanaged) mode
 and `extern` blocks.
 
 #### Pointer Operators
@@ -1014,9 +1014,9 @@ For arena-allocated data, prefer `Handle<T>` over raw pointers. See
 
 #### Overview
 
-**Every function in Aria returns `Result<T>`** (except extern functions). The compiler
+**Every function in Nitpick returns `Result<T>`** (except extern functions). The compiler
 forces you to handle the result — unhandled Results are compile errors. This is the
-core of Aria's safety model at the function level.
+core of Nitpick's safety model at the function level.
 
 #### Structure
 
@@ -1161,7 +1161,7 @@ Component-wise arithmetic: `+`, `-`, `*`, `/` apply to all lanes simultaneously.
 
 #### Overview
 
-Aria strings are **UTF-8 encoded, immutable, reference-counted, and length-tracked**
+Nitpick strings are **UTF-8 encoded, immutable, reference-counted, and length-tracked**
 (not null-terminated internally). String operations return new strings.
 
 #### Declaration
@@ -1185,9 +1185,9 @@ string:empty = "";
 Use backtick strings with `&{expression}` for interpolation:
 
 ```aria
-string:name = "Aria";
+string:name = "Nitpick";
 int32:version = 4;
-println(`&{name} version &{version}`);  // "Aria version 4"
+println(`&{name} version &{version}`);  // "Nitpick version 4"
 ```
 
 #### Operations
@@ -1324,9 +1324,9 @@ int32:sum = raw add_coords(origin);
 
 #### Overview
 
-TBB types are Aria's **error-propagating integers**. They use a symmetric range with a
+TBB types are Nitpick's **error-propagating integers**. They use a symmetric range with a
 dedicated ERR sentinel value. Once a TBB value becomes ERR, it stays ERR through all
-subsequent operations — "sticky error propagation." This is the foundation of Aria's
+subsequent operations — "sticky error propagation." This is the foundation of Nitpick's
 safety model.
 
 Think of ERR as **NaN for integers**, but with a single well-defined value and deterministic
@@ -1661,10 +1661,10 @@ See [bitwise.md](bitwise.md) for `<<=`, `>>=`.
 #### Fixed Values
 
 ```aria
-fixed int32:MAX = 100;    // Aria's const (use 'fixed', not 'const')
+fixed int32:MAX = 100;    // Nitpick's const (use 'fixed', not 'const')
 ```
 
-`const` is reserved for extern blocks. Use `fixed` for Aria constants.
+`const` is reserved for extern blocks. Use `fixed` for Nitpick constants.
 
 **Note:** `fixed` is specified in the language but has limited compiler test coverage.
 Compute in a variable first, then assign to `fixed` if needed.
@@ -1799,7 +1799,7 @@ pick (cmp) {
 
 #### Ternary Conditional — `is`
 
-Aria uses `is` for ternary expressions:
+Nitpick uses `is` for ternary expressions:
 
 ```aria
 int32:max = is (a > b) : a : b;
@@ -1954,7 +1954,7 @@ loop(0, 10, 1) {
 
 ##### Result Operators
 
-These operators control how `Result<T>` values are handled. Every function call in Aria
+These operators control how `Result<T>` values are handled. Every function call in Nitpick
 returns `Result<T>` — these operators let you unwrap, propagate, or discard results.
 
 #### Operator Table
@@ -2172,7 +2172,7 @@ There are no anonymous inline lambdas at call sites.
 
 #### Syntax
 
-Aria functions use the `func:name = return_type(params)` syntax:
+Nitpick functions use the `func:name = return_type(params)` syntax:
 
 ```aria
 func:add = int32(int32:a, int32:b) {
@@ -2229,7 +2229,7 @@ func:process = NIL(int64:val) { pass(NIL); }
 
 #### Overview
 
-Aria supports formal contracts on functions: `requires` (preconditions), `ensures`
+Nitpick supports formal contracts on functions: `requires` (preconditions), `ensures`
 (postconditions), and `invariant` (loop invariants). These are checked at compile time
 where possible and at runtime otherwise.
 
@@ -2282,7 +2282,7 @@ coverage.
 
 #### Overview
 
-`extern` blocks declare C functions callable from Aria. Extern functions do **not**
+`extern` blocks declare C functions callable from Nitpick. Extern functions do **not**
 return `Result<T>` — they return raw values.
 
 #### Syntax
@@ -2311,7 +2311,7 @@ extern func:custom_func = int32(int32:a, int32:b);
 
 #### String ABI
 
-| Direction | Aria Type | C Type |
+| Direction | Nitpick Type | C Type |
 |-----------|-----------|--------|
 | Parameter | `string` | `const char*` |
 | Return | `string` | `AriaString {char* data, int64_t length}` |
@@ -2320,7 +2320,7 @@ C shims for string-returning functions must return the AriaString struct.
 
 #### Float ABI
 
-Aria's `flt32` passes as `double` at the C ABI level. C shims must use `double` params:
+Nitpick's `flt32` passes as `double` at the C ABI level. C shims must use `double` params:
 
 ```c
 // C side
@@ -2354,7 +2354,7 @@ func:failsafe = int32(tbb32:err) {
 
 #### Related
 
-- [modules/use_import.md](../modules/use_import.md) — importing Aria modules
+- [modules/use_import.md](../modules/use_import.md) — importing Nitpick modules
 - [types/string.md](../types/string.md) — string ABI details
 
 
@@ -2407,7 +2407,7 @@ See [advanced_features/traits.md](../advanced_features/traits.md) for trait defi
 
 ##### main and failsafe — Mandatory Functions
 
-Every Aria program **must** define both `main` and `failsafe`.
+Every Nitpick program **must** define both `main` and `failsafe`.
 
 #### main
 
@@ -2441,7 +2441,7 @@ func:failsafe = int32(tbb32:err) {
 - `pass`/`fail` are **not valid** in failsafe
 - Called automatically on emphatic unwrap (`?!`) failure
 - Called by `!!! err;` shorthand
-- This is Aria's last line of defense — it must always exit
+- This is Nitpick's last line of defense — it must always exit
 
 #### Required in Every Program
 
@@ -2565,7 +2565,7 @@ loop(0, 10, 1) {
 
 #### Layered Error Model
 
-Aria has a three-tier error system:
+Nitpick has a three-tier error system:
 
 | Tier | Mechanism | Scope | Recovery |
 |------|-----------|-------|----------|
@@ -2771,7 +2771,7 @@ println(sum);          // 5050
 
 #### Syntax
 
-Aria's equivalent of switch/case:
+Nitpick's equivalent of switch/case:
 
 ```aria
 pick (value) {
@@ -2912,7 +2912,7 @@ while (count < 10) {
 
 #### Overview
 
-Aria has borrow operators for safe reference passing:
+Nitpick has borrow operators for safe reference passing:
 
 | Operator | Meaning |
 |----------|---------|
@@ -3027,7 +3027,7 @@ arena.grow();
 
 #### Three Allocation Modes
 
-Aria provides explicit control over memory allocation:
+Nitpick provides explicit control over memory allocation:
 
 | Keyword | Mode | Management | Use Case |
 |---------|------|------------|----------|
@@ -3085,7 +3085,7 @@ No automatic cleanup. Combine with `defer` for manual resource management.
 
 #### Overview
 
-Stack allocation is the **default** in Aria. Variables are allocated on the function's
+Stack allocation is the **default** in Nitpick. Variables are allocated on the function's
 stack frame and automatically freed when the scope exits.
 
 #### Declaration
@@ -3219,20 +3219,20 @@ mod crypto;
 
 #### Package Structure
 
-Aria packages follow a standard layout managed by `aria-make`:
+Nitpick packages follow a standard layout managed by `nitpick-build`:
 
 ```
 my-package/
 ├── src/
-│   ├── main.aria
-│   └── lib.aria
+│   ├── main.npk
+│   └── lib.npk
 ├── test/
-│   └── test_main.aria
-├── aria-make.toml
+│   └── test_main.npk
+├── nitpick-build.toml
 └── README.md
 ```
 
-#### aria-make.toml
+#### nitpick-build.toml
 
 ```toml
 [package]
@@ -3246,9 +3246,9 @@ aria-string = "0.1.0"
 #### Building
 
 ```bash
-aria-make build        # compile
-aria-make test         # run tests
-aria-make run          # build and run
+nitpick-build build        # compile
+nitpick-build test         # run tests
+nitpick-build run          # build and run
 ```
 
 #### Package Registry
@@ -3261,7 +3261,7 @@ Packages are hosted at `aria-packages` and `aria-packages-apt`:
 
 | Category | Count | % |
 |----------|-------|---|
-| Pure Aria | 17 | 24.6% |
+| Pure Nitpick | 17 | 24.6% |
 | aria-libc backed | 9 | 13.0% |
 | Direct extern FFI | 43 | 62.3% |
 | **Total (with TOML)** | **69** | |
@@ -3272,9 +3272,9 @@ Packages are hosted at `aria-packages` and `aria-packages-apt`:
 
 | Package | Category | Description |
 |---------|----------|-------------|
-| `aria-bitset` | Pure Aria (aria-libc mem) | Fixed-size bit sets with union, intersect, complement |
-| `aria-result` | Pure Aria (aria-libc mem) | Extended Result combinators — unwrap, map_or, and/or |
-| `aria-deque` | Pure Aria (aria-libc mem) | Double-ended queue with O(1) push/pop at both ends |
+| `aria-bitset` | Pure Nitpick (aria-libc mem) | Fixed-size bit sets with union, intersect, complement |
+| `aria-result` | Pure Nitpick (aria-libc mem) | Extended Result combinators — unwrap, map_or, and/or |
+| `aria-deque` | Pure Nitpick (aria-libc mem) | Double-ended queue with O(1) push/pop at both ends |
 
 #### Related
 
@@ -3289,7 +3289,7 @@ The standard library contains **59 modules** in `REPOS/aria/stdlib/`.
 #### Import Pattern
 
 ```aria
-use "stdlib_file.aria".*;    // bare filename — compiler searches stdlib/
+use "stdlib_file.npk".*;    // bare filename — compiler searches stdlib/
 ```
 
 #### Available Modules
@@ -3314,9 +3314,9 @@ The standard library lives in `REPOS/aria/stdlib/` and provides:
 - Thread pool, channels, atomics, mutexes, condvars, rwlocks, barriers, actors (via stdlib wrappers on aria-libc)
 
 ##### Concurrency Modules (v0.11.0)
-- `thread.aria`, `mutex.aria`, `condvar.aria`, `rwlock.aria` — via aria_libc_process
-- `channel.aria`, `actor.aria`, `thread_pool.aria` — built on above
-- `shm.aria` — POSIX shared memory via aria_libc_posix
+- `thread.npk`, `mutex.npk`, `condvar.npk`, `rwlock.npk` — via aria_libc_process
+- `channel.npk`, `actor.npk`, `thread_pool.npk` — built on above
+- `shm.npk` — POSIX shared memory via aria_libc_posix
 
 #### Related
 
@@ -3329,8 +3329,8 @@ The standard library lives in `REPOS/aria/stdlib/` and provides:
 #### Syntax
 
 ```aria
-use "path/to/module.aria".*;           // wildcard import (all pub symbols)
-use "stdlib_file.aria".*;              // stdlib import (bare filename)
+use "path/to/module.npk".*;           // wildcard import (all pub symbols)
+use "stdlib_file.npk".*;              // stdlib import (bare filename)
 ```
 
 #### Path Resolution
@@ -3342,13 +3342,13 @@ use "stdlib_file.aria".*;              // stdlib import (bare filename)
 #### Example
 
 ```aria
-// file: math_utils.aria
+// file: math_utils.npk
 pub func:square = int32(int32:x) {
     pass (x * x);
 }
 
-// file: main.aria
-use "math_utils.aria".*;
+// file: main.npk
+use "math_utils.npk".*;
 
 func:main = int32() {
     int32:val = raw square(5);
@@ -3635,7 +3635,7 @@ Both return `Result<string>`.
 
 #### Three Tiers
 
-Aria provides direct syscall access at three safety levels:
+Nitpick provides direct syscall access at three safety levels:
 
 | Function | Tier | Syscalls Available | Return Type | TOS Layer |
 |----------|------|-------------------|-------------|-----------|
@@ -3727,13 +3727,13 @@ flt64:result = sin(3.14159);
 
 #### What's in stdlib/
 
-The standard library provides common functionality as importable Aria modules.
+The standard library provides common functionality as importable Nitpick modules.
 Located at `REPOS/aria/stdlib/`.
 
 #### Import Pattern
 
 ```aria
-use "module_name.aria".*;    // bare filename — compiler searches stdlib/
+use "module_name.npk".*;    // bare filename — compiler searches stdlib/
 ```
 
 #### Available Categories
@@ -3772,7 +3772,7 @@ These are available without `use`:
 #### Usage
 
 ```aria
-use "string_utils.aria".*;
+use "string_utils.npk".*;
 
 string:name = "Hello, World!";
 int64:len = raw string_length(name);      // 13
@@ -3793,7 +3793,7 @@ bool:has = raw string_contains(name, "World");  // true
 
 #### Overview
 
-Aria's concurrency model provides four layers of abstraction:
+Nitpick's concurrency model provides four layers of abstraction:
 
 | Layer | API | Use Case |
 |-------|-----|----------|
@@ -4104,25 +4104,25 @@ pass val;
 - [types/int.md](../types/int.md) — LBIM types
 
 
-##### JIT Compilation in Aria
+##### JIT Compilation in Nitpick
 
 #### Overview
 
-Aria includes a built-in JIT assembler for runtime code generation. The JIT subsystem builds on two foundations:
+Nitpick includes a built-in JIT assembler for runtime code generation. The JIT subsystem builds on two foundations:
 
 - **WildX** (`wildx_alloc.cpp`) — W⊕X memory management with ASLR, guard pages, code signing, and quota enforcement
 - **Assembler** (`assembler.cpp`) — x86-64 instruction encoder with label backpatching, register allocation, peephole optimization, and instruction selection
 
-The JIT is accessible from Aria code through the `jit` stdlib package, which provides FFI bindings to the C++ assembler API.
+The JIT is accessible from Nitpick code through the `jit` stdlib package, which provides FFI bindings to the C++ assembler API.
 
 #### Architecture
 
 ```
 ┌──────────────────────────────────────────────┐
-│               Aria Source Code               │
+│               Nitpick Source Code               │
 │         use jit;  use wildx;                 │
 ├──────────────────────────────────────────────┤
-│           jit.aria FFI Bindings              │
+│           jit.npk FFI Bindings              │
 │    81 bindings + 17 helpers + constants      │
 ├──────────────────────────────────────────────┤
 │           Assembler Pipeline                 │
@@ -4283,7 +4283,7 @@ Always use WildX guards and code signing for JIT code.
 
 #### Overview
 
-Aria provides three mechanisms for compile-time code generation and evaluation:
+Nitpick provides three mechanisms for compile-time code generation and evaluation:
 
 1. **AST macros** — Template-based code generation invoked with `name!(args)`
 2. **Compile-time evaluation** — `comptime(expr)` for constant folding at compile time
@@ -4346,7 +4346,7 @@ func:failsafe = int32(tbb32:err) {
 
 ##### Key Differences from C Macros
 
-| Feature | C Preprocessor | Aria Macros |
+| Feature | C Preprocessor | Nitpick Macros |
 |---------|---------------|-------------|
 | Expansion level | Text substitution | AST-level substitution |
 | Type safety | None (text) | Full (post-expansion type check) |
@@ -4355,7 +4355,7 @@ func:failsafe = int32(tbb32:err) {
 | `##` operator | Token paste | **Does not exist** |
 | Syntax | `#define NAME(x)` | `macro:name = (x) { };` |
 
-> **Important**: Aria's `#` operator is the **pin** operator for the borrow checker, NOT a stringify operator.
+> **Important**: Nitpick's `#` operator is the **pin** operator for the borrow checker, NOT a stringify operator.
 
 ---
 
@@ -4583,11 +4583,11 @@ Rules<int32[]>:arr_min_length = { $.length >= 4 };
 
 #### Overview
 
-Aria's safety model uses explicit layers. Each layer grants more power and less safety:
+Nitpick's safety model uses explicit layers. Each layer grants more power and less safety:
 
 | Layer | Name | Access | Safety |
 |-------|------|--------|--------|
-| 0 | Safe | Default Aria code | Full — Result<T>, bounds checks, type safety |
+| 0 | Safe | Default Nitpick code | Full — Result<T>, bounds checks, type safety |
 | 1 | Controlled | `sys()` safe syscalls | Curated syscall whitelist |
 | 2 | Supervised | `sys!!()` all syscalls | All syscalls, still returns Result |
 | 3 | Raw | `sys!!!()`, `wild`, `wildx` | No safety net — you own it |
@@ -4609,7 +4609,7 @@ Explicit bypass keywords that escalate safety level:
 #### Philosophy
 
 Every safety bypass is **visible in code**. There are no hidden undefined behaviors.
-When reading Aria code, the `raw`, `wild`, `drop`, `sys!!!` keywords immediately
+When reading Nitpick code, the `raw`, `wild`, `drop`, `sys!!!` keywords immediately
 identify where safety guarantees are intentionally relaxed.
 
 #### Related
@@ -4756,11 +4756,11 @@ see the RFC at `META/ARIA/TRAITS_AND_BORROW_SEMANTICS_RFC.md`.
 - [functions/generics.md](../functions/generics.md) — generic functions
 
 
-##### Verification in Aria — Formal Proofs with Z3
+##### Verification in Nitpick — Formal Proofs with Z3
 
 #### Overview
 
-Aria integrates the Z3 SMT solver to verify program properties at compile time.
+Nitpick integrates the Z3 SMT solver to verify program properties at compile time.
 Verification is opt-in via `--verify` flags and covers six domains: Rules/limit
 constraints, function contracts, integer overflow, concurrency safety, memory safety,
 and user-driven proofs.
@@ -4785,7 +4785,7 @@ When **Unknown** (solver timeout), the runtime check is preserved.
 Use `--verify` alone to enable everything, or combine individual flags:
 
 ```bash
-ariac program.aria -o program \
+npkc program.npk -o program \
     --verify-contracts --verify-overflow --prove-report
 ```
 
@@ -5064,9 +5064,9 @@ The default per-query timeout is 5000ms. Reduce for faster compilation at the co
 of more Unknown results; increase for complex proofs:
 
 ```bash
-ariac program.aria -o program \
+npkc program.npk -o program \
     --verify --smt-timeout=2000   # faster
-ariac program.aria -o program \
+npkc program.npk -o program \
     --verify --smt-timeout=10000  # slower
 ```
 
@@ -5109,7 +5109,7 @@ ariac program.aria -o program \
 
 - [rules.md](rules.md) — Rules & Limit syntax
 - [../functions/design_by_contract.md](../functions/design_by_contract.md) — requires/ensures
-- [safety_layers.md](safety_layers.md) — Aria's safety model
+- [safety_layers.md](safety_layers.md) — Nitpick's safety model
 - [concurrency.md](concurrency.md) — threading and mutexes
 
 
@@ -5117,7 +5117,7 @@ ariac program.aria -o program \
 
 #### Overview
 
-Aria can target WebAssembly (WASM) via LLVM's wasm32 backend.
+Nitpick can target WebAssembly (WASM) via LLVM's wasm32 backend.
 
 #### Limitations
 
@@ -5131,7 +5131,7 @@ Current WASM limitations:
 #### Building for WASM
 
 ```bash
-ariac --target wasm32 source.aria -o output.wasm
+npkc --target wasm32 source.npk -o output.wasm
 ```
 
 #### Related
@@ -5186,7 +5186,7 @@ Store in variable first:
 
 # Part III: Safety Walkthrough
 
-#### Safety-Critical Development in Aria: A Walkthrough
+#### Safety-Critical Development in Nitpick: A Walkthrough
 
 **Version:** 0.3.4  
 **Date:** 2026-04-10  
@@ -5232,28 +5232,28 @@ itself does not enforce safety — external tools and coding standards do. A
 developer who forgets to run the checker, or who disables a warning, is back to
 writing unsafe code.
 
-Aria takes a different approach: **safety is structural.** The compiler itself
+Nitpick takes a different approach: **safety is structural.** The compiler itself
 refuses to produce a binary that lacks mandatory error handling, that uses
 unchecked results, or that violates declared constraints. You cannot forget to
 handle errors because the compiler will not let you. You cannot silently overflow
 a safety-critical integer because the type system traps it.
 
-This walkthrough demonstrates Aria's safety features through a realistic
+This walkthrough demonstrates Nitpick's safety features through a realistic
 application — a medical drug infusion pump controller — building up from
 individual features to a complete, compilable program.
 
 #### Who This Document Is For
 
-- Safety engineers evaluating Aria for safety-critical domains
+- Safety engineers evaluating Nitpick for safety-critical domains
 - Language researchers comparing error-handling and verification models
-- Developers curious about Aria's safety guarantees and how they differ from
+- Developers curious about Nitpick's safety guarantees and how they differ from
   Rust, Ada/SPARK, or traditional C/C++ approaches
 
 #### Prerequisites
 
-- The `ariac` compiler (v0.3.4+)
+- The `npkc` compiler (v0.3.4+)
 - Basic familiarity with imperative programming
-- No prior Aria experience required
+- No prior Nitpick experience required
 
 #### Companion Files
 
@@ -5262,14 +5262,14 @@ directory:
 
 | File | Feature |
 |------|---------|
-| `01_failsafe_basics.aria` | Mandatory failsafe handler |
-| `02_result_handling.aria` | Result\<T\> with pass/fail |
-| `03_tbb_propagation.aria` | TBB sticky error types |
-| `04_limit_rules.aria` | limit\<Rules\> constraints |
-| `05_borrow_safety.aria` | Borrow semantics ($$i/$$m) |
-| `06_emergency_operators.aria` | ?! and !!! operators |
-| `07_infusion_pump.aria` | Complete pump controller |
-| `08_syscall_safety.aria` | sys() tiered syscall safety |
+| `01_failsafe_basics.npk` | Mandatory failsafe handler |
+| `02_result_handling.npk` | Result\<T\> with pass/fail |
+| `03_tbb_propagation.npk` | TBB sticky error types |
+| `04_limit_rules.npk` | limit\<Rules\> constraints |
+| `05_borrow_safety.npk` | Borrow semantics ($$i/$$m) |
+| `06_emergency_operators.npk` | ?! and !!! operators |
+| `07_infusion_pump.npk` | Complete pump controller |
+| `08_syscall_safety.npk` | sys() tiered syscall safety |
 
 ---
 
@@ -5289,7 +5289,7 @@ Common failure modes include:
 - **Missing error handling:** an error return is ignored, execution continues
   with garbage data
 
-Our example pump controller will demonstrate how each of Aria's safety features
+Our example pump controller will demonstrate how each of Nitpick's safety features
 addresses one or more of these failure modes.
 
 The controller performs a single infusion cycle:
@@ -5312,9 +5312,9 @@ In C, error-handling functions like `atexit()` or signal handlers are optional.
 A developer can write a program with no error handling at all, and the compiler
 will happily produce a binary. In safety-critical systems, this is unacceptable.
 
-#### Aria's Solution
+#### Nitpick's Solution
 
-Every Aria program **must** define a `failsafe` function. The compiler checks
+Every Nitpick program **must** define a `failsafe` function. The compiler checks
 for its existence and refuses to compile if it is missing. This is enforced at
 the analysis phase (BUG-005 fix, v0.3.4), not by convention or linting.
 
@@ -5340,7 +5340,7 @@ func:failsafe = int32(tbb32:err) {
 
 #### Example
 
-*(See `examples/01_failsafe_basics.aria`)*
+*(See `examples/01_failsafe_basics.npk`)*
 
 ```aria
 func:failsafe = int32(tbb32:err) {
@@ -5362,7 +5362,7 @@ func:main = int32() {
 
 In traditional safety-critical C (IEC 62304, DO-178C), external coding
 standards mandate error handling — but the compiler itself does not enforce them.
-Aria makes the guarantee structural: **no failsafe, no binary.**
+Nitpick makes the guarantee structural: **no failsafe, no binary.**
 
 ---
 
@@ -5381,7 +5381,7 @@ fread(buf, 1, 100, f);             // UB if f is NULL — no compiler warning
 In C++, exceptions can be unhandled. In Go, errors are values that can be
 discarded with `_`.
 
-#### Aria's Solution
+#### Nitpick's Solution
 
 Functions that can fail return `Result<T>` implicitly. The caller **must** check
 `.is_error` before accessing `.value` — the compiler enforces this rule (called
@@ -5408,7 +5408,7 @@ if (r.is_error) {
 
 #### Error Codes
 
-Aria defines standardized error code ranges:
+Nitpick defines standardized error code ranges:
 
 | Range | Meaning | Examples |
 |-------|---------|----------|
@@ -5419,7 +5419,7 @@ Aria defines standardized error code ranges:
 
 #### Example
 
-*(See `examples/02_result_handling.aria`)*
+*(See `examples/02_result_handling.npk`)*
 
 ```aria
 func:read_temperature = int32() {
@@ -5477,7 +5477,7 @@ dose = patient_weight * rate_per_kg
 If `patient_weight` overflows to a small positive number due to a sensor bug,
 the dose might appear valid but be dramatically wrong.
 
-#### Aria's Solution
+#### Nitpick's Solution
 
 TBB (Trusted Balanced Bitfield) types are integers with a **sentinel error
 value** at the type minimum. Once a TBB variable enters the ERR state — through
@@ -5507,7 +5507,7 @@ silently disappear. TBB guarantees this cannot happen.
 
 #### Example
 
-*(See `examples/03_tbb_propagation.aria`)*
+*(See `examples/03_tbb_propagation.npk`)*
 
 ```aria
 func:main = int32() {
@@ -5564,9 +5564,9 @@ redline, a reactor temperature must remain within safe bounds.
 In traditional languages, these constraints live in comments, documentation,
 or runtime assertions that can be forgotten, disabled, or bypassed.
 
-#### Aria's Solution
+#### Nitpick's Solution
 
-Aria's `Rules` declarations define named constraints. The `limit<RuleName>`
+Nitpick's `Rules` declarations define named constraints. The `limit<RuleName>`
 annotation on a variable means the compiler and runtime enforce those constraints
 at every assignment. With Z3 verification (`--verify`), the compiler can
 **prove** constraints at compile time — before the program ever runs.
@@ -5603,7 +5603,7 @@ When compiled with `--verify`, the compiler translates Rules constraints into Z3
 SMT assertions and attempts to prove them statically:
 
 ```bash
-ariac --verify 04_limit_rules.aria
+npkc --verify 04_limit_rules.npk
 ```
 
 If the compiler can prove a constraint is always satisfied, no runtime check is
@@ -5612,7 +5612,7 @@ can neither prove nor disprove, a runtime check is emitted as a safety net.
 
 #### Example
 
-*(See `examples/04_limit_rules.aria`)*
+*(See `examples/04_limit_rules.npk`)*
 
 ```aria
 Rules:r_safe_dose_mg = {
@@ -5661,7 +5661,7 @@ patient-max-dose clamp, but falls outside 1–5000 mg would be caught by
 #### Why This Matters
 
 Unlike runtime assertions in C (`assert(dose <= 5000)`) which can be compiled
-out with `NDEBUG`, Aria's constraints are part of the type system. They cannot
+out with `NDEBUG`, Nitpick's constraints are part of the type system. They cannot
 be disabled. With Z3, they can be verified at compile time — providing the
 strongest possible guarantee without runtime cost.
 
@@ -5680,9 +5680,9 @@ C and C++ provide no structural protection against:
 - Data races from concurrent aliased mutation
 - Dangling pointers
 
-#### Aria's Solution
+#### Nitpick's Solution
 
-Aria uses explicit borrow annotations with two rules enforced at compile time:
+Nitpick uses explicit borrow annotations with two rules enforced at compile time:
 
 | Annotation | Meaning | Rule |
 |-----------|---------|------|
@@ -5694,7 +5694,7 @@ reference coexisting with any other reference to the same data.
 
 #### Example
 
-*(See `examples/05_borrow_safety.aria`)*
+*(See `examples/05_borrow_safety.npk`)*
 
 ```aria
 func:main = int32() {
@@ -5753,9 +5753,9 @@ error path). Exception-based languages make error handling convenient but
 difficult to audit. Return-code languages make error handling auditable but
 tedious.
 
-#### Aria's Solution
+#### Nitpick's Solution
 
-Aria provides two operators that form a **two-level error escalation system**:
+Nitpick provides two operators that form a **two-level error escalation system**:
 
 | Operator | Name | Level | Behavior |
 |----------|------|-------|----------|
@@ -5779,7 +5779,7 @@ int32:value = sensor ?! safe_default;
 
 #### Example
 
-*(See `examples/06_emergency_operators.aria`)*
+*(See `examples/06_emergency_operators.npk`)*
 
 ```aria
 // Level 1: Local recovery with ?!
@@ -5830,7 +5830,7 @@ DMA buffers, or foreign-function interfaces that require raw pointer access.
 In Rust, this is `unsafe {}`. In Ada, it is `pragma Import`. The challenge is
 making unsafe code **visible and auditable** while still allowing it when needed.
 
-#### Aria's Approach
+#### Nitpick's Approach
 
 The `wild` keyword declares raw, unmanaged pointers that bypass the borrow
 checker:
@@ -5865,10 +5865,10 @@ to keep the demonstrations portable and compilable without hardware.
 
 #### 10. Feature 8: sys() — Tiered Syscall Safety
 
-*(See `examples/08_syscall_safety.aria`)*
+*(See `examples/08_syscall_safety.npk`)*
 
 Direct syscalls bypass libc — one wrong argument can corrupt memory or kill a
-process. Aria applies its TOS escalation model to make syscall danger visible
+process. Nitpick applies its TOS escalation model to make syscall danger visible
 and intentional.
 
 #### The Three Tiers
@@ -5916,9 +5916,9 @@ is required. Only truly dangerous operations like process spawning would need
 
 #### 11. Feature 9: _? and _! — Ergonomic Drop & Raw Shorthand
 
-*(See `examples/09_drop_raw_shorthand.aria`)*
+*(See `examples/09_drop_raw_shorthand.npk`)*
 
-Aria v0.4.0 adds prefix shorthand operators for the two TOS-bypass builtins:
+Nitpick v0.4.0 adds prefix shorthand operators for the two TOS-bypass builtins:
 
 | Shorthand | Desugars to | Operator Family |
 |-----------|------------|------------------|
@@ -5931,7 +5931,7 @@ verbose forms. No new semantics, no new risks.
 
 #### Why Both Forms?
 
-Aria keeps verbose and terse forms so developers can choose the right one for context:
+Nitpick keeps verbose and terse forms so developers can choose the right one for context:
 
 ```aria
 // In a long function where readability matters most:
@@ -5945,7 +5945,7 @@ int32:x = _!safe_add(a, b);
 
 #### The ? and ! Families
 
-The shorthand operators fit naturally into Aria's existing operator families:
+The shorthand operators fit naturally into Nitpick's existing operator families:
 
 **? family** (safe / provides fallback / discards):
 - `expr ? default` — unwrap with fallback
@@ -5976,7 +5976,7 @@ interchangeable. The choice is purely stylistic.
 
 #### 12. Putting It Together: The Complete Pump Controller
 
-*(See `examples/07_infusion_pump.aria`)*
+*(See `examples/07_infusion_pump.npk`)*
 
 The complete infusion pump controller combines all features into a coherent
 program:
@@ -6093,21 +6093,21 @@ safe mode — no drug is delivered.
 
 #### 12. Z3 Verification in Practice
 
-Aria v0.3.4 includes a built-in Z3 SMT solver integration that can verify
+Nitpick v0.3.4 includes a built-in Z3 SMT solver integration that can verify
 limit\<Rules\> constraints and function contracts at compile time.
 
 #### Usage
 
 ```bash
 #### Verify all constraints
-ariac --verify 07_infusion_pump.aria
+npkc --verify 07_infusion_pump.npk
 
 #### Generate a detailed verification report
-ariac --verify --verify-report pump_report.txt 07_infusion_pump.aria
+npkc --verify --verify-report pump_report.txt 07_infusion_pump.npk
 
 #### Verify specific categories
-ariac --verify-contracts 07_infusion_pump.aria     # requires/ensures
-ariac --verify-overflow  07_infusion_pump.aria      # integer overflow
+npkc --verify-contracts 07_infusion_pump.npk     # requires/ensures
+npkc --verify-overflow  07_infusion_pump.npk      # integer overflow
 ```
 
 #### What Z3 Proves
@@ -6128,7 +6128,7 @@ The Z3 verifier operates in three phases:
 
 ```
 === Z3 Verification Report ===
-File: 07_infusion_pump.aria
+File: 07_infusion_pump.npk
 
 [PASS] limit<r_safe_dose> at line 156: dose ∈ [1, 5000] — PROVED
 [PASS] limit<r_valid_weight> at line 134: weight ∈ [1, 300] — PROVED
@@ -6147,9 +6147,9 @@ Verification time: 0.023s
 | SPARK/Ada | Compile time | [Y] | [Y] |
 | Frama-C/WP | Post-hoc | [N] | [N] |
 | CBMC | Post-hoc | [N] | [N] |
-| **Aria + Z3** | **Compile time** | **[Y]** | **[Y]** |
+| **Nitpick + Z3** | **Compile time** | **[Y]** | **[Y]** |
 
-Aria's Z3 integration runs as part of the normal compilation pipeline. No
+Nitpick's Z3 integration runs as part of the normal compilation pipeline. No
 separate tool invocation, no configuration files, no annotation language
 different from the source language.
 
@@ -6157,9 +6157,9 @@ different from the source language.
 
 #### 14. Comparison with Other Approaches
 
-#### How Aria Compares to Safety-Critical Alternatives
+#### How Nitpick Compares to Safety-Critical Alternatives
 
-| Feature | C (MISRA) | Ada/SPARK | Rust | **Aria** |
+| Feature | C (MISRA) | Ada/SPARK | Rust | **Nitpick** |
 |---------|-----------|-----------|------|----------|
 | Mandatory error handler | [N] Convention | [N] Optional | [N] Optional | **[Y] Compiler-enforced** |
 | Checked results | [N] Return codes | [Y] Exceptions | [Y] Result\<T\> | **[Y] Result\<T\> + no-checky-no-val** |
@@ -6190,7 +6190,7 @@ different from the source language.
 
 #### 15. Summary
 
-Aria's safety model is built on a simple insight: **safety features that can be
+Nitpick's safety model is built on a simple insight: **safety features that can be
 forgotten will be forgotten.** Every feature described in this walkthrough is
 either mandatory (failsafe), compiler-enforced (Result checking, borrow rules),
 or structurally integrated (TBB, limit\<Rules\>, Z3).
@@ -6218,32 +6218,32 @@ if not, by `limit<Rules>` (Layer 7); if not, by `failsafe` (Layer 1).
 cd aria/build && cmake .. && make -j$(nproc)
 
 #### Compile and run individual examples
-./ariac ../../aria-docs/safety-walkthrough/examples/01_failsafe_basics.aria
+./npkc ../../aria-docs/safety-walkthrough/examples/01_failsafe_basics.npk
 ./01_failsafe_basics
 
 #### Compile with Z3 verification
-./ariac --verify ../../aria-docs/safety-walkthrough/examples/04_limit_rules.aria
+./npkc --verify ../../aria-docs/safety-walkthrough/examples/04_limit_rules.npk
 
 #### Compile the complete pump controller
-./ariac ../../aria-docs/safety-walkthrough/examples/07_infusion_pump.aria
+./npkc ../../aria-docs/safety-walkthrough/examples/07_infusion_pump.npk
 ./07_infusion_pump
 ```
 
 #### Next Steps
 
 - **For safety engineers:** Review the pump controller code and compare it to
-  your current development practices. Consider which failure modes Aria prevents
+  your current development practices. Consider which failure modes Nitpick prevents
   that your current toolchain does not.
 - **For language researchers:** The formal comparison in Section 12 is intended
   as a starting point. We welcome analysis from the verification and safety
   communities.
-- **For developers:** Clone the [Aria repository](https://github.com/alternative-intelligence-cp/aria),
+- **For developers:** Clone the [Nitpick repository](https://github.com/alternative-intelligence-cp/aria),
   build the compiler, and try compiling and modifying the example files. Break
   things. See what the compiler catches.
 
 ---
 
-*This document is part of the Aria documentation suite. For language specification,
+*This document is part of the Nitpick documentation suite. For language specification,
 see `specs/aria_specs.txt`. For getting started, see `GETTING_STARTED.md`.*
 
 \newpage
@@ -6251,7 +6251,7 @@ see `specs/aria_specs.txt`. For getting started, see `GETTING_STARTED.md`.*
 # Part IV: Appendix — Reference
 
 
-#### The Aria Philosophy - In the Creator's Words
+#### The Nitpick Philosophy - In the Creator's Words
 
 #### The Origin Story
 
@@ -6318,7 +6318,7 @@ MOV → move
 RET → return  
 JMP → jump
 
-// In Aria:
+// In Nitpick:
 Result<T>  // It's a result that wraps T
 .is_error  // Boolean: is this an error?
 .value     // The value (if not error)
@@ -6353,7 +6353,7 @@ No mixing. No confusion.
 #### 5. Safety Through Design, Not Restriction
 
 **Bad approach:** "You can't do X because it's unsafe"  
-**Aria approach:** "You can do X, but the compiler will make sure you do it safely, or ask you to explicitly bypass (auditability)"
+**Nitpick approach:** "You can do X, but the compiler will make sure you do it safely, or ask you to explicitly bypass (auditability)"
 
 Examples:
 - Result<T> enforcement: Must check, but simple to do
@@ -6402,7 +6402,7 @@ This isn't about protecting developers from themselves.
 
 > "I wanted to not have to go hunt through man pages or online tutorials every five minutes to figure out what operators do. I wanted to know what was happening."
 
-**Aria: The language where things mean what they say.**
+**Nitpick: The language where things mean what they say.**
 
 - `MOV` moves
 - `Result<T>` is a result
@@ -6418,15 +6418,15 @@ Everything else?
 
 ---
 
-*This philosophy shapes every design decision in Aria. When in doubt, ask: "Does this make the AI model safer? Does this make meaning clearer? Does this reduce hunting through docs?" If yes to any, consider it. If yes to all, it's probably the right choice.*
+*This philosophy shapes every design decision in Nitpick. When in doubt, ask: "Does this make the AI model safer? Does this make meaning clearer? Does this reduce hunting through docs?" If yes to any, consider it. If yes to all, it's probably the right choice.*
 
 **Remember: The goal is safety. The gravy is that safety turns out to be powerful, performant, and pleasant to use.**
 
 \newpage
 
-#### Aria Compiler Architecture
+#### Nitpick Compiler Architecture
 
-**Purpose**: The Aria language compiler - transforms Aria source code into executable binaries via LLVM.
+**Purpose**: The Nitpick language compiler - transforms Nitpick source code into executable binaries via LLVM.
 
 ---
 
@@ -6453,7 +6453,7 @@ Everything else?
 #### High-Level Architecture
 
 ```
-Aria Source Code (.aria)
+Nitpick Source Code (.npk)
     ↓
 [Preprocessor] - Handles #include, conditional compilation
     ↓
@@ -6572,7 +6572,7 @@ Aria Source Code (.aria)
 #### Code Generation Strategy
 1. **Function-at-a-time** - Process each function independently
 2. **SSA Form** - Static Single Assignment via LLVM
-3. **Type Lowering** - Aria types → LLVM types
+3. **Type Lowering** - Nitpick types → LLVM types
 4. **Optimization** - Leverage LLVM's optimization passes
 
 ---
@@ -6605,10 +6605,10 @@ Aria Source Code (.aria)
 - **CMake 3.20+** - Build system
 - **C++17** - Compiler implementation language
 
-#### Internal (Aria Ecosystem)
+#### Internal (Nitpick Ecosystem)
 - **aria_lang_specs** - Language specification (source of truth)
 - **aria_ecosystem** - Architecture documentation
-- **AriaBuild** - Build system integration (planned)
+- **NpkBld** - Build system integration (planned)
 - **AriaX** - Package management (planned)
 
 ---
@@ -6633,7 +6633,7 @@ IR_SOURCES = ir_generator.cpp, codegen_expr.cpp, codegen_stmt.cpp, ...
 RUNTIME_SOURCES = gc.cpp, streams.cpp, ...
 
 #### Main Executable
-ariac = LEX + PARSER + SEMA + IR + RUNTIME + LLVM
+npkc = LEX + PARSER + SEMA + IR + RUNTIME + LLVM
 ```
 
 #### Build Commands
@@ -6642,7 +6642,7 @@ ariac = LEX + PARSER + SEMA + IR + RUNTIME + LLVM
 cmake -B build -DCMAKE_BUILD_TYPE=Debug
 
 #### Build compiler
-cmake --build build --target ariac
+cmake --build build --target npkc
 
 #### Run tests
 cmake --build build --target test
@@ -6683,7 +6683,7 @@ aria/
 │
 ├── tests/               # Test suite
 │   ├── unit/           # Unit tests (C++)
-│   ├── integration/    # Integration tests (Aria code)
+│   ├── integration/    # Integration tests (Nitpick code)
 │   ├── safety/         # Safety feature tests
 │   └── runtime/        # Runtime library tests
 │
@@ -6773,7 +6773,7 @@ func:main = int8() {
 
 7. **Code Generation**:
    - Platform-specific assembly
-   - Link against Aria runtime
+   - Link against Nitpick runtime
    - Produce executable binary
 
 ---
@@ -6811,8 +6811,8 @@ func:main = int8() {
 - Mock dependencies
 - Fast feedback (~1 second)
 
-#### Integration Tests (Aria)
-- Test actual Aria programs
+#### Integration Tests (Nitpick)
+- Test actual Nitpick programs
 - Verify end-to-end compilation
 - Check runtime behavior
 
@@ -6867,7 +6867,7 @@ func:main = int8() {
 
 **Key Questions**:
 - **Where do I start?** Read TASKS.md for beginner-friendly work.
-- **How do I test?** `cmake --build build && ./build/ariac tests/your_test.aria`
+- **How do I test?** `cmake --build build && ./build/npkc tests/your_test.npk`
 - **What's the code style?** Match existing code. We don't bikeshed formatting.
 - **Can I add a feature?** Only if it's in the specs. Want a new feature? Discuss in aria_ecosystem first.
 
@@ -6884,7 +6884,7 @@ func:main = int8() {
 
 \newpage
 
-#### Aria Type System Design
+#### Nitpick Type System Design
 **Date**: 2025-02-07  
 **Status**: Design Phase - Ready for Implementation
 
@@ -6904,7 +6904,7 @@ func:main = int8() {
 
 #### Core Principle: Zero Context Switching
 
-**Aria's Consistency Law**: `type:name = value;` for EVERYTHING
+**Nitpick's Consistency Law**: `type:name = value;` for EVERYTHING
 
 ```aria
 // Variables
@@ -6920,7 +6920,7 @@ int32(int32:x) { pass(x * 2); };  // Can execute immediately with ()
 struct:Point = { int32:x; int32:y; };
 
 // Types (new!)
-Type:Counter = { /* regular Aria syntax inside */ };
+Type:Counter = { /* regular Nitpick syntax inside */ };
 ```
 
 **No special cases. No syntax changes. Just organization.**
@@ -6931,7 +6931,7 @@ Type:Counter = { /* regular Aria syntax inside */ };
 
 ```aria
 Type:Counter = {
-    // Constructor - just a regular Aria function
+    // Constructor - just a regular Nitpick function
     func:create = Counter(int32:initial) {
         Counter:c = { 
             secret_ptr = allocate_storage(),
@@ -6940,12 +6940,12 @@ Type:Counter = {
         pass(c);
     };
     
-    // Destructor - just a regular Aria function  
+    // Destructor - just a regular Nitpick function  
     func:destroy = void(Counter:self) {
         free(self.secret_ptr);
     };
     
-    // Methods - just regular Aria functions with self parameter
+    // Methods - just regular Nitpick functions with self parameter
     func:increment = void(Counter:self) {
         self.count = self.count + 1;
     };
@@ -7129,7 +7129,7 @@ void TypeChecker::validateMemberAccess(MemberAccessExpr* expr) {
 
 #### Terminology Mapping
 
-| Traditional OOP | Aria Type System | Rationale |
+| Traditional OOP | Nitpick Type System | Rationale |
 |----------------|------------------|-----------|
 | `class` | `Type:` | Different word = different thing |
 | `constructor` | `func:create` | It's just a function you write |
@@ -7145,7 +7145,7 @@ void TypeChecker::validateMemberAccess(MemberAccessExpr* expr) {
 
 **Critic**: "This is just OOP with different names!"
 
-**Response**: "Not at all. Look at the generated code - it's structs and functions. No inheritance, no vtables, no dynamic dispatch. Just organized composition with zero overhead. If you want OOP, use C++ or Java. Aria gives you the ergonomics without the cost."
+**Response**: "Not at all. Look at the generated code - it's structs and functions. No inheritance, no vtables, no dynamic dispatch. Just organized composition with zero overhead. If you want OOP, use C++ or Java. Nitpick gives you the ergonomics without the cost."
 
 **Critic**: "Why not use `class` keyword?"
 
@@ -7162,7 +7162,7 @@ void TypeChecker::validateMemberAccess(MemberAccessExpr* expr) {
 #### Example: Type-Based Atomic Counter
 
 ```aria
-// stdlib/concurrent/atomic_counter.aria
+// stdlib/concurrent/atomic_counter.npk
 
 Type:AtomicCounter = {
     // Constructor
@@ -7214,7 +7214,7 @@ Type:AtomicCounter = {
 };
 
 // Usage
-use "stdlib/concurrent/atomic_counter.aria";
+use "stdlib/concurrent/atomic_counter.npk";
 
 func:main = int32() {
     AtomicCounter:counter = instance<AtomicCounter>(0);
@@ -7277,7 +7277,7 @@ func:main = void() {
 
 #### Zero-Cost Abstractions [DONE]
 ```c
-// Your Aria code:
+// Your Nitpick code:
 counter.increment();
 
 // Compiles to (LLVM IR):
@@ -7303,7 +7303,7 @@ Type:Point = {
 
 #### FFI Compatible [DONE]
 ```c
-// C code can use Aria Types directly
+// C code can use Nitpick Types directly
 struct Point {
     int32_t x;
     int32_t y;
@@ -7358,7 +7358,7 @@ void use_point(struct Point* p) {
 
 \newpage
 
-#### Aria Function Specification
+#### Nitpick Function Specification
 
 #### Declaration Syntax
 All function declarations require a trailing semicolon.
@@ -7412,7 +7412,7 @@ func:failsafe = int32(tbb32:err) {
     exit(1);
 };
 ```
-Note: `int8[]->` is Aria's equivalent to C's `char**` for argv compatibility.
+Note: `int8[]->` is Nitpick's equivalent to C's `char**` for argv compatibility.
 
 #### Exit Code Conventions
 - Traditional conventions apply: 0 = no error, > 0 = error
@@ -7429,7 +7429,7 @@ The failsafe parameter is tbb32, giving range [-2147483647, +2147483647] with ER
 
 #### System Error Codes (negative range: -1 to -2147483647)
 Reserved for runtime, OS, and hardware-level errors. These are set by the
-Aria runtime or OS signal handlers — user code should not emit these.
+Nitpick runtime or OS signal handlers — user code should not emit these.
 
 | Code | Name | Meaning |
 |------|------|---------|
@@ -7449,7 +7449,7 @@ Aria runtime or OS signal handlers — user code should not emit these.
 | -14  | SYS_DEADLOCK         | Deadlock detected |
 | -15  | SYS_THREAD_PANIC     | Thread panic / unrecoverable thread error |
 | -16  | SYS_RESOURCE_LIMIT   | System resource limit reached (file descriptors, etc.) |
-| -17 to -99   | (reserved)  | Reserved for future Aria runtime system codes |
+| -17 to -99   | (reserved)  | Reserved for future Nitpick runtime system codes |
 | -100 to -999 | (reserved)  | Reserved for OS/platform-specific system codes |
 | -1000 to -2147483647 | (unassigned) | Available for future system-level extensions |
 
@@ -7468,7 +7468,7 @@ For application-level errors triggered by `!!! code` (failsafe invocation).
 | 8    | USR_HARDWARE         | Hardware device error (sensor, GPU, etc.) |
 | 9    | USR_TIMEOUT          | Critical operation timed out |
 | 10   | USR_ASSERTION        | Assertion / invariant violation |
-| 11 to 49    | (reserved)  | Reserved for future Aria standard user codes |
+| 11 to 49    | (reserved)  | Reserved for future Nitpick standard user codes |
 | 50 to 99    | (reserved)  | Reserved for framework/library standard codes |
 | 100+        | (user-defined) | Application-specific error codes |
 
@@ -7541,12 +7541,12 @@ Stack is automatically destroyed on function return (explicit return or fallthro
 No manual cleanup needed.
 \newpage
 
-#### Aria Reserved Words — Complete List
+#### Nitpick Reserved Words — Complete List
 
 > Generated from `src/frontend/lexer/lexer.cpp` keyword table (151 keywords)
 > v0.16.11 — Authoritative reference
 
-All words listed below are reserved by the Aria compiler and **cannot be used as
+All words listed below are reserved by the Nitpick compiler and **cannot be used as
 variable names, function names, or identifiers** (except `stack` and `gc` which are
 contextual — see notes).
 
@@ -7702,7 +7702,7 @@ ahcount     ahsize      ahfits      ahtype
 
 #### Design Intent
 
-Every Aria executable has exactly two code-path endpoints:
+Every Nitpick executable has exactly two code-path endpoints:
 
   main       — normal program entry and exit
   failsafe   — abnormal/error exit (runtime errors, !!!, constraint violations)
@@ -7760,7 +7760,7 @@ func:failsafe = int32(tbb32:err) {
 
 - `pass(value)` — this is for regular functions, creates Result<T>
 - `fail(code)` — this is for regular functions, creates error Result
-- `return` — Aria doesn't use this keyword
+- `return` — Nitpick doesn't use this keyword
 
 
 #### Invocation patterns
@@ -7936,8 +7936,8 @@ Example messages:
 
 | Test File | Count | Coverage |
 |-----------|-------|----------|
-| `tests/test_ustack.aria` | 14 | LIFO ordering, peek, multi-push, typed pop (int8/int32/int64/flt32/flt64), mixed types |
-| `tests/test_ustack_strings.aria` | 8 | Scope independence across function calls, mixed int/float types |
+| `tests/test_ustack.npk` | 14 | LIFO ordering, peek, multi-push, typed pop (int8/int32/int64/flt32/flt64), mixed types |
+| `tests/test_ustack_strings.npk` | 8 | Scope independence across function calls, mixed int/float types |
 
 ---
 
@@ -7955,7 +7955,7 @@ Example messages:
 
 #### Design Rationale
 
-The user stack fills a specific niche in Aria's "safe by default, opt-in to danger" philosophy:
+The user stack fills a specific niche in Nitpick's "safe by default, opt-in to danger" philosophy:
 
 1. **Why not just use variables?** Variables are faster but require knowing the shape at compile time. The user stack supports dynamic depth and mixed types.
 
@@ -7977,11 +7977,11 @@ The user stack fills a specific niche in Aria's "safe by default, opt-in to dang
 
 #### Macro & Derive Authoring Guide
 
-> v0.8.4 — Aria Compiler Documentation
+> v0.8.4 — Nitpick Compiler Documentation
 
 #### Overview
 
-Aria's macro system provides two mechanisms for code generation:
+Nitpick's macro system provides two mechanisms for code generation:
 
 1. **Derive macros** — Auto-generate trait implementations for structs
 2. **Attribute macros** — Modify or annotate declarations at compile time
@@ -8049,7 +8049,7 @@ Note: Derived methods return `Result<T>`, so use `raw` to unwrap.
 
 \newpage
 
-#### SMT Solver Reference — Aria Compiler
+#### SMT Solver Reference — Nitpick Compiler
 
 Working document. Will become a best practices guide later.
 
@@ -8057,7 +8057,7 @@ Working document. Will become a best practices guide later.
 
 #### Architecture Overview
 
-Z3 is statically linked into `ariac`. Users never interact with it directly.
+Z3 is statically linked into `npkc`. Users never interact with it directly.
 The compiler uses it in two modes:
 
 1. **Verification mode** (`--verify`) — prove constraints, contracts, overflow safety
@@ -8137,7 +8137,7 @@ Parsed at main.cpp:328-341.
 #### Core Pattern (Negation-Based Proof)
 ```
 1. Create Z3 sort (bitvector for ints, real for floats)
-2. Translate Aria AST condition → Z3_ast
+2. Translate Nitpick AST condition → Z3_ast
 3. Assert NEGATION of the property
 4. solver.check()
 5. L_FALSE (UNSAT) → property PROVEN for all inputs
@@ -8151,7 +8151,7 @@ Parsed at main.cpp:328-341.
 - Fresh solver created per query with push/pop scope
 
 #### Type Mapping
-| Aria Type | Z3 Sort | Tag |
+| Nitpick Type | Z3 Sort | Tag |
 |-----------|---------|-----|
 | int8 | BitVec(8) | 0 |
 | int16 | BitVec(16) | 1 |
@@ -8273,11 +8273,11 @@ only works for integers. Changed to `Constant::getNullValue(type)` which works f
 
 #### Garbage Collection Tuning Guide
 
-> v0.8.4 — Aria Compiler Documentation
+> v0.8.4 — Nitpick Compiler Documentation
 
 #### Overview
 
-Aria uses a **hybrid generational garbage collector** with two regions:
+Nitpick uses a **hybrid generational garbage collector** with two regions:
 
 - **Nursery (Young Generation)**: A copying (Cheney-style) semi-space for short-lived allocations.
 - **Old Generation**: A mark-sweep region for long-lived objects promoted from the nursery.
@@ -8335,7 +8335,7 @@ A **card table** tracks cross-generational references. When an old-gen object is
 
 \newpage
 
-#### RFC: Traits & Borrow Semantics for Aria
+#### RFC: Traits & Borrow Semantics for Nitpick
 
 **Status:** Design Proposal (v0.2.4)  
 **Implementation Target:** v0.2.5 or v0.2.6  
@@ -8345,7 +8345,7 @@ A **card table** tracks cross-generational references. When an old-gen object is
 
 #### Motivation
 
-Two gaps in Aria's type system limit what real programs can express:
+Two gaps in Nitpick's type system limit what real programs can express:
 
 1. **No polymorphic dispatch.** You can't write a function that works on "anything with an `.encode()` method." Database backends, serialization formats, and generic algorithms all need this.
 
@@ -8477,7 +8477,7 @@ func:write_any = NIL(dyn Encodable:item) {
 #### Design Goals
 
 - **Make the existing borrow checker user-facing** — the infrastructure is already there (`$` operator, AccessPath, loan tracking)
-- **Rust's safety without Rust's learning curve** — Aria should guide, not punish
+- **Rust's safety without Rust's learning curve** — Nitpick should guide, not punish
 - **Explicit borrows** — no implicit reference creation, you always see `$`
 - **Compatible with move-by-default** — borrows are a controlled exception to the consume-on-use rule
 
@@ -8563,7 +8563,7 @@ int32$:ref_b = $p.b;       // borrow field b — disjoint, allowed
 
 #### Lifetime Rules
 
-Aria uses **scope-based lifetimes** (no explicit lifetime annotations like Rust's `'a`):
+Nitpick uses **scope-based lifetimes** (no explicit lifetime annotations like Rust's `'a`):
 
 1. A borrow cannot outlive the scope of the borrowed value
 2. The borrow checker uses Appendage Theory: `Depth(Borrower) ≤ Depth(Owner)`
@@ -8679,11 +8679,11 @@ func<T: Printable>:print_twice = NIL(T$:item) {
 
 \newpage
 
-#### Aria WebAssembly Compilation Guide
+#### Nitpick WebAssembly Compilation Guide
 
 #### Overview
 
-Aria v0.2.13 adds WebAssembly (WASM) as a compilation target. Compile Aria programs to `.wasm` files that run in WASI-compatible runtimes like `wasmtime`, `wasmer`, or `wasm3`.
+Nitpick v0.2.13 adds WebAssembly (WASM) as a compilation target. Compile Nitpick programs to `.wasm` files that run in WASI-compatible runtimes like `wasmtime`, `wasmer`, or `wasm3`.
 
 #### Prerequisites
 
@@ -8705,13 +8705,13 @@ Aria v0.2.13 adds WebAssembly (WASM) as a compilation target. Compile Aria progr
 #### Basic Compilation
 
 ```bash
-ariac program.aria --emit-wasm -o program.wasm
+npkc program.npk --emit-wasm -o program.wasm
 ```
 
 #### With Explicit Target
 
 ```bash
-ariac program.aria --emit-wasm --target=wasm32-wasi -o program.wasm
+npkc program.npk --emit-wasm --target=wasm32-wasi -o program.wasm
 ```
 
 #### Running
@@ -8759,7 +8759,7 @@ The compiler's compatibility checker scans your code and warns about unsupported
 
 ```
                     ┌─────────────┐
- program.aria  ──>  │  Aria Parser │
+ program.npk  ──>  │  Nitpick Parser │
                     └──────┬──────┘
                            │ AST
                     ┌──────▼──────┐
@@ -8810,7 +8810,7 @@ func:failsafe = void(int32:err_code) {};
 ```
 
 ```bash
-ariac hello.aria --emit-wasm -o hello.wasm
+npkc hello.npk --emit-wasm -o hello.wasm
 wasmtime hello.wasm
 #### Output: Hello from WebAssembly!
 ```
@@ -8878,32 +8878,32 @@ wasmtime --dir=. program.wasm
 
 #### Cross-Language Bindings
 
-Aria can interoperate with C, Python, and any language that supports C ABI calling conventions.
+Nitpick can interoperate with C, Python, and any language that supports C ABI calling conventions.
 
 ---
 
 #### Overview
 
-Aria's compilation pipeline (Aria → LLVM IR → native code) produces symbols with standard C ABI linkage. This means Aria functions are callable from any language that can load shared libraries and call C functions.
+Nitpick's compilation pipeline (Nitpick → LLVM IR → native code) produces symbols with standard C ABI linkage. This means Nitpick functions are callable from any language that can load shared libraries and call C functions.
 
 **Three binding directions:**
 
 | Direction | Mechanism | Status |
 |-----------|-----------|--------|
-| C → Aria | `extern` FFI blocks | Stable (v0.1.0+) |
-| Aria → C | `--shared` flag produces `.so` | New in v0.2.6 |
-| Aria → Python | `ctypes.CDLL()` on `.so` | New in v0.2.6 |
+| C → Nitpick | `extern` FFI blocks | Stable (v0.1.0+) |
+| Nitpick → C | `--shared` flag produces `.so` | New in v0.2.6 |
+| Nitpick → Python | `ctypes.CDLL()` on `.so` | New in v0.2.6 |
 
 ---
 
-#### Aria → C (Exporting Aria Functions)
+#### Nitpick → C (Exporting Nitpick Functions)
 
-Compile Aria source to a shared library that C programs can link against.
+Compile Nitpick source to a shared library that C programs can link against.
 
-#### Step 1: Write Aria Library
+#### Step 1: Write Nitpick Library
 
 ```aria
-// mathlib.aria
+// mathlib.npk
 func:add = int32(int32:a, int32:b) {
     pass(a + b);
 };
@@ -8920,7 +8920,7 @@ func:square = int32(int32:n) {
 #### Step 2: Compile to Shared Library
 
 ```bash
-ariac mathlib.aria --shared -o libmathlib.so
+npkc mathlib.npk --shared -o libmathlib.so
 ```
 
 The `--shared` flag:
@@ -8933,7 +8933,7 @@ The `--shared` flag:
 ```c
 #include <stdio.h>
 
-// Declare the Aria functions
+// Declare the Nitpick functions
 extern int add(int a, int b);
 extern int multiply(int x, int y);
 extern int square(int n);
@@ -8951,9 +8951,9 @@ gcc main.c -L. -lmathlib -Wl,-rpath,. -o main
 ./main
 ```
 
-#### Type Mapping (Aria → C)
+#### Type Mapping (Nitpick → C)
 
-| Aria Type | C Type | Notes |
+| Nitpick Type | C Type | Notes |
 |-----------|--------|-------|
 | `int8` | `int8_t` / `char` | |
 | `int16` | `int16_t` / `short` | |
@@ -8966,9 +8966,9 @@ gcc main.c -L. -lmathlib -Wl,-rpath,. -o main
 
 ---
 
-#### C → Aria (Consuming C Libraries)
+#### C → Nitpick (Consuming C Libraries)
 
-Use `extern` blocks to declare C functions, then call them from Aria.
+Use `extern` blocks to declare C functions, then call them from Nitpick.
 
 #### Example: Using a C Math Library
 
@@ -8989,7 +8989,7 @@ func:main = NIL() {
 ```
 
 ```bash
-ariac main.aria -o main -lm
+npkc main.npk -o main -lm
 ```
 
 #### Using Custom C Shared Libraries
@@ -9002,21 +9002,21 @@ extern "mylib" {
 ```
 
 ```bash
-ariac main.aria -o main -L./libs -lmylib
+npkc main.npk -o main -L./libs -lmylib
 ```
 
 The `extern "name"` string corresponds to the library name: `libname.so`.
 
 ---
 
-#### Aria → Python (via ctypes)
+#### Nitpick → Python (via ctypes)
 
-Python can call Aria shared libraries using the built-in `ctypes` module.
+Python can call Nitpick shared libraries using the built-in `ctypes` module.
 
-#### Step 1: Compile Aria to Shared Library
+#### Step 1: Compile Nitpick to Shared Library
 
 ```bash
-ariac mathlib.aria --shared -o libmathlib.so
+npkc mathlib.npk --shared -o libmathlib.so
 ```
 
 #### Step 2: Call from Python
@@ -9024,7 +9024,7 @@ ariac mathlib.aria --shared -o libmathlib.so
 ```python
 import ctypes
 
-#### Load the Aria shared library
+#### Load the Nitpick shared library
 lib = ctypes.CDLL('./libmathlib.so')
 
 #### Declare function signatures
@@ -9037,7 +9037,7 @@ lib.multiply.argtypes = [ctypes.c_int, ctypes.c_int]
 lib.square.restype = ctypes.c_int
 lib.square.argtypes = [ctypes.c_int]
 
-#### Call Aria functions from Python
+#### Call Nitpick functions from Python
 print(lib.add(10, 20))        # 30
 print(lib.multiply(7, 8))     # 56
 print(lib.square(9))          # 81
@@ -9045,7 +9045,7 @@ print(lib.square(9))          # 81
 
 #### Python Type Mapping
 
-| Aria Type | ctypes Type |
+| Nitpick Type | ctypes Type |
 |-----------|-------------|
 | `int8` | `ctypes.c_int8` |
 | `int16` | `ctypes.c_int16` |
@@ -9058,9 +9058,9 @@ print(lib.square(9))          # 81
 
 ---
 
-#### Aria → Other Languages
+#### Nitpick → Other Languages
 
-Any language that supports C FFI can call Aria shared libraries:
+Any language that supports C FFI can call Nitpick shared libraries:
 
 | Language | Mechanism |
 |----------|-----------|
@@ -9072,7 +9072,7 @@ Any language that supports C FFI can call Aria shared libraries:
 | **C#** | `[DllImport]` P/Invoke |
 | **Zig** | `@cImport` or `extern` |
 
-Since Aria produces standard C ABI symbols, any language with C interop works.
+Since Nitpick produces standard C ABI symbols, any language with C interop works.
 
 ---
 
@@ -9090,7 +9090,7 @@ Since Aria produces standard C ABI symbols, any language with C interop works.
 
 #### Symbol Naming
 
-Aria functions use their declared name directly as the symbol name. There is no name mangling.
+Nitpick functions use their declared name directly as the symbol name. There is no name mangling.
 
 ```aria
 func:my_function = int32(int32:x) { pass(x); };
@@ -9102,9 +9102,9 @@ Produces symbol: `my_function` (visible via `nm -D libname.so`).
 
 #### Limitations
 
-- **Strings**: Aria string values passed across the boundary are C-style `char*` pointers. The caller is responsible for memory management of string arguments.
+- **Strings**: Nitpick string values passed across the boundary are C-style `char*` pointers. The caller is responsible for memory management of string arguments.
 - **Complex types**: Structs and arrays are not yet supported across the FFI boundary. Use scalar types or pointers.
-- **Async functions**: Async Aria functions cannot be called from C/Python directly (they return coroutine handles).
+- **Async functions**: Async Nitpick functions cannot be called from C/Python directly (they return coroutine handles).
 - **No header generation**: C header files must be written manually. Planned for future release.
 
 \newpage
@@ -9359,7 +9359,7 @@ You can be an expert swimmer, but the boat still needs emergency equipment. The 
 
 #### Direct Syscalls and Safety (v0.4.0)
 
-The `sys()` builtin extends Aria's escalation model to kernel-level operations:
+The `sys()` builtin extends Nitpick's escalation model to kernel-level operations:
 
 | Construct | Danger | Analogy |
 |-----------|--------|---------|
@@ -9375,29 +9375,29 @@ The safe tier cannot be bypassed with variables or expressions — only named co
 
 \newpage
 
-#### **Evaluation of the Aria Programming Language for Safety-Critical and Physics-Based AI Systems**
+#### **Evaluation of the Nitpick Programming Language for Safety-Critical and Physics-Based AI Systems**
 
 The engineering of safety-critical software—spanning domains such as aerospace flight control, nuclear reactor management, autonomous vehicular navigation, and the emerging field of Artificial General Intelligence (AGI)—demands programming paradigms that systematically eradicate undefined behavior, memory corruption, and non-deterministic execution.1 Historically, the software industry has addressed these stringent requirements by relying on heavily constrained subsets of legacy programming languages. For instance, C and C++ are frequently utilized under strict adherence to MISRA or AUTOSAR guidelines to mitigate their inherent vulnerabilities, while specialized languages such as Ada and its formally verifiable subset, SPARK, have long served as the gold standard for high-integrity systems.2 In recent years, Rust has emerged as a formidable alternative, introducing compile-time memory safety through its rigorous ownership model and borrowing semantics, thereby eliminating the need for garbage collection while preventing data races.5
 
-The Aria programming language enters this highly rigorous ecosystem with a specialized focus on physics-based artificial intelligence models, wave-based computation, and AGI consciousness substrates.1 Aria attempts to reconcile the draconian safety requirements mandated by certification standards like DO-178C (for civil aviation) and ISO 26262 (for automotive functional safety) with the highly connected, graph-heavy, and mathematically intense memory patterns required by advanced physics simulations and neural architectures.1 By codifying a layered safety system, deterministic twisted floating-point arithmetic, generational memory handles, and compile-time dimensional analysis, Aria presents a novel and exhaustive architecture.1 If fully implemented and verified according to its specification, Aria represents a significant evolutionary branch in systems programming. It diverges from Rust’s static lifetime analysis in favor of structural isolation, emphasizes sticky error propagation over exception handling, and prioritizes absolute mathematical determinism across heterogeneous hardware.1 The following analysis evaluates the language's specified features against contemporary safety-critical standards and competing programming languages.
+The Nitpick programming language enters this highly rigorous ecosystem with a specialized focus on physics-based artificial intelligence models, wave-based computation, and AGI consciousness substrates.1 Nitpick attempts to reconcile the draconian safety requirements mandated by certification standards like DO-178C (for civil aviation) and ISO 26262 (for automotive functional safety) with the highly connected, graph-heavy, and mathematically intense memory patterns required by advanced physics simulations and neural architectures.1 By codifying a layered safety system, deterministic twisted floating-point arithmetic, generational memory handles, and compile-time dimensional analysis, Nitpick presents a novel and exhaustive architecture.1 If fully implemented and verified according to its specification, Nitpick represents a significant evolutionary branch in systems programming. It diverges from Rust’s static lifetime analysis in favor of structural isolation, emphasizes sticky error propagation over exception handling, and prioritizes absolute mathematical determinism across heterogeneous hardware.1 The following analysis evaluates the language's specified features against contemporary safety-critical standards and competing programming languages.
 
 #### **The Epistemology of Error: Layered Safety and the Elimination of Undefined Behavior**
 
 The defining characteristic of any programming language intended for safety-critical environments is its treatment of anomalous states and edge cases. In standard C and C++, operations such as signed integer overflow, division by zero, or out-of-bounds memory access result in undefined behavior (UB).1 Modern optimizing compilers, such as those based on the LLVM infrastructure, utilize undefined behavior as an aggressive optimization license; the compiler assumes UB will never occur and routinely eliminates safety branches or fabricates values to minimize the generated instruction count.17 In safety-critical contexts, this compiler behavior leads to catastrophic, silent divergences between the source code's logical intent and the executed machine code.16
 
-Aria's design philosophy fundamentally rejects the concept of undefined behavior, operating under the strict doctrine that software must never reach an undefined state that causes an immediate, uncontrollable crash.1 To achieve this, the language constructs a defense-in-depth architecture composed of three distinct and non-negotiable safety layers: the Result\<T\> system for hard errors, the unknown sentinel state for soft errors, and the mandatory failsafe() routine for unrecoverable systemic failures.1
+Nitpick's design philosophy fundamentally rejects the concept of undefined behavior, operating under the strict doctrine that software must never reach an undefined state that causes an immediate, uncontrollable crash.1 To achieve this, the language constructs a defense-in-depth architecture composed of three distinct and non-negotiable safety layers: the Result\<T\> system for hard errors, the unknown sentinel state for soft errors, and the mandatory failsafe() routine for unrecoverable systemic failures.1
 
 #### **The Result System and Explicit Accountability**
 
-Aria’s primary error-handling layer mandates that all functions implicitly return a Result\<T\> struct, which physically encapsulates a success value, a void pointer to an error message, and a boolean error flag.1 This mechanism is conceptually analogous to Rust’s Result\<T, E\> enum, forcing the developer to explicitly acknowledge and handle the possibility of failure before the underlying data can be accessed.5 However, Aria streamlines the cognitive overhead by unifying the error type into a standardized structure, integrating it directly with language-level operators.1
+Nitpick’s primary error-handling layer mandates that all functions implicitly return a Result\<T\> struct, which physically encapsulates a success value, a void pointer to an error message, and a boolean error flag.1 This mechanism is conceptually analogous to Rust’s Result\<T, E\> enum, forcing the developer to explicitly acknowledge and handle the possibility of failure before the underlying data can be accessed.5 However, Nitpick streamlines the cognitive overhead by unifying the error type into a standardized structure, integrating it directly with language-level operators.1
 
-The divergence from mainstream languages lies in Aria’s compiler-enforced accountability and syntactic integration. Languages like Java or Python rely on exceptions, which introduce hidden control flow paths, significant stack-unwinding overhead at runtime, and the persistent danger of unhandled exceptions crashing the host process.1 Conversely, C relies on integer return codes, which lack type safety and are effortlessly ignored by developers.1 By making the Result type pervasive and syntactically binding it to sticky error propagation, Aria ensures that recoverable errors—such as file I/O failures, network timeouts, or parsing errors—are handled explicitly at the boundary of their occurrence.1
+The divergence from mainstream languages lies in Nitpick’s compiler-enforced accountability and syntactic integration. Languages like Java or Python rely on exceptions, which introduce hidden control flow paths, significant stack-unwinding overhead at runtime, and the persistent danger of unhandled exceptions crashing the host process.1 Conversely, C relies on integer return codes, which lack type safety and are effortlessly ignored by developers.1 By making the Result type pervasive and syntactically binding it to sticky error propagation, Nitpick ensures that recoverable errors—such as file I/O failures, network timeouts, or parsing errors—are handled explicitly at the boundary of their occurrence.1
 
-Aria provides a suite of unwrap operators to interact with this system seamlessly. The safe unwrap operator (?) allows the developer to provide a default fallback value if the operation fails, ensuring continuous execution.1 The null coalescing operator (??) provides similar fallback functionality specifically for NIL optional values, differentiating between an explicit error state and a benign absence of data.1 Furthermore, Aria guarantees zero-overhead on the success path; checking the Result struct's boolean flag requires only a single branch instruction, which modern CPU branch predictors optimize to negligible latency.1
+Nitpick provides a suite of unwrap operators to interact with this system seamlessly. The safe unwrap operator (?) allows the developer to provide a default fallback value if the operation fails, ensuring continuous execution.1 The null coalescing operator (??) provides similar fallback functionality specifically for NIL optional values, differentiating between an explicit error state and a benign absence of data.1 Furthermore, Nitpick guarantees zero-overhead on the success path; checking the Result struct's boolean flag requires only a single branch instruction, which modern CPU branch predictors optimize to negligible latency.1
 
 #### **The Unknown State: Enabling Fail-Operational Design**
 
-The second layer of Aria’s safety architecture addresses operations that traditionally trigger hardware traps, panics, or undefined behavior, such as division by zero, invalid type conversions, or out-of-bounds array accesses.1 Instead of crashing the application or triggering a controlled panic (as Rust would in safe mode), Aria maps these anomalous operations to a defined unknown sentinel value.1
+The second layer of Nitpick’s safety architecture addresses operations that traditionally trigger hardware traps, panics, or undefined behavior, such as division by zero, invalid type conversions, or out-of-bounds array accesses.1 Instead of crashing the application or triggering a controlled panic (as Rust would in safe mode), Nitpick maps these anomalous operations to a defined unknown sentinel value.1
 
 This design choice aligns flawlessly with the concept of "fail-operational" systems, a critical architectural requirement in modern aerospace design and highly automated driving frameworks.24 A fail-operational system must continue to function, albeit potentially in a degraded state, when a subsystem fails, rather than simply shutting down.26 By allowing an unknown value to propagate systematically through a chain of calculations—similar to how a Not-a-Number (NaN) value propagates in floating-point math, but highly controlled and type-checked across all data types—the software avoids abrupt termination.1
 
@@ -9405,13 +9405,13 @@ The developer is required to use the ok() function to explicitly verify the data
 
 #### **The Mandatory Failsafe: Enforcing the Safe State**
 
-When fail-operational mitigation strategies are exhausted, or when an error is fundamentally unrecoverable, safety-critical systems must seamlessly transition to a "fail-safe" mode, achieving a state where no harm can occur to human life or physical property.24 Aria codifies this transition at the compiler level by requiring every single program to define a global failsafe(int32:err\_code) function.1 This function acts as the ultimate, un-bypassable sink for unrecoverable errors, out-of-memory conditions, stack overflows, and assertions.1
+When fail-operational mitigation strategies are exhausted, or when an error is fundamentally unrecoverable, safety-critical systems must seamlessly transition to a "fail-safe" mode, achieving a state where no harm can occur to human life or physical property.24 Nitpick codifies this transition at the compiler level by requiring every single program to define a global failsafe(int32:err\_code) function.1 This function acts as the ultimate, un-bypassable sink for unrecoverable errors, out-of-memory conditions, stack overflows, and assertions.1
 
-This language-level mandate is a paradigm shift. While MISRA C guidelines and ISO 26262 standards strictly require systems to possess a safe state transition protocol—such as de-energizing industrial motors, dropping nuclear control rods, or severing fuel lines—these are traditionally implemented as architectural design patterns rather than compiler-enforced language semantics.10 Aria’s strict refusal to compile without a defined, non-empty failsafe() routine forces developers to codify their emergency termination protocols at the inception of the project.1
+This language-level mandate is a paradigm shift. While MISRA C guidelines and ISO 26262 standards strictly require systems to possess a safe state transition protocol—such as de-energizing industrial motors, dropping nuclear control rods, or severing fuel lines—these are traditionally implemented as architectural design patterns rather than compiler-enforced language semantics.10 Nitpick’s strict refusal to compile without a defined, non-empty failsafe() routine forces developers to codify their emergency termination protocols at the inception of the project.1
 
-Aria introduces the emphatic unwrap operator (?\!) and the direct failsafe operator (\!\!\!) to interface with this layer. The ?\! operator attempts to unwrap a Result, but immediately invokes the failsafe() routine if an error is present, signaling that the software cannot safely continue without the requested data.1 The \!\!\! operator provides unconditional emergency termination, bypassing the Result system entirely to assert that an impossible state has been reached and the system must be halted.1
+Nitpick introduces the emphatic unwrap operator (?\!) and the direct failsafe operator (\!\!\!) to interface with this layer. The ?\! operator attempts to unwrap a Result, but immediately invokes the failsafe() routine if an error is present, signaling that the software cannot safely continue without the requested data.1 The \!\!\! operator provides unconditional emergency termination, bypassing the Result system entirely to assert that an impossible state has been reached and the system must be halted.1
 
-| Error Handling Paradigm | C / C++ | Rust | Ada / SPARK | Aria |
+| Error Handling Paradigm | C / C++ | Rust | Ada / SPARK | Nitpick |
 | :---- | :---- | :---- | :---- | :---- |
 | **Expected Errors** | Integer Return Codes | Result\<T, E\> Enum | Exceptions / Out Params | Result\<T\> Struct (Mandatory) |
 | **Math Anomalies / OOB** | Undefined Behavior | panic\! (Controlled Crash) | Exceptions / Formal Proof | unknown Sentinel (Fail-Operational) |
@@ -9420,31 +9420,31 @@ Aria introduces the emphatic unwrap operator (?\!) and the direct failsafe opera
 
 #### **Mathematical Determinism and Twisted Numeric Representation**
 
-Aria’s primary target domain includes distributed Artificial General Intelligence substrates and hyper-accurate physics simulations. In these environments, identical mathematical operations must yield perfectly bit-exact results across heterogeneous hardware architectures (e.g., x86, ARM, RISC-V) to maintain network consensus and prevent the corruption of complex physical state manifolds.1 Standard floating-point arithmetic, governed by the IEEE 754 standard, catastrophically fails to provide this absolute guarantee.39
+Nitpick’s primary target domain includes distributed Artificial General Intelligence substrates and hyper-accurate physics simulations. In these environments, identical mathematical operations must yield perfectly bit-exact results across heterogeneous hardware architectures (e.g., x86, ARM, RISC-V) to maintain network consensus and prevent the corruption of complex physical state manifolds.1 Standard floating-point arithmetic, governed by the IEEE 754 standard, catastrophically fails to provide this absolute guarantee.39
 
 #### **The Rejection of IEEE 754**
 
 IEEE 754 floating-point calculations are notoriously non-deterministic across different central processing units.39 Depending on the specific hardware and the compiler's optimization flags, instructions may be fused into Multiply-Add (FMA) operations, intermediate calculations may be temporarily stored in extended 80-bit precision registers, and rounding modes may be altered dynamically by shared mutable state within the floating-point environment.40 Furthermore, IEEE 754 introduces mathematically problematic artifacts such as negative zero (-0.0) and multiple binary representations of Not-a-Number (NaN).1 These artifacts can propagate silently through millions of operations, corrupting logical branching and destroying zero-neutrality.1 In the context of an AGI physics engine—where quantum states or neural topologies are iteratively calculated over sustained periods—even sub-atomic floating-point drift inevitably cascades into systemic divergence, fracturing the simulation.1
 
-Aria completely abandons hardware-accelerated IEEE floats for critical calculations, providing its own strictly deterministic software-implemented types: fix256 (deterministic fixed-point) and tfp64 (Twisted Floating Point).1 The fix256 type utilizes a massive Q128.128 representation, allocating 128 bits for the integer component and 128 bits for the fractional component.1 This provides astronomical precision down to ![][image1] (significantly finer than the Planck length) while ensuring that all operations execute under the hood as pure, deterministic integer arithmetic.1 Fixed-point arithmetic avoids the non-associativity of floating-point math, making it the required standard for deterministic systems in aerospace telemetry and lockstep physics engines.39
+Nitpick completely abandons hardware-accelerated IEEE floats for critical calculations, providing its own strictly deterministic software-implemented types: fix256 (deterministic fixed-point) and tfp64 (Twisted Floating Point).1 The fix256 type utilizes a massive Q128.128 representation, allocating 128 bits for the integer component and 128 bits for the fractional component.1 This provides astronomical precision down to ![][image1] (significantly finer than the Planck length) while ensuring that all operations execute under the hood as pure, deterministic integer arithmetic.1 Fixed-point arithmetic avoids the non-associativity of floating-point math, making it the required standard for deterministic systems in aerospace telemetry and lockstep physics engines.39
 
-For scientific applications requiring a massive dynamic range that fixed-point cannot provide, Aria introduces the tfp32 and tfp64 types. These construct a floating-point representation using Aria's specialized integer components for both the mantissa and the exponent, executing the arithmetic entirely in software.1 While this incurs a steep performance penalty (estimated at 10x to 50x slower than hardware FPU execution), it guarantees absolute cross-platform bit-exactness, collapses all mathematical error states into a single unified ERR sentinel, and entirely eliminates the \-0 anomaly.1
+For scientific applications requiring a massive dynamic range that fixed-point cannot provide, Nitpick introduces the tfp32 and tfp64 types. These construct a floating-point representation using Nitpick's specialized integer components for both the mantissa and the exponent, executing the arithmetic entirely in software.1 While this incurs a steep performance penalty (estimated at 10x to 50x slower than hardware FPU execution), it guarantees absolute cross-platform bit-exactness, collapses all mathematical error states into a single unified ERR sentinel, and entirely eliminates the \-0 anomaly.1
 
 #### **Twisted Balanced Binary (TBB) and Sticky Error Propagation**
 
-Aria addresses the vulnerabilities of standard integer arithmetic through its proprietary Twisted Balanced Binary (TBB) types, available in tbb8, tbb16, tbb32, and tbb64 variants.1 Standard two's complement integers exhibit a dangerous asymmetry; for example, an 8-bit signed integer ranges from \-128 to \+127. Because the absolute value of \-128 is \+128, which exceeds the maximum positive limit, attempting to negate the minimum value results in a silent wraparound or an overflow panic in languages like Rust.1
+Nitpick addresses the vulnerabilities of standard integer arithmetic through its proprietary Twisted Balanced Binary (TBB) types, available in tbb8, tbb16, tbb32, and tbb64 variants.1 Standard two's complement integers exhibit a dangerous asymmetry; for example, an 8-bit signed integer ranges from \-128 to \+127. Because the absolute value of \-128 is \+128, which exceeds the maximum positive limit, attempting to negate the minimum value results in a silent wraparound or an overflow panic in languages like Rust.1
 
-Aria’s TBB types structurally eliminate this vulnerability by sacrificing the absolute minimum value (e.g., \-128 in a tbb8) to serve as a hardware-level ERR sentinel.1 This yields a perfectly symmetric valid numeric range (-127 to \+127), making absolute value and negation operations mathematically flawless.1
+Nitpick’s TBB types structurally eliminate this vulnerability by sacrificing the absolute minimum value (e.g., \-128 in a tbb8) to serve as a hardware-level ERR sentinel.1 This yields a perfectly symmetric valid numeric range (-127 to \+127), making absolute value and negation operations mathematically flawless.1
 
 More importantly, this architectural decision enables "sticky error propagation" at the bare-metal level.1 Whenever an overflow, underflow, or invalid operation occurs, the result collapses into the ERR sentinel.1 Any subsequent mathematical operation involving an ERR sentinel natively evaluates to ERR.1 This eliminates the need for the compiler to inject expensive branching checks after every single arithmetic instruction—a common and severe performance bottleneck in safe C++ implementations or Rust's checked-math modes.49 The application can execute a massive, vectorized pipeline of calculations and simply check for the ERR sentinel at the termination of the sequence, dramatically increasing throughput without sacrificing safety.1
 
 #### **Exact Rational Arithmetic and LBIM Cryptographic Types**
 
-Complementing its deterministic floats, Aria provides Fraction types (frac8 through frac64) to enable mathematically exact rational arithmetic.1 A frac struct maintains a whole number, a numerator, and a denominator, constantly reducing to canonical form via Greatest Common Divisor (GCD) algorithms to entirely prevent the accumulation of rounding errors common in recursive division.1
+Complementing its deterministic floats, Nitpick provides Fraction types (frac8 through frac64) to enable mathematically exact rational arithmetic.1 A frac struct maintains a whole number, a numerator, and a denominator, constantly reducing to canonical form via Greatest Common Divisor (GCD) algorithms to entirely prevent the accumulation of rounding errors common in recursive division.1
 
-For high-security consensus algorithms and communications, Aria embeds Large BigInt Math (LBIM) types directly into the language primitives, scaling from int1024 up to a strictly enforced limit of int4096 and uint4096.1 These massive types are specifically designed for post-quantum and quantum-resistant cryptography (e.g., RSA-16384, lattice-based cryptography).1 By defining these cryptographic types as fundamental language primitives rather than relying on external, third-party libraries (which are historically frequent sources of vulnerabilities via side-channel attacks or memory mismanagement), Aria ensures that cryptographic operations inherit the exact same sticky error propagation, division-by-zero protection, and deterministic constraints as native integers.1
+For high-security consensus algorithms and communications, Nitpick embeds Large BigInt Math (LBIM) types directly into the language primitives, scaling from int1024 up to a strictly enforced limit of int4096 and uint4096.1 These massive types are specifically designed for post-quantum and quantum-resistant cryptography (e.g., RSA-16384, lattice-based cryptography).1 By defining these cryptographic types as fundamental language primitives rather than relying on external, third-party libraries (which are historically frequent sources of vulnerabilities via side-channel attacks or memory mismanagement), Nitpick ensures that cryptographic operations inherit the exact same sticky error propagation, division-by-zero protection, and deterministic constraints as native integers.1
 
-| Feature | IEEE 754 / Standard Int | Aria TBB / TFP / Fix | Safety & Physics Impact |
+| Feature | IEEE 754 / Standard Int | Nitpick TBB / TFP / Fix | Safety & Physics Impact |
 | :---- | :---- | :---- | :---- |
 | **Symmetry** | Asymmetric (e.g., \-128 to 127\) | Symmetric (e.g., \-127 to 127\) | Prevents absolute value and negation overflow panics. |
 | **Error State** | NaN (Float), Wraparound (Int) | Unified ERR Sentinel | Halts silent data corruption; explicitly tracked by compiler. |
@@ -9459,28 +9459,28 @@ However, the strict, tree-based ownership hierarchy demanded by Rust's borrow ch
 
 #### **Generational Handles and Arena Allocation**
 
-Aria aggressively solves the graph-structure problem by adopting Generational Handles paired with Arena allocators as a fundamental language construct.1 A Handle\<T\> is a lightweight, 12-byte structure comprising an index (uint64) and a generation counter (uint32).1 It acts as a safe reference to memory, completely replacing raw pointers for dynamic, interconnected data.1
+Nitpick aggressively solves the graph-structure problem by adopting Generational Handles paired with Arena allocators as a fundamental language construct.1 A Handle\<T\> is a lightweight, 12-byte structure comprising an index (uint64) and a generation counter (uint32).1 It acts as a safe reference to memory, completely replacing raw pointers for dynamic, interconnected data.1
 
-When an object—such as a wave node in Aria's physics engine or a neuron in its Sparse Hyper-Voxel Octree (SHVO)—is allocated in a typed arena, the arena issues a handle containing the slot's current generation number.1 If the arena is forced to reallocate (e.g., during exponential memory expansion or "neurogenesis"), or if the specific object is explicitly freed, the arena increments the generation counter for that memory slot.1 When the program subsequently attempts to access the data using the old handle, the generation mismatch is immediately detected.1 Instead of allowing a catastrophic use-after-free read or write, the arena.get() function safely returns an ERR via the Result\<T\> system.1
+When an object—such as a wave node in Nitpick's physics engine or a neuron in its Sparse Hyper-Voxel Octree (SHVO)—is allocated in a typed arena, the arena issues a handle containing the slot's current generation number.1 If the arena is forced to reallocate (e.g., during exponential memory expansion or "neurogenesis"), or if the specific object is explicitly freed, the arena increments the generation counter for that memory slot.1 When the program subsequently attempts to access the data using the old handle, the generation mismatch is immediately detected.1 Instead of allowing a catastrophic use-after-free read or write, the arena.get() function safely returns an ERR via the Result\<T\> system.1
 
-This paradigm fundamentally shifts memory safety from a static compile-time proof (as seen in Rust) to an ![][image2] dynamic runtime check.1 While this theoretically introduces runtime overhead, modern CPU branch predictors optimize the generation comparison check to near-zero latency on the hot path.1 Generational handles provide deterministic, rapid, and completely memory-safe graph representations, granting Aria a vital architectural advantage over Rust for building scalable AGI memory substrates without wrestling with lifetime annotations.1
+This paradigm fundamentally shifts memory safety from a static compile-time proof (as seen in Rust) to an ![][image2] dynamic runtime check.1 While this theoretically introduces runtime overhead, modern CPU branch predictors optimize the generation comparison check to near-zero latency on the hot path.1 Generational handles provide deterministic, rapid, and completely memory-safe graph representations, granting Nitpick a vital architectural advantage over Rust for building scalable AGI memory substrates without wrestling with lifetime annotations.1
 
 #### **Explicit Allocation Modes and RAII Semantics**
 
-To accommodate diverse real-time constraints and prevent hidden performance latency, Aria mandates explicit allocation modes, removing the dangerous ambiguity of implicit heap allocations found in many high-level languages.1
+To accommodate diverse real-time constraints and prevent hidden performance latency, Nitpick mandates explicit allocation modes, removing the dangerous ambiguity of implicit heap allocations found in many high-level languages.1
 
 * **stack**: The default mode, offering ultra-fast ![][image2] allocation via pointer bumping, constrained strictly by lexical scope lifetimes.  
 * **gc**: Opt-in garbage collection for non-critical code with complex shared ownership, though heavily discouraged in deterministic physics loops due to unpredictable pause times.  
 * **wild**: Manual, unmanaged heap allocation (akin to C's malloc) designed for absolute real-time determinism where the developer takes full responsibility.  
 * **wildx**: Executable memory allocation strictly isolated for Just-In-Time (JIT) compilation requirements.1
 
-When utilizing wild memory, Aria mitigates the severe risk of memory leaks through the defer keyword.1 The defer statement guarantees that designated cleanup code executes in Last-In-First-Out (LIFO) order upon scope exit.1 Crucially, this execution is guaranteed regardless of whether the scope exits normally, via an early return, or through an error/failsafe trigger.1 This provides the safety benefits of C++ Resource Acquisition Is Initialization (RAII) without the immense complexity of hidden constructor/destructor control flows.1
+When utilizing wild memory, Nitpick mitigates the severe risk of memory leaks through the defer keyword.1 The defer statement guarantees that designated cleanup code executes in Last-In-First-Out (LIFO) order upon scope exit.1 Crucially, this execution is guaranteed regardless of whether the scope exits normally, via an early return, or through an error/failsafe trigger.1 This provides the safety benefits of C++ Resource Acquisition Is Initialization (RAII) without the immense complexity of hidden constructor/destructor control flows.1
 
 #### **Borrow Semantics and Pinning**
 
-While generational handles dominate dynamic graph allocations, later updates to the Aria specification (v0.2.35) incorporated an opt-in compile-time borrow checker to provide localized memory safety and prevent data races.1 Utilizing the $$m (mutable, exclusive) and $$i (immutable, shared) qualifiers, Aria enforces standard aliasing rules to ensure safe concurrent access during parallel physics computations.1 Furthermore, Aria introduces the pinning operator (\#), which guarantees that a variable's memory address remains absolutely stable. This prevents the garbage collector from relocating the data during optimization passes, an essential feature for seamless, zero-copy Foreign Function Interface (FFI) integration with external C libraries.1
+While generational handles dominate dynamic graph allocations, later updates to the Nitpick specification (v0.2.35) incorporated an opt-in compile-time borrow checker to provide localized memory safety and prevent data races.1 Utilizing the $$m (mutable, exclusive) and $$i (immutable, shared) qualifiers, Nitpick enforces standard aliasing rules to ensure safe concurrent access during parallel physics computations.1 Furthermore, Nitpick introduces the pinning operator (\#), which guarantees that a variable's memory address remains absolutely stable. This prevents the garbage collector from relocating the data during optimization passes, an essential feature for seamless, zero-copy Foreign Function Interface (FFI) integration with external C libraries.1
 
-| Memory Management Strategy | C / C++ | Rust | Aria |
+| Memory Management Strategy | C / C++ | Rust | Nitpick |
 | :---- | :---- | :---- | :---- |
 | **Primary Safety Mechanism** | Manual / Smart Pointers | Borrow Checker / Lifetimes | Generational Handles / Arenas |
 | **Temporal Safety (Use-After-Free)** | Unsafe (Developer Responsibility) | Statically Proven at Compile-Time | Dynamically Checked (Handles) |
@@ -9494,67 +9494,67 @@ Beyond securing memory and preventing arithmetic overflow, safety-critical softw
 
 #### **Compile-Time Dimensional Analysis**
 
-Aria elevates physical units of measurement to the type system level, instituting strict, compile-time dimensional analysis.1 By parameterizing numeric types with physical units (e.g., fix256\<Joules\>, fix256\<Meters\>, tfp64\<Newtons\>), the Aria compiler mechanically verifies thermodynamic and physical equations prior to execution.1 Attempting to add time to energy, or equating mass to energy without explicitly applying the ![][image3] conversion coefficient, triggers an immediate compile-time error.1
+Nitpick elevates physical units of measurement to the type system level, instituting strict, compile-time dimensional analysis.1 By parameterizing numeric types with physical units (e.g., fix256\<Joules\>, fix256\<Meters\>, tfp64\<Newtons\>), the Nitpick compiler mechanically verifies thermodynamic and physical equations prior to execution.1 Attempting to add time to energy, or equating mass to energy without explicitly applying the ![][image3] conversion coefficient, triggers an immediate compile-time error.1
 
-While dimensional analysis is relatively rare in mainstream, general-purpose languages, it is highly prized in scientific computing and aerospace engineering. F\# successfully implements units of measure, verifying the logic and then stripping the metadata at compile time to incur zero runtime performance overhead.69 The Ada 2012 specification similarly introduced dimensionality checking specifically to prevent multi-million-dollar disasters akin to the Mars Climate Orbiter unit-conversion failure.72 By mandating this at the core of the language rather than relying on external libraries, Aria prevents entire categories of physics errors—a rigorous paradigm the language specification refers to as "Thermodynamic Constitutionalism".1
+While dimensional analysis is relatively rare in mainstream, general-purpose languages, it is highly prized in scientific computing and aerospace engineering. F\# successfully implements units of measure, verifying the logic and then stripping the metadata at compile time to incur zero runtime performance overhead.69 The Ada 2012 specification similarly introduced dimensionality checking specifically to prevent multi-million-dollar disasters akin to the Mars Climate Orbiter unit-conversion failure.72 By mandating this at the core of the language rather than relying on external libraries, Nitpick prevents entire categories of physics errors—a rigorous paradigm the language specification refers to as "Thermodynamic Constitutionalism".1
 
 #### **Design by Contract and Refinement Types**
 
-To further enforce semantic correctness, Aria integrates Design by Contract (DbC) natively into its function syntax using the requires (preconditions) and ensures (postconditions) clauses.1 If an input parameter violates a requires clause at runtime, the function immediately intercepts the execution and automatically returns an error Result, intertwining contractual constraints directly with the sticky error propagation system.1
+To further enforce semantic correctness, Nitpick integrates Design by Contract (DbC) natively into its function syntax using the requires (preconditions) and ensures (postconditions) clauses.1 If an input parameter violates a requires clause at runtime, the function immediately intercepts the execution and automatically returns an error Result, intertwining contractual constraints directly with the sticky error propagation system.1
 
-Aria extends this philosophy with "Rules" and "Limits," effectively implementing Refinement Types.1 Developers can define logical boundaries—such as Rules:r\_safe\_temp \= { $ \>= \-40, $ \<= 120 }—and apply them to variable declarations using the limit keyword.1 If a literal value violates the limit, the compiler throws an error; if a dynamic runtime value breaches the boundary, it triggers the failsafe.1
+Nitpick extends this philosophy with "Rules" and "Limits," effectively implementing Refinement Types.1 Developers can define logical boundaries—such as Rules:r\_safe\_temp \= { $ \>= \-40, $ \<= 120 }—and apply them to variable declarations using the limit keyword.1 If a literal value violates the limit, the compiler throws an error; if a dynamic runtime value breaches the boundary, it triggers the failsafe.1
 
-It is critical to contrast Aria's approach to contracts with the formal methods used by Ada/SPARK. SPARK utilizes deductive formal verification, employing powerful SMT solvers (like Z3, Alt-Ergo, or CVC4) to mathematically *prove* the Absence of Runtime Errors (AoRTE) and verify contractual compliance before the code is ever compiled into an executable.65 SPARK can formally guarantee that a buffer overflow or contract violation is impossible across all conceivable execution paths.74
+It is critical to contrast Nitpick's approach to contracts with the formal methods used by Ada/SPARK. SPARK utilizes deductive formal verification, employing powerful SMT solvers (like Z3, Alt-Ergo, or CVC4) to mathematically *prove* the Absence of Runtime Errors (AoRTE) and verify contractual compliance before the code is ever compiled into an executable.65 SPARK can formally guarantee that a buffer overflow or contract violation is impossible across all conceivable execution paths.74
 
-As of v0.3.4, Aria has integrated the Z3 SMT solver directly into its compiler pipeline, enabling static formal verification of `requires`/`ensures` contracts and integer arithmetic overflow at compile time.1 The `--verify-contracts` flag instructs the compiler to translate function preconditions and postconditions into Z3 assertions and mathematically prove their validity across all possible inputs. The `--verify-overflow` flag uses Z3's bitvector overflow intrinsics (`bvadd_no_overflow`, `bvsub_no_underflow`) to prove that integer arithmetic operations cannot overflow for bounded input ranges. A `--verify-report` flag emits detailed proof results per function (proven, unproven, or skipped).
+As of v0.3.4, Nitpick has integrated the Z3 SMT solver directly into its compiler pipeline, enabling static formal verification of `requires`/`ensures` contracts and integer arithmetic overflow at compile time.1 The `--verify-contracts` flag instructs the compiler to translate function preconditions and postconditions into Z3 assertions and mathematically prove their validity across all possible inputs. The `--verify-overflow` flag uses Z3's bitvector overflow intrinsics (`bvadd_no_overflow`, `bvsub_no_underflow`) to prove that integer arithmetic operations cannot overflow for bounded input ranges. A `--verify-report` flag emits detailed proof results per function (proven, unproven, or skipped).
 
-This places Aria's contractual verification power in the same class as SPARK's formal methods—using the same Z3 solver backend—while integrating the proofs directly into Aria's existing Result and failsafe error propagation systems. Aria's Z3 integration also extends to its Rules/limit refinement types (since v0.2.45), where the solver verifies the consistency and satisfiability of compile-time constraints using bitvector-accurate proofs that match Aria's exact integer widths. Combined with the runtime enforcement of contracts and limits as a fallback for cases the solver cannot statically prove, Aria now provides both static and dynamic assurance for contractual compliance.65
+This places Nitpick's contractual verification power in the same class as SPARK's formal methods—using the same Z3 solver backend—while integrating the proofs directly into Nitpick's existing Result and failsafe error propagation systems. Nitpick's Z3 integration also extends to its Rules/limit refinement types (since v0.2.45), where the solver verifies the consistency and satisfiability of compile-time constraints using bitvector-accurate proofs that match Nitpick's exact integer widths. Combined with the runtime enforcement of contracts and limits as a fallback for cases the solver cannot statically prove, Nitpick now provides both static and dynamic assurance for contractual compliance.65
 
 #### **Concurrency, Polymorphism, and Performance**
 
-High-performance physics engines and AGI substrates require massively parallel execution across multi-core architectures with minimal synchronization overhead.1 Aria addresses this by mandating Sequential Consistency (SeqCst) as the default memory ordering for all atomic operations.1 This prioritizes developer reasoning and state safety over the raw, unpredictable speed of relaxed memory models.1 The language provides robust, safe primitives for Lock-Free Queues, Seqlocks, and Transactional Locks, requiring developers to explicitly mark weaker memory orderings (using suffixes like \_acquire, \_release, \_relaxed) to alert security auditors to expert-level hardware optimizations.1
+High-performance physics engines and AGI substrates require massively parallel execution across multi-core architectures with minimal synchronization overhead.1 Nitpick addresses this by mandating Sequential Consistency (SeqCst) as the default memory ordering for all atomic operations.1 This prioritizes developer reasoning and state safety over the raw, unpredictable speed of relaxed memory models.1 The language provides robust, safe primitives for Lock-Free Queues, Seqlocks, and Transactional Locks, requiring developers to explicitly mark weaker memory orderings (using suffixes like \_acquire, \_release, \_relaxed) to alert security auditors to expert-level hardware optimizations.1
 
-For hardware acceleration, Aria introduces explicit SIMD (Single Instruction, Multiple Data) vector types (e.g., simd\<fix256, 16\>) tailored for modern processor extensions like AVX-512 and ARM NEON.1 Crucially, SIMD operations in Aria utilize masked operations to handle sticky errors without relying on CPU branching.1 This ensures that safety checks do not destroy vectorization throughput—a pervasive limitation in auto-vectorizing C++ compilers where the introduction of a safety branch forces the compiler to abandon SIMD optimizations.1
+For hardware acceleration, Nitpick introduces explicit SIMD (Single Instruction, Multiple Data) vector types (e.g., simd\<fix256, 16\>) tailored for modern processor extensions like AVX-512 and ARM NEON.1 Crucially, SIMD operations in Nitpick utilize masked operations to handle sticky errors without relying on CPU branching.1 This ensures that safety checks do not destroy vectorization throughput—a pervasive limitation in auto-vectorizing C++ compilers where the introduction of a safety branch forces the compiler to abandon SIMD optimizations.1
 
 #### **Monomorphization vs. Dynamic Dispatch**
 
-Aria achieves zero-cost abstraction for generic programming via monomorphization, a technique identical to C++ templates and Rust generics.1 When a generic function or struct is utilized, the compiler generates a specialized, hard-coded copy of that function for the specific type being processed.1 This completely eliminates the need for virtual function tables (vtables) and dynamic dispatch overhead at runtime.1
+Nitpick achieves zero-cost abstraction for generic programming via monomorphization, a technique identical to C++ templates and Rust generics.1 When a generic function or struct is utilized, the compiler generates a specialized, hard-coded copy of that function for the specific type being processed.1 This completely eliminates the need for virtual function tables (vtables) and dynamic dispatch overhead at runtime.1
 
-While monomorphization drastically improves execution speed and allows the compiler to aggressively inline code, it risks "binary bloat"—a legitimate and significant concern for flash-constrained embedded systems in aerospace and automotive hardware.80 However, the sheer execution speed and cache-locality afforded by monomorphization are absolutely essential for Aria to achieve the strict 1-millisecond simulation timesteps demanded by advanced, multi-dimensional AGI physics grids.1
+While monomorphization drastically improves execution speed and allows the compiler to aggressively inline code, it risks "binary bloat"—a legitimate and significant concern for flash-constrained embedded systems in aerospace and automotive hardware.80 However, the sheer execution speed and cache-locality afforded by monomorphization are absolutely essential for Nitpick to achieve the strict 1-millisecond simulation timesteps demanded by advanced, multi-dimensional AGI physics grids.1
 
-To complement its memory and concurrency models, recent updates to the Aria specification (v0.2.37) introduced Channels and Actors to facilitate thread-safe message passing.1 By providing buffered, unbuffered, and oneshot channels alongside isolated Actor entities, Aria embraces structured concurrency paradigms heavily inspired by Go and Erlang, preventing the catastrophic state corruption that occurs when multiple threads attempt to mutate shared global memory.1
+To complement its memory and concurrency models, recent updates to the Nitpick specification (v0.2.37) introduced Channels and Actors to facilitate thread-safe message passing.1 By providing buffered, unbuffered, and oneshot channels alongside isolated Actor entities, Nitpick embraces structured concurrency paradigms heavily inspired by Go and Erlang, preventing the catastrophic state corruption that occurs when multiple threads attempt to mutate shared global memory.1
 
 #### **Expressive Paradigms and Architectural Syntax**
 
-While heavily focused on bare-metal safety, Aria provides modern, expressive paradigms to maintain developer productivity without compromising its core tenets. The language treats functions as first-class citizens, supporting closures and lambda expressions.1 To maintain strict scoping safety, Aria differentiates between safe value capture (which copies data into the closure) and unsafe reference capture (which requires explicit pointer dereferencing and lifetime management by the developer).1
+While heavily focused on bare-metal safety, Nitpick provides modern, expressive paradigms to maintain developer productivity without compromising its core tenets. The language treats functions as first-class citizens, supporting closures and lambda expressions.1 To maintain strict scoping safety, Nitpick differentiates between safe value capture (which copies data into the closure) and unsafe reference capture (which requires explicit pointer dereferencing and lifetime management by the developer).1
 
-Aria's syntax is meticulously designed to reduce cognitive load and prevent ambiguity. It rejects the overloaded operators common in C++ in favor of distinct, blueprint-style operators that visually indicate the direction of data flow.1 For instance, int64-\>:ptr denotes a pointer pointing *to* an integer type, @var represents the address *at* a variable, and \<-ptr clearly indicates data being pulled *from* a pointer during dereferencing.1
+Nitpick's syntax is meticulously designed to reduce cognitive load and prevent ambiguity. It rejects the overloaded operators common in C++ in favor of distinct, blueprint-style operators that visually indicate the direction of data flow.1 For instance, int64-\>:ptr denotes a pointer pointing *to* an integer type, @var represents the address *at* a variable, and \<-ptr clearly indicates data being pulled *from* a pointer during dereferencing.1
 
-Furthermore, Aria supports advanced string interpolation via template literals (e.g., \`Value: &{x}\`), allowing complex expressions and function calls to be evaluated safely within strings, complete with automatic type conversion and multiline support.1 The module system relies on explicit use, mod, and pub keywords, enforcing strict namespace isolation and facilitating clean dependency management in large-scale codebases.1
+Furthermore, Nitpick supports advanced string interpolation via template literals (e.g., \`Value: &{x}\`), allowing complex expressions and function calls to be evaluated safely within strings, complete with automatic type conversion and multiline support.1 The module system relies on explicit use, mod, and pub keywords, enforcing strict namespace isolation and facilitating clean dependency management in large-scale codebases.1
 
 #### **Regulatory Compliance and the Explicit TOS Bypass**
 
-When evaluating a programming language for commercial safety-critical deployment, technical features must translate into verifiable regulatory compliance capabilities, specifically targeting rigorous frameworks like RTCA DO-178C (Civil Aviation) and ISO 26262 (Automotive Functional Safety).9 Aria's design presents several major advantages for certification:
+When evaluating a programming language for commercial safety-critical deployment, technical features must translate into verifiable regulatory compliance capabilities, specifically targeting rigorous frameworks like RTCA DO-178C (Civil Aviation) and ISO 26262 (Automotive Functional Safety).9 Nitpick's design presents several major advantages for certification:
 
-1. **Zero Implicit Conversion:** Aria strictly enforces literal type suffixes and completely eliminates implicit type coercions.1 This natively enforces at the compiler level one of the most critical and frequently violated rules in the MISRA C coding standard, drastically reducing the required static analysis burden prior to certification audits.1  
-2. **Absence of Unintended Behavior:** DO-178C places a heavy emphasis on predictable data flow, control coupling, and hardware determinism.13 Aria’s systemic removal of undefined behavior, combined with the deterministic fixed-point (fix256) and twisted floating-point (tfp64) math, provides profound assurances that the software will execute exactly as modeled across all operational states.1  
-3. **Safe State Transitions:** ISO 26262 requires systems to identify hazards and guarantee a transition to a defined Safe State upon failure.10 Aria’s language-mandated failsafe() function serves as the ultimate, un-bypassable conduit for this exact requirement, ensuring that Architectural Safety Integrity Level (ASIL) D targets for runtime monitoring and emergency response are structurally satisfied from day one.1
+1. **Zero Implicit Conversion:** Nitpick strictly enforces literal type suffixes and completely eliminates implicit type coercions.1 This natively enforces at the compiler level one of the most critical and frequently violated rules in the MISRA C coding standard, drastically reducing the required static analysis burden prior to certification audits.1  
+2. **Absence of Unintended Behavior:** DO-178C places a heavy emphasis on predictable data flow, control coupling, and hardware determinism.13 Nitpick’s systemic removal of undefined behavior, combined with the deterministic fixed-point (fix256) and twisted floating-point (tfp64) math, provides profound assurances that the software will execute exactly as modeled across all operational states.1  
+3. **Safe State Transitions:** ISO 26262 requires systems to identify hazards and guarantee a transition to a defined Safe State upon failure.10 Nitpick’s language-mandated failsafe() function serves as the ultimate, un-bypassable conduit for this exact requirement, ensuring that Architectural Safety Integrity Level (ASIL) D targets for runtime monitoring and emergency response are structurally satisfied from day one.1
 
 #### **The TOS Vocabulary vs. Rust Unsafe**
 
 In systems programming, developers inevitably require mechanisms to bypass high-level safety constraints to interact directly with hardware or optimize critical paths. Rust utilizes the monolithic unsafe keyword to unlock raw pointer dereferencing, mutable statics, and unchecked array access.54 However, the broad scope of unsafe has drawn scrutiny from security researchers regarding poor developer risk assessment, the lack of granular security policies, and the difficulty of auditing precisely *which* safety rule is being bypassed within an unsafe block.54
 
-Aria categorizes its explicit bypasses into a discrete, highly auditable "Terms of Service" (TOS) vocabulary.1 Instead of a single unsafe block, developers must use specific keywords for specific actions: raw() forces a Result unwrap without checking the error flag; drop() evaluates an expression but throws away the safety Result entirely; wild allocates unmanaged memory; and ok() deliberately strips an unknown sentinel taint from a variable.1 This extreme granularity heavily favors compliance certification, allowing auditors to precisely track and justify where error checking was bypassed versus where memory management was handled manually.1
+Nitpick categorizes its explicit bypasses into a discrete, highly auditable "Terms of Service" (TOS) vocabulary.1 Instead of a single unsafe block, developers must use specific keywords for specific actions: raw() forces a Result unwrap without checking the error flag; drop() evaluates an expression but throws away the safety Result entirely; wild allocates unmanaged memory; and ok() deliberately strips an unknown sentinel taint from a variable.1 This extreme granularity heavily favors compliance certification, allowing auditors to precisely track and justify where error checking was bypassed versus where memory management was handled manually.1
 
-Despite these immense architectural strengths, Aria currently lacks the decades of ecosystem maturity, certified compiler toolchains, and established developer familiarity that C, C++, and Ada possess.7 To achieve DAL A (DO-178C) or ASIL D (ISO 26262\) certification in commercial settings, the Aria compiler itself must undergo rigorous qualification, and structural coverage analysis tools (such as MC/DC analyzers) must be developed specifically for the language.10
+Despite these immense architectural strengths, Nitpick currently lacks the decades of ecosystem maturity, certified compiler toolchains, and established developer familiarity that C, C++, and Ada possess.7 To achieve DAL A (DO-178C) or ASIL D (ISO 26262\) certification in commercial settings, the Nitpick compiler itself must undergo rigorous qualification, and structural coverage analysis tools (such as MC/DC analyzers) must be developed specifically for the language.10
 
 #### **Conclusion**
 
-The Aria programming language represents a highly specialized, intensely rigorous approach to safety-critical software architecture. By synthesizing the graph-friendly memory safety of generational handles with the structural accountability of a mandatory failsafe system, and underpinning it all with the absolute determinism of fixed-point and twisted-binary arithmetic, Aria addresses the precise failure modes that plague C/C++ and Rust in highly concurrent, physics-based AI simulations.1
+The Nitpick programming language represents a highly specialized, intensely rigorous approach to safety-critical software architecture. By synthesizing the graph-friendly memory safety of generational handles with the structural accountability of a mandatory failsafe system, and underpinning it all with the absolute determinism of fixed-point and twisted-binary arithmetic, Nitpick addresses the precise failure modes that plague C/C++ and Rust in highly concurrent, physics-based AI simulations.1
 
-While it presently lacks the static formal verification ecosystem of Ada/SPARK 74, its architectural refusal to allow undefined behavior, its fail-operational unknown state, and its strict thermodynamic constraints position Aria as an exceptionally potent language for its intended domain.1 By making safety an inescapable structural requirement rather than a developer convention, Aria possesses the foundational semantics necessary to become a dominant language in the development of fault-tolerant AGI, aerospace control systems, and high-fidelity physics substrates.
+While it presently lacks the static formal verification ecosystem of Ada/SPARK 74, its architectural refusal to allow undefined behavior, its fail-operational unknown state, and its strict thermodynamic constraints position Nitpick as an exceptionally potent language for its intended domain.1 By making safety an inescapable structural requirement rather than a developer convention, Nitpick possesses the foundational semantics necessary to become a dominant language in the development of fault-tolerant AGI, aerospace control systems, and high-fidelity physics substrates.
 
-**Update (v0.3.4, March 2026):** Aria has since integrated the Z3 SMT solver into its compiler pipeline, adding static formal verification of `requires`/`ensures` contracts and integer arithmetic overflow proofs. This directly addresses the formal verification gap identified above, placing Aria alongside Ada/SPARK in providing compile-time mathematical correctness guarantees for safety-critical code.
+**Update (v0.3.4, March 2026):** Nitpick has since integrated the Z3 SMT solver into its compiler pipeline, adding static formal verification of `requires`/`ensures` contracts and integer arithmetic overflow proofs. This directly addresses the formal verification gap identified above, placing Nitpick alongside Ada/SPARK in providing compile-time mathematical correctness guarantees for safety-critical code.
 
 #### **Works cited**
 

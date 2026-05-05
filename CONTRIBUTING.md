@@ -1,6 +1,6 @@
-# Contributing to Aria Documentation
+# Contributing to Nitpick Documentation
 
-Thank you for helping improve Aria's documentation!
+Thank you for helping improve Nitpick's documentation!
 
 ## Getting Started
 
@@ -23,7 +23,7 @@ Thank you for helping improve Aria's documentation!
 
 ### Code Examples
 
-Use correct Aria syntax in all code blocks:
+Use correct Nitpick syntax in all code blocks:
 
 ```aria
 func:example = int32(int32:x) {
@@ -48,7 +48,7 @@ If documenting a feature that is part of the language specification but not yet 
 
 ```markdown
 > **⚠️ DESIGN DOCUMENT — NOT YET IMPLEMENTED IN COMPILER**
-> This feature is part of the Aria language specification but is not yet available.
+> This feature is part of the Nitpick language specification but is not yet available.
 ```
 
 ## Building Man Pages

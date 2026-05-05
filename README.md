@@ -6,19 +6,19 @@
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
-> 🚧 **Rebrand in progress:** Aria is becoming **Nitpick**. This documentation
-> repo still uses Aria names while the migration is underway. Existing docs,
+> 🚧 **Rebrand in progress:** Nitpick is becoming **Nitpick**. This documentation
+> repo still uses Nitpick names while the migration is underway. Existing docs,
 > examples, man pages, and history are being preserved; source and file-extension
 > renames will happen in later coordinated slices.
 
-Documentation, man pages, and examples for the [Aria (Nitpick) programming language](https://github.com/alternative-intelligence-cp/nitpick) (v0.18.0).
+Documentation, man pages, and examples for the [Nitpick (Nitpick) programming language](https://github.com/alternative-intelligence-cp/nitpick) (v0.18.0).
 
 ## Contents
 
 - **guide/** — Programming guide (362 files): types, functions, control flow, memory model, modules, advanced features, standard library
-- **guide/aria-pkg.md** — Package manager usage guide
-- **man/** — Man page sources and build scripts (`man ariac`, `man aria-pkg`, etc.)
-- **examples/** — Example programs demonstrating Aria features (69 .aria files)
+- **guide/npkpkg.md** — Package manager usage guide
+- **man/** — Man page sources and build scripts (`man npkc`, `man npkpkg`, etc.)
+- **examples/** — Example programs demonstrating Nitpick features (69 .aria files)
 - **reference/** — Language reference and compiler architecture documentation
 - **specs/** — Language specification (`aria_specs.txt` — 7,200-line spec covering the 3-layer safety system)
 - **packages/** — Package-specific guides (raylib, GML, Tetris, OpenGL)

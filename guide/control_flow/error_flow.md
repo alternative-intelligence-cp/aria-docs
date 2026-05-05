@@ -2,7 +2,7 @@
 
 ## Layered Error Model
 
-Aria has a three-tier error system:
+Nitpick has a three-tier error system:
 
 | Tier | Mechanism | Scope | Recovery |
 |------|-----------|-------|----------|

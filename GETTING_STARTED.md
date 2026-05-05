@@ -1,32 +1,32 @@
-# Getting Started with Aria — Tester's Guide
+# Getting Started with Nitpick — Tester's Guide
 
-Welcome! This guide will walk you through everything you need to set up the Aria compiler on your Linux Mint machine, write and compile Aria programs, and report any bugs you find. Every step is spelled out — just follow along in order.
+Welcome! This guide will walk you through everything you need to set up the Nitpick compiler on your Linux Mint machine, write and compile Nitpick programs, and report any bugs you find. Every step is spelled out — just follow along in order.
 
 ---
 
 ## Table of Contents
 
-1. [What is Aria?](#1-what-is-aria)
+1. [What is Nitpick?](#1-what-is-nitpick)
 2. [Install Prerequisites](#2-install-prerequisites)
-3. [Clone the Aria Repository](#3-clone-the-aria-repository)
+3. [Clone the Nitpick Repository](#3-clone-the-nitpick-repository)
 4. [Build the Compiler](#4-build-the-compiler)
-5. [Your First Aria Program](#5-your-first-aria-program)
+5. [Your First Nitpick Program](#5-your-first-nitpick-program)
 6. [Install VS Code Syntax Highlighting](#6-install-vs-code-syntax-highlighting)
 7. [Key Reference Files](#7-key-reference-files)
 8. [Compiling Programs — Quick Reference](#8-compiling-programs--quick-reference)
 9. [Exploring the Examples](#9-exploring-the-examples)
-10. [Aria Language Crash Course](#10-aria-language-crash-course)
+10. [Nitpick Language Crash Course](#10-nitpick-language-crash-course)
 11. [Prompts for Your AI Assistant](#11-prompts-for-your-ai-assistant)
 12. [How to Report Bugs](#12-how-to-report-bugs)
 13. [Troubleshooting](#13-troubleshooting)
 
 ---
 
-## 1. What is Aria?
+## 1. What is Nitpick?
 
-Aria is a compiled systems programming language. Think of it like C or Rust, but with its own unique syntax. You write `.aria` files, compile them with the `ariac` compiler, and get a native executable you can run directly. It compiles down to machine code via LLVM — so the programs are fast.
+Nitpick is a compiled systems programming language. Think of it like C or Rust, but with its own unique syntax. You write `.npk` files, compile them with the `npkc` compiler, and get a native executable you can run directly. It compiles down to machine code via LLVM — so the programs are fast.
 
-Aria is under active development (version 0.17.x), so **you may find bugs**. That's exactly what we need your help with! When something doesn't work the way you'd expect, that's valuable information.
+Nitpick is under active development (version 0.18.0), so **you may find bugs**. That's exactly what we need your help with! When something doesn't work the way you'd expect, that's valuable information.
 
 ---
 
@@ -50,7 +50,7 @@ This installs the C++ compiler (`g++`), the build system (`cmake`), and `git` fo
 
 ### Step 3: Install LLVM 20
 
-Aria requires LLVM version 20. On Linux Mint 22.3 (based on Ubuntu 24.04), this is available in the default repositories:
+Nitpick requires LLVM version 20. On Linux Mint 22.3 (based on Ubuntu 24.04), this is available in the default repositories:
 
 ```bash
 sudo apt install -y llvm-20-dev
@@ -87,7 +87,7 @@ If any of those commands fail or show a version that's too old, stop here and le
 
 ---
 
-## 3. Clone the Aria Repository
+## 3. Clone the Nitpick Repository
 
 ### Option A: HTTPS (recommended if you haven't set up SSH keys)
 
@@ -125,7 +125,7 @@ The install script handles everything — prerequisite checking, building, and o
 ./install.sh --build-only
 ```
 
-This will check prerequisites, then build `ariac`, `aria-ls`, `aria-pkg`, `aria-doc`, and `aria-safety`. To also install them to `/usr/local/bin`:
+This will check prerequisites, then build `npkc`, `aria-ls`, `npkpkg`, `aria-doc`, and `aria-safety`. To also install them to `/usr/local/bin`:
 
 ```bash
 sudo ./install.sh
@@ -147,10 +147,10 @@ This will:
 When it finishes, verify the compiler was built:
 
 ```bash
-./build/ariac --help
+./build/npkc --help
 ```
 
-You should see the compiler's usage message listing all the flags and options. If you see that, **congratulations — you have a working Aria compiler!**
+You should see the compiler's usage message listing all the flags and options. If you see that, **congratulations — you have a working Nitpick compiler!**
 
 ### If the build fails
 
@@ -183,11 +183,11 @@ See [INSTALL.md](https://github.com/alternative-intelligence-cp/aria/blob/main/I
 
 ---
 
-## 5. Your First Aria Program
+## 5. Your First Nitpick Program
 
 ### Create a file
 
-Open VS Code, create a new file called `hello.aria`, and paste this:
+Open VS Code, create a new file called `hello.npk`, and paste this:
 
 ```aria
 func:main = int32(){
@@ -204,10 +204,10 @@ Save it somewhere you can find it (your home directory is fine).
 In the terminal, navigate to where you saved the file and run:
 
 ```bash
-~/aria/build/ariac hello.aria -o hello
+~/aria/build/npkc hello.npk -o hello
 ```
 
-This compiles `hello.aria` into an executable called `hello`.
+This compiles `hello.npk` into an executable called `hello`.
 
 ### Run it
 
@@ -226,13 +226,13 @@ Hello, World!
 - `func:main = int32()` — declares the main function (entry point), returns an int32
 - `print("Hello, World!")` — prints text to the screen
 - `pass(0)` — returns 0 (success) from the function
-- The `};` at the end closes the function (yes, functions end with `};` in Aria)
+- The `};` at the end closes the function (yes, functions end with `};` in Nitpick)
 
 ---
 
 ## 6. Install VS Code Syntax Highlighting
 
-The Aria repository includes a VS Code extension for syntax highlighting.
+The Nitpick repository includes a VS Code extension for syntax highlighting.
 
 ### Step 1: Copy the extension
 
@@ -246,7 +246,7 @@ Close VS Code completely and reopen it. (Or press Ctrl+Shift+P, type "Reload Win
 
 ### Step 3: Verify
 
-Open any `.aria` file. You should see syntax highlighting — keywords in one color, strings in another, comments greyed out, etc.
+Open any `.npk` file. You should see syntax highlighting — keywords in one color, strings in another, comments greyed out, etc.
 
 If it doesn't work, you can also try:
 ```bash
@@ -268,7 +268,7 @@ These are the important files to know about inside the `~/aria/` directory:
 | `.internal/aria_specs.txt` | The complete language specification (7,000+ lines — reference, not tutorial) |
 | `KNOWN_ISSUES.md` | Known bugs and limitations — check here before reporting |
 | `ARCHITECTURE.md` | How the compiler works internally |
-| `SAFETY.md` | Aria's three-layer safety system |
+| `SAFETY.md` | Nitpick's three-layer safety system |
 | `CHANGELOG.md` | Version history and changes |
 | `tests/` | 400+ test files — great for seeing how features are used |
 | `stdlib/` | Standard library source code |
@@ -279,7 +279,7 @@ The programming guide at `aria_ecosystem/programming_guide/` is organized by top
 
 | Directory | Topics |
 |---|---|
-| `types/` | All Aria types (int8-int64, uint8-uint64, flt32/flt64, bool, string, int128-int4096, and more) |
+| `types/` | All Nitpick types (int8-int64, uint8-uint64, flt32/flt64, bool, string, int128-int4096, and more) |
 | `functions/` | Function syntax, generics, closures, async |
 | `control_flow/` | if/else, while, till, pick (switch), loops |
 | `operators/` | All operators (+, -, *, /, comparisons, bitwise, etc.) |
@@ -296,38 +296,38 @@ The programming guide at `aria_ecosystem/programming_guide/` is organized by top
 
 ```bash
 # Basic compile and run:
-~/aria/build/ariac myfile.aria -o myprogram
+~/aria/build/npkc myfile.npk -o myprogram
 ./myprogram
 
 # Compile with optimizations:
-~/aria/build/ariac myfile.aria -o myprogram -O2
+~/aria/build/npkc myfile.npk -o myprogram -O2
 
 # See the generated LLVM IR (useful for bug reports):
-~/aria/build/ariac myfile.aria --emit-llvm
+~/aria/build/npkc myfile.npk --emit-llvm
 
 # See the generated assembly:
-~/aria/build/ariac myfile.aria --emit-asm
+~/aria/build/npkc myfile.npk --emit-asm
 
 # Compile with verbose output (shows what the compiler is doing):
-~/aria/build/ariac myfile.aria -o myprogram -v
+~/aria/build/npkc myfile.npk -o myprogram -v
 
 # Compile a multi-file project (modules):
-~/aria/build/ariac main.aria utils.aria -o myprogram
+~/aria/build/npkc main.npk utils.npk -o myprogram
 
 # Link against a C library (e.g., math):
-~/aria/build/ariac myfile.aria -o myprogram -lm
+~/aria/build/npkc myfile.npk -o myprogram -lm
 ```
 
 **Tip**: You can create an alias so you don't have to type the full path every time. Add this to the end of your `~/.bashrc` file:
 
 ```bash
-alias ariac="$HOME/aria/build/ariac"
+alias npkc="$HOME/aria/build/npkc"
 ```
 
 Then open a new terminal (or run `source ~/.bashrc`), and you can just type:
 
 ```bash
-ariac myfile.aria -o myprogram
+npkc myfile.npk -o myprogram
 ```
 
 ---
@@ -340,19 +340,19 @@ The `examples/basic/` directory has 5 beginner-friendly examples. Try compiling 
 cd ~/aria/examples/basic
 
 # Hello World
-~/aria/build/ariac 01_hello_world.aria -o hello && ./hello
+~/aria/build/npkc 01_hello_world.npk -o hello && ./hello
 
 # Variables and Types
-~/aria/build/ariac 02_variables.aria -o variables && ./variables
+~/aria/build/npkc 02_variables.npk -o variables && ./variables
 
 # Functions
-~/aria/build/ariac 03_functions.aria -o functions && ./functions
+~/aria/build/npkc 03_functions.npk -o functions && ./functions
 
 # Control Flow (if/else, loops)
-~/aria/build/ariac 04_control_flow.aria -o control_flow && ./control_flow
+~/aria/build/npkc 04_control_flow.npk -o control_flow && ./control_flow
 
 # Memory
-~/aria/build/ariac 05_memory.aria -o memory && ./memory
+~/aria/build/npkc 05_memory.npk -o memory && ./memory
 ```
 
 After those, check out the more advanced examples in `examples/`:
@@ -361,13 +361,13 @@ After those, check out the more advanced examples in `examples/`:
 ls ~/aria/examples/
 ```
 
-Look for things like `rpn_calc.aria` (calculator), `tictactoe.aria` (game), `number_demo.aria`, etc.
+Look for things like `rpn_calc.npk` (calculator), `tictactoe.npk` (game), `number_demo.npk`, etc.
 
 ---
 
-## 10. Aria Language Crash Course
+## 10. Nitpick Language Crash Course
 
-Here's a quick overview of how Aria differs from languages you might have seen:
+Here's a quick overview of how Nitpick differs from languages you might have seen:
 
 ### Variables — type comes first
 
@@ -375,7 +375,7 @@ Here's a quick overview of how Aria differs from languages you might have seen:
 int32:x = 42;
 flt64:pi = 3.14159;
 bool:done = false;
-string:name = "Aria";
+string:name = "Nitpick";
 ```
 
 ### Functions — `func:name = returnType(params){ body };`
@@ -437,7 +437,7 @@ pick(value){
 }
 ```
 
-### Result type — Aria's error handling
+### Result type — Nitpick's error handling
 
 Functions return `result` types with `.val` (the value) and `.err` (error code):
 
@@ -464,11 +464,11 @@ func:main = int32(){
 
 ## 11. Prompts for Your AI Assistant
 
-Here are some prompts you can give Copilot (or any AI assistant) to help you write Aria code. **Copy the relevant prompt and paste it into your AI chat.**
+Here are some prompts you can give Copilot (or any AI assistant) to help you write Nitpick code. **Copy the relevant prompt and paste it into your AI chat.**
 
-### Starter prompt — teach your AI about Aria
+### Starter prompt — teach your AI about Nitpick
 
-> I'm writing code in a new programming language called Aria. Here are the key syntax rules:
+> I'm writing code in a new programming language called Nitpick. Here are the key syntax rules:
 >
 > - Variables: `type:name = value;` (e.g., `int32:x = 42;`)
 > - Functions: `func:name = returnType(type:param){ body };` — note the semicolon after `}`
@@ -487,17 +487,17 @@ Here are some prompts you can give Copilot (or any AI assistant) to help you wri
 > - Result type: `result:r = func(); r.val` for value, `r.err` for error code
 > - The failsafe function is required as an error handler: `func:failsafe = NIL(int32:err_code) {};`
 >
-> I have the language spec at `.internal/aria_specs.txt` and examples in `examples/basic/` in my project. Help me write Aria programs following these rules.
+> I have the language spec at `.internal/aria_specs.txt` and examples in `examples/basic/` in my project. Help me write Nitpick programs following these rules.
 
-### When porting code to Aria
+### When porting code to Nitpick
 
-> I have this [Python/JavaScript/etc.] code that I want to rewrite in Aria. Remember Aria uses `type:name` for variables (like `int32:x`), `pass()` instead of `return`, functions end with `};`, and string interpolation uses backticks with `&{}`. Please convert this code to Aria syntax:
+> I have this [Python/JavaScript/etc.] code that I want to rewrite in Nitpick. Remember Nitpick uses `type:name` for variables (like `int32:x`), `pass()` instead of `return`, functions end with `};`, and string interpolation uses backticks with `&{}`. Please convert this code to Nitpick syntax:
 >
 > [paste your code here]
 
 ### When something doesn't compile
 
-> I'm getting a compiler error in Aria. The compiler is called `ariac`. Here's my code and the error message. Can you help me figure out what's wrong? Remember Aria syntax requires `type:name` for variables, `pass()` for return values, and functions are declared as `func:name = returnType(params){ body };`
+> I'm getting a compiler error in Nitpick. The compiler is called `npkc`. Here's my code and the error message. Can you help me figure out what's wrong? Remember Nitpick syntax requires `type:name` for variables, `pass()` for return values, and functions are declared as `func:name = returnType(params){ body };`
 >
 > **Code:**
 > [paste code]
@@ -507,7 +507,7 @@ Here are some prompts you can give Copilot (or any AI assistant) to help you wri
 
 ### When exploring crypto/data analysis features
 
-> I want to write a data analysis tool in Aria. Aria has large integer types (int128 up to int4096) which could be useful for crypto calculations. It also has flt64 for floating-point math. Help me write an Aria program that [describe what you want]. Remember the Aria syntax rules: `type:name` for variables, `pass()` to return, `func:name = returnType(params){ body };` for functions.
+> I want to write a data analysis tool in Nitpick. Nitpick has large integer types (int128 up to int4096) which could be useful for crypto calculations. It also has flt64 for floating-point math. Help me write an Nitpick program that [describe what you want]. Remember the Nitpick syntax rules: `type:name` for variables, `pass()` to return, `func:name = returnType(params){ body };` for functions.
 
 ---
 
@@ -540,7 +540,7 @@ include all of them.]
 
 --- COMPILER COMMAND ---
 [The exact command you ran, e.g.:]
-~/aria/build/ariac myfile.aria -o myprogram
+~/aria/build/npkc myfile.npk -o myprogram
 
 --- COMPILER OUTPUT ---
 [Paste the COMPLETE output from the compiler. Include any error messages,
@@ -548,7 +548,7 @@ warnings, or crash output. If the program compiled but crashed when running,
 include that output too.]
 
 --- LLVM IR (if possible) ---
-[Run: ~/aria/build/ariac myfile.aria --emit-llvm 2>&1 ]
+[Run: ~/aria/build/npkc myfile.npk --emit-llvm 2>&1 ]
 [Paste the output here — this helps us debug. Skip if the compiler crashes
 before producing IR.]
 
@@ -604,17 +604,17 @@ echo "LLVM: $(llvm-config-20 --version)" >> bugreport.txt
 echo "OS: $(lsb_release -d -s)" >> bugreport.txt
 echo "" >> bugreport.txt
 echo "--- SOURCE CODE ---" >> bugreport.txt
-cat YOUR_FILE.aria >> bugreport.txt
+cat YOUR_FILE.npk >> bugreport.txt
 echo "" >> bugreport.txt
 echo "--- COMPILER OUTPUT ---" >> bugreport.txt
-~/aria/build/ariac YOUR_FILE.aria -o testprog 2>&1 >> bugreport.txt
+~/aria/build/npkc YOUR_FILE.npk -o testprog 2>&1 >> bugreport.txt
 echo "" >> bugreport.txt
 echo "--- PROGRAM OUTPUT ---" >> bugreport.txt
 ./testprog 2>&1 >> bugreport.txt
 echo "=== END REPORT ===" >> bugreport.txt
 ```
 
-(Replace `YOUR_FILE.aria` with your actual filename.)
+(Replace `YOUR_FILE.npk` with your actual filename.)
 
 Then just email us the `bugreport.txt` file.
 
@@ -622,9 +622,9 @@ Then just email us the `bugreport.txt` file.
 
 ## 13. Troubleshooting
 
-### "command not found: ariac"
+### "command not found: npkc"
 
-You need to use the full path: `~/aria/build/ariac`. Or set up the alias described in [section 8](#8-compiling-programs--quick-reference).
+You need to use the full path: `~/aria/build/npkc`. Or set up the alias described in [section 8](#8-compiling-programs--quick-reference).
 
 ### "llvm-config-20: command not found"
 
@@ -655,7 +655,7 @@ chmod +x ~/aria/scripts/build.sh
    ```
    If that file doesn't exist, redo step 6.
 2. Restart VS Code completely (close all windows, reopen).
-3. Make sure your file has the `.aria` extension.
+3. Make sure your file has the `.npk` extension.
 
 ### Program compiled but nothing happened
 
@@ -681,7 +681,7 @@ git pull
 
 ## 14. Database Client Libraries
 
-Aria includes client libraries for four popular databases. Each uses a C shim to bridge Aria's FFI to the database's native C library.
+Nitpick includes client libraries for four popular databases. Each uses a C shim to bridge Nitpick's FFI to the database's native C library.
 
 ### Prerequisites
 
@@ -714,7 +714,7 @@ cc -O2 -shared -fPIC -Wall -o libaria_sqlite_shim.so aria_sqlite_shim.c -lsqlite
 cd ..
 
 # 2. Compile your program that uses the library
-ariac my_program.aria -L shim -laria_sqlite_shim -lsqlite3 -o my_program
+npkc my_program.npk -L shim -laria_sqlite_shim -lsqlite3 -o my_program
 
 # 3. Run (shim must be in library path)
 LD_LIBRARY_PATH=shim ./my_program
@@ -762,11 +762,11 @@ All SQL database packages support parameterized queries to prevent SQL injection
 - [ ] Installed liburing-dev
 - [ ] Cloned the repository
 - [ ] Built the compiler with `./scripts/build.sh`
-- [ ] Compiled and ran `hello.aria`
+- [ ] Compiled and ran `hello.npk`
 - [ ] Installed VS Code syntax highlighting
 - [ ] Read through `examples/basic/`
-- [ ] Set up the `ariac` alias (optional but recommended)
-- [ ] Gave your AI assistant the Aria syntax primer prompt
+- [ ] Set up the `npkc` alias (optional but recommended)
+- [ ] Gave your AI assistant the Nitpick syntax primer prompt
 
 ---
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebAssembly Target - Aria Programming Guide</title>
+    <title>WebAssembly Target - Nitpick Programming Guide</title>
     <style>
         :root {
             --bg-main: #1e1e1e;
@@ -218,7 +218,7 @@
 </head>
 <body>
     <nav>
-        <h2>Aria Guide</h2>
+        <h2>Nitpick Guide</h2>
         <div class="category">
 <h3>Advanced Features</h3>
 <ul>
@@ -354,7 +354,7 @@
         <h1>WebAssembly Target</h1>
 <h2>Overview</h2>
 <p>
-Aria can target WebAssembly (WASM) via LLVM's wasm32 backend.
+Nitpick can target WebAssembly (WASM) via LLVM's wasm32 backend.
 </p>
 <h2>Limitations</h2>
 <p>
@@ -367,7 +367,7 @@ Current WASM limitations:
 <li>No FFI with native C libraries</li>
 </ul>
 <h2>Building for WASM</h2>
-<pre><code>ariac --target wasm32 source.aria -o output.wasm</code></pre>
+<pre><code>npkc --target wasm32 source.npk -o output.wasm</code></pre>
 <h2>Related</h2>
 <ul><li><a href="../functions/extern.md">functions/extern.md</a> — FFI (not available in WASM)</li>
 <li><a href="../io_system/sys.md">io_system/sys.md</a> — syscalls (not available in WASM)</li>

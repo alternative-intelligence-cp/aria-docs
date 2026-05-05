@@ -1,4 +1,4 @@
-# Aria Language Server Protocol (aria-lsp)
+# Nitpick Language Server Protocol (aria-lsp)
 
 **Component Type**: Language Server / IDE Integration  
 **Language**: C++20 (planned)  
@@ -23,7 +23,7 @@
 
 ## Overview
 
-The Aria Language Server (aria-lsp) provides IDE integration for Aria development. It implements the Language Server Protocol (LSP), enabling rich editing features in any LSP-compatible editor (VSCode, Vim, Emacs, etc.).
+The Nitpick Language Server (aria-lsp) provides IDE integration for Nitpick development. It implements the Language Server Protocol (LSP), enabling rich editing features in any LSP-compatible editor (VSCode, Vim, Emacs, etc.).
 
 ### Key Features
 
@@ -122,7 +122,7 @@ libaria_frontend.a
 ```
 
 **Used by**:
-- `ariac` (compiler): Links with libaria_frontend.a
+- `npkc` (compiler): Links with libaria_frontend.a
 - `aria-lsp` (language server): Links with libaria_frontend.a
 
 **Difference**:
@@ -265,7 +265,7 @@ func:main = int64() {
 
 **Example**:
 ```aria
-// File: src/main.aria
+// File: src/main.npk
 use parser;
 
 func:main = int64() {
@@ -275,16 +275,16 @@ func:main = int64() {
 }
 ```
 
-**LSP Response**: Jump to definition in `src/parser.aria`:
+**LSP Response**: Jump to definition in `src/parser.npk`:
 ```aria
-// File: src/parser.aria
+// File: src/parser.npk
 func:parse = result<ast>(code: string) {
     // ... implementation
 }
 ```
 
 **Symbol Table Lookup**:
-1. Resolve `parser` → module `src/parser.aria`
+1. Resolve `parser` → module `src/parser.npk`
 2. Resolve `parse` → function definition at line 5, col 6
 3. Return location to editor
 
@@ -303,10 +303,10 @@ func:parse = result<ast>(code: string) {
 
 **Results**:
 ```
-src/parser.aria:10:6    - Definition
-src/parser.aria:45:12   - Call: parse_expr(tokens)
-src/main.aria:23:9      - Call: expr = parse_expr(input)
-tests/test_parser.aria:15:5 - Call: parse_expr("1 + 2")
+src/parser.npk:10:6    - Definition
+src/parser.npk:45:12   - Call: parse_expr(tokens)
+src/main.npk:23:9      - Call: expr = parse_expr(input)
+tests/test_parser.npk:15:5 - Call: parse_expr("1 + 2")
 ```
 
 ---
@@ -421,7 +421,7 @@ func:main = int64() {
 
 ---
 
-## Aria-Specific Extensions
+## Nitpick-Specific Extensions
 
 ### TBB Range Information
 
@@ -432,7 +432,7 @@ func:main = int64() {
 {
   "method": "aria/tbbRange",
   "params": {
-    "textDocument": {"uri": "file:///src/main.aria"},
+    "textDocument": {"uri": "file:///src/main.npk"},
     "position": {"line": 2, "character": 10}
   }
 }
@@ -461,7 +461,7 @@ func:main = int64() {
 {
   "method": "aria/resultFlow",
   "params": {
-    "textDocument": {"uri": "file:///src/main.aria"},
+    "textDocument": {"uri": "file:///src/main.npk"},
     "position": {"line": 5, "character": 20}
   }
 }
@@ -526,9 +526,9 @@ func:main = int64() {
 
 **Example**:
 - Project has 100 files
-- User opens `main.aria`
+- User opens `main.npk`
 - LSP parses all 100 files (symbol table only)
-- Full analysis only on `main.aria` + its imports
+- Full analysis only on `main.npk` + its imports
 - Result: Instant startup, accurate diagnostics for open files
 
 ---
@@ -550,7 +550,7 @@ User types → Queue parse request → Background thread processes → Send diag
 
 ## Integration Points
 
-### With Aria Compiler
+### With Nitpick Compiler
 
 **Shared Library**: `libaria_frontend.a`
 
@@ -560,7 +560,7 @@ User types → Queue parse request → Background thread processes → Send diag
 
 ---
 
-### With AriaBuild
+### With NpkBld
 
 **Project Context**:
 - LSP reads `build.abc` to understand project structure
@@ -606,7 +606,7 @@ std.mem
 
 **Installation**:
 ```bash
-code --install-extension aria-lang.aria-vscode
+code --install-extension aria-lang.npk-vscode
 ```
 
 **Extension activates aria-lsp**:
@@ -659,9 +659,9 @@ code --install-extension aria-lang.aria-vscode
 
 ## Related Components
 
-- **[Aria Compiler](ARIA_COMPILER.md)**: Shares frontend (lexer, parser, semantic)
+- **[Nitpick Compiler](ARIA_COMPILER.md)**: Shares frontend (lexer, parser, semantic)
 - **[aria-dap](ARIA_DAP.md)**: Debug adapter (complementary to LSP)
-- **[AriaBuild](ARIABUILD.md)**: Provides project context
+- **[NpkBld](ARIABUILD.md)**: Provides project context
 - **[AriaX](ARIAX.md)**: Package resolution for imports
 
 ---

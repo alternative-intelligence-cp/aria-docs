@@ -1,8 +1,8 @@
-# Aria WebAssembly Compilation Guide
+# Nitpick WebAssembly Compilation Guide
 
 ## Overview
 
-Aria v0.2.13 adds WebAssembly (WASM) as a compilation target. Compile Aria programs to `.wasm` files that run in WASI-compatible runtimes like `wasmtime`, `wasmer`, or `wasm3`.
+Nitpick v0.2.13 adds WebAssembly (WASM) as a compilation target. Compile Nitpick programs to `.wasm` files that run in WASI-compatible runtimes like `wasmtime`, `wasmer`, or `wasm3`.
 
 ## Prerequisites
 
@@ -24,13 +24,13 @@ Aria v0.2.13 adds WebAssembly (WASM) as a compilation target. Compile Aria progr
 ### Basic Compilation
 
 ```bash
-ariac program.aria --emit-wasm -o program.wasm
+npkc program.npk --emit-wasm -o program.wasm
 ```
 
 ### With Explicit Target
 
 ```bash
-ariac program.aria --emit-wasm --target=wasm32-wasi -o program.wasm
+npkc program.npk --emit-wasm --target=wasm32-wasi -o program.wasm
 ```
 
 ### Running
@@ -78,7 +78,7 @@ The compiler's compatibility checker scans your code and warns about unsupported
 
 ```
                     ┌─────────────┐
- program.aria  ──>  │  Aria Parser │
+ program.npk  ──>  │  Nitpick Parser │
                     └──────┬──────┘
                            │ AST
                     ┌──────▼──────┐
@@ -129,7 +129,7 @@ func:failsafe = void(int32:err_code) {};
 ```
 
 ```bash
-ariac hello.aria --emit-wasm -o hello.wasm
+npkc hello.npk --emit-wasm -o hello.wasm
 wasmtime hello.wasm
 # Output: Hello from WebAssembly!
 ```

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Extern — FFI with C - Aria Programming Guide</title>
+    <title>Extern — FFI with C - Nitpick Programming Guide</title>
     <style>
         :root {
             --bg-main: #1e1e1e;
@@ -218,7 +218,7 @@
 </head>
 <body>
     <nav>
-        <h2>Aria Guide</h2>
+        <h2>Nitpick Guide</h2>
         <div class="category">
 <h3>Advanced Features</h3>
 <ul>
@@ -353,7 +353,7 @@
         <div class="breadcrumb"><a href="/">Home</a> / Functions</div>
         <h1>Extern — FFI with C</h1>
 <h2>Overview</h2>
-<code>extern</code> blocks declare C functions callable from Aria. Extern functions do <strong>not</strong>
+<code>extern</code> blocks declare C functions callable from Nitpick. Extern functions do <strong>not</strong>
 <p>
 return <code>Result<T></code> — they return raw values.
 </p>
@@ -379,7 +379,7 @@ Or flat (no library block):
 </p>
 <h2>String ABI</h2>
 <p>
-| Direction | Aria Type | C Type |
+| Direction | Nitpick Type | C Type |
 |-----------|-----------|--------|
 | Parameter | <code>string</code> | <code>const char*</code> |
 | Return | <code>string</code> | <code>AriaString {char* data, int64_t length}</code> |
@@ -389,7 +389,7 @@ C shims for string-returning functions must return the AriaString struct.
 </p>
 <h2>Float ABI</h2>
 <p>
-Aria's <code>flt32</code> passes as <code>double</code> at the C ABI level. C shims must use <code>double</code> params:
+Nitpick's <code>flt32</code> passes as <code>double</code> at the C ABI level. C shims must use <code>double</code> params:
 </p>
 <pre><code>// C side
 <p>
@@ -421,7 +421,7 @@ exit 1;
 }</code></pre>
 </p>
 <h2>Related</h2>
-<ul><li><a href="../modules/use_import.md">modules/use_import.md</a> — importing Aria modules</li>
+<ul><li><a href="../modules/use_import.md">modules/use_import.md</a> — importing Nitpick modules</li>
 <li><a href="../types/string.md">types/string.md</a> — string ABI details</li>
 </ul>
     </main>

@@ -1,4 +1,4 @@
-# Aria Ecosystem - Component Tree
+# Nitpick Ecosystem - Component Tree
 
 **Document Version**: 1.0  
 **Last Updated**: December 22, 2025  
@@ -11,8 +11,8 @@
 ```
 AILP/
 ├── Core Language & Compiler/
-│   ├── Aria Programming Language
-│   ├── ariac (Compiler Executable)
+│   ├── Nitpick Programming Language
+│   ├── npkc (Compiler Executable)
 │   └── libaria_runtime.a (Runtime Library)
 │
 ├── Development Tools/
@@ -22,7 +22,7 @@ AILP/
 │   └── VSCode Extension
 │
 ├── Build & Package Management/
-│   ├── AriaBuild (Build System)
+│   ├── NpkBld (Build System)
 │   ├── AriaX (Package Manager)
 │   └── AriaX Linux (Custom Distribution)
 │
@@ -37,7 +37,7 @@ AILP/
 
 ## 1. Core Language & Compiler
 
-### 1.1 Aria Programming Language
+### 1.1 Nitpick Programming Language
 
 **Repository**: `/home/randy/._____RANDY_____/REPOS/aria`  
 **Version**: v0.2.0 (March 2026)  
@@ -45,7 +45,7 @@ AILP/
 
 #### Language Features Tree
 ```
-Aria Language/
+Nitpick Language/
 ├── Type System/
 │   ├── Primitive Types/
 │   │   ├── Signed Integers (int8, int16, int32, int64, int128, int256, int512)
@@ -140,15 +140,15 @@ Aria Language/
 
 ---
 
-### 1.2 ariac (Compiler Executable)
+### 1.2 npkc (Compiler Executable)
 
-**Binary**: `/home/randy/._____RANDY_____/REPOS/aria/build/ariac`  
+**Binary**: `/home/randy/._____RANDY_____/REPOS/aria/build/npkc`  
 **Language**: C++20  
 **Dependencies**: LLVM 20, libaria_runtime (for linking)
 
 #### Compiler Pipeline Tree
 ```
-ariac/
+npkc/
 ├── Frontend/
 │   ├── Preprocessor/
 │   │   ├── File Reading
@@ -259,7 +259,7 @@ src/
 
 **Library**: `/home/randy/._____RANDY_____/REPOS/aria/build/libaria_runtime.a`  
 **Language**: C (with C++ support)  
-**Type**: Static library (linked into all Aria executables)
+**Type**: Static library (linked into all Nitpick executables)
 
 #### Runtime Library Tree
 ```
@@ -565,7 +565,7 @@ VSCode Extension/
 │   └── Breakpoint UI
 │
 ├── Build Tasks/
-│   ├── ariac Compilation
+│   ├── npkc Compilation
 │   └── Error Parsing
 │
 └── Snippets/
@@ -578,16 +578,16 @@ VSCode Extension/
 
 ## 3. Build & Package Management
 
-### 3.1 AriaBuild (Build System)
+### 3.1 NpkBld (Build System)
 
-**Repository**: `/home/randy/._____RANDY_____/REPOS/aria_make`  
+**Repository**: `/home/randy/._____RANDY_____/REPOS/npkbld`  
 **Executable**: `ariab` (TBD)  
-**Config Format**: ABC (Aria Build Config)  
+**Config Format**: ABC (Nitpick Build Config)  
 **Status**: Design phase
 
 #### Build System Tree
 ```
-AriaBuild/
+NpkBld/
 ├── ABC Format (Configuration)/
 │   ├── Project Metadata/
 │   │   ├── name, version, author
@@ -696,7 +696,7 @@ AriaX/
 │   └── ariax publish (for package authors)
 │
 └── Integration/
-    └── AriaBuild (automatic dependency fetching)
+    └── NpkBld (automatic dependency fetching)
 ```
 
 ---
@@ -723,13 +723,13 @@ AriaX Linux/
 │   │
 │   ├── Standard Utilities/
 │   │   ├── Recompiled for 6-stream support
-│   │   └── Aria-native implementations (long-term)
+│   │   └── Nitpick-native implementations (long-term)
 │   │
 │   └── Default Shell/
 │       └── AriaSH (aria_shell)
 │
-├── Aria Toolchain (Preinstalled)/
-│   ├── ariac (compiler)
+├── Nitpick Toolchain (Preinstalled)/
+│   ├── npkc (compiler)
 │   ├── libaria_runtime.a
 │   ├── aria-lsp, aria-dap, aria-doc
 │   ├── ariab (build system)
@@ -774,7 +774,7 @@ aria_shell/
 │   │
 │   ├── Parser/
 │   │   ├── Tokenizer (whitespace-insensitive)
-│   │   ├── AST Builder (Aria subset)
+│   │   ├── AST Builder (Nitpick subset)
 │   │   └── Variable Interpolation (&{VAR})
 │   │
 │   ├── Environment/
@@ -821,7 +821,7 @@ aria_shell/
 │   ├── Tab Completion/
 │   │   ├── Command Completion
 │   │   ├── Path Completion
-│   │   └── Aria Type Integration
+│   │   └── Nitpick Type Integration
 │   │
 │   ├── Job Control/
 │   │   ├── Background Jobs (&)
@@ -934,7 +934,7 @@ Nikola/
 │   ├── SIMD Optimization (AVX-512)
 │   ├── Multi-Threading (OpenMP)
 │   ├── GPU Acceleration (CUDA/OpenCL, future)
-│   └── I/O Integration (future Aria bindings)
+│   └── I/O Integration (future Nitpick bindings)
 │
 └── Research Documentation/
     ├── 02_foundations.md (15,933 lines)
@@ -951,16 +951,16 @@ Nikola/
 ```
 Component         | Depends On                                    | Used By
 ------------------|-----------------------------------------------|------------------------
-ariac             | LLVM, libaria_runtime (for linking)          | AriaBuild, VSCode
-libaria_runtime   | POSIX/Win32 APIs                              | ALL Aria programs, ariac
-aria-lsp          | ariac (lexer/parser)                          | VSCode Extension
-aria-dap          | LLDB, ariac                                   | VSCode Extension
-aria-doc          | ariac (AST)                                   | Documentation site
-AriaBuild         | ariac, AriaX                                  | Developers
-AriaX             | HTTP client, GPG                              | AriaBuild, system setup
+npkc             | LLVM, libaria_runtime (for linking)          | NpkBld, VSCode
+libaria_runtime   | POSIX/Win32 APIs                              | ALL Nitpick programs, npkc
+aria-lsp          | npkc (lexer/parser)                          | VSCode Extension
+aria-dap          | LLDB, npkc                                   | VSCode Extension
+aria-doc          | npkc (AST)                                   | Documentation site
+NpkBld         | npkc, AriaX                                  | Developers
+AriaX             | HTTP client, GPG                              | NpkBld, system setup
 aria_shell        | libaria_runtime, TBB                          | End users, AriaX Linux
 AriaX Linux       | Kernel patch, aria toolchain                  | Infrastructure
-Nikola            | C++23, AVX-512, (future) Aria FFI bindings    | AI applications
+Nikola            | C++23, AVX-512, (future) Nitpick FFI bindings    | AI applications
 VSCode Extension  | aria-lsp, aria-dap                            | Developers
 ```
 
@@ -974,7 +974,7 @@ VSCode Extension  | aria-lsp, aria-dap                            | Developers
 /home/randy/._____RANDY_____/REPOS/
 ├── aria/                    # Compiler + Runtime
 ├── aria_shell/              # Shell (research phase)
-├── aria_make/               # Build system (design)
+├── npkbld/               # Build system (design)
 ├── ariax/                   # Package manager + distro
 ├── nikola/                  # Consciousness substrate
 └── aria_ecosystem/          # THIS DOCUMENTATION

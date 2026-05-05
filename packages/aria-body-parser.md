@@ -4,7 +4,7 @@
 **Category**: middleware, http
 **License**: MIT
 
-HTTP request body parser for Aria. Detects content type, parses URL-encoded
+HTTP request body parser for Nitpick. Detects content type, parses URL-encoded
 form data, and provides field access by name or index.
 
 ## API Reference
@@ -29,7 +29,7 @@ form data, and provides field access by name or index.
 ## Quick Start
 
 ```aria
-use "aria_body_parser.aria".*;
+use "aria_body_parser.npk".*;
 
 func:main = int32() {
     int64:bp = raw body_parse("application/x-www-form-urlencoded", "name=Alice&age=30");

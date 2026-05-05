@@ -21,7 +21,7 @@ complex<flt64>:z = { real = 3.0, imag = 4.0 };  // 3 + 4i
 Standard complex arithmetic via stdlib functions:
 
 ```aria
-use "complex.aria".*;
+use "complex.npk".*;
 
 complex<flt64>:a = raw complex_new(1.0, 2.0);
 complex<flt64>:b = raw complex_new(3.0, 4.0);
@@ -45,7 +45,7 @@ Interleaved layout for SIMD: `[real₀, imag₀, real₁, imag₁, ...]`
 
 ## Status
 
-Implemented in stdlib (`complex.aria`, 510 lines). Generic over all `Numeric` trait
+Implemented in stdlib (`complex.npk`, 510 lines). Generic over all `Numeric` trait
 types. 10+ test files covering basic operations, generics, and turbofish syntax.
 
 ## Related

@@ -4,7 +4,7 @@
 **Category**: graphics, gamedev, gpu
 **License**: Apache-2.0 WITH Runtime-Library-Exception
 
-OpenGL 3.3 Core Profile bindings for Aria. Provides direct access to the GPU
+OpenGL 3.3 Core Profile bindings for Nitpick. Provides direct access to the GPU
 shader pipeline — vertex buffers, shader compilation, uniform uploads, and draw
 calls — for custom 3D rendering and post-processing effects beyond what the
 raylib-based packages support.
@@ -27,7 +27,7 @@ Uses SDL2 for windowing/OpenGL context creation and GLAD for GL function loading
 ## Quick Start
 
 ```aria
-use "../src/aria_opengl.aria".*;
+use "../src/aria_opengl.npk".*;
 
 func:main = int32() {
     int32:ok = gl_init(800i32, 600i32, "OpenGL Triangle");
@@ -233,7 +233,7 @@ Requires: `libSDL2-dev`, GLAD headers (included).
 ## Compile Your Program
 
 ```bash
-ariac my_app.aria -o my_app \
+npkc my_app.npk -o my_app \
   -L packages/aria-opengl/shim \
   -laria_opengl_shim $(sdl2-config --libs) -lGL -lm
 ```
@@ -250,7 +250,7 @@ aria-opengl/
 │   ├── khrplatform.h
 │   └── Makefile
 └── src/
-    └── aria_opengl.aria    # Aria bindings + constants (pub wrappers)
+    └── aria_opengl.npk    # Nitpick bindings + constants (pub wrappers)
 ```
 
 ## See Also

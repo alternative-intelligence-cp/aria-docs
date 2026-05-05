@@ -2,9 +2,9 @@
 
 ## Overview
 
-**Every function in Aria returns `Result<T>`** (except extern functions). The compiler
+**Every function in Nitpick returns `Result<T>`** (except extern functions). The compiler
 forces you to handle the result — unhandled Results are compile errors. This is the
-core of Aria's safety model at the function level.
+core of Nitpick's safety model at the function level.
 
 ## Structure
 

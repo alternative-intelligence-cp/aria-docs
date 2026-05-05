@@ -2,7 +2,7 @@
 
 ## Syntax
 
-Aria functions use the `func:name = return_type(params)` syntax:
+Nitpick functions use the `func:name = return_type(params)` syntax:
 
 ```aria
 func:add = int32(int32:a, int32:b) {

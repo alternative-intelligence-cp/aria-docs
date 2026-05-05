@@ -1,4 +1,4 @@
-# Aria Programming Guide
+# Nitpick Programming Guide
 
 **Version:** 0.16.8  
 **Last Updated:** 2026-04-07
@@ -7,7 +7,7 @@
 
 | Section | Description |
 |---------|-------------|
-| [types/](types/) | All Aria types — integers, floats, TBB, strings, structs, etc. |
+| [types/](types/) | All Nitpick types — integers, floats, TBB, strings, structs, etc. |
 | [operators/](operators/) | Arithmetic, comparison, logical, bitwise, result, and special operators |
 | [functions/](functions/) | Function declaration, main/failsafe, pass/fail, extern, generics |
 | [control_flow/](control_flow/) | if/else, for, while, loop/till, when, pick |

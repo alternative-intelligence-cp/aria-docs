@@ -2,7 +2,7 @@
 
 ## Syntax
 
-Aria's equivalent of switch/case:
+Nitpick's equivalent of switch/case:
 
 ```aria
 pick (value) {

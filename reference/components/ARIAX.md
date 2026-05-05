@@ -1,4 +1,4 @@
-# AriaX - Aria Package Manager & Distribution
+# AriaX - Nitpick Package Manager & Distribution
 
 **Component Type**: Package Manager + Linux Distribution  
 **Language**: C++20 (planned) + Bash scripts  
@@ -25,12 +25,12 @@
 
 AriaX serves a **dual purpose**:
 
-1. **Package Manager**: Like npm, cargo, or apt - manages Aria libraries and tools
+1. **Package Manager**: Like npm, cargo, or apt - manages Nitpick libraries and tools
 2. **Linux Distribution**: Custom OS with kernel support for 6-stream I/O topology
 
 ### Package Manager Features
 
-- Download and install Aria packages
+- Download and install Nitpick packages
 - Dependency resolution with semantic versioning
 - Cryptographic verification (GPG signatures + SHA-256)
 - Global and local package installation
@@ -39,8 +39,8 @@ AriaX serves a **dual purpose**:
 ### Linux Distribution Features
 
 - Kernel patch: Reserve FDs 3-5 for applications
-- Pre-installed Aria toolchain (compiler, runtime, shell, build system)
-- Optimized for Aria development
+- Pre-installed Nitpick toolchain (compiler, runtime, shell, build system)
+- Optimized for Nitpick development
 - Based on existing distro (likely Arch or Gentoo for flexibility)
 
 ---
@@ -67,10 +67,10 @@ AriaX serves a **dual purpose**:
 
 ### Package Repository Structure
 
-**Central Repository**: `https://packages.aria-language.org/`
+**Central Repository**: `https://packages.npk-language.org/`
 
 ```
-packages.aria-language.org/
+packages.npk-language.org/
 ├── index.json                    # Package index
 ├── std.collections/
 │   ├── 1.0.0/
@@ -95,7 +95,7 @@ packages.aria-language.org/
   "name": "std.collections",
   "version": "1.0.0",
   "description": "Standard library collections (Vector, HashMap, etc.)",
-  "authors": ["Aria Team <team@aria-language.org>"],
+  "authors": ["Nitpick Team <team@aria-language.org>"],
   "license": "MIT",
   
   "dependencies": {
@@ -103,7 +103,7 @@ packages.aria-language.org/
   },
   
   "files": {
-    "src": ["src/**/*.aria"],
+    "src": ["src/**/*.npk"],
     "headers": ["include/**/*.ariah"],
     "lib": ["lib/libstd_collections.a"]
   },
@@ -127,7 +127,7 @@ packages.aria-language.org/
 │   │   └── lib/
 │   └── std.io-1.0.0/
 │       └── ...
-├── bin/                          # Executables (ariac, ariab, ariax)
+├── bin/                          # Executables (npkc, ariab, ariax)
 ├── lib/
 │   └── libaria_runtime.a
 └── include/
@@ -167,7 +167,7 @@ my_project/
       "checksum": "sha256:def456..."
     }
   ],
-  "repository": "https://packages.aria-language.org/"
+  "repository": "https://packages.npk-language.org/"
 }
 ```
 
@@ -186,14 +186,14 @@ my_project/
       "latest_version": "1.0.1",
       "versions": ["1.0.0", "1.0.1"],
       "description": "Standard collections",
-      "url": "https://packages.aria-language.org/std.collections/"
+      "url": "https://packages.npk-language.org/std.collections/"
     },
     {
       "name": "std.io",
       "latest_version": "1.0.0",
       "versions": ["1.0.0"],
       "description": "I/O primitives",
-      "url": "https://packages.aria-language.org/std.io/"
+      "url": "https://packages.npk-language.org/std.io/"
     }
   ]
 }
@@ -228,7 +228,7 @@ $ ariax install std.collections
 
 1. **Query Repository**:
    ```
-   GET https://packages.aria-language.org/index.json
+   GET https://packages.npk-language.org/index.json
      → Find std.collections-1.0.0
    ```
 
@@ -246,11 +246,11 @@ $ ariax install std.collections
 
 3. **Download Packages**:
    ```
-   GET https://packages.aria-language.org/std.mem/1.0.0/std.mem-1.0.0.tar.gz
-   GET https://packages.aria-language.org/std.mem/1.0.0/std.mem-1.0.0.tar.gz.sig
+   GET https://packages.npk-language.org/std.mem/1.0.0/std.mem-1.0.0.tar.gz
+   GET https://packages.npk-language.org/std.mem/1.0.0/std.mem-1.0.0.tar.gz.sig
    
-   GET https://packages.aria-language.org/std.collections/1.0.0/std.collections-1.0.0.tar.gz
-   GET https://packages.aria-language.org/std.collections/1.0.0/std.collections-1.0.0.tar.gz.sig
+   GET https://packages.npk-language.org/std.collections/1.0.0/std.collections-1.0.0.tar.gz
+   GET https://packages.npk-language.org/std.collections/1.0.0/std.collections-1.0.0.tar.gz.sig
    ```
 
 4. **Verify Signatures**:
@@ -286,7 +286,7 @@ $ ariax install std.collections
 ### Cryptographic Verification
 
 **GPG Signing**:
-- Packages signed by Aria team (or third-party authors)
+- Packages signed by Nitpick team (or third-party authors)
 - Public keys distributed via keyserver
 - Signature verification before extraction
 
@@ -296,7 +296,7 @@ $ ariax install std.collections
 - Protects against corrupted downloads
 
 **Trust Model**:
-- Aria official packages: Signed by Aria Team key
+- Nitpick official packages: Signed by Nitpick Team key
 - Third-party packages: Signed by author, users trust at own risk
 - Future: Web of trust, package reputation system
 
@@ -311,10 +311,10 @@ $ ariax install std.collections
 **Modifications**:
 1. **Kernel Patch**: Reserve FDs 3-5 (see below)
 2. **Pre-installed Toolchain**:
-   - ariac (Aria compiler)
+   - npkc (Nitpick compiler)
    - libaria_runtime.a
    - aria_shell (AriaSH)
-   - ariab (AriaBuild)
+   - ariab (NpkBld)
    - ariax (package manager)
 3. **Optimized Environment**:
    - PATH includes `/usr/local/aria/bin`
@@ -332,7 +332,7 @@ $ ariax install std.collections
 
 **Partitioning**:
 - Standard Linux layout
-- Optional: Separate `/home/aria` for Aria projects
+- Optional: Separate `/home/aria` for Nitpick projects
 
 ---
 
@@ -343,7 +343,7 @@ $ ariax install std.collections
 **Standard Linux Kernel**:
 - File descriptors assigned sequentially: 0, 1, 2, 3, 4, 5, ...
 - When opening files, gets next available FD (often 3)
-- Conflicts with Aria's 6-stream I/O (wants FDs 3-5)
+- Conflicts with Nitpick's 6-stream I/O (wants FDs 3-5)
 
 **Example Conflict**:
 ```c
@@ -410,13 +410,13 @@ CONFIG_RESERVED_FDS_3_5=y
 linux ... reserve_fds=3-5
 ```
 
-Users can disable if needed (for compatibility with non-Aria software).
+Users can disable if needed (for compatibility with non-Nitpick software).
 
 ---
 
 ## Integration Points
 
-### With AriaBuild
+### With NpkBld
 
 **Dependency Installation**:
 ```bash
@@ -428,17 +428,17 @@ Calls: ariax install std.collections std.io
   ↓
 AriaX downloads and installs packages
   ↓
-AriaBuild continues with compilation
+NpkBld continues with compilation
 ```
 
-### With Aria Compiler
+### With Nitpick Compiler
 
 **Include Paths**:
 ```bash
-ariac main.aria -I/usr/local/aria/packages/std.collections-1.0.0/include
+npkc main.npk -I/usr/local/aria/packages/std.collections-1.0.0/include
 ```
 
-AriaX maintains package registry, AriaBuild queries it for paths.
+AriaX maintains package registry, NpkBld queries it for paths.
 
 ### With aria_shell
 
@@ -507,7 +507,7 @@ $ ariax info std.collections
 Name: std.collections
 Version: 1.0.0
 Description: Standard library collections (Vector, HashMap, etc.)
-Authors: Aria Team <team@aria-language.org>
+Authors: Nitpick Team <team@aria-language.org>
 License: MIT
 Dependencies:
   - std.mem ^1.0.0
@@ -545,7 +545,7 @@ Path: /usr/local/aria/packages/std.collections-1.0.0
    my-awesome-lib/
    ├── manifest.json
    ├── src/
-   │   └── lib.aria
+   │   └── lib.npk
    └── README.md
    ```
 
@@ -594,9 +594,9 @@ Path: /usr/local/aria/packages/std.collections-1.0.0
 
 ## Related Components
 
-- **[AriaBuild](ARIABUILD.md)**: Uses AriaX for dependency resolution
-- **[Aria Compiler](ARIA_COMPILER.md)**: Installed via AriaX
-- **[Aria Runtime](ARIA_RUNTIME.md)**: Distributed as system package
+- **[NpkBld](ARIABUILD.md)**: Uses AriaX for dependency resolution
+- **[Nitpick Compiler](ARIA_COMPILER.md)**: Installed via AriaX
+- **[Nitpick Runtime](ARIA_RUNTIME.md)**: Distributed as system package
 - **[aria_shell](ARIA_SHELL.md)**: Invokes AriaX commands
 
 ---

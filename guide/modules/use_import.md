@@ -3,8 +3,8 @@
 ## Syntax
 
 ```aria
-use "path/to/module.aria".*;           // wildcard import (all pub symbols)
-use "stdlib_file.aria".*;              // stdlib import (bare filename)
+use "path/to/module.npk".*;           // wildcard import (all pub symbols)
+use "stdlib_file.npk".*;              // stdlib import (bare filename)
 ```
 
 ## Path Resolution
@@ -16,13 +16,13 @@ use "stdlib_file.aria".*;              // stdlib import (bare filename)
 ## Example
 
 ```aria
-// file: math_utils.aria
+// file: math_utils.npk
 pub func:square = int32(int32:x) {
     pass (x * x);
 };
 
-// file: main.aria
-use "math_utils.aria".*;
+// file: main.npk
+use "math_utils.npk".*;
 
 func:main = int32() {
     int32:val = raw square(5);

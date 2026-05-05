@@ -4,9 +4,9 @@
 **Category**: gamedev, compatibility, ffi
 **License**: Apache-2.0 WITH Runtime-Library-Exception
 
-GameMaker Language (GML) compatibility layer for Aria. Provides GML-style
+GameMaker Language (GML) compatibility layer for Nitpick. Provides GML-style
 function names and event-driven game loop semantics over `aria-raylib`, so
-developers familiar with GameMaker can write Aria games immediately using
+developers familiar with GameMaker can write Nitpick games immediately using
 API names they already know.
 
 This package is also the foundation of the educational track — see
@@ -31,7 +31,7 @@ comparing GML source to the compiled native stack.
 ## Quick Start
 
 ```aria
-use "../src/aria_gml.aria".*;
+use "../src/aria_gml.npk".*;
 
 flt64:bx  = 320.0f64;
 flt64:by  = 240.0f64;
@@ -51,7 +51,7 @@ func:draw = void() {
     draw_set_color(c_yellow);
     draw_circle(bx, by, 16.0f64);
     draw_set_color(c_white);
-    draw_text(8.0f64, 8.0f64, "Bouncing Ball — written in Aria");
+    draw_text(8.0f64, 8.0f64, "Bouncing Ball — written in Nitpick");
 };
 
 func:main = int32() {
@@ -207,7 +207,7 @@ cc -O2 -shared -fPIC -Wall -o libaria_gml_shim.so \
 ## Compile Your Program
 
 ```bash
-ariac my_game.aria -o my_game \
+npkc my_game.npk -o my_game \
   -L packages/aria-gml/shim \
   -laria_gml_shim -lraylib -lm
 ```
@@ -221,7 +221,7 @@ aria-gml/
 │   ├── aria_gml_shim.c     # C bridge (~370 lines)
 │   └── Makefile
 ├── src/
-│   └── aria_gml.aria       # Aria bindings + pub wrappers + constants
+│   └── aria_gml.npk       # Nitpick bindings + pub wrappers + constants
 └── examples/
     └── gml_bounce/         # Bouncing ball demo
 ```

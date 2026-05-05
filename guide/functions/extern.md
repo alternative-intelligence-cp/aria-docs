@@ -2,7 +2,7 @@
 
 ## Overview
 
-`extern` blocks declare C functions callable from Aria. Extern functions do **not**
+`extern` blocks declare C functions callable from Nitpick. Extern functions do **not**
 return `Result<T>` — they return raw values.
 
 ## Syntax
@@ -31,7 +31,7 @@ extern func:custom_func = int32(int32:a, int32:b);
 
 ## String ABI
 
-| Direction | Aria Type | C Type |
+| Direction | Nitpick Type | C Type |
 |-----------|-----------|--------|
 | Parameter | `string` | `const char*` |
 | Return | `string` | `AriaString {char* data, int64_t length}` |
@@ -40,7 +40,7 @@ C shims for string-returning functions must return the AriaString struct.
 
 ## Float ABI
 
-Aria's `flt32` passes as `double` at the C ABI level. C shims must use `double` params:
+Nitpick's `flt32` passes as `double` at the C ABI level. C shims must use `double` params:
 
 ```c
 // C side
@@ -74,5 +74,5 @@ func:failsafe = int32(tbb32:err) {
 
 ## Related
 
-- [modules/use_import.md](../modules/use_import.md) — importing Aria modules
+- [modules/use_import.md](../modules/use_import.md) — importing Nitpick modules
 - [types/string.md](../types/string.md) — string ABI details

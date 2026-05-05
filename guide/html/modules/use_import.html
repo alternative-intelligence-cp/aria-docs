@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>use — Importing Modules - Aria Programming Guide</title>
+    <title>use — Importing Modules - Nitpick Programming Guide</title>
     <style>
         :root {
             --bg-main: #1e1e1e;
@@ -218,7 +218,7 @@
 </head>
 <body>
     <nav>
-        <h2>Aria Guide</h2>
+        <h2>Nitpick Guide</h2>
         <div class="category">
 <h3>Advanced Features</h3>
 <ul>
@@ -353,9 +353,9 @@
         <div class="breadcrumb"><a href="/">Home</a> / Modules</div>
         <h1>use — Importing Modules</h1>
 <h2>Syntax</h2>
-<pre><code>use "path/to/module.aria".*;           // wildcard import (all pub symbols)
+<pre><code>use "path/to/module.npk".*;           // wildcard import (all pub symbols)
 <p>
-use "stdlib_file.aria".*;              // stdlib import (bare filename)</code></pre>
+use "stdlib_file.npk".*;              // stdlib import (bare filename)</code></pre>
 </p>
 <h2>Path Resolution</h2>
 <ul><li><strong>Relative paths</strong>: resolved relative to the importing source file</li>
@@ -363,15 +363,15 @@ use "stdlib_file.aria".*;              // stdlib import (bare filename)</code></
 <li>Wildcard <code>.*</code> imports all <code>pub</code> declarations</li>
 </ul>
 <h2>Example</h2>
-<pre><code>// file: math_utils.aria
+<pre><code>// file: math_utils.npk
 <p>
 pub func:square = int32(int32:x) {
 pass (x * x);
 }
 </p>
 <p>
-// file: main.aria
-use "math_utils.aria".*;
+// file: main.npk
+use "math_utils.npk".*;
 </p>
 <p>
 func:main = int32() {

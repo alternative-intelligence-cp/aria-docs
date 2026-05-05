@@ -1,4 +1,4 @@
-# Safety-Critical Development in Aria: A Walkthrough
+# Safety-Critical Development in Nitpick: A Walkthrough
 
 **Version:** 0.16.7  
 **Date:** 2026-04-10  
@@ -44,28 +44,28 @@ itself does not enforce safety — external tools and coding standards do. A
 developer who forgets to run the checker, or who disables a warning, is back to
 writing unsafe code.
 
-Aria takes a different approach: **safety is structural.** The compiler itself
+Nitpick takes a different approach: **safety is structural.** The compiler itself
 refuses to produce a binary that lacks mandatory error handling, that uses
 unchecked results, or that violates declared constraints. You cannot forget to
 handle errors because the compiler will not let you. You cannot silently overflow
 a safety-critical integer because the type system traps it.
 
-This walkthrough demonstrates Aria's safety features through a realistic
+This walkthrough demonstrates Nitpick's safety features through a realistic
 application — a medical drug infusion pump controller — building up from
 individual features to a complete, compilable program.
 
 ### Who This Document Is For
 
-- Safety engineers evaluating Aria for safety-critical domains
+- Safety engineers evaluating Nitpick for safety-critical domains
 - Language researchers comparing error-handling and verification models
-- Developers curious about Aria's safety guarantees and how they differ from
+- Developers curious about Nitpick's safety guarantees and how they differ from
   Rust, Ada/SPARK, or traditional C/C++ approaches
 
 ### Prerequisites
 
-- The `ariac` compiler (v0.3.4+)
+- The `npkc` compiler (v0.3.4+)
 - Basic familiarity with imperative programming
-- No prior Aria experience required
+- No prior Nitpick experience required
 
 ### Companion Files
 
@@ -74,14 +74,14 @@ directory:
 
 | File | Feature |
 |------|---------|
-| `01_failsafe_basics.aria` | Mandatory failsafe handler |
-| `02_result_handling.aria` | Result\<T\> with pass/fail |
-| `03_tbb_propagation.aria` | TBB sticky error types |
-| `04_limit_rules.aria` | limit\<Rules\> constraints |
-| `05_borrow_safety.aria` | Borrow semantics ($$i/$$m) |
-| `06_emergency_operators.aria` | ?! and !!! operators |
-| `07_infusion_pump.aria` | Complete pump controller |
-| `08_syscall_safety.aria` | sys() tiered syscall safety |
+| `01_failsafe_basics.npk` | Mandatory failsafe handler |
+| `02_result_handling.npk` | Result\<T\> with pass/fail |
+| `03_tbb_propagation.npk` | TBB sticky error types |
+| `04_limit_rules.npk` | limit\<Rules\> constraints |
+| `05_borrow_safety.npk` | Borrow semantics ($$i/$$m) |
+| `06_emergency_operators.npk` | ?! and !!! operators |
+| `07_infusion_pump.npk` | Complete pump controller |
+| `08_syscall_safety.npk` | sys() tiered syscall safety |
 
 ---
 
@@ -101,7 +101,7 @@ Common failure modes include:
 - **Missing error handling:** an error return is ignored, execution continues
   with garbage data
 
-Our example pump controller will demonstrate how each of Aria's safety features
+Our example pump controller will demonstrate how each of Nitpick's safety features
 addresses one or more of these failure modes.
 
 The controller performs a single infusion cycle:
@@ -124,9 +124,9 @@ In C, error-handling functions like `atexit()` or signal handlers are optional.
 A developer can write a program with no error handling at all, and the compiler
 will happily produce a binary. In safety-critical systems, this is unacceptable.
 
-### Aria's Solution
+### Nitpick's Solution
 
-Every Aria program **must** define a `failsafe` function. The compiler checks
+Every Nitpick program **must** define a `failsafe` function. The compiler checks
 for its existence and refuses to compile if it is missing. This is enforced at
 the analysis phase (BUG-005 fix, v0.3.4), not by convention or linting.
 
@@ -152,7 +152,7 @@ func:failsafe = int32(tbb32:err) {
 
 ### Example
 
-*(See `examples/01_failsafe_basics.aria`)*
+*(See `examples/01_failsafe_basics.npk`)*
 
 ```aria
 func:failsafe = int32(tbb32:err) {
@@ -174,7 +174,7 @@ func:main = int32() {
 
 In traditional safety-critical C (IEC 62304, DO-178C), external coding
 standards mandate error handling — but the compiler itself does not enforce them.
-Aria makes the guarantee structural: **no failsafe, no binary.**
+Nitpick makes the guarantee structural: **no failsafe, no binary.**
 
 ---
 
@@ -193,7 +193,7 @@ fread(buf, 1, 100, f);             // UB if f is NULL — no compiler warning
 In C++, exceptions can be unhandled. In Go, errors are values that can be
 discarded with `_`.
 
-### Aria's Solution
+### Nitpick's Solution
 
 Functions that can fail return `Result<T>` implicitly. The caller **must** check
 `.is_error` before accessing `.value` — the compiler enforces this rule (called
@@ -220,7 +220,7 @@ if (r.is_error) {
 
 ### Error Codes
 
-Aria defines standardized error code ranges:
+Nitpick defines standardized error code ranges:
 
 | Range | Meaning | Examples |
 |-------|---------|----------|
@@ -231,7 +231,7 @@ Aria defines standardized error code ranges:
 
 ### Example
 
-*(See `examples/02_result_handling.aria`)*
+*(See `examples/02_result_handling.npk`)*
 
 ```aria
 func:read_temperature = int32() {
@@ -289,7 +289,7 @@ dose = patient_weight * rate_per_kg
 If `patient_weight` overflows to a small positive number due to a sensor bug,
 the dose might appear valid but be dramatically wrong.
 
-### Aria's Solution
+### Nitpick's Solution
 
 TBB (Trusted Balanced Bitfield) types are integers with a **sentinel error
 value** at the type minimum. Once a TBB variable enters the ERR state — through
@@ -319,7 +319,7 @@ silently disappear. TBB guarantees this cannot happen.
 
 ### Example
 
-*(See `examples/03_tbb_propagation.aria`)*
+*(See `examples/03_tbb_propagation.npk`)*
 
 ```aria
 func:main = int32() {
@@ -376,9 +376,9 @@ redline, a reactor temperature must remain within safe bounds.
 In traditional languages, these constraints live in comments, documentation,
 or runtime assertions that can be forgotten, disabled, or bypassed.
 
-### Aria's Solution
+### Nitpick's Solution
 
-Aria's `Rules` declarations define named constraints. The `limit<RuleName>`
+Nitpick's `Rules` declarations define named constraints. The `limit<RuleName>`
 annotation on a variable means the compiler and runtime enforce those constraints
 at every assignment. With Z3 verification (`--verify`), the compiler can
 **prove** constraints at compile time — before the program ever runs.
@@ -415,7 +415,7 @@ When compiled with `--verify`, the compiler translates Rules constraints into Z3
 SMT assertions and attempts to prove them statically:
 
 ```bash
-ariac --verify 04_limit_rules.aria
+npkc --verify 04_limit_rules.npk
 ```
 
 If the compiler can prove a constraint is always satisfied, no runtime check is
@@ -424,7 +424,7 @@ can neither prove nor disprove, a runtime check is emitted as a safety net.
 
 ### Example
 
-*(See `examples/04_limit_rules.aria`)*
+*(See `examples/04_limit_rules.npk`)*
 
 ```aria
 Rules:r_safe_dose_mg = {
@@ -473,7 +473,7 @@ patient-max-dose clamp, but falls outside 1–5000 mg would be caught by
 ### Why This Matters
 
 Unlike runtime assertions in C (`assert(dose <= 5000)`) which can be compiled
-out with `NDEBUG`, Aria's constraints are part of the type system. They cannot
+out with `NDEBUG`, Nitpick's constraints are part of the type system. They cannot
 be disabled. With Z3, they can be verified at compile time — providing the
 strongest possible guarantee without runtime cost.
 
@@ -492,9 +492,9 @@ C and C++ provide no structural protection against:
 - Data races from concurrent aliased mutation
 - Dangling pointers
 
-### Aria's Solution
+### Nitpick's Solution
 
-Aria uses explicit borrow annotations with two rules enforced at compile time:
+Nitpick uses explicit borrow annotations with two rules enforced at compile time:
 
 | Annotation | Meaning | Rule |
 |-----------|---------|------|
@@ -506,7 +506,7 @@ reference coexisting with any other reference to the same data.
 
 ### Example
 
-*(See `examples/05_borrow_safety.aria`)*
+*(See `examples/05_borrow_safety.npk`)*
 
 ```aria
 func:main = int32() {
@@ -565,9 +565,9 @@ error path). Exception-based languages make error handling convenient but
 difficult to audit. Return-code languages make error handling auditable but
 tedious.
 
-### Aria's Solution
+### Nitpick's Solution
 
-Aria provides two operators that form a **two-level error escalation system**:
+Nitpick provides two operators that form a **two-level error escalation system**:
 
 | Operator | Name | Level | Behavior |
 |----------|------|-------|----------|
@@ -591,7 +591,7 @@ int32:value = sensor ?! safe_default;
 
 ### Example
 
-*(See `examples/06_emergency_operators.aria`)*
+*(See `examples/06_emergency_operators.npk`)*
 
 ```aria
 // Level 1: Local recovery with ?!
@@ -642,7 +642,7 @@ DMA buffers, or foreign-function interfaces that require raw pointer access.
 In Rust, this is `unsafe {}`. In Ada, it is `pragma Import`. The challenge is
 making unsafe code **visible and auditable** while still allowing it when needed.
 
-### Aria's Approach
+### Nitpick's Approach
 
 The `wild` keyword declares raw, unmanaged pointers that bypass the borrow
 checker:
@@ -677,10 +677,10 @@ to keep the demonstrations portable and compilable without hardware.
 
 ## 10. Feature 8: sys() — Tiered Syscall Safety
 
-*(See `examples/08_syscall_safety.aria`)*
+*(See `examples/08_syscall_safety.npk`)*
 
 Direct syscalls bypass libc — one wrong argument can corrupt memory or kill a
-process. Aria applies its TOS escalation model to make syscall danger visible
+process. Nitpick applies its TOS escalation model to make syscall danger visible
 and intentional.
 
 ### The Three Tiers
@@ -728,9 +728,9 @@ is required. Only truly dangerous operations like process spawning would need
 
 ## 11. Feature 9: _? and _! — Ergonomic Drop & Raw Shorthand
 
-*(See `examples/09_drop_raw_shorthand.aria`)*
+*(See `examples/09_drop_raw_shorthand.npk`)*
 
-Aria v0.4.0 adds prefix shorthand operators for the two TOS-bypass builtins:
+Nitpick v0.4.0 adds prefix shorthand operators for the two TOS-bypass builtins:
 
 | Shorthand | Desugars to | Operator Family |
 |-----------|------------|------------------|
@@ -743,7 +743,7 @@ verbose forms. No new semantics, no new risks.
 
 ### Why Both Forms?
 
-Aria keeps verbose and terse forms so developers can choose the right one for context:
+Nitpick keeps verbose and terse forms so developers can choose the right one for context:
 
 ```aria
 // In a long function where readability matters most:
@@ -757,7 +757,7 @@ int32:x = _!safe_add(a, b);
 
 ### The ? and ! Families
 
-The shorthand operators fit naturally into Aria's existing operator families:
+The shorthand operators fit naturally into Nitpick's existing operator families:
 
 **? family** (safe / provides fallback / discards):
 - `expr ? default` — unwrap with fallback
@@ -788,7 +788,7 @@ interchangeable. The choice is purely stylistic.
 
 ## 12. Putting It Together: The Complete Pump Controller
 
-*(See `examples/07_infusion_pump.aria`)*
+*(See `examples/07_infusion_pump.npk`)*
 
 The complete infusion pump controller combines all features into a coherent
 program:
@@ -905,21 +905,21 @@ safe mode — no drug is delivered.
 
 ## 12. Z3 Verification in Practice
 
-Aria v0.3.4 includes a built-in Z3 SMT solver integration that can verify
+Nitpick v0.3.4 includes a built-in Z3 SMT solver integration that can verify
 limit\<Rules\> constraints and function contracts at compile time.
 
 ### Usage
 
 ```bash
 # Verify all constraints
-ariac --verify 07_infusion_pump.aria
+npkc --verify 07_infusion_pump.npk
 
 # Generate a detailed verification report
-ariac --verify --verify-report pump_report.txt 07_infusion_pump.aria
+npkc --verify --verify-report pump_report.txt 07_infusion_pump.npk
 
 # Verify specific categories
-ariac --verify-contracts 07_infusion_pump.aria     # requires/ensures
-ariac --verify-overflow  07_infusion_pump.aria      # integer overflow
+npkc --verify-contracts 07_infusion_pump.npk     # requires/ensures
+npkc --verify-overflow  07_infusion_pump.npk      # integer overflow
 ```
 
 ### What Z3 Proves
@@ -940,7 +940,7 @@ The Z3 verifier operates in three phases:
 
 ```
 === Z3 Verification Report ===
-File: 07_infusion_pump.aria
+File: 07_infusion_pump.npk
 
 [PASS] limit<r_safe_dose> at line 156: dose ∈ [1, 5000] — PROVED
 [PASS] limit<r_valid_weight> at line 134: weight ∈ [1, 300] — PROVED
@@ -959,9 +959,9 @@ Verification time: 0.023s
 | SPARK/Ada | Compile time | ✓ | ✓ |
 | Frama-C/WP | Post-hoc | ✗ | ✗ |
 | CBMC | Post-hoc | ✗ | ✗ |
-| **Aria + Z3** | **Compile time** | **✓** | **✓** |
+| **Nitpick + Z3** | **Compile time** | **✓** | **✓** |
 
-Aria's Z3 integration runs as part of the normal compilation pipeline. No
+Nitpick's Z3 integration runs as part of the normal compilation pipeline. No
 separate tool invocation, no configuration files, no annotation language
 different from the source language.
 
@@ -969,9 +969,9 @@ different from the source language.
 
 ## 14. Comparison with Other Approaches
 
-### How Aria Compares to Safety-Critical Alternatives
+### How Nitpick Compares to Safety-Critical Alternatives
 
-| Feature | C (MISRA) | Ada/SPARK | Rust | **Aria** |
+| Feature | C (MISRA) | Ada/SPARK | Rust | **Nitpick** |
 |---------|-----------|-----------|------|----------|
 | Mandatory error handler | ✗ Convention | ✗ Optional | ✗ Optional | **✓ Compiler-enforced** |
 | Checked results | ✗ Return codes | ✓ Exceptions | ✓ Result\<T\> | **✓ Result\<T\> + no-checky-no-val** |
@@ -1002,7 +1002,7 @@ different from the source language.
 
 ## 15. Summary
 
-Aria's safety model is built on a simple insight: **safety features that can be
+Nitpick's safety model is built on a simple insight: **safety features that can be
 forgotten will be forgotten.** Every feature described in this walkthrough is
 either mandatory (failsafe), compiler-enforced (Result checking, borrow rules),
 or structurally integrated (TBB, limit\<Rules\>, Z3).
@@ -1030,30 +1030,30 @@ if not, by `limit<Rules>` (Layer 7); if not, by `failsafe` (Layer 1).
 cd aria/build && cmake .. && make -j$(nproc)
 
 # Compile and run individual examples
-./ariac ../../aria-docs/safety-walkthrough/examples/01_failsafe_basics.aria
+./npkc ../../aria-docs/safety-walkthrough/examples/01_failsafe_basics.npk
 ./01_failsafe_basics
 
 # Compile with Z3 verification
-./ariac --verify ../../aria-docs/safety-walkthrough/examples/04_limit_rules.aria
+./npkc --verify ../../aria-docs/safety-walkthrough/examples/04_limit_rules.npk
 
 # Compile the complete pump controller
-./ariac ../../aria-docs/safety-walkthrough/examples/07_infusion_pump.aria
+./npkc ../../aria-docs/safety-walkthrough/examples/07_infusion_pump.npk
 ./07_infusion_pump
 ```
 
 ### Next Steps
 
 - **For safety engineers:** Review the pump controller code and compare it to
-  your current development practices. Consider which failure modes Aria prevents
+  your current development practices. Consider which failure modes Nitpick prevents
   that your current toolchain does not.
 - **For language researchers:** The formal comparison in Section 12 is intended
   as a starting point. We welcome analysis from the verification and safety
   communities.
-- **For developers:** Clone the [Aria repository](https://github.com/alternative-intelligence-cp/aria),
+- **For developers:** Clone the [Nitpick repository](https://github.com/alternative-intelligence-cp/aria),
   build the compiler, and try compiling and modifying the example files. Break
   things. See what the compiler catches.
 
 ---
 
-*This document is part of the Aria documentation suite. For language specification,
+*This document is part of the Nitpick documentation suite. For language specification,
 see `specs/aria_specs.txt`. For getting started, see `GETTING_STARTED.md`.*

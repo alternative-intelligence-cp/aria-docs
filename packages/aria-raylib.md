@@ -4,7 +4,7 @@
 **Category**: graphics, gamedev, audio, input
 **License**: Apache-2.0 WITH Runtime-Library-Exception
 
-raylib bindings for Aria — the primary game development package. Provides
+raylib bindings for Nitpick — the primary game development package. Provides
 windowing, 2D drawing, texture loading, audio playback, keyboard/mouse/gamepad
 input, and procedural sound generation through a thin C shim.
 
@@ -24,10 +24,10 @@ This is the layer that `aria-gml` and `aria-tetris` build on.
 ## Quick Start
 
 ```aria
-use "../src/aria_raylib.aria".*;
+use "../src/aria_raylib.npk".*;
 
 func:main = int32() {
-    rl_init_window(640i32, 480i32, "Hello Aria");
+    rl_init_window(640i32, 480i32, "Hello Nitpick");
     rl_set_target_fps(60i32);
 
     rl_init_audio_device();
@@ -217,7 +217,7 @@ aria-raylib/
 │   ├── aria_raylib_shim.c   # C bridge (~540 lines)
 │   └── libaria_raylib_shim.so
 └── src/
-    └── aria_raylib.aria     # Aria bindings + pub wrappers + constants
+    └── aria_raylib.npk     # Nitpick bindings + pub wrappers + constants
 ```
 
 ## See Also

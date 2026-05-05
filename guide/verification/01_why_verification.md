@@ -2,7 +2,7 @@
 
 ## What SMT Verification Does
 
-Aria's compiler integrates the Z3 SMT (Satisfiability Modulo Theories) solver to
+Nitpick's compiler integrates the Z3 SMT (Satisfiability Modulo Theories) solver to
 **prove program properties at compile time**. Instead of discovering bugs at runtime
 through testing, the solver mathematically proves that certain classes of bugs
 *cannot exist* in your program.
@@ -51,20 +51,20 @@ Verification proves your program works for cases you *didn't* think of.
 
 ```bash
 # Enable all verification
-ariac program.aria -o program --verify
+npkc program.npk -o program --verify
 
 # Individual domains
-ariac program.aria --verify-contracts    # Just contracts
-ariac program.aria --verify-overflow     # Just overflow
-ariac program.aria --verify-concurrency  # Just data races
+npkc program.npk --verify-contracts    # Just contracts
+npkc program.npk --verify-overflow     # Just overflow
+npkc program.npk --verify-concurrency  # Just data races
 
 # Verification + optimization (recommended for release builds)
-ariac program.aria --smt-opt             # Implies --verify, eliminates proven checks
+npkc program.npk --smt-opt             # Implies --verify, eliminates proven checks
 
 # Control verification depth (v0.14.3+)
-ariac program.aria --verify --verify-level=1   # Fast (Rules only)
-ariac program.aria --verify --verify-level=2   # Standard (+ contracts, overflow)
-ariac program.aria --verify --verify-level=3   # Thorough (all phases, full proofs)
+npkc program.npk --verify --verify-level=1   # Fast (Rules only)
+npkc program.npk --verify --verify-level=2   # Standard (+ contracts, overflow)
+npkc program.npk --verify --verify-level=3   # Thorough (all phases, full proofs)
 ```
 
 ## How It Works (Overview)

@@ -21,11 +21,11 @@
 
 ## Overview
 
-**AriaBuild** (`ariab`) orchestrates the compilation of Aria projects by:
+**NpkBld** (`ariab`) orchestrates the compilation of Nitpick projects by:
 
 1. **Parsing build.abc** (project configuration)
 2. **Resolving dependencies** (local & external)
-3. **Invoking ariac** (compiler) with correct flags
+3. **Invoking npkc** (compiler) with correct flags
 4. **Managing incremental builds** (only recompile changed files)
 5. **Parallelizing compilation** (use all CPU cores)
 
@@ -35,7 +35,7 @@
 
 ### ABC File Format
 
-**Aria Build Configuration** (ABC): JSON-based project manifest
+**Nitpick Build Configuration** (ABC): JSON-based project manifest
 
 **Example**: `build.abc`
 ```json
@@ -43,10 +43,10 @@
   "name": "my_project",
   "version": "1.0.0",
   "type": "executable",
-  "entry": "src/main.aria",
+  "entry": "src/main.npk",
   
   "sources": [
-    "src/**/*.aria"
+    "src/**/*.npk"
   ],
   
   "dependencies": {
@@ -100,8 +100,8 @@
 
 **Internal Process**:
 ```bash
-# AriaBuild expands to:
-ariac src/main.aria \
+# NpkBld expands to:
+npkc src/main.npk \
   --output build/my_app \
   --optimization O2 \
   --warnings all \
@@ -115,7 +115,7 @@ ariac src/main.aria \
 
 **1. Parse build.abc**:
 ```cpp
-// AriaBuild code (simplified)
+// NpkBld code (simplified)
 json config = parse_json("build.abc");
 
 std::string name = config["name"];
@@ -128,7 +128,7 @@ bool debug = config["compiler"]["debug_symbols"];
 **2. Resolve Source Files**:
 ```cpp
 std::vector<std::string> sources = glob(config["sources"]);
-// sources = ["src/main.aria", "src/utils.aria", "src/parser.aria"]
+// sources = ["src/main.npk", "src/utils.npk", "src/parser.npk"]
 ```
 
 ---
@@ -136,7 +136,7 @@ std::vector<std::string> sources = glob(config["sources"]);
 **3. Build Compiler Command**:
 ```cpp
 std::vector<std::string> args;
-args.push_back("ariac");
+args.push_back("npkc");
 
 // Add source files
 for (const auto& src : sources) {
@@ -165,11 +165,11 @@ for (const auto& [dep_name, dep_version] : config["dependencies"]) {
 
 **4. Execute Compiler**:
 ```cpp
-// Spawn ariac process
+// Spawn npkc process
 pid_t pid = fork();
 if (pid == 0) {
     // Child: Execute compiler
-    execvp("ariac", args.data());
+    execvp("npkc", args.data());
     _exit(127);  // Failed to exec
 } else {
     // Parent: Wait for compilation
@@ -215,14 +215,14 @@ if (pid == 0) {
 
 **Resolution**:
 ```bash
-# AriaBuild queries AriaX
+# NpkBld queries AriaX
 ariax install http_client@^2.1.0
 # Downloads to ~/.aria/packages/http_client/2.1.3/
 ```
 
 **Compiler Link**:
 ```bash
-ariac src/main.aria \
+npkc src/main.npk \
   --link-dependency http_client \
   --package-path ~/.aria/packages/http_client/2.1.3/lib/libhttp_client.a
 ```
@@ -238,13 +238,13 @@ ariac src/main.aria \
 
 **Resolution**:
 ```bash
-# AriaBuild recursively builds local dependency
+# NpkBld recursively builds local dependency
 cd ../shared_utils
 ariab build
 cd ../my_project
 
 # Link against built artifact
-ariac src/main.aria \
+npkc src/main.npk \
   --link-dependency shared_utils \
   --package-path ../shared_utils/build/libshared_utils.a
 ```
@@ -325,12 +325,12 @@ shared_utils/  (local)
 ```cpp
 // Check if source file is newer than object file
 struct stat src_stat, obj_stat;
-stat("src/main.aria", &src_stat);
+stat("src/main.npk", &src_stat);
 stat("build/main.o", &obj_stat);
 
 if (src_stat.st_mtime > obj_stat.st_mtime) {
     // Source is newer, recompile
-    compile("src/main.aria", "build/main.o");
+    compile("src/main.npk", "build/main.o");
 }
 ```
 
@@ -342,15 +342,15 @@ if (src_stat.st_mtime > obj_stat.st_mtime) {
 
 ```cpp
 // Compute SHA-256 of source file
-std::string current_hash = sha256_file("src/main.aria");
+std::string current_hash = sha256_file("src/main.npk");
 
 // Load previous hash from cache
-std::string cached_hash = load_hash_from_cache("src/main.aria");
+std::string cached_hash = load_hash_from_cache("src/main.npk");
 
 if (current_hash != cached_hash) {
     // Content changed, recompile
-    compile("src/main.aria", "build/main.o");
-    save_hash_to_cache("src/main.aria", current_hash);
+    compile("src/main.npk", "build/main.o");
+    save_hash_to_cache("src/main.npk", current_hash);
 }
 ```
 
@@ -360,22 +360,22 @@ if (current_hash != cached_hash) {
 
 ### Dependency Tracking
 
-**Problem**: If `utils.aria` changes, `main.aria` (which imports it) must be recompiled
+**Problem**: If `utils.npk` changes, `main.npk` (which imports it) must be recompiled
 
 **Solution**: Track import dependencies
 
 **Dependency Graph**:
 ```
-main.aria
-  ├── imports utils.aria
-  └── imports parser.aria
-      └── imports string_utils.aria
+main.npk
+  ├── imports utils.npk
+  └── imports parser.npk
+      └── imports string_utils.npk
 ```
 
 **Change Propagation**:
-- If `string_utils.aria` changes → recompile `parser.aria`, `main.aria`
-- If `utils.aria` changes → recompile `main.aria`
-- If `main.aria` changes → recompile only `main.aria`
+- If `string_utils.npk` changes → recompile `parser.npk`, `main.npk`
+- If `utils.npk` changes → recompile `main.npk`
+- If `main.npk` changes → recompile only `main.npk`
 
 ---
 
@@ -383,13 +383,13 @@ main.aria
 ```cpp
 // Build dependency map
 std::map<std::string, std::set<std::string>> imports;
-imports["main.aria"] = {"utils.aria", "parser.aria"};
-imports["parser.aria"] = {"string_utils.aria"};
+imports["main.npk"] = {"utils.npk", "parser.npk"};
+imports["parser.npk"] = {"string_utils.npk"};
 
 // Find files that need recompilation
-std::set<std::string> changed = {"string_utils.aria"};
+std::set<std::string> changed = {"string_utils.npk"};
 std::set<std::string> to_recompile = transitive_closure(imports, changed);
-// to_recompile = {"string_utils.aria", "parser.aria", "main.aria"}
+// to_recompile = {"string_utils.npk", "parser.npk", "main.npk"}
 ```
 
 ---
@@ -409,17 +409,17 @@ std::set<std::string> to_recompile = transitive_closure(imports, changed);
 **hashes.json**:
 ```json
 {
-  "src/main.aria": "sha256:abc123...",
-  "src/utils.aria": "sha256:def456...",
-  "src/parser.aria": "sha256:ghi789..."
+  "src/main.npk": "sha256:abc123...",
+  "src/utils.npk": "sha256:def456...",
+  "src/parser.npk": "sha256:ghi789..."
 }
 ```
 
 **dependencies.json**:
 ```json
 {
-  "src/main.aria": ["src/utils.aria", "src/parser.aria"],
-  "src/parser.aria": ["src/string_utils.aria"]
+  "src/main.npk": ["src/utils.npk", "src/parser.npk"],
+  "src/parser.npk": ["src/string_utils.npk"]
 }
 ```
 
@@ -439,17 +439,17 @@ std::set<std::string> to_recompile = transitive_closure(imports, changed);
 
 **Dependency Graph** (Directed Acyclic Graph):
 ```
-       main.aria
+       main.npk
        /       \
-    utils.aria  parser.aria
+    utils.npk  parser.npk
                     |
-                string_utils.aria
+                string_utils.npk
 ```
 
 **Topological Levels**:
-- **Level 0**: `string_utils.aria` (no dependencies)
-- **Level 1**: `utils.aria`, `parser.aria` (depend on level 0)
-- **Level 2**: `main.aria` (depends on level 1)
+- **Level 0**: `string_utils.npk` (no dependencies)
+- **Level 1**: `utils.npk`, `parser.npk` (depend on level 0)
+- **Level 2**: `main.npk` (depends on level 1)
 
 **Parallel Execution**:
 1. Compile level 0 files (all in parallel)
@@ -521,16 +521,16 @@ public:
 ThreadPool pool(std::thread::hardware_concurrency());
 
 // Level 0 (parallel)
-pool.enqueue([&] { compile("src/string_utils.aria", "build/string_utils.o"); });
+pool.enqueue([&] { compile("src/string_utils.npk", "build/string_utils.o"); });
 // Wait for level 0 to complete...
 
 // Level 1 (parallel)
-pool.enqueue([&] { compile("src/utils.aria", "build/utils.o"); });
-pool.enqueue([&] { compile("src/parser.aria", "build/parser.o"); });
+pool.enqueue([&] { compile("src/utils.npk", "build/utils.o"); });
+pool.enqueue([&] { compile("src/parser.npk", "build/parser.o"); });
 // Wait for level 1 to complete...
 
 // Level 2
-pool.enqueue([&] { compile("src/main.aria", "build/main.o"); });
+pool.enqueue([&] { compile("src/main.npk", "build/main.o"); });
 ```
 
 ---
@@ -539,10 +539,10 @@ pool.enqueue([&] { compile("src/main.aria", "build/main.o"); });
 
 **Terminal Output**:
 ```
-[1/5] Compiling src/string_utils.aria...
-[2/5] Compiling src/utils.aria...
-[3/5] Compiling src/parser.aria...
-[4/5] Compiling src/main.aria...
+[1/5] Compiling src/string_utils.npk...
+[2/5] Compiling src/utils.npk...
+[3/5] Compiling src/parser.npk...
+[4/5] Compiling src/main.npk...
 [5/5] Linking build/my_app...
 Build complete in 3.2s
 ```
@@ -570,14 +570,14 @@ auto compile_with_progress = [&](const std::string& src, const std::string& obj)
 **Compiler Output** (stderr):
 ```
 error: Expected ';' after statement
-  --> src/main.aria:10:25
+  --> src/main.npk:10:25
    |
 10 | var:x = i32(42)
    |                 ^
    | help: Add ';' here
 ```
 
-**AriaBuild Behavior**:
+**NpkBld Behavior**:
 1. Capture compiler stderr
 2. Display to user (with color coding)
 3. Stop build immediately (fail-fast)
@@ -599,7 +599,7 @@ int compile(const std::string& src, const std::string& obj) {
         close(stderr_pipe[0]);
         close(stderr_pipe[1]);
         
-        execl("ariac", "ariac", src.c_str(), "--output", obj.c_str(), nullptr);
+        execl("npkc", "npkc", src.c_str(), "--output", obj.c_str(), nullptr);
         _exit(127);
     } else {
         // Parent: Capture stderr
@@ -639,7 +639,7 @@ error: Package 'http_client@^2.1.0' not found in AriaX registry
    | note: Available versions: 1.0.0, 1.5.2, 2.0.1
 ```
 
-**AriaBuild Behavior**:
+**NpkBld Behavior**:
 1. Query AriaX registry
 2. If package doesn't exist, report error with suggestions
 3. Exit with code 1
@@ -655,7 +655,7 @@ error: Package 'http_client@^2.1.0' not found in AriaX registry
 undefined reference to `http_request'
 ```
 
-**AriaBuild Behavior**:
+**NpkBld Behavior**:
 1. Capture linker output
 2. Suggest possible causes:
    - Missing dependency
@@ -676,5 +676,5 @@ undefined reference to `http_request'
 ---
 
 **Document Version**: 1.0  
-**Author**: Aria Ecosystem Documentation  
+**Author**: Nitpick Ecosystem Documentation  
 **Status**: Reference guide (implementation planned)

@@ -4,7 +4,7 @@
 **Category**: networking, http, server
 **License**: MIT
 
-HTTP server framework for Aria. Bind, listen, accept clients, parse HTTP
+HTTP server framework for Nitpick. Bind, listen, accept clients, parse HTTP
 requests, and send typed responses with custom headers.
 
 ## Features
@@ -43,7 +43,7 @@ requests, and send typed responses with custom headers.
 ## Quick Start
 
 ```aria
-use "aria_server.aria".*;
+use "aria_server.npk".*;
 
 func:main = int32() {
     int64:fd = raw srv_listen("0.0.0.0", 8080i64, 10i64);
@@ -51,7 +51,7 @@ func:main = int32() {
     int64:_r = raw srv_read_req(client);
     string:method = raw srv_req_method();
     string:path = raw srv_req_path();
-    int64:_s = raw srv_respond(client, 200i64, "Hello from Aria!");
+    int64:_s = raw srv_respond(client, 200i64, "Hello from Nitpick!");
     int64:_c = raw srv_close_client(client);
     int64:_d = raw srv_close(fd);
     exit(0i32);

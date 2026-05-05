@@ -1,9 +1,9 @@
-# Aria Reserved Words — Complete List
+# Nitpick Reserved Words — Complete List
 
 > Generated from `src/frontend/lexer/lexer.cpp` keyword table (151 keywords)
 > v0.13.4 — Authoritative reference
 
-All words listed below are reserved by the Aria compiler and **cannot be used as
+All words listed below are reserved by the Nitpick compiler and **cannot be used as
 variable names, function names, or identifiers** (except `stack` and `gc` which are
 contextual — see notes).
 

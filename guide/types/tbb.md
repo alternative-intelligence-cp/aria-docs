@@ -4,9 +4,9 @@
 
 ## Overview
 
-TBB types are Aria's **error-propagating integers**. They use a symmetric range with a
+TBB types are Nitpick's **error-propagating integers**. They use a symmetric range with a
 dedicated ERR sentinel value. Once a TBB value becomes ERR, it stays ERR through all
-subsequent operations — "sticky error propagation." This is the foundation of Aria's
+subsequent operations — "sticky error propagation." This is the foundation of Nitpick's
 safety model.
 
 Think of ERR as **NaN for integers**, but with a single well-defined value and deterministic

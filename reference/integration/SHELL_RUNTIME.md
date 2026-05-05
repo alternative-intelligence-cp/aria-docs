@@ -21,7 +21,7 @@
 
 ## Overview
 
-The **aria_shell** (AriaSH) manages the execution of Aria programs by:
+The **aria_shell** (AriaSH) manages the execution of Nitpick programs by:
 
 1. **Spawning processes** with 6 streams properly configured
 2. **Draining output** without blocking
@@ -49,7 +49,7 @@ Shell                          Child Process
   |    (sets FDs 0-5)              |
   |                                |
   |                                | execve()
-  |                                | (becomes Aria program)
+  |                                | (becomes Nitpick program)
   |                                |
   | -- drain threads -->           |
   | (read stdout, stderr, ...)    | (writes to FDs 1-5)
@@ -134,7 +134,7 @@ if (pid == 0) {
     close(stddato_pipe[0]);
     close(stddato_pipe[1]);
     
-    // Execute Aria program
+    // Execute Nitpick program
     execve(executable_path, argv, envp);
     
     // Only reached if execve fails
@@ -236,7 +236,7 @@ Shell (Parent Process)
                          │
 ┌────────────────────────┼──────────────────────────────────┐
 │                        │                                 │
-│                        │  Child Process (Aria Program)   │
+│                        │  Child Process (Nitpick Program)   │
 │                        │                                 │
 │   FD 0 (stdin) ◄───────┤                                 │
 │   FD 1 (stdout) ───────►                                 │
@@ -608,5 +608,5 @@ void foreground_job(int job_id) {
 ---
 
 **Document Version**: 1.0  
-**Author**: Aria Ecosystem Documentation  
+**Author**: Nitpick Ecosystem Documentation  
 **Status**: Reference guide (implementation in progress, research complete 15/15)

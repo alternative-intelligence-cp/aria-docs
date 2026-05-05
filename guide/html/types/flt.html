@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Floating Point — `flt` - Aria Programming Guide</title>
+    <title>Floating Point — `flt` - Nitpick Programming Guide</title>
     <style>
         :root {
             --bg-main: #1e1e1e;
@@ -218,7 +218,7 @@
 </head>
 <body>
     <nav>
-        <h2>Aria Guide</h2>
+        <h2>Nitpick Guide</h2>
         <div class="category">
 <h3>Advanced Features</h3>
 <ul>
@@ -395,7 +395,7 @@ flt64:from_f32 = small;        // flt32→flt64: safe widening</code></pre>
 <h2>ABI Note</h2>
 <strong><code>flt32</code> passes as <code>double</code> at the C ABI level.</strong> If writing C shims for extern functions,
 <p>
-the C side must declare parameters as <code>double</code>, then cast internally. This is an Aria
+the C side must declare parameters as <code>double</code>, then cast internally. This is a Nitpick
 codegen convention, not a bug.
 </p>
 <h2>When NOT to Use Floats</h2>

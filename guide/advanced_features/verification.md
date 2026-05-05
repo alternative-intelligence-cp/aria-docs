@@ -1,4 +1,4 @@
-# Verification in Aria — Formal Proofs with Z3
+# Verification in Nitpick — Formal Proofs with Z3
 
 > **Expanded guide available:** See `guide/verification/` for the full 6-section
 > verification guide covering Rules, contracts, optimizations, concurrency, and
@@ -6,7 +6,7 @@
 
 ## Overview
 
-Aria integrates the Z3 SMT solver to verify program properties at compile time.
+Nitpick integrates the Z3 SMT solver to verify program properties at compile time.
 Verification is opt-in via `--verify` flags and covers six domains: Rules/limit
 constraints, function contracts, integer overflow, concurrency safety, memory safety,
 and user-driven proofs.
@@ -32,7 +32,7 @@ When **Unknown** (solver timeout), the runtime check is preserved.
 Use `--verify` alone to enable everything, or combine individual flags:
 
 ```bash
-ariac program.aria -o program --verify-contracts --verify-overflow --prove-report
+npkc program.npk -o program --verify-contracts --verify-overflow --prove-report
 ```
 
 ## 1. Rules & Limit Verification
@@ -299,8 +299,8 @@ The default per-query timeout is 5000ms. Reduce for faster compilation at the co
 of more Unknown results; increase for complex proofs:
 
 ```bash
-ariac program.aria -o program --verify --smt-timeout=2000    # faster, more unknowns
-ariac program.aria -o program --verify --smt-timeout=10000   # slower, fewer unknowns
+npkc program.npk -o program --verify --smt-timeout=2000    # faster, more unknowns
+npkc program.npk -o program --verify --smt-timeout=10000   # slower, fewer unknowns
 ```
 
 ## Notes
@@ -342,7 +342,7 @@ ariac program.aria -o program --verify --smt-timeout=10000   # slower, fewer unk
 
 - [rules.md](rules.md) — Rules & Limit syntax
 - [../functions/design_by_contract.md](../functions/design_by_contract.md) — requires/ensures
-- [safety_layers.md](safety_layers.md) — Aria's safety model
+- [safety_layers.md](safety_layers.md) — Nitpick's safety model
 - [concurrency.md](concurrency.md) — threading and mutexes
 - [../verification/01_why_verification.md](../verification/01_why_verification.md) — full verification guide
 - [../../reference/SMT_INFO.md](../../reference/SMT_INFO.md) — internal SMT architecture reference

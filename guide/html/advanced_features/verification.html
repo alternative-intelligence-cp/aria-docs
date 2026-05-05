@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verification in Aria — Formal Proofs with Z3 - Aria Programming Guide</title>
+    <title>Verification in Nitpick — Formal Proofs with Z3 - Nitpick Programming Guide</title>
     <style>
         :root {
             --bg-main: #1e1e1e;
@@ -218,7 +218,7 @@
 </head>
 <body>
     <nav>
-        <h2>Aria Guide</h2>
+        <h2>Nitpick Guide</h2>
         <div class="category">
 <h3>General</h3>
 <ul>
@@ -235,10 +235,10 @@
     </nav>
     <main>
         <div class="breadcrumb"><a href="/">Home</a></div>
-        <h1>Verification in Aria — Formal Proofs with Z3</h1>
+        <h1>Verification in Nitpick — Formal Proofs with Z3</h1>
 <h2>Overview</h2>
 <p>
-Aria integrates the Z3 SMT solver to verify program properties at compile time.
+Nitpick integrates the Z3 SMT solver to verify program properties at compile time.
 Verification is opt-in via <code>--verify</code> flags and covers six domains: Rules/limit
 constraints, function contracts, integer overflow, concurrency safety, memory safety,
 and user-driven proofs.
@@ -264,7 +264,7 @@ When <strong>Unknown</strong> (solver timeout), the runtime check is preserved.
 <p>
 Use <code>--verify</code> alone to enable everything, or combine individual flags:
 </p>
-<pre><code>ariac program.aria -o program --verify-contracts --verify-overflow --prove-report</code></pre>
+<pre><code>npkc program.npk -o program --verify-contracts --verify-overflow --prove-report</code></pre>
 <h2>1. Rules & Limit Verification</h2>
 <p>
 Rules define value constraints. The compiler uses Z3 to verify that every <code>limit<></code>
@@ -515,9 +515,9 @@ Typical overhead and speedup from the benchmark suite:
 The default per-query timeout is 5000ms. Reduce for faster compilation at the cost
 of more Unknown results; increase for complex proofs:
 </p>
-<pre><code>ariac program.aria -o program --verify --smt-timeout=2000    # faster, more unknowns
+<pre><code>npkc program.npk -o program --verify --smt-timeout=2000    # faster, more unknowns
 <p>
-ariac program.aria -o program --verify --smt-timeout=10000   # slower, fewer unknowns</code></pre>
+npkc program.npk -o program --verify --smt-timeout=10000   # slower, fewer unknowns</code></pre>
 </p>
 <h2>Notes</h2>
 <ul><li>Verification requires the compiler built with <code>-DARIA_HAS_Z3=ON</code></li>
@@ -530,7 +530,7 @@ ariac program.aria -o program --verify --smt-timeout=10000   # slower, fewer unk
 <h2>Related</h2>
 <ul><li><a href="rules.md">rules.md</a> — Rules & Limit syntax</li>
 <li><a href="../functions/design_by_contract.md">../functions/design_by_contract.md</a> — requires/ensures</li>
-<li><a href="safety_layers.md">safety_layers.md</a> — Aria's safety model</li>
+<li><a href="safety_layers.md">safety_layers.md</a> — Nitpick's safety model</li>
 <li><a href="concurrency.md">concurrency.md</a> — threading and mutexes</li>
 </ul>
     </main>

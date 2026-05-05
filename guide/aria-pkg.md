@@ -1,6 +1,6 @@
-# aria-pkg — Aria Package Manager
+# npkpkg — Nitpick Package Manager
 
-`aria-pkg` manages Aria libraries and tools. It can install packages from the
+`npkpkg` manages Nitpick libraries and tools. It can install packages from the
 online registry or from local directories.
 
 ## Commands
@@ -8,7 +8,7 @@ online registry or from local directories.
 ### Update the registry
 
 ```bash
-aria-pkg update
+npkpkg update
 ```
 
 Downloads the latest package registry from GitHub. Run this before searching
@@ -17,51 +17,51 @@ or installing remote packages. The cache lives at `~/.aria/cache/aria-packages/`
 ### Search packages
 
 ```bash
-aria-pkg list --remote              # list all available packages
-aria-pkg list --remote json         # search by keyword
-aria-pkg list --remote http         # find HTTP-related packages
+npkpkg list --remote              # list all available packages
+npkpkg list --remote json         # search by keyword
+npkpkg list --remote http         # find HTTP-related packages
 ```
 
 ### Install a package
 
 ```bash
-aria-pkg install aria-json          # install from registry
-aria-pkg install ./my-package/      # install from local directory
-aria-pkg install my-package.aria-pkg  # install from archive
+npkpkg install aria-json          # install from registry
+npkpkg install ./my-package/      # install from local directory
+npkpkg install my-package.npkpkg  # install from archive
 ```
 
-When given a bare name (not a path), `aria-pkg` looks up the package in the
-cached registry and installs it. Run `aria-pkg update` first if the cache
+When given a bare name (not a path), `npkpkg` looks up the package in the
+cached registry and installs it. Run `npkpkg update` first if the cache
 is empty.
 
 ### List installed packages
 
 ```bash
-aria-pkg list
+npkpkg list
 ```
 
 ### Get package info
 
 ```bash
-aria-pkg info aria-json
+npkpkg info aria-json
 ```
 
 ### Remove a package
 
 ```bash
-aria-pkg remove aria-json
+npkpkg remove aria-json
 ```
 
 ### Search installed registry
 
 ```bash
-aria-pkg search json
+npkpkg search json
 ```
 
 ### Create a new package
 
 ```bash
-aria-pkg init my-library
+npkpkg init my-library
 ```
 
 Creates a package skeleton with `aria-package.toml`, `src/`, and `tests/`.
@@ -69,24 +69,24 @@ Creates a package skeleton with `aria-package.toml`, `src/`, and `tests/`.
 ### Pack a package
 
 ```bash
-aria-pkg pack ./my-library/
+npkpkg pack ./my-library/
 ```
 
-Creates a `.aria-pkg` archive for distribution.
+Creates a `.npkpkg` archive for distribution.
 
 ---
 
 ## Package Structure
 
-Every Aria package has this layout:
+Every Nitpick package has this layout:
 
 ```
 my-package/
 ├── aria-package.toml    # metadata and dependencies
 ├── src/
-│   └── my_package.aria  # source files
+│   └── my_package.npk  # source files
 └── tests/
-    └── test_my_package.aria
+    └── test_my_package.npk
 ```
 
 ### aria-package.toml
@@ -103,7 +103,7 @@ aria-json = "0.2.0"
 
 [build]
 type  = "library"           # "library" or "executable"
-entry = "src/my_package.aria"
+entry = "src/my_package.npk"
 ```
 
 The `[build]` section is optional. If present, `type` defaults to `"library"`
@@ -113,7 +113,7 @@ and `entry` defaults to `""`.
 
 ## Using packages in your code
 
-After installing a package, use it in your Aria source:
+After installing a package, use it in your Nitpick source:
 
 ```aria
 use "aria-json".*;
@@ -140,7 +140,7 @@ func:failsafe = int32(tbb32:err) { exit(1); };
 ## Custom registry URL
 
 ```bash
-aria-pkg update https://github.com/your-org/your-packages.git
+npkpkg update https://github.com/your-org/your-packages.git
 ```
 
 The default remote is `https://github.com/alternative-intelligence-cp/aria-packages.git`.

@@ -4,7 +4,7 @@
 **Category**: terminal, input
 **License**: MIT
 
-Key mapping and button state manager for Aria. Pure Aria implementation —
+Key mapping and button state manager for Nitpick. Pure Nitpick implementation —
 tracks button press/release via bitmask operations (division/modulo pattern),
 key name bindings, and frame-based input updates. Rebuilt from FFI in v0.12.2.
 
@@ -29,7 +29,7 @@ key name bindings, and frame-based input updates. Rebuilt from FFI in v0.12.2.
 ## Quick Start
 
 ```aria
-use "aria_input.aria".*;
+use "aria_input.npk".*;
 
 func:main = int32() {
     int64:inp = raw inp_create();

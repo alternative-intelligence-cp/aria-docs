@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Result<T> — Mandatory Error Handling - Aria Programming Guide</title>
+    <title>Result<T> — Mandatory Error Handling - Nitpick Programming Guide</title>
     <style>
         :root {
             --bg-main: #1e1e1e;
@@ -218,7 +218,7 @@
 </head>
 <body>
     <nav>
-        <h2>Aria Guide</h2>
+        <h2>Nitpick Guide</h2>
         <div class="category">
 <h3>Advanced Features</h3>
 <ul>
@@ -353,10 +353,10 @@
         <div class="breadcrumb"><a href="/">Home</a> / Types</div>
         <h1>Result<T> — Mandatory Error Handling</h1>
 <h2>Overview</h2>
-<strong>Every function in Aria returns <code>Result<T></code></strong> (except extern functions). The compiler
+<strong>Every function in Nitpick returns <code>Result<T></code></strong> (except extern functions). The compiler
 <p>
 forces you to handle the result — unhandled Results are compile errors. This is the
-core of Aria's safety model at the function level.
+core of Nitpick's safety model at the function level.
 </p>
 <h2>Structure</h2>
 <pre><code>Result<T> = { T|NULL:value, tbb8:error, bool:is_error }</code></pre>

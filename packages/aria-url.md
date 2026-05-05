@@ -4,7 +4,7 @@
 **Category**: networking, url
 **License**: MIT
 
-URL parsing, encoding, and decoding for Aria. Decomposes URLs into
+URL parsing, encoding, and decoding for Nitpick. Decomposes URLs into
 scheme, host, port, path, query, and fragment components.
 
 ## API Reference
@@ -24,7 +24,7 @@ scheme, host, port, path, query, and fragment components.
 ## Quick Start
 
 ```aria
-use "aria_url.aria".*;
+use "aria_url.npk".*;
 
 func:main = int32() {
     int32:_p = raw parse("https://example.com:8080/api?q=test#top");

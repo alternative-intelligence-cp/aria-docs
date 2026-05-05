@@ -51,7 +51,7 @@ flt64:from_f32 = small;        // flt32→flt64: safe widening
 ## ABI Note
 
 **`flt32` passes as `double` at the C ABI level.** If writing C shims for extern functions,
-the C side must declare parameters as `double`, then cast internally. This is an Aria
+the C side must declare parameters as `double`, then cast internally. This is a Nitpick
 codegen convention, not a bug.
 
 ## When NOT to Use Floats

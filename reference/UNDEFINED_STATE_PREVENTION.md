@@ -248,7 +248,7 @@ You can be an expert swimmer, but the boat still needs emergency equipment. The 
 
 ## Direct Syscalls and Safety (v0.4.0)
 
-The `sys()` builtin extends Aria's escalation model to kernel-level operations:
+The `sys()` builtin extends Nitpick's escalation model to kernel-level operations:
 
 | Construct | Danger | Analogy |
 |-----------|--------|---------|

@@ -1,6 +1,6 @@
 # main and failsafe — Mandatory Functions
 
-Every Aria program **must** define both `main` and `failsafe`.
+Every Nitpick program **must** define both `main` and `failsafe`.
 
 ## main
 
@@ -34,7 +34,7 @@ func:failsafe = int32(tbb32:err) {
 - `pass`/`fail` are **not valid** in failsafe
 - Called automatically on emphatic unwrap (`?!`) failure
 - Called by `!!! err;` shorthand
-- This is Aria's last line of defense — it must always exit
+- This is Nitpick's last line of defense — it must always exit
 
 ## Required in Every Program
 

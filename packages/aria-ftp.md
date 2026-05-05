@@ -4,7 +4,7 @@
 **Category**: networking, protocol
 **License**: MIT
 
-FTP command builder and reply parser for Aria. Pure Aria implementation —
+FTP command builder and reply parser for Nitpick. Pure Nitpick implementation —
 builds FTP protocol strings and parses server responses. Pair with
 `aria-socket` for actual network I/O.
 
@@ -36,7 +36,7 @@ builds FTP protocol strings and parses server responses. Pair with
 ## Quick Start
 
 ```aria
-use "aria_ftp.aria".*;
+use "aria_ftp.npk".*;
 
 func:main = int32() {
     int64:ftp = raw ftp_create();

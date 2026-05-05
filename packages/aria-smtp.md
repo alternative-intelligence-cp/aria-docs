@@ -4,7 +4,7 @@
 **Category**: networking, protocol, email
 **License**: MIT
 
-SMTP command builder and reply parser for Aria. Pure Aria implementation —
+SMTP command builder and reply parser for Nitpick. Pure Nitpick implementation —
 builds SMTP protocol strings, composes email messages, and parses server
 responses. Pair with `aria-socket` for transport.
 
@@ -33,7 +33,7 @@ responses. Pair with `aria-socket` for transport.
 ## Quick Start
 
 ```aria
-use "aria_smtp.aria".*;
+use "aria_smtp.npk".*;
 
 func:main = int32() {
     int64:sm = raw smtp_create();

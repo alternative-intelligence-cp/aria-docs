@@ -4,7 +4,7 @@
 **Category**: data-structures, cache
 **License**: MIT
 
-LRU (Least Recently Used) cache for Aria. Pure Aria implementation using
+LRU (Least Recently Used) cache for Nitpick. Pure Nitpick implementation using
 ahash with clock-based access tracking. Automatic eviction of least recently
 used entries when capacity is reached.
 
@@ -32,7 +32,7 @@ used entries when capacity is reached.
 ## Quick Start
 
 ```aria
-use "aria_lru.aria".*;
+use "aria_lru.npk".*;
 
 func:main = int32() {
     int64:cache = raw lru_create(3i64);

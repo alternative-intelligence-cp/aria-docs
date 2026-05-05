@@ -6,7 +6,7 @@ When `--smt-opt` is passed, the compiler uses Z3 proofs to eliminate runtime saf
 checks. Every eliminated check means fewer branches, less code, and faster execution.
 
 ```bash
-ariac program.aria -o program --smt-opt
+npkc program.npk -o program --smt-opt
 ```
 
 `--smt-opt` implies `--verify` — it enables verification AND uses the results for
@@ -117,8 +117,8 @@ Control how thorough verification is. Higher levels prove more but take longer:
 | 3 | + null, bounds, div-zero, concurrency, all proofs | Release builds |
 
 ```bash
-ariac program.aria --verify --verify-level=1    # ~9% overhead
-ariac program.aria --verify --verify-level=3    # Full verification
+npkc program.npk --verify --verify-level=1    # ~9% overhead
+npkc program.npk --verify --verify-level=3    # Full verification
 ```
 
 ## Incremental Solving (v0.14.3+)

@@ -1,6 +1,6 @@
-# Aria Language Examples
+# Nitpick Language Examples
 
-This directory contains example programs demonstrating the Aria programming language features.
+This directory contains example programs demonstrating the Nitpick programming language features.
 
 ## Directory Structure
 
@@ -15,55 +15,55 @@ examples/
 
 These examples cover fundamental language concepts:
 
-### 01_hello_world.aria
+### 01_hello_world.npk
 - Basic program structure
 - Main function
 - Print statement
 - Return values
 
-**Run:** `ariac examples/basic/01_hello_world.aria`
+**Run:** `npkc examples/basic/01_hello_world.npk`
 
-### 02_variables.aria
+### 02_variables.npk
 - Variable declarations with type:name syntax
 - Integer types (int8 through int4096, uint8 through uint64)
 - Float types (flt32, flt64, flt128 through flt512)
 - Boolean and string types
 - LBIM (Large Binary Integer Math) types
 
-**Run:** `ariac examples/basic/02_variables.aria`
+**Run:** `npkc examples/basic/02_variables.npk`
 
-### 03_functions.aria
+### 03_functions.npk
 - Function definitions with `func:name = ReturnType(params)` syntax
 - Parameters and return types
 - Function calls
 - `pass()` and `fail()` for return values
 - `failsafe` error handler
 
-**Run:** `ariac examples/basic/03_functions.aria`
+**Run:** `npkc examples/basic/03_functions.npk`
 
-### 04_control_flow.aria
+### 04_control_flow.npk
 - If/else statements
 - If-else if-else chains
 - While loops
-- `till` loops (Aria's for-loop equivalent)
+- `till` loops (Nitpick's for-loop equivalent)
 - Nested loops
 - Comparison operators
 
-**Run:** `ariac examples/basic/04_control_flow.aria`
+**Run:** `npkc examples/basic/04_control_flow.npk`
 
-### 05_memory.aria
+### 05_memory.npk
 - Ownership semantics
 - Borrowing with `$$i` (immutable) and `$$m` (mutable) qualifiers
 - Move semantics
 - Memory safety guarantees
 
-**Run:** `ariac examples/basic/05_memory.aria`
+**Run:** `npkc examples/basic/05_memory.npk`
 
 ## Feature Examples
 
 These examples demonstrate advanced language features:
 
-### 06_modules.aria
+### 06_modules.npk
 - Module declarations
 - Import statements
 - Public/private visibility
@@ -71,9 +71,9 @@ These examples demonstrate advanced language features:
 - Module aliases
 - Standard library imports
 
-**Run:** `ariac examples/features/06_modules.aria`
+**Run:** `npkc examples/features/06_modules.npk`
 
-### 07_generics.aria
+### 07_generics.npk
 - Generic function definitions
 - Type parameters
 - Multiple type parameters
@@ -82,9 +82,9 @@ These examples demonstrate advanced language features:
 - Generic containers (structs)
 - Monomorphization
 
-**Run:** `ariac examples/features/07_generics.aria`
+**Run:** `npkc examples/features/07_generics.npk`
 
-### 08_stdlib.aria
+### 08_stdlib.npk
 - Standard library overview
 - I/O operations (std.io)
 - String manipulation (std.string)
@@ -93,9 +93,9 @@ These examples demonstrate advanced language features:
 - File operations (std.fs)
 - Error handling patterns
 
-**Run:** `ariac examples/features/08_stdlib.aria`
+**Run:** `npkc examples/features/08_stdlib.npk`
 
-### 09_tbb_arithmetic.aria
+### 09_tbb_arithmetic.npk
 - Ternary Balanced Base (TBB) literals
 - TBB arithmetic operations
 - TBB to decimal conversion
@@ -103,7 +103,7 @@ These examples demonstrate advanced language features:
 - TBB comparison operators
 - Practical TBB applications
 
-**Run:** `ariac examples/features/09_tbb_arithmetic.aria`
+**Run:** `npkc examples/features/09_tbb_arithmetic.npk`
 
 **TBB Overview:**
 - Uses digits: `-1`, `0`, `+1` (represented as `-`, `0`, `+`)
@@ -116,7 +116,7 @@ These examples demonstrate advanced language features:
 
 Complete applications demonstrating integration of multiple features:
 
-### 10_complete_app.aria
+### 10_complete_app.npk
 A complete task manager application featuring:
 - Data structures (Task, TaskManager)
 - Module organization
@@ -127,7 +127,7 @@ A complete task manager application featuring:
 - Control flow patterns
 - Error handling
 
-**Run:** `ariac examples/advanced/10_complete_app.aria`
+**Run:** `npkc examples/advanced/10_complete_app.npk`
 
 ## Learning Path
 
@@ -154,30 +154,30 @@ A complete task manager application featuring:
 
 ### Compile and Run
 ```bash
-ariac examples/basic/01_hello_world.aria -o hello
+npkc examples/basic/01_hello_world.npk -o hello
 ./hello
 ```
 
 ### Compile to LLVM IR
 ```bash
-ariac examples/basic/01_hello_world.aria --emit-llvm -o hello.ll
+npkc examples/basic/01_hello_world.npk --emit-llvm -o hello.ll
 ```
 
 ### Compile to Assembly
 ```bash
-ariac examples/basic/01_hello_world.aria --emit-asm -o hello.s
+npkc examples/basic/01_hello_world.npk --emit-asm -o hello.s
 ```
 
 ### Run with Debugging
 ```bash
-ariac examples/basic/01_hello_world.aria -g -o hello
+npkc examples/basic/01_hello_world.npk -g -o hello
 gdb ./hello
 ```
 
 ## Integration Tests
 
 These examples also serve as integration tests. The test runner in `tests/integration/runner.sh` will:
-1. Compile each `.aria` file
+1. Compile each `.npk` file
 2. Run the executable
 3. Verify output
 4. Check exit codes
@@ -192,7 +192,7 @@ cd tests/integration
 
 When adding new examples:
 
-1. **File naming:** Use `NN_descriptive_name.aria` format
+1. **File naming:** Use `NN_descriptive_name.npk` format
 2. **Comments:** Include header comment explaining what's demonstrated
 3. **Documentation:** Update this README.md
 4. **Testing:** Ensure example compiles and runs correctly
@@ -241,7 +241,7 @@ module my_module {
 
 ## Style Guide
 
-These examples follow Aria style conventions:
+These examples follow Nitpick style conventions:
 - 4 spaces for indentation
 - Snake_case for variables and functions
 - PascalCase for types and structs

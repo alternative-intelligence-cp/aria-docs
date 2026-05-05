@@ -1,10 +1,10 @@
 # Garbage Collection Tuning Guide
 
-> v0.16.7 — Aria Compiler Documentation
+> v0.16.7 — Nitpick Compiler Documentation
 
 ## Overview
 
-Aria uses a **hybrid generational garbage collector** with two regions:
+Nitpick uses a **hybrid generational garbage collector** with two regions:
 
 - **Nursery (Young Generation)**: A copying (Cheney-style) semi-space for short-lived allocations.
 - **Old Generation**: A mark-sweep region for long-lived objects promoted from the nursery.

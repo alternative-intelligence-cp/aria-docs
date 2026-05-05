@@ -1,4 +1,4 @@
-# Aria Compiler Architecture Manual
+# Nitpick Compiler Architecture Manual
 
 **Target audience:** Anyone who wants to understand the compiler internals, contribute to the compiler, or implement new language features.
 
@@ -56,9 +56,9 @@
                 └───────────────┘
 ```
 
-The compiler (`ariac`) is a single-pass, ahead-of-time compiler. Source files go through preprocessing, lexing, parsing, type checking, borrow checking, and LLVM IR generation. LLVM handles optimization and machine code emission.
+The compiler (`npkc`) is a single-pass, ahead-of-time compiler. Source files go through preprocessing, lexing, parsing, type checking, borrow checking, and LLVM IR generation. LLVM handles optimization and machine code emission.
 
-The compiler is written in C++17. The LLVM backend remains in C++ by design, while the compiler frontend has been self-hosted in Aria (lexer, parser, type checker, borrow checker, safety checker, exhaustiveness checker, const evaluator — 220 tests across 5 modules).
+The compiler is written in C++17. The LLVM backend remains in C++ by design, while the compiler frontend has been self-hosted in Nitpick (lexer, parser, type checker, borrow checker, safety checker, exhaustiveness checker, const evaluator — 220 tests across 5 modules).
 
 ---
 
@@ -168,7 +168,7 @@ Recursive-descent parser producing a `ProgramNode` AST root. Notable features:
 - **Generic syntax:** `<T>` on function/struct declarations, turbofish `::<T>` on call sites
 - **Extern blocks:** `extern "lib" { ... }` with C-compatible declarations
 - **Design-by-contract:** `requires`/`ensures`/`invariant` clauses attached to function declarations
-- **Colon syntax:** Aria uses `type:name` for declarations (e.g., `int32:x = 5i32;`)
+- **Colon syntax:** Nitpick uses `type:name` for declarations (e.g., `int32:x = 5i32;`)
 - **Function syntax:** `func:name = ReturnType(params) { body };` — note trailing semicolon
 - **Two for-loop forms:** C-style `for(init; cond; step)` and range `for (i in a..b)`
 
@@ -323,8 +323,8 @@ Wraps LLVM's core objects:
 
 Key internal state:
 - `named_values` — symbol table mapping variable names to `llvm::Value*`
-- `value_types` — tracks the Aria type of each `llvm::Value*`
-- `var_aria_types` — maps variable names to Aria types (for borrow checker interop)
+- `value_types` — tracks the Nitpick type of each `llvm::Value*`
+- `var_aria_types` — maps variable names to Nitpick types (for borrow checker interop)
 - `current_function` — the LLVM function being generated
 - `loop_stack` — stack of (continue_bb, break_bb) for nested loops
 - `pick_merge_bb` — merge block for pick/case chains
@@ -360,7 +360,7 @@ When `-g` is passed, `IRGenerator` uses a `DIBuilder` to emit DWARF debug inform
 ## Runtime Library
 
 **Location:** `src/runtime/` (~33,900 lines) + headers in `include/runtime/`  
-**Build target:** `aria_runtime` (static library linked into every compiled Aria program)
+**Build target:** `aria_runtime` (static library linked into every compiled Nitpick program)
 
 ### Core Components
 
@@ -389,7 +389,7 @@ When `-g` is passed, `IRGenerator` uses a `DIBuilder` to emit DWARF debug inform
 
 ### Exotic Type Runtime Ops
 
-These live in `src/backend/runtime/` and support Aria's unique numeric types:
+These live in `src/backend/runtime/` and support Nitpick's unique numeric types:
 
 | File | Lines | Types Supported |
 |------|------:|-----------------|
@@ -426,7 +426,7 @@ A separate `aria_runtime_wasm` static library is built targeting wasm32. It excl
 
 ## Memory Model
 
-Aria provides three allocation strategies:
+Nitpick provides three allocation strategies:
 
 ### 1. GC (Default)
 
@@ -490,7 +490,7 @@ extern "libm" {
 - Block: parses `extern "libname" { ... }` with multiple function/variable/struct/opaque declarations
 
 **Type Mapping** (`ir_generator.cpp`, `mapFFIType()`):
-- Aria primitive types → matching LLVM types (int32 → i32, flt64 → double, etc.)
+- Nitpick primitive types → matching LLVM types (int32 → i32, flt64 → double, etc.)
 - `string` → `ptr` (C string pointer)
 - `wild T->` → `ptr` (opaque pointer)
 - `?*` (type-erased pointer) → `ptr` (for C's `void*`)
@@ -503,31 +503,31 @@ extern "libm" {
 
 **Conventions:**
 - `*` (thin C pointers) allowed only inside extern blocks
-- `->` (fat Aria pointers) only outside extern blocks
+- `->` (fat Nitpick pointers) only outside extern blocks
 - `opaque struct:Name;` declares C types the compiler cannot inspect
-- `void` return type allowed only in extern context; Aria code uses `NIL`
+- `void` return type allowed only in extern context; Nitpick code uses `NIL`
 
 ### C Shim Pattern
 
-For complex C libraries, Aria packages use a C shim that provides a simplified API:
+For complex C libraries, Nitpick packages use a C shim that provides a simplified API:
 
 ```
 ┌──────────┐     ┌───────────┐     ┌──────────┐
-│ Aria code │────►│ C shim.so │────►│ C library│
+│ Nitpick code │────►│ C shim.so │────►│ C library│
 │ (extern)  │     │ (wrapper) │     │ (e.g. PQ)│
 └──────────┘     └───────────┘     └──────────┘
 ```
 
 The shim handles:
 - Complex struct lifecycle (allocate/use/free pools)
-- String memory management (shim owns strings, Aria reads via helpers)
+- String memory management (shim owns strings, Nitpick reads via helpers)
 - Error code translation
 
 ---
 
 ## Tooling
 
-### ariac (Compiler Driver)
+### npkc (Compiler Driver)
 
 **Entry:** `src/main.cpp` (1,596 lines)
 
@@ -555,13 +555,13 @@ DAP server using LLDB 20 as backend:
 - Breakpoints (line, conditional, logpoints)
 - Stepping (into, over, out)
 - Stack traces and variable inspection
-- Aria-specific type formatters
+- Nitpick-specific type formatters
 - Memory visualization
 - Async coroutine debugging
 
 Conditionally built — requires LLDB development libraries.
 
-### aria-pkg (Package Manager)
+### npkpkg (Package Manager)
 
 **Source:** `src/tools/pkg/` (~1,078 lines)
 
@@ -574,7 +574,7 @@ Conditionally built — requires LLDB development libraries.
 
 **Source:** `src/tools/doc/` (~1,309 lines)
 
-- Parses Aria source files for doc comments
+- Parses Nitpick source files for doc comments
 - Generates HTML documentation pages
 - Produces 435+ pages from the ecosystem
 
@@ -597,11 +597,11 @@ Conditionally built — requires LLDB development libraries.
 | Target | Type | Description |
 |--------|------|-------------|
 | `aria_runtime` | Static lib | Runtime linked into compiled programs |
-| `ariac` | Executable | Main compiler |
+| `npkc` | Executable | Main compiler |
 | `ariac_testing` | Executable | Separate test compiler (avoids fuzzer disruption) |
 | `aria-ls` | Executable | Language Server |
 | `aria-dap` | Executable | Debugger (conditional on LLDB) |
-| `aria-pkg` | Executable | Package manager |
+| `npkpkg` | Executable | Package manager |
 | `aria-doc` | Executable | Documentation generator |
 
 ### Build Options

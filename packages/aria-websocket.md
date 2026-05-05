@@ -4,9 +4,9 @@
 **Category**: networking, protocol
 **License**: MIT
 
-WebSocket protocol layer for Aria. Pure Aria implementation — manages
+WebSocket protocol layer for Nitpick. Pure Nitpick implementation — manages
 connection state, handshake generation, frame type classification, and
-close negotiation. Rebuilt from FFI to pure Aria in v0.12.2.
+close negotiation. Rebuilt from FFI to pure Nitpick in v0.12.2.
 
 ## API Reference
 
@@ -35,7 +35,7 @@ close negotiation. Rebuilt from FFI to pure Aria in v0.12.2.
 ## Quick Start
 
 ```aria
-use "aria_websocket.aria".*;
+use "aria_websocket.npk".*;
 
 func:main = int32() {
     int64:ws = raw ws_create("echo.websocket.org", "/");

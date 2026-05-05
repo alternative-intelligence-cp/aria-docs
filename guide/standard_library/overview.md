@@ -2,13 +2,13 @@
 
 ## What's in stdlib/
 
-The standard library provides common functionality as importable Aria modules.
+The standard library provides common functionality as importable Nitpick modules.
 Located at `REPOS/aria/stdlib/`.
 
 ## Import Pattern
 
 ```aria
-use "module_name.aria".*;    // bare filename — compiler searches stdlib/
+use "module_name.npk".*;    // bare filename — compiler searches stdlib/
 ```
 
 ## Available Categories

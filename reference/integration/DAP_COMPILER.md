@@ -52,7 +52,7 @@ The **aria-dap** (Debug Adapter Protocol implementation) relies on **DWARF debug
 
 **Example**:
 ```bash
-$ ariac main.aria --debug-symbols -o my_app
+$ npkc main.npk --debug-symbols -o my_app
 ```
 
 **Compiler Invokes**:
@@ -96,7 +96,7 @@ Section Headers:
 
 **Purpose**: Map machine code addresses to source line numbers
 
-**Example Aria Code**:
+**Example Nitpick Code**:
 ```aria
 func:main = i64() {
     io.stdout.write("Hello\n");  // Line 2
@@ -127,10 +127,10 @@ main:
 **Line Number Table** (DWARF `.debug_line`):
 ```
 Address      Line  File
-0x401000     1     main.aria
-0x401005     2     main.aria
-0x401020     3     main.aria
-0x401030     4     main.aria
+0x401000     1     main.npk
+0x401005     2     main.npk
+0x401020     3     main.npk
+0x401030     4     main.npk
 ```
 
 **DAP Usage**: When user sets breakpoint at line 3, DAP looks up address `0x401020` in table
@@ -183,7 +183,7 @@ void IRGenerator::generate_function(FuncDeclNode* func) {
 
 ### Local Variables
 
-**Aria Code**:
+**Nitpick Code**:
 ```aria
 func:main = i64() {
     var:x = i32(42);
@@ -303,7 +303,7 @@ llvm::DIBasicType* get_di_type_i32() {
 
 ### Struct Types
 
-**Aria Code**:
+**Nitpick Code**:
 ```aria
 struct:point = { x: i32, y: i32 };
 ```
@@ -366,7 +366,7 @@ llvm::DICompositeType* get_di_type_struct(StructType* type) {
 
 ### Result<T> Type
 
-**Aria Code**:
+**Nitpick Code**:
 ```aria
 result<i32>:r = divide(10, 2);
 ```
@@ -521,7 +521,7 @@ void DebugSession::start() {
     // Create LLDB debugger
     lldb::SBDebugger debugger = lldb::SBDebugger::Create();
     
-    // Load Aria formatters
+    // Load Nitpick formatters
     lldb::SBError error;
     debugger.GetCommandInterpreter().HandleCommand(
         "command script import /usr/local/lib/aria/formatters/aria_formatters.py",
@@ -609,5 +609,5 @@ DW_TAG_variable (temp)
 ---
 
 **Document Version**: 1.0  
-**Author**: Aria Ecosystem Documentation  
+**Author**: Nitpick Ecosystem Documentation  
 **Status**: Reference guide (implementation planned, DWARF generation in compiler confirmed)

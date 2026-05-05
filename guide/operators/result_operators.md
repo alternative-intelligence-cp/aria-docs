@@ -1,6 +1,6 @@
 # Result Operators
 
-These operators control how `Result<T>` values are handled. Every function call in Aria
+These operators control how `Result<T>` values are handled. Every function call in Nitpick
 returns `Result<T>` — these operators let you unwrap, propagate, or discard results.
 
 ## Operator Table

@@ -4,9 +4,9 @@
 **Category**: terminal, ui
 **License**: MIT
 
-Terminal display state manager for Aria. Pure Aria implementation — tracks
+Terminal display state manager for Nitpick. Pure Nitpick implementation — tracks
 cursor position, colors, text attributes, and terminal dimensions.
-Rebuilt from FFI to pure Aria in v0.12.2.
+Rebuilt from FFI to pure Nitpick in v0.12.2.
 
 ## API Reference
 
@@ -37,7 +37,7 @@ Rebuilt from FFI to pure Aria in v0.12.2.
 ## Quick Start
 
 ```aria
-use "aria_display.aria".*;
+use "aria_display.npk".*;
 
 func:main = int32() {
     int64:d = raw disp_create(80i64, 24i64);

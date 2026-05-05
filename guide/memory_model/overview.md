@@ -2,7 +2,7 @@
 
 ## Three Allocation Modes
 
-Aria provides explicit control over memory allocation:
+Nitpick provides explicit control over memory allocation:
 
 | Keyword | Mode | Management | Use Case |
 |---------|------|------------|----------|

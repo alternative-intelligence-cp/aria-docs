@@ -1,12 +1,12 @@
-# Transformer Experiment — Aria Language Capability Assessment
+# Transformer Experiment — Nitpick Language Capability Assessment
 
 **Date**: March 9, 2026  
-**Purpose**: Determine what Aria can express for ML compute; inform `stdlib.linalg` / `stdlib.ml` planning.
+**Purpose**: Determine what Nitpick can express for ML compute; inform `stdlib.linalg` / `stdlib.ml` planning.
 
 ## What This Is
 
 A minimal transformer encoder block — single-head scaled dot-product attention — implemented entirely
-in current Aria (`ariac` LLVM-18 build). 
+in current Nitpick (`npkc` LLVM-18 build). 
 
 Architecture: SEQ=4, D_MODEL=8, D_K=4, D_V=4, D_FF=16, VOCAB=8.
 
@@ -18,7 +18,7 @@ All computation is inline in `main()`. No arrays are passed between functions (s
 cd /home/randy/Workspace/REPOS/aria
 
 # Compile
-./build/ariac examples/transformer/transformer_experiment.aria \
+./build/npkc examples/transformer/transformer_experiment.npk \
   -o examples/transformer/transformer_experiment 2>&1 | grep -v "^\[DEBUG\]"
 
 # Run
@@ -27,7 +27,7 @@ cd /home/randy/Workspace/REPOS/aria
 
 Expected output:
 ```
-=== Aria Minimal Transformer Forward Pass ===
+=== Nitpick Minimal Transformer Forward Pass ===
   SEQ=4  D_MODEL=8  D_K=4  D_FF=16  VOCAB=8  single-head attention
 
 Step 1 done: input embeddings loaded
@@ -117,7 +117,7 @@ All nine possible mechanisms were tested and all fail:
 | `wild flt64->:arr = alloc(32)` | `alloc()` returns `int8@`; no coercion to `flt64->` |
 
 Impact: no helper functions possible for matrix operations — everything inline in `main()`.  
-Workaround: all 11 transformer steps are inline (see `transformer_experiment.aria`).
+Workaround: all 11 transformer steps are inline (see `transformer_experiment.npk`).
 
 ### BUG — Global flt64 Array Element Loads Use Wrong IR Type
 
@@ -137,21 +137,21 @@ of `f64`.
 Note: global scalar `flt64:x = 1.0` works fine. Only *array element loads* from global arrays break.  
 Workaround: all arrays are local (`main()` stack).
 
-### BUG — `use math;` Broken from Non-Root Source Paths + math.aria Has Internal Errors
+### BUG — `use math;` Broken from Non-Root Source Paths + math.npk Has Internal Errors
 
 Two separate issues:
 
 1. **Module path resolution**: `rootPath` is set to the directory of the source FILE being compiled,
-   not the working directory. Compiling `examples/transformer/foo.aria` sets rootPath to 
-   `examples/transformer/`, so `use math;` searches for `examples/transformer/lib/std/math.aria`,
+   not the working directory. Compiling `examples/transformer/foo.npk` sets rootPath to 
+   `examples/transformer/`, so `use math;` searches for `examples/transformer/lib/std/math.npk`,
    which doesn't exist. Can be worked around with `-I /path/to/aria/lib/std`.
 
-2. **math.aria internal errors**: Even with `-I`, `math.aria` fails type-checking because several
+2. **math.npk internal errors**: Even with `-I`, `math.npk` fails type-checking because several
    of its `pub func` bodies use the `return` keyword instead of `pass`, and some functions reference
    `fabs` (which has a scoping issue with extern-declared names). The whole module fails, making
    `exponential()` and `square_root()` unavailable even though those specific functions are correct.
 
-   Affected functions in math.aria: `floor_f64`, `ceil_f64`, `round_f64`, `trunc_f64`, `mod_f64`,
+   Affected functions in math.npk: `floor_f64`, `ceil_f64`, `round_f64`, `trunc_f64`, `mod_f64`,
    `factorial_i32`, `factorial_f64`, `binomial_i32`, `lerp_f64`, `inverse_lerp`, `map_range`,
    `smoothstep`, `smootherstep`, `clamp_f64`, `wrap_f64`, `ping_pong`, `sign_f64`, `copysign`.
 
@@ -181,14 +181,14 @@ its return value. Since `NIL` functions are typed as returning `NIL` (not nothin
 
 ## Architecture Notes for Future stdlib.ml / stdlib.linalg
 
-This experiment confirms the minimal viable set for an Aria ML library:
+This experiment confirms the minimal viable set for an Nitpick ML library:
 
 1. **Immediate prerequisite (blocks all helper functions)**: Fix stack array-to-pointer passing (see P4/P5 bugs above). Without this, every matrix operation must be inlined at the call site — completely impractical for real use.
 
 2. **Desirable (for clean APIs)**:
    - 2D array syntax (`flt64[M][N]`) or syntax sugar over flat arrays
    - Struct fields holding arrays (allows `struct:Tensor = { flt64[512]:data; int32[4]:shape; }`)
-   - Fix math.aria (replace `return` with `pass`, fix `fabs` scoping)
+   - Fix math.npk (replace `return` with `pass`, fix `fabs` scoping)
    - Fix global float array element load type bug
 
 3. **What works well now**:
@@ -202,7 +202,7 @@ This experiment confirms the minimal viable set for an Aria ML library:
 
 ## Files in This Directory
 
-- `transformer_experiment.aria` — The main experiment (full annotated transformer forward pass)
-- `probe_01_float_arrays.aria` — Early probes of float array mechanics
-- `probe_alloc.aria` — Heap allocation probes (result: `alloc()` only returns `int8@`)
+- `transformer_experiment.npk` — The main experiment (full annotated transformer forward pass)
+- `probe_01_float_arrays.npk` — Early probes of float array mechanics
+- `probe_alloc.npk` — Heap allocation probes (result: `alloc()` only returns `int8@`)
 - `README.md` — This file

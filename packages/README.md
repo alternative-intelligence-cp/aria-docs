@@ -1,6 +1,6 @@
-# Aria Packages Reference
+# Nitpick Packages Reference
 
-This directory documents the official Aria packages available in `aria-packages`.
+This directory documents the official Nitpick packages available in `aria-packages`.
 
 ## v0.2.8 Packages (Game Development Track)
 
@@ -63,7 +63,7 @@ cd aria-packages/packages/aria-gml/shim
 make
 
 # Compile a program using aria-gml
-ariac my_game.aria -o my_game \
+npkc my_game.npk -o my_game \
   -L packages/aria-gml/shim \
   -laria_gml_shim -lraylib -lm
 ```

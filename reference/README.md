@@ -1,6 +1,6 @@
-# Aria Ecosystem Architecture
+# Nitpick Ecosystem Architecture
 
-**Purpose**: System overview documentation showing how all Aria components connect, their interfaces, dependencies, and data flows.
+**Purpose**: System overview documentation showing how all Nitpick components connect, their interfaces, dependencies, and data flows.
 
 **Status**: Documentation in progress (started Dec 22, 2025)
 
@@ -15,12 +15,12 @@
 - [DATA_FLOW.md](DATA_FLOW.md) - How data moves through the system
 
 ### Component Details
-- [ARIA_COMPILER.md](components/ARIA_COMPILER.md) - Aria language compiler architecture
+- [ARIA_COMPILER.md](components/ARIA_COMPILER.md) - Nitpick language compiler architecture
 - [ARIA_SHELL.md](components/ARIA_SHELL.md) - AriaSH shell implementation
-- [ARIA_BUILD.md](components/ARIA_BUILD.md) - AriaBuild build system
+- [ARIA_BUILD.md](components/ARIA_BUILD.md) - NpkBld build system
 - [ARIAX.md](components/ARIAX.md) - AriaX package/dependency manager
 - [NIKOLA.md](components/NIKOLA.md) - Nikola consciousness substrate
-- [RUNTIME.md](components/RUNTIME.md) - Aria runtime library
+- [RUNTIME.md](components/RUNTIME.md) - Nitpick runtime library
 
 ### Technical Specifications
 - ✅ [TYPE_SYSTEM.md](specs/TYPE_SYSTEM.md) - Complete type theory (primitives, TBB, Result<T>, Wild, generics, inference, ownership)
@@ -39,7 +39,7 @@
 - ✅ [NIKOLA_ARIA.md](integration/NIKOLA_ARIA.md) - Consciousness substrate FFI bindings, C wrapper, 6-stream wave data, use cases
 
 ### Programming Guide
-- 📝 [Programming Guide](programming_guide/README.md) - Comprehensive reference for every Aria language feature (302 topics)
+- 📝 [Programming Guide](programming_guide/README.md) - Comprehensive reference for every Nitpick language feature (302 topics)
   - **Structure Complete**: Types, Memory Model, Control Flow, Operators, Functions, Modules, I/O, Standard Library, Advanced Features
   - **Content Status**: Files created, content to be filled incrementally during development
 
@@ -48,13 +48,13 @@
 ## Quick Reference
 
 ### Active Components (v0.2.13)
-- **Aria Compiler** (ariac) — v0.2.13 — [github.com/alternative-intelligence-cp/aria](https://github.com/alternative-intelligence-cp/aria)
+- **Nitpick Compiler** (npkc) — v0.2.13 — [github.com/alternative-intelligence-cp/aria](https://github.com/alternative-intelligence-cp/aria)
 - **AriaX** — Linux distribution — [github.com/alternative-intelligence-cp/ariax](https://github.com/alternative-intelligence-cp/ariax)
 - **Nikola** — 9D-TWI consciousness substrate — [github.com/alternative-intelligence-cp/nikola](https://github.com/alternative-intelligence-cp/nikola)
 - **74 ecosystem packages** — [github.com/alternative-intelligence-cp/aria-packages](https://github.com/alternative-intelligence-cp/aria-packages)
 
 ### Shared Infrastructure
-- **Aria Runtime** - libaria_runtime.a - Part of compiler repo
+- **Nitpick Runtime** - libaria_runtime.a - Part of compiler repo
 - **Wild Memory** - Arena/pool/slab allocators - Shared across all components
 - **TBB System** - Twisted Balanced Binary arithmetic - Shared type system
 - **6-Stream I/O** - stdin/stdout/stderr + stddbg/stddati/stddato - Shared I/O model

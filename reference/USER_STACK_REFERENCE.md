@@ -115,8 +115,8 @@ Example messages:
 
 | Test File | Count | Coverage |
 |-----------|-------|----------|
-| `tests/test_ustack.aria` | 14 | LIFO ordering, peek, multi-push, typed pop (int8/int32/int64/flt32/flt64), mixed types |
-| `tests/test_ustack_strings.aria` | 8 | Scope independence across function calls, mixed int/float types |
+| `tests/test_ustack.npk` | 14 | LIFO ordering, peek, multi-push, typed pop (int8/int32/int64/flt32/flt64), mixed types |
+| `tests/test_ustack_strings.npk` | 8 | Scope independence across function calls, mixed int/float types |
 
 ---
 
@@ -134,7 +134,7 @@ Example messages:
 
 ## Design Rationale
 
-The user stack fills a specific niche in Aria's "safe by default, opt-in to danger" philosophy:
+The user stack fills a specific niche in Nitpick's "safe by default, opt-in to danger" philosophy:
 
 1. **Why not just use variables?** Variables are faster but require knowing the shape at compile time. The user stack supports dynamic depth and mixed types.
 

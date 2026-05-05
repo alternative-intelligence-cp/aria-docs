@@ -4,7 +4,7 @@
 **Category**: resilience, networking
 **License**: MIT
 
-Retry with exponential backoff for Aria. Pure Aria implementation — tracks
+Retry with exponential backoff for Nitpick. Pure Nitpick implementation — tracks
 attempt count, computes delays as `base_ms * 2^attempt` capped at `cap_ms`,
 and manages success/failure/exhaustion state.
 
@@ -35,7 +35,7 @@ and manages success/failure/exhaustion state.
 ## Quick Start
 
 ```aria
-use "aria_retry.aria".*;
+use "aria_retry.npk".*;
 
 func:main = int32() {
     int64:r = raw retry_create(3i64, 100i64, 5000i64);

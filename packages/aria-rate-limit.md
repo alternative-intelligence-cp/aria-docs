@@ -4,7 +4,7 @@
 **Category**: middleware, security
 **License**: MIT
 
-Token-bucket rate limiter for Aria. Configure maximum tokens, refill rate,
+Token-bucket rate limiter for Nitpick. Configure maximum tokens, refill rate,
 and generate standard rate-limit HTTP headers.
 
 ## API Reference
@@ -27,7 +27,7 @@ and generate standard rate-limit HTTP headers.
 ## Quick Start
 
 ```aria
-use "aria_rate_limit.aria".*;
+use "aria_rate_limit.npk".*;
 
 func:main = int32() {
     int64:rl = raw rate_configure(100i64, 10i64);

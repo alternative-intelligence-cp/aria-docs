@@ -2,7 +2,7 @@
 
 ## Overview
 
-Stack allocation is the **default** in Aria. Variables are allocated on the function's
+Stack allocation is the **default** in Nitpick. Variables are allocated on the function's
 stack frame and automatically freed when the scope exits.
 
 ## Declaration

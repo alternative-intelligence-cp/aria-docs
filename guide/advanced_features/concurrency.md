@@ -2,7 +2,7 @@
 
 ## Overview
 
-Aria's concurrency model provides four layers of abstraction:
+Nitpick's concurrency model provides four layers of abstraction:
 
 | Layer | API | Use Case |
 |-------|-----|----------|

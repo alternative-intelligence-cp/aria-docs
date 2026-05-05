@@ -1,7 +1,7 @@
-# Aria Language Quick Reference
+# Nitpick Language Quick Reference
 
 **Purpose:** One-line lookup for every type, operator, construct, and stdlib
-module in Aria. No elaboration — just the facts.
+module in Nitpick. No elaboration — just the facts.
 
 **Full spec:** `specs/aria_specs.txt`  
 **Full guide:** `guide/`
@@ -160,7 +160,7 @@ Literal prefixes: `0t` for ternary (T = −1), `0n` for nonary (A–D = −1..�
 
 | Value | Type | Description |
 |-------|------|-------------|
-| `NIL` | Unit/optional | Aria's "no value" — for `T?` optional types only |
+| `NIL` | Unit/optional | Nitpick's "no value" — for `T?` optional types only |
 | `NULL` | Pointer | C-style null pointer (address 0x0) — for `type->` pointer types only |
 | `ERR` | Type-specific | Type-specific error sentinel; sticky over arithmetic |
 | `unknown` | Any | Soft error state returned instead of crashing (e.g., division by zero → `unknown`) |
@@ -315,11 +315,11 @@ for (int32:i = 0i32; i < 100i32; i++) { }  // C-style for
 // 'when' loop — structured conditional loop with completion/failure branches
 when (cond) { body } then { /* ran to completion */ } end { /* exited early */ }
 
-// 'loop' — Aria counted loop; $ is always int64 iteration variable
+// 'loop' — Nitpick counted loop; $ is always int64 iteration variable
 loop (start, limit, step) { int64:i = $; }
 // step is magnitude only; direction determined by start vs limit
 
-// 'till' — Aria zero-based counted loop; $ is always int64
+// 'till' — Nitpick zero-based counted loop; $ is always int64
 till (limit, step) { int64:i = $; }
 // positive step: 0 → limit; negative step: limit → 0
 ```
@@ -557,7 +557,7 @@ Multiline: content between backticks may span lines.
 use std.io;                         // module
 use std.io.{println, readFile};     // selective
 use math.*;                         // wildcard
-use "./utils.aria" as utils;        // local with alias
+use "./utils.npk" as utils;        // local with alias
 use cfg(target_os = "linux") std.os.linux;  // conditional
 use cfg(feature = "net") std.net;
 ```
@@ -565,7 +565,7 @@ use cfg(feature = "net") std.net;
 ### Defining
 ```aria
 mod name { pub func:api; func:internal; }   // inline module
-mod network;                                 // file-based (network.aria)
+mod network;                                 // file-based (network.npk)
 pub func:name = ...                          // public visibility
 ```
 

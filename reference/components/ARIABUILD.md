@@ -1,9 +1,9 @@
-# AriaBuild - Aria Build System
+# NpkBld - Nitpick Build System
 
 **Component Type**: Build System / Build Orchestrator  
 **Language**: C++20 (planned)  
-**Repository**: `/home/randy/._____RANDY_____/REPOS/aria_make` (design phase)  
-**Configuration Format**: ABC (Aria Build Configuration) - JSON-based  
+**Repository**: `/home/randy/._____RANDY_____/REPOS/npkbld` (design phase)  
+**Configuration Format**: ABC (Nitpick Build Configuration) - JSON-based  
 **Status**: Design Phase  
 **Version**: v0.0.1-concept
 
@@ -24,7 +24,7 @@
 
 ## Overview
 
-AriaBuild is the official build system for Aria projects. It orchestrates compilation, linking, testing, and packaging through a declarative configuration file (build.abc) and intelligent dependency analysis.
+NpkBld is the official build system for Nitpick projects. It orchestrates compilation, linking, testing, and packaging through a declarative configuration file (build.abc) and intelligent dependency analysis.
 
 ### Key Features
 
@@ -58,7 +58,7 @@ AriaBuild is the official build system for Aria projects. It orchestrates compil
 ```
 
 **Defaults**:
-- Source files: `src/**/*.aria`
+- Source files: `src/**/*.npk`
 - Output: `bin/<project_name>`
 - Runtime: Automatically linked
 
@@ -66,13 +66,13 @@ AriaBuild is the official build system for Aria projects. It orchestrates compil
 
 Every build is a dependency graph:
 ```
-helpers.aria  (no deps)
+helpers.npk  (no deps)
    ↓
-utils.aria    (depends on helpers)
+utils.npk    (depends on helpers)
    ↓
-parser.aria   (depends on utils, helpers)
+parser.npk   (depends on utils, helpers)
    ↓
-main.aria     (depends on parser, utils)
+main.npk     (depends on parser, utils)
    ↓
 main.o → link → executable
 ```
@@ -101,7 +101,7 @@ main.o → link → executable
     "binary": {
       "type": "executable",
       "output": "bin/hello",
-      "sources": ["src/main.aria"]
+      "sources": ["src/main.npk"]
     }
   }
 }
@@ -128,9 +128,9 @@ main.o → link → executable
       "type": "executable",
       "output": "bin/my_app",
       "sources": [
-        "src/main.aria",
-        "src/parser.aria",
-        "src/utils.aria"
+        "src/main.npk",
+        "src/parser.npk",
+        "src/utils.npk"
       ],
       "compile_flags": ["-O2", "--debug-info"]
     },
@@ -138,13 +138,13 @@ main.o → link → executable
     "lib": {
       "type": "library",
       "output": "lib/libmyapp.a",
-      "sources": ["lib/*.aria"],
-      "public_headers": ["lib/api.aria"]
+      "sources": ["lib/*.npk"],
+      "public_headers": ["lib/api.npk"]
     },
     
     "tests": {
       "type": "test",
-      "sources": ["tests/**/*.aria"],
+      "sources": ["tests/**/*.npk"],
       "depends_on": ["binary"]
     }
   },
@@ -188,7 +188,7 @@ Validate schema
    ↓
 Extract targets, dependencies, sources
    ↓
-Resolve glob patterns (src/**/*.aria)
+Resolve glob patterns (src/**/*.npk)
    ↓
 Configuration object ready
 ```
@@ -215,13 +215,13 @@ use lib.helpers;      // Library module
 
 **Graph Construction**:
 ```
-main.aria:
+main.npk:
   imports: [parser, std.io]
   
-parser.aria:
+parser.npk:
   imports: [utils, lib.helpers]
   
-utils.aria:
+utils.npk:
   imports: [lib.helpers]
   
 lib.helpers:
@@ -244,17 +244,17 @@ For each source file:
 
 **Example**:
 ```
-helpers.aria: modified yesterday
+helpers.npk: modified yesterday
   helpers.o: exists, timestamp yesterday
   → UP TO DATE, skip
 
-utils.aria: modified today
+utils.npk: modified today
   utils.o: exists, timestamp yesterday
   → OUT OF DATE, recompile
 
-parser.aria: not modified
+parser.npk: not modified
   parser.o: exists, timestamp yesterday
-  BUT depends on utils.aria (changed today)
+  BUT depends on utils.npk (changed today)
   → NEEDS RECOMPILATION
 ```
 
@@ -284,7 +284,7 @@ t=5s: All .o files ready
 
 **Compilation Command**:
 ```bash
-ariac src/utils.aria -o src/utils.o -I/usr/local/include/aria -O2
+npkc src/utils.npk -o src/utils.o -I/usr/local/include/aria -O2
 ```
 
 ### Phase 5: Linking
@@ -347,7 +347,7 @@ Executable ready
 
 ### Import Resolution
 
-When compiling `main.aria`:
+When compiling `main.npk`:
 ```aria
 use std.collections;
 use mylib.widgets;
@@ -360,7 +360,7 @@ use mylib.widgets;
 
 **Compiler Flags**:
 ```bash
-ariac main.aria \
+npkc main.npk \
   -I/usr/local/aria/packages/std.collections-1.0.0/include \
   -I/usr/local/aria/packages/mylib-2.3.5/include \
   -o main.o
@@ -383,9 +383,9 @@ ariac main.aria \
 **timestamps.json**:
 ```json
 {
-  "src/main.aria": 1703267890,
-  "src/parser.aria": 1703267800,
-  "src/utils.aria": 1703267850,
+  "src/main.npk": 1703267890,
+  "src/parser.npk": 1703267800,
+  "src/utils.npk": 1703267850,
   "src/main.o": 1703267895,
   "src/parser.o": 1703267805,
   "src/utils.o": 1703267855
@@ -397,7 +397,7 @@ ariac main.aria \
 **Algorithm**:
 ```python
 def needs_recompilation(source_file):
-    obj_file = source_file.replace('.aria', '.o')
+    obj_file = source_file.replace('.npk', '.o')
     
     # Check if object file exists
     if not exists(obj_file):
@@ -426,8 +426,8 @@ For robust builds, also hash file contents:
 **hashes.json**:
 ```json
 {
-  "src/main.aria": "sha256:abc123...",
-  "src/parser.aria": "sha256:def456..."
+  "src/main.npk": "sha256:abc123...",
+  "src/parser.npk": "sha256:def456..."
 }
 ```
 
@@ -491,19 +491,19 @@ pool.wait_all();
 
 ## Integration Points
 
-### With Aria Compiler
+### With Nitpick Compiler
 
 **Invokes Compiler**:
 ```bash
 ariab build
   ↓
-Invokes: ariac src/main.aria -o main.o
+Invokes: npkc src/main.npk -o main.o
 ```
 
 **Compiler Integration**:
-- AriaBuild passes flags: `-O2`, `--debug-info`, etc.
+- NpkBld passes flags: `-O2`, `--debug-info`, etc.
 - Compiler returns exit code (0 = success)
-- AriaBuild captures stdout/stderr for error reporting
+- NpkBld captures stdout/stderr for error reporting
 
 ### With AriaX Package Manager
 
@@ -517,14 +517,14 @@ Query AriaX: ariax install std.collections
   ↓
 AriaX downloads and installs packages
   ↓
-AriaBuild continues compilation
+NpkBld continues compilation
 ```
 
 **Package Paths**:
 - AriaX installs to: `/usr/local/aria/packages/`
-- AriaBuild adds to include path: `-I/usr/local/aria/packages/*/include`
+- NpkBld adds to include path: `-I/usr/local/aria/packages/*/include`
 
-### With Aria Runtime
+### With Nitpick Runtime
 
 **Automatic Linking**:
 ```bash
@@ -533,7 +533,7 @@ ariab build
 Link phase: clang *.o /usr/local/lib/libaria_runtime.a -o bin/app
 ```
 
-No manual linking required - AriaBuild knows to link runtime library.
+No manual linking required - NpkBld knows to link runtime library.
 
 ### With aria_shell
 
@@ -541,8 +541,8 @@ No manual linking required - AriaBuild knows to link runtime library.
 ```bash
 aria_shell> ariab build
 [Building my_app...]
-Compiling src/main.aria... Done
-Compiling src/parser.aria... Done
+Compiling src/main.npk... Done
+Compiling src/parser.npk... Done
 Linking bin/my_app... Done
 Build succeeded in 3.2s
 
@@ -573,23 +573,23 @@ Hello, World!
 $ ariab build
 [Building my_app v1.0.0]
 Compiling 4 files...
-  src/helpers.aria... Done (0.5s)
-  src/utils.aria... Done (0.6s)
-  src/parser.aria... Done (0.7s)
-  src/main.aria... Done (0.6s)
+  src/helpers.npk... Done (0.5s)
+  src/utils.npk... Done (0.6s)
+  src/parser.npk... Done (0.7s)
+  src/main.npk... Done (0.6s)
 Linking bin/my_app... Done (0.3s)
 Build succeeded in 2.7s
 
 # Change one file
-$ echo "// comment" >> src/utils.aria
+$ echo "// comment" >> src/utils.npk
 
 # Incremental build
 $ ariab build
 [Building my_app v1.0.0]
 Compiling 3 files... (1 cached)
-  src/utils.aria... Done (0.6s)
-  src/parser.aria... Done (0.7s)  [depends on utils]
-  src/main.aria... Done (0.6s)    [depends on parser]
+  src/utils.npk... Done (0.6s)
+  src/parser.npk... Done (0.7s)  [depends on utils]
+  src/main.npk... Done (0.6s)    [depends on parser]
 Linking bin/my_app... Done (0.3s)
 Build succeeded in 2.2s
 ```
@@ -610,7 +610,7 @@ ariab watch
 ```json
 {
   "build": {
-    "cache_server": "https://cache.aria.example.com"
+    "cache_server": "https://cache.npk.example.com"
   }
 }
 ```
@@ -623,7 +623,7 @@ Share build artifacts across team via remote cache.
 {
   "build": {
     "distributed": true,
-    "build_farm": "https://farm.aria.example.com"
+    "build_farm": "https://farm.npk.example.com"
   }
 }
 ```
@@ -634,9 +634,9 @@ Offload compilation to remote servers.
 
 ## Related Components
 
-- **[Aria Compiler](ARIA_COMPILER.md)**: Invoked by build system
+- **[Nitpick Compiler](ARIA_COMPILER.md)**: Invoked by build system
 - **[AriaX](ARIAX.md)**: Provides dependency resolution
-- **[Aria Runtime](ARIA_RUNTIME.md)**: Linked automatically
+- **[Nitpick Runtime](ARIA_RUNTIME.md)**: Linked automatically
 - **[aria_shell](ARIA_SHELL.md)**: Invokes build system
 
 ---

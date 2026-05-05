@@ -1,21 +1,21 @@
-# aria-make — Aria Build System
+# nitpick-build — Nitpick Build System
 
-`aria_make` is the build system for Aria projects. It handles incremental
+`npkbld` is the build system for Nitpick projects. It handles incremental
 compilation, dependency tracking, and FFI (C library) builds.
 
 For full documentation, see the
-[aria-make README](https://github.com/alternative-intelligence-cp/aria-make).
+[nitpick-build README](https://github.com/alternative-intelligence-cp/nitpick-build).
 
 ## Quick Reference
 
 ### Build a project
 
 ```bash
-aria_make              # build default target
-aria_make my-target    # build specific target
-aria_make --force      # rebuild everything
-aria_make --clean      # remove build artifacts
-aria_make -v           # verbose output
+npkbld              # build default target
+npkbld my-target    # build specific target
+npkbld --force      # rebuild everything
+npkbld --clean      # remove build artifacts
+npkbld -v           # verbose output
 ```
 
 ### build.abc format
@@ -28,13 +28,13 @@ name = "my-app"
 version = "0.1.0"
 
 [compiler]
-path = "ariac"
+path = "npkc"
 flags = "-O2"
 
 [target.my-app]
 type = "binary"
-entry = "src/main.aria"
-sources = ["src/*.aria"]
+entry = "src/main.npk"
+sources = ["src/*.npk"]
 ```
 
 ### FFI builds (C interop)
@@ -47,8 +47,8 @@ flags = "-O2 -fPIC"
 
 [target.my-app]
 type = "binary"
-entry = "src/main.aria"
-sources = ["src/*.aria"]
+entry = "src/main.npk"
+sources = ["src/*.npk"]
 link = ["my_c_lib"]
 ```
 

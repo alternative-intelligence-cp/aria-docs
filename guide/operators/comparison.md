@@ -27,7 +27,7 @@ pick (cmp) {
 
 ## Ternary Conditional — `is`
 
-Aria uses `is` for ternary expressions:
+Nitpick uses `is` for ternary expressions:
 
 ```aria
 int32:max = is (a > b) : a : b;

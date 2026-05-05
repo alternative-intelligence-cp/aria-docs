@@ -2,7 +2,7 @@
 
 ## Overview
 
-Aria provides three mechanisms for compile-time code generation and evaluation:
+Nitpick provides three mechanisms for compile-time code generation and evaluation:
 
 1. **AST macros** — Template-based code generation invoked with `name!(args)`
 2. **Compile-time evaluation** — `comptime(expr)` for constant folding at compile time
@@ -65,7 +65,7 @@ func:failsafe = int32(tbb32:err) {
 
 ### Key Differences from C Macros
 
-| Feature | C Preprocessor | Aria Macros |
+| Feature | C Preprocessor | Nitpick Macros |
 |---------|---------------|-------------|
 | Expansion level | Text substitution | AST-level substitution |
 | Type safety | None (text) | Full (post-expansion type check) |
@@ -74,7 +74,7 @@ func:failsafe = int32(tbb32:err) {
 | `##` operator | Token paste | **Does not exist** |
 | Syntax | `#define NAME(x)` | `macro:name = (x) { };` |
 
-> **Important**: Aria's `#` operator is the **pin** operator for the borrow checker, NOT a stringify operator.
+> **Important**: Nitpick's `#` operator is the **pin** operator for the borrow checker, NOT a stringify operator.
 
 ---
 

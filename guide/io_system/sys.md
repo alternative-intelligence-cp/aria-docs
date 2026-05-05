@@ -2,7 +2,7 @@
 
 ## Three Tiers
 
-Aria provides direct syscall access at three safety levels:
+Nitpick provides direct syscall access at three safety levels:
 
 | Function | Tier | Syscalls Available | Return Type | TOS Layer |
 |----------|------|-------------------|-------------|-----------|

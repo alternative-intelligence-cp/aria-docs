@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Safety Layers — TOS (Terms of Safety) - Aria Programming Guide</title>
+    <title>Safety Layers — TOS (Terms of Safety) - Nitpick Programming Guide</title>
     <style>
         :root {
             --bg-main: #1e1e1e;
@@ -218,7 +218,7 @@
 </head>
 <body>
     <nav>
-        <h2>Aria Guide</h2>
+        <h2>Nitpick Guide</h2>
         <div class="category">
 <h3>Advanced Features</h3>
 <ul>
@@ -354,12 +354,12 @@
         <h1>Safety Layers — TOS (Terms of Safety)</h1>
 <h2>Overview</h2>
 <p>
-Aria's safety model uses explicit layers. Each layer grants more power and less safety:
+Nitpick's safety model uses explicit layers. Each layer grants more power and less safety:
 </p>
 <p>
 | Layer | Name | Access | Safety |
 |-------|------|--------|--------|
-| 0 | Safe | Default Aria code | Full — Result<T>, bounds checks, type safety |
+| 0 | Safe | Default Nitpick code | Full — Result<T>, bounds checks, type safety |
 | 1 | Controlled | <code>sys()</code> safe syscalls | Curated syscall whitelist |
 | 2 | Supervised | <code>sys!!()</code> all syscalls | All syscalls, still returns Result |
 | 3 | Raw | <code>sys!!!()</code>, <code>wild</code>, <code>wildx</code> | No safety net — you own it |
@@ -382,7 +382,7 @@ Explicit bypass keywords that escalate safety level:
 <h2>Philosophy</h2>
 <p>
 Every safety bypass is <strong>visible in code</strong>. There are no hidden undefined behaviors.
-When reading Aria code, the <code>raw</code>, <code>wild</code>, <code>drop</code>, <code>sys!!!</code> keywords immediately
+When reading Nitpick code, the <code>raw</code>, <code>wild</code>, <code>drop</code>, <code>sys!!!</code> keywords immediately
 identify where safety guarantees are intentionally relaxed.
 </p>
 <h2>Related</h2>

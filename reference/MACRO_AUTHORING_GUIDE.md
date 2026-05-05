@@ -1,10 +1,10 @@
 # Macro & Derive Authoring Guide
 
-> v0.16.7 — Aria Compiler Documentation
+> v0.16.7 — Nitpick Compiler Documentation
 
 ## Overview
 
-Aria's macro system provides two mechanisms for code generation:
+Nitpick's macro system provides two mechanisms for code generation:
 
 1. **Derive macros** — Auto-generate trait implementations for structs
 2. **Attribute macros** — Modify or annotate declarations at compile time

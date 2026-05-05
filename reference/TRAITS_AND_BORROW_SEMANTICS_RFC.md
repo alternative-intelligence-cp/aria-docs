@@ -1,4 +1,4 @@
-# RFC: Traits & Borrow Semantics for Aria
+# RFC: Traits & Borrow Semantics for Nitpick
 
 **Status:** Design Proposal (v0.2.4)  
 **Implementation Target:** v0.2.5 or v0.2.6  
@@ -8,7 +8,7 @@
 
 ## Motivation
 
-Two gaps in Aria's type system limit what real programs can express:
+Two gaps in Nitpick's type system limit what real programs can express:
 
 1. **No polymorphic dispatch.** You can't write a function that works on "anything with an `.encode()` method." Database backends, serialization formats, and generic algorithms all need this.
 
@@ -140,7 +140,7 @@ func:write_any = NIL(dyn Encodable:item) {
 ### Design Goals
 
 - **Make the existing borrow checker user-facing** — the infrastructure is already there (AccessPath and loan tracking)
-- **Rust's safety without Rust's learning curve** — Aria should guide, not punish
+- **Rust's safety without Rust's learning curve** — Nitpick should guide, not punish
 - **Explicit borrows** — borrow intent is declared with `$$i` / `$$m` qualifiers
 - **Compatible with move-by-default** — borrows are a controlled exception to the consume-on-use rule
 
@@ -226,7 +226,7 @@ $$m int32:ref_b = p.b;     // borrow field b — disjoint, allowed
 
 ### Lifetime Rules
 
-Aria uses **scope-based lifetimes** (no explicit lifetime annotations like Rust's `'a`):
+Nitpick uses **scope-based lifetimes** (no explicit lifetime annotations like Rust's `'a`):
 
 1. A borrow cannot outlive the scope of the borrowed value
 2. The borrow checker uses Appendage Theory: `Depth(Borrower) ≤ Depth(Owner)`

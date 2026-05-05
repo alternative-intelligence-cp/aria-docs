@@ -1,31 +1,31 @@
 # Cross-Language Bindings
 
-Aria can interoperate with C, Python, and any language that supports C ABI calling conventions.
+Nitpick can interoperate with C, Python, and any language that supports C ABI calling conventions.
 
 ---
 
 ## Overview
 
-Aria's compilation pipeline (Aria → LLVM IR → native code) produces symbols with standard C ABI linkage. This means Aria functions are callable from any language that can load shared libraries and call C functions.
+Nitpick's compilation pipeline (Nitpick → LLVM IR → native code) produces symbols with standard C ABI linkage. This means Nitpick functions are callable from any language that can load shared libraries and call C functions.
 
 **Three binding directions:**
 
 | Direction | Mechanism | Status |
 |-----------|-----------|--------|
-| C → Aria | `extern` FFI blocks | Stable (v0.1.0+) |
-| Aria → C | `--shared` flag produces `.so` | New in v0.2.6 |
-| Aria → Python | `ctypes.CDLL()` on `.so` | New in v0.2.6 |
+| C → Nitpick | `extern` FFI blocks | Stable (v0.1.0+) |
+| Nitpick → C | `--shared` flag produces `.so` | New in v0.2.6 |
+| Nitpick → Python | `ctypes.CDLL()` on `.so` | New in v0.2.6 |
 
 ---
 
-## Aria → C (Exporting Aria Functions)
+## Nitpick → C (Exporting Nitpick Functions)
 
-Compile Aria source to a shared library that C programs can link against.
+Compile Nitpick source to a shared library that C programs can link against.
 
-### Step 1: Write Aria Library
+### Step 1: Write Nitpick Library
 
 ```aria
-// mathlib.aria
+// mathlib.npk
 func:add = int32(int32:a, int32:b) {
     pass(a + b);
 };
@@ -42,7 +42,7 @@ func:square = int32(int32:n) {
 ### Step 2: Compile to Shared Library
 
 ```bash
-ariac mathlib.aria --shared -o libmathlib.so
+npkc mathlib.npk --shared -o libmathlib.so
 ```
 
 The `--shared` flag:
@@ -55,7 +55,7 @@ The `--shared` flag:
 ```c
 #include <stdio.h>
 
-// Declare the Aria functions
+// Declare the Nitpick functions
 extern int add(int a, int b);
 extern int multiply(int x, int y);
 extern int square(int n);
@@ -73,9 +73,9 @@ gcc main.c -L. -lmathlib -Wl,-rpath,. -o main
 ./main
 ```
 
-### Type Mapping (Aria → C)
+### Type Mapping (Nitpick → C)
 
-| Aria Type | C Type | Notes |
+| Nitpick Type | C Type | Notes |
 |-----------|--------|-------|
 | `int8` | `int8_t` / `char` | |
 | `int16` | `int16_t` / `short` | |
@@ -88,9 +88,9 @@ gcc main.c -L. -lmathlib -Wl,-rpath,. -o main
 
 ---
 
-## C → Aria (Consuming C Libraries)
+## C → Nitpick (Consuming C Libraries)
 
-Use `extern` blocks to declare C functions, then call them from Aria.
+Use `extern` blocks to declare C functions, then call them from Nitpick.
 
 ### Example: Using a C Math Library
 
@@ -111,7 +111,7 @@ func:main = NIL() {
 ```
 
 ```bash
-ariac main.aria -o main -lm
+npkc main.npk -o main -lm
 ```
 
 ### Using Custom C Shared Libraries
@@ -124,21 +124,21 @@ extern "mylib" {
 ```
 
 ```bash
-ariac main.aria -o main -L./libs -lmylib
+npkc main.npk -o main -L./libs -lmylib
 ```
 
 The `extern "name"` string corresponds to the library name: `libname.so`.
 
 ---
 
-## Aria → Python (via ctypes)
+## Nitpick → Python (via ctypes)
 
-Python can call Aria shared libraries using the built-in `ctypes` module.
+Python can call Nitpick shared libraries using the built-in `ctypes` module.
 
-### Step 1: Compile Aria to Shared Library
+### Step 1: Compile Nitpick to Shared Library
 
 ```bash
-ariac mathlib.aria --shared -o libmathlib.so
+npkc mathlib.npk --shared -o libmathlib.so
 ```
 
 ### Step 2: Call from Python
@@ -146,7 +146,7 @@ ariac mathlib.aria --shared -o libmathlib.so
 ```python
 import ctypes
 
-# Load the Aria shared library
+# Load the Nitpick shared library
 lib = ctypes.CDLL('./libmathlib.so')
 
 # Declare function signatures
@@ -159,7 +159,7 @@ lib.multiply.argtypes = [ctypes.c_int, ctypes.c_int]
 lib.square.restype = ctypes.c_int
 lib.square.argtypes = [ctypes.c_int]
 
-# Call Aria functions from Python
+# Call Nitpick functions from Python
 print(lib.add(10, 20))        # 30
 print(lib.multiply(7, 8))     # 56
 print(lib.square(9))          # 81
@@ -167,7 +167,7 @@ print(lib.square(9))          # 81
 
 ### Python Type Mapping
 
-| Aria Type | ctypes Type |
+| Nitpick Type | ctypes Type |
 |-----------|-------------|
 | `int8` | `ctypes.c_int8` |
 | `int16` | `ctypes.c_int16` |
@@ -180,9 +180,9 @@ print(lib.square(9))          # 81
 
 ---
 
-## Aria → Other Languages
+## Nitpick → Other Languages
 
-Any language that supports C FFI can call Aria shared libraries:
+Any language that supports C FFI can call Nitpick shared libraries:
 
 | Language | Mechanism |
 |----------|-----------|
@@ -194,7 +194,7 @@ Any language that supports C FFI can call Aria shared libraries:
 | **C#** | `[DllImport]` P/Invoke |
 | **Zig** | `@cImport` or `extern` |
 
-Since Aria produces standard C ABI symbols, any language with C interop works.
+Since Nitpick produces standard C ABI symbols, any language with C interop works.
 
 ---
 
@@ -212,7 +212,7 @@ Since Aria produces standard C ABI symbols, any language with C interop works.
 
 ## Symbol Naming
 
-Aria functions use their declared name directly as the symbol name. There is no name mangling.
+Nitpick functions use their declared name directly as the symbol name. There is no name mangling.
 
 ```aria
 func:my_function = int32(int32:x) { pass(x); };
@@ -224,7 +224,7 @@ Produces symbol: `my_function` (visible via `nm -D libname.so`).
 
 ## Limitations
 
-- **Strings**: Aria string values passed across the boundary are C-style `char*` pointers. The caller is responsible for memory management of string arguments.
+- **Strings**: Nitpick string values passed across the boundary are C-style `char*` pointers. The caller is responsible for memory management of string arguments.
 - **Complex types**: Structs and arrays are not yet supported across the FFI boundary. Use scalar types or pointers.
-- **Async functions**: Async Aria functions cannot be called from C/Python directly (they return coroutine handles).
+- **Async functions**: Async Nitpick functions cannot be called from C/Python directly (they return coroutine handles).
 - **No header generation**: C header files must be written manually. Planned for future release.

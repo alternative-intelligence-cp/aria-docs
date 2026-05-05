@@ -2,11 +2,11 @@
 
 ## Overview
 
-Aria's safety model uses explicit layers. Each layer grants more power and less safety:
+Nitpick's safety model uses explicit layers. Each layer grants more power and less safety:
 
 | Layer | Name | Access | Safety |
 |-------|------|--------|--------|
-| 0 | Safe | Default Aria code | Full — Result<T>, bounds checks, type safety |
+| 0 | Safe | Default Nitpick code | Full — Result<T>, bounds checks, type safety |
 | 1 | Controlled | `sys()` safe syscalls | Curated syscall whitelist |
 | 2 | Supervised | `sys!!()` all syscalls | All syscalls, still returns Result |
 | 3 | Raw | `sys!!!()`, `wild`, `wildx` | No safety net — you own it |
@@ -28,7 +28,7 @@ Explicit bypass keywords that escalate safety level:
 ## Philosophy
 
 Every safety bypass is **visible in code**. There are no hidden undefined behaviors.
-When reading Aria code, the `raw`, `wild`, `drop`, `sys!!!` keywords immediately
+When reading Nitpick code, the `raw`, `wild`, `drop`, `sys!!!` keywords immediately
 identify where safety guarantees are intentionally relaxed.
 
 ## Related

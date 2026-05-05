@@ -4,7 +4,7 @@
 **Category**: networking, dns
 **License**: MIT
 
-DNS resolution for Aria. Forward and reverse lookups, IPv4 validation,
+DNS resolution for Nitpick. Forward and reverse lookups, IPv4 validation,
 hostname detection, and safe fallback resolution.
 
 ## Features
@@ -32,7 +32,7 @@ hostname detection, and safe fallback resolution.
 ## Quick Start
 
 ```aria
-use "aria_dns.aria".*;
+use "aria_dns.npk".*;
 
 func:main = int32() {
     string:ip = raw dns_resolve("example.com");

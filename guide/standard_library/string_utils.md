@@ -11,7 +11,7 @@
 ## Usage
 
 ```aria
-use "string_utils.aria".*;
+use "string_utils.npk".*;
 
 string:name = "Hello, World!";
 int64:len = raw string_length(name);      // 13

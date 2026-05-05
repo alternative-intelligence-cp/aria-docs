@@ -2,7 +2,7 @@
 
 ## Overview
 
-Aria has three memory modes. Pointers are only directly used in `wild` (unmanaged) mode
+Nitpick has three memory modes. Pointers are only directly used in `wild` (unmanaged) mode
 and `extern` blocks.
 
 ## Pointer Operators

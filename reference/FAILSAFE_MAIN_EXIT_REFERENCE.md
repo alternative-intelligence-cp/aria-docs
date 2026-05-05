@@ -3,7 +3,7 @@
 
 ## Design Intent
 
-Every Aria executable has exactly two code-path endpoints:
+Every Nitpick executable has exactly two code-path endpoints:
 
   main       — normal program entry and exit
   failsafe   — abnormal/error exit (runtime errors, !!!, constraint violations)
@@ -61,7 +61,7 @@ func:failsafe = int32(tbb32:err) {
 
 - `pass(value)` — this is for regular functions, creates Result<T>
 - `fail(code)` — this is for regular functions, creates error Result
-- `return` — Aria doesn't use this keyword
+- `return` — Nitpick doesn't use this keyword
 
 
 ## Invocation patterns

@@ -4,7 +4,7 @@
 **Category**: middleware, http, filesystem
 **License**: MIT
 
-Static file serving middleware for Aria. Resolve URL paths to filesystem paths,
+Static file serving middleware for Nitpick. Resolve URL paths to filesystem paths,
 detect MIME types, and serve file content with proper headers.
 
 ## API Reference
@@ -28,7 +28,7 @@ detect MIME types, and serve file content with proper headers.
 ## Quick Start
 
 ```aria
-use "aria_static.aria".*;
+use "aria_static.npk".*;
 
 func:main = int32() {
     int64:srv = raw static_reset();

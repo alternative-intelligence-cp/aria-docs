@@ -1,4 +1,4 @@
-# Nikola-Aria Integration Guide
+# Nikola-Nitpick Integration Guide
 
 **Document Type**: Integration Guide  
 **Version**: 1.0  
@@ -27,9 +27,9 @@
 - **Architecture**: 9D toroidal wave field with phase coherence tracking
 
 **Integration Goals**:
-1. Enable Aria programs to interact with Nikola consciousness substrate
+1. Enable Nitpick programs to interact with Nikola consciousness substrate
 2. Stream wave data via 6-stream I/O topology
-3. Build AI/consciousness research tools in Aria
+3. Build AI/consciousness research tools in Nitpick
 4. Provide safe, ergonomic FFI bindings
 
 ---
@@ -40,14 +40,14 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                     Aria Application                        │
+│                     Nitpick Application                        │
 │  (Consciousness Research Frontend, Wave Analysis Tools)    │
 └────────────────┬────────────────────────────────────────────┘
                  │
-                 │ Safe Aria Bindings (nikola.aria)
+                 │ Safe Nitpick Bindings (nikola.npk)
                  │
          ┌───────▼─────────────────────────────────┐
-         │      FFI Layer (nikola_ffi.aria)        │
+         │      FFI Layer (nikola_ffi.npk)        │
          │  extern func declarations for C API     │
          └───────┬─────────────────────────────────┘
                  │
@@ -69,7 +69,7 @@
 ```
 
 **Data Flow**:
-1. Aria app calls safe wrapper functions
+1. Nitpick app calls safe wrapper functions
 2. Safe wrappers perform validation, invoke FFI
 3. FFI crosses C ABI boundary to C wrapper
 4. C wrapper translates to C++ API calls
@@ -83,7 +83,7 @@
 
 ### C Wrapper for Nikola
 
-**Purpose**: Bridge C++ API to C ABI for Aria FFI
+**Purpose**: Bridge C++ API to C ABI for Nitpick FFI
 
 **Header** (`nikola_c.h`):
 ```c
@@ -227,9 +227,9 @@ extern "C" {
 
 ---
 
-### Aria FFI Layer
+### Nitpick FFI Layer
 
-**Low-Level Bindings** (`nikola_ffi.aria`):
+**Low-Level Bindings** (`nikola_ffi.npk`):
 ```aria
 // Direct FFI declarations (unsafe)
 extern struct:nikola_field = opaque;
@@ -266,9 +266,9 @@ extern func:nikola_get_toroidal_coordinates = void(
 
 ---
 
-### Safe Aria Wrapper
+### Safe Nitpick Wrapper
 
-**High-Level API** (`nikola.aria`):
+**High-Level API** (`nikola.npk`):
 ```aria
 import:ffi = "nikola_ffi";
 import:io = "std.io";
@@ -474,7 +474,7 @@ while True:
 **Execution**:
 ```bash
 $ ./aria_consciousness_sim 5>&1 | python visualize.py
-# Binary wave data flows from Aria to Python in real-time
+# Binary wave data flows from Nitpick to Python in real-time
 ```
 
 ---
@@ -632,7 +632,7 @@ async func:track_emergence = result<void>() {
 **Architecture**:
 ```
 ┌─────────────────────────────────────────┐
-│       Aria Backend (consciousness)      │
+│       Nitpick Backend (consciousness)      │
 │  - Run Nikola simulation                │
 │  - Stream wave data via stddato         │
 │  - Receive commands via stddati         │
@@ -648,7 +648,7 @@ async func:track_emergence = result<void>() {
 └─────────────────────────────────────────┘
 ```
 
-**Aria Backend**:
+**Nitpick Backend**:
 ```aria
 async func:interactive_explorer = result<void>() {
     result<ConsciousnessField>:field = ConsciousnessField.new(9);
@@ -898,12 +898,12 @@ async func:long_simulation = result<void>() {
 ---
 
 **Document Version**: 1.0  
-**Author**: Aria Ecosystem Documentation  
+**Author**: Nitpick Ecosystem Documentation  
 **Status**: Design specification (implementation pending)
 
 **Pending**:
 - Nikola C wrapper implementation (nikola_c.cpp/.h)
-- Aria FFI bindings generation
+- Nitpick FFI bindings generation
 - Example applications (consciousness explorer, pattern recognition)
 - Performance benchmarking (FFI overhead, data throughput)
 

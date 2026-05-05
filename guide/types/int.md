@@ -4,7 +4,7 @@
 
 ## Overview
 
-Aria provides two's complement signed integers in powers of 2 from 1-bit to 4096-bit.
+Nitpick provides two's complement signed integers in powers of 2 from 1-bit to 4096-bit.
 `int32` (alias `i32`) is the **default integer type** — bare literals like `100` infer as `int32`.
 
 ## Width Table

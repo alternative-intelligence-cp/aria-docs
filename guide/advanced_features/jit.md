@@ -1,22 +1,22 @@
-# JIT Compilation in Aria
+# JIT Compilation in Nitpick
 
 ## Overview
 
-Aria includes a built-in JIT assembler for runtime code generation. The JIT subsystem builds on two foundations:
+Nitpick includes a built-in JIT assembler for runtime code generation. The JIT subsystem builds on two foundations:
 
 - **WildX** (`wildx_alloc.cpp`) — W⊕X memory management with ASLR, guard pages, code signing, and quota enforcement
 - **Assembler** (`assembler.cpp`) — x86-64 instruction encoder with label backpatching, register allocation, peephole optimization, and instruction selection
 
-The JIT is accessible from Aria code through the `jit` stdlib package, which provides FFI bindings to the C++ assembler API.
+The JIT is accessible from Nitpick code through the `jit` stdlib package, which provides FFI bindings to the C++ assembler API.
 
 ## Architecture
 
 ```
 ┌──────────────────────────────────────────────┐
-│               Aria Source Code               │
+│               Nitpick Source Code               │
 │         use jit;  use wildx;                 │
 ├──────────────────────────────────────────────┤
-│           jit.aria FFI Bindings              │
+│           jit.npk FFI Bindings              │
 │    81 bindings + 17 helpers + constants      │
 ├──────────────────────────────────────────────┤
 │           Assembler Pipeline                 │

@@ -1,7 +1,7 @@
-# Aria UFCS: Zero-Cost Method Syntax
+# Nitpick UFCS: Zero-Cost Method Syntax
 
 ## Overview
-Aria implements **Uniform Function Call Syntax (UFCS)** to provide method-like syntax without runtime overhead or OOP complexity. This enables clean, ergonomic APIs while maintaining zero-cost abstractions.
+Nitpick implements **Uniform Function Call Syntax (UFCS)** to provide method-like syntax without runtime overhead or OOP complexity. This enables clean, ergonomic APIs while maintaining zero-cost abstractions.
 
 ## How It Works
 
@@ -20,7 +20,7 @@ TypeName_method(variable, arg1, arg2)
 
 **Key transformation:**
 1. Compiler identifies member access in function call: `expr.member(...)`
-2. Looks up Aria type name for `expr` from `var_aria_types` map
+2. Looks up Nitpick type name for `expr` from `var_aria_types` map
 3. Mangles function name: `type_name + "_" + member_name`
 4. Injects object as first parameter automatically
 5. Generates direct function call with no virtual dispatch
@@ -31,7 +31,7 @@ TypeName_method(variable, arg1, arg2)
 Follow the naming convention: `TypeName_methodName`
 
 ```aria
-// stdlib/mymodule.aria
+// stdlib/mymodule.npk
 
 // UFCS method for int32 type
 pub func:int32_double = int32(int32:self) {
@@ -45,7 +45,7 @@ pub func:int32_is_even = int8(int32:self) {
 
 ### 2. Import and Use
 ```aria
-use "stdlib/mymodule.aria".*;
+use "stdlib/mymodule.npk".*;
 
 func:main = int32() {
     int32:x = 42;
@@ -65,7 +65,7 @@ func:main = int32() {
 ## Working Example: Atomic Int32
 
 ### Module Definition
-**File**: `/home/randy/Workspace/REPOS/aria/stdlib/atomic/int32.aria`
+**File**: `/home/randy/Workspace/REPOS/aria/stdlib/atomic/int32.npk`
 
 ```aria
 // Memory order constants
@@ -87,10 +87,10 @@ pub func:int32_atomic_add = int32(int32:self, int32:amount, int32:order) {
 ```
 
 ### Usage
-**File**: `/home/randy/Workspace/REPOS/aria/test_atomic_ufcs.aria`
+**File**: `/home/randy/Workspace/REPOS/aria/test_atomic_ufcs.npk`
 
 ```aria
-use "stdlib/atomic/int32.aria".*;
+use "stdlib/atomic/int32.npk".*;
 
 func:main = int32() {
     int32:counter = 0;
@@ -118,7 +118,7 @@ entry:
 
 ## Advantages Over OOP
 
-| Feature | OOP (C++/Java) | Aria UFCS |
+| Feature | OOP (C++/Java) | Nitpick UFCS |
 |---------|---------------|-----------|
 | **Dispatch** | Virtual table lookup | Direct function call |
 | **Overhead** | Pointer indirection | Zero (inlined) |
@@ -131,7 +131,7 @@ entry:
 
 ### Step 1: Create Module
 ```aria
-// stdlib/mytype/extensions.aria
+// stdlib/mytype/extensions.npk
 
 // Add methods to existing int64 type
 pub func:int64_to_string = ??? {  // TODO: implement when string type exists
@@ -155,7 +155,7 @@ pub func:int64_abs = int64(int64:self) {
 
 ### Step 4: Import and Call
 ```aria
-use "stdlib/mytype/extensions.aria".*;
+use "stdlib/mytype/extensions.npk".*;
 
 func:test = void() {
     int64:x = -42;
@@ -179,13 +179,13 @@ module->moduleInfo->exportSymbol(funcDecl->funcName, funcSym, Visibility::PUBLIC
 ### Import Modes
 ```aria
 // Wildcard: imports all public symbols into current scope
-use "module.aria".*;
+use "module.npk".*;
 
 // Selective: imports only specified symbols
-use "module.aria" with { func1, func2 };  // TODO: verify syntax
+use "module.npk" with { func1, func2 };  // TODO: verify syntax
 
 // Namespace: imports module as namespace (requires qualified access)
-use "module.aria";
+use "module.npk";
 // TODO: module.func() syntax not yet tested
 ```
 
@@ -207,7 +207,7 @@ use "module.aria";
 
 ### Zero-Cost Abstraction Verified ✓
 ```console
-$ ./build/ariac test_atomic_ufcs.aria --emit-llvm -o test.ll
+$ ./build/npkc test_atomic_ufcs.npk --emit-llvm -o test.ll
 # Generated IR shows direct calls, no indirection:
 call @int32_atomic_add(i32 %value, i32 10, ...)
 ```
@@ -244,14 +244,14 @@ impl MyTrait for i32 {
 }
 ```
 
-### Aria
+### Nitpick
 ```aria
-// Aria: just name your function correctly and import it
+// Nitpick: just name your function correctly and import it
 pub func:int32_my_method = int32(int32:self) { ... };
 // Use: x.my_method()
 ```
 
-**Aria's approach:** Simpler than Rust traits, more explicit than D, similar to Zig but with automatic mangling.
+**Nitpick's approach:** Simpler than Rust traits, more explicit than D, similar to Zig but with automatic mangling.
 
 ## Future Work
 
@@ -264,7 +264,7 @@ pub func:int32_my_method = int32(int32:self) { ... };
 
 ## Summary
 
-Aria's UFCS provides:
+Nitpick's UFCS provides:
 - ✅ Ergonomic method syntax without OOP overhead
 - ✅ Zero-cost abstractions (verified in LLVM IR)
 - ✅ Extensible (add "methods" to any type from any module)
@@ -279,5 +279,5 @@ Perfect for building clean APIs with metaprogramming flexibility!
 **Last Updated**: 2025-02-02  
 **Status**: ✅ Fully functional, ready for stdlib development  
 **Test Files**: 
-- `/home/randy/Workspace/REPOS/aria/test_atomic_ufcs.aria`
-- `/home/randy/Workspace/REPOS/aria/stdlib/atomic/int32.aria`
+- `/home/randy/Workspace/REPOS/aria/test_atomic_ufcs.npk`
+- `/home/randy/Workspace/REPOS/aria/stdlib/atomic/int32.npk`

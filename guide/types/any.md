@@ -2,7 +2,7 @@
 
 ## Overview
 
-`any` is Aria's dynamically-typed value container. It can hold any type, with the actual
+`any` is Nitpick's dynamically-typed value container. It can hold any type, with the actual
 type tracked at runtime. Internally implemented as a fat pointer `{ptr, i64}` with a type tag.
 
 > **Note:** `dyn` is NOT an alias for `any`. `dyn` is used exclusively for trait object
@@ -31,7 +31,7 @@ int64->:ptr = box.resolve::<int64>();
 
 ## Casting
 
-`any` does not use `as` for casting. Aria has three cast forms:
+`any` does not use `as` for casting. Nitpick has three cast forms:
 
 ```aria
 // Infix arrow cast

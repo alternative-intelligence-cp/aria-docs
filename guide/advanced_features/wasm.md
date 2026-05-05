@@ -2,7 +2,7 @@
 
 ## Overview
 
-Aria can target WebAssembly (WASM) via LLVM's wasm32 backend.
+Nitpick can target WebAssembly (WASM) via LLVM's wasm32 backend.
 
 ## Limitations
 
@@ -16,7 +16,7 @@ Current WASM limitations:
 ## Building for WASM
 
 ```bash
-ariac --target wasm32 source.aria -o output.wasm
+npkc --target wasm32 source.npk -o output.wasm
 ```
 
 ## Related

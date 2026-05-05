@@ -1,4 +1,4 @@
-# Aria Ecosystem - Data Flow Analysis
+# Nitpick Ecosystem - Data Flow Analysis
 
 **Document Version**: 1.0  
 **Last Updated**: December 22, 2025  
@@ -27,7 +27,7 @@
 │ COMPILATION PIPELINE                                             │
 └─────────────────────────────────────────────────────────────────┘
 
-INPUT: hello.aria
+INPUT: hello.npk
 ───────────────────────────────────────────────────────────────────
 func:main = int64() {
     io.stdout.write("Hello, World!\n");
@@ -238,7 +238,7 @@ C Runtime: Initialize standard library
   ↓
 C Runtime: Run static constructors (__attribute__((constructor)))
   ↓
-Aria Runtime: aria_runtime_init() [static constructor]
+Nitpick Runtime: aria_runtime_init() [static constructor]
   ↓
   Initialize stream handles:
     io.stdin_fd = 0;
@@ -294,7 +294,7 @@ main() returned 0
   ↓
 C Runtime: Run static destructors
   ↓
-Aria Runtime: aria_runtime_shutdown() [static destructor]
+Nitpick Runtime: aria_runtime_shutdown() [static destructor]
   ↓
   Flush all stream buffers
   ↓
@@ -364,11 +364,11 @@ Total heap usage: 24 bytes (leaked in this simplified example)
 my_project/
 ├── build.abc
 ├── src/
-│   ├── main.aria
-│   ├── parser.aria
-│   └── utils.aria
+│   ├── main.npk
+│   ├── parser.npk
+│   └── utils.npk
 └── lib/
-    └── helpers.aria
+    └── helpers.npk
 
 ─────────────────────────────────────────────────────────────────
 build.abc:
@@ -382,10 +382,10 @@ build.abc:
       "type": "executable",
       "output": "bin/my_app",
       "sources": [
-        "src/main.aria",
-        "src/parser.aria",
-        "src/utils.aria",
-        "lib/helpers.aria"
+        "src/main.npk",
+        "src/parser.npk",
+        "src/utils.npk",
+        "lib/helpers.npk"
       ]
     }
   }
@@ -408,7 +408,7 @@ Read build.abc
 Parse JSON
   ↓
 Extract:
-  - Sources: [main.aria, parser.aria, utils.aria, helpers.aria]
+  - Sources: [main.npk, parser.npk, utils.npk, helpers.npk]
   - Output: bin/my_app
   - Type: executable
 
@@ -419,40 +419,40 @@ Extract:
 └──────────────────────────────────────────────────────────────┘
 Parse imports in each source file:
 
-main.aria:
+main.npk:
   use parser;
   use utils;
-  → depends on: parser.aria, utils.aria
+  → depends on: parser.npk, utils.npk
 
-parser.aria:
+parser.npk:
   use utils;
   use helpers;
-  → depends on: utils.aria, helpers.aria
+  → depends on: utils.npk, helpers.npk
 
-utils.aria:
+utils.npk:
   use helpers;
-  → depends on: helpers.aria
+  → depends on: helpers.npk
 
-helpers.aria:
+helpers.npk:
   (no imports)
   → depends on: (none)
 
 Dependency Graph:
-  helpers.aria  (no deps)
+  helpers.npk  (no deps)
      ↑
-     ├── utils.aria  (depends on helpers)
+     ├── utils.npk  (depends on helpers)
      │     ↑
-     │     ├── parser.aria  (depends on utils, helpers)
+     │     ├── parser.npk  (depends on utils, helpers)
      │     │     ↑
-     │     │     └── main.aria
-     │     └── main.aria
+     │     │     └── main.npk
+     │     └── main.npk
      └── (already covered)
 
 Topological Sort (build order):
-  1. helpers.aria
-  2. utils.aria
-  3. parser.aria
-  4. main.aria
+  1. helpers.npk
+  2. utils.npk
+  3. parser.npk
+  4. main.npk
 
   ↓
 
@@ -461,27 +461,27 @@ Topological Sort (build order):
 └──────────────────────────────────────────────────────────────┘
 For each source file, check if object file is up-to-date:
 
-helpers.aria: (modified yesterday)
+helpers.npk: (modified yesterday)
   Object: lib/helpers.o (exists, timestamp: yesterday)
   → UP TO DATE, skip compilation
 
-utils.aria: (modified today)
+utils.npk: (modified today)
   Object: src/utils.o (exists, timestamp: yesterday)
   → OUT OF DATE, needs recompilation
 
-parser.aria: (modified yesterday)
+parser.npk: (modified yesterday)
   Object: src/parser.o (exists, timestamp: yesterday)
-  → UP TO DATE, but depends on utils.aria which changed
+  → UP TO DATE, but depends on utils.npk which changed
   → NEEDS RECOMPILATION (dependency changed)
 
-main.aria: (modified today)
+main.npk: (modified today)
   Object: src/main.o (exists, timestamp: yesterday)
   → OUT OF DATE, needs recompilation
 
 Compilation Queue:
-  - utils.aria (source modified)
-  - parser.aria (dependency modified)
-  - main.aria (source modified)
+  - utils.npk (source modified)
+  - parser.npk (dependency modified)
+  - main.npk (source modified)
 
   ↓
 
@@ -491,21 +491,21 @@ Compilation Queue:
 Detect CPU cores: 8 cores available
 Spawn 3 compiler instances (parallelizable tasks):
 
-[Thread 1] ariac src/utils.aria -o src/utils.o
-[Thread 2] ariac src/parser.aria -o src/parser.o  (waits for utils.o)
-[Thread 3] ariac src/main.aria -o src/main.o      (waits for parser.o, utils.o)
+[Thread 1] npkc src/utils.npk -o src/utils.o
+[Thread 2] npkc src/parser.npk -o src/parser.o  (waits for utils.o)
+[Thread 3] npkc src/main.npk -o src/main.o      (waits for parser.o, utils.o)
 
 Timeline:
-  t=0s:  Thread 1 starts (utils.aria)
+  t=0s:  Thread 1 starts (utils.npk)
   t=0s:  Thread 2 waits (parser depends on utils)
   t=0s:  Thread 3 waits (main depends on parser, utils)
   
   t=2s:  Thread 1 completes (utils.o ready)
-  t=2s:  Thread 2 starts (parser.aria)
+  t=2s:  Thread 2 starts (parser.npk)
   t=2s:  Thread 3 still waits
   
   t=3s:  Thread 2 completes (parser.o ready)
-  t=3s:  Thread 3 starts (main.aria)
+  t=3s:  Thread 3 starts (main.npk)
   
   t=4s:  Thread 3 completes (main.o ready)
 
@@ -645,7 +645,7 @@ Download std.collections:
 Verify std.mem:
   GPG verify: std.mem-1.0.0.tar.gz using std.mem-1.0.0.tar.gz.sig
     ↓
-  Result: Signature valid, signed by Aria Team <team@aria.org> ✓
+  Result: Signature valid, signed by Nitpick Team <team@aria.org> ✓
     ↓
   SHA-256: Compute hash of tarball
     ↓
@@ -672,8 +672,8 @@ Extract std.mem:
     ↓
   Created: /usr/local/aria/packages/std.mem-1.0.0/
     ├── src/
-    │   ├── allocator.aria
-    │   └── arena.aria
+    │   ├── allocator.npk
+    │   └── arena.npk
     ├── lib/
     │   └── libstd_mem.a (precompiled)
     └── package.json
@@ -683,9 +683,9 @@ Extract std.collections:
     ↓
   Created: /usr/local/aria/packages/std.collections-1.0.0/
     ├── src/
-    │   ├── vector.aria
-    │   ├── hashmap.aria
-    │   └── list.aria
+    │   ├── vector.npk
+    │   ├── hashmap.npk
+    │   └── list.npk
     ├── lib/
     │   └── libstd_collections.a
     └── package.json
@@ -755,7 +755,7 @@ VSCode: Displays ready status
 
 TIME: t1 - Developer opens file
 ─────────────────────────────────────────────────────────────────
-User: Opens src/main.aria
+User: Opens src/main.npk
   ↓
 VSCode: Sends textDocument/didOpen notification
   ↓
@@ -803,10 +803,10 @@ User: Presses Ctrl+Shift+B (Build)
   ↓
 VSCode: Runs task: "ariab build"
   ↓
-AriaBuild: Compiles modified files
+NpkBld: Compiles modified files
   ↓
-AriaBuild: Outputs to terminal:
-  "Compiling src/main.aria... Done"
+NpkBld: Outputs to terminal:
+  "Compiling src/main.npk... Done"
   "Linking bin/my_app... Done"
   ↓
 VSCode: Parses output, highlights any errors
@@ -981,7 +981,7 @@ pid = fork()
 └──────────────────────────────────────────────────────────────┘
 data_processor starts:
   ↓
-Aria Runtime initializes:
+Nitpick Runtime initializes:
   io.stdin_fd = 0   (mapped to shell's FD 4 write)
   io.stdout_fd = 1  (mapped to shell's FD 6 write)
   io.stderr_fd = 2  (mapped to shell's FD 8 write)

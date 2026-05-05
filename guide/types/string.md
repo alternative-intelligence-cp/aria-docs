@@ -2,7 +2,7 @@
 
 ## Overview
 
-Aria strings are **UTF-8 encoded, immutable, reference-counted, and length-tracked**
+Nitpick strings are **UTF-8 encoded, immutable, reference-counted, and length-tracked**
 (not null-terminated internally). String operations return new strings.
 
 ## Declaration
@@ -26,9 +26,9 @@ string:empty = "";
 Use backtick strings with `&{expression}` for interpolation:
 
 ```aria
-string:name = "Aria";
+string:name = "Nitpick";
 int32:version = 4;
-println(`&{name} version &{version}`);  // "Aria version 4"
+println(`&{name} version &{version}`);  // "Nitpick version 4"
 ```
 
 ## Operations

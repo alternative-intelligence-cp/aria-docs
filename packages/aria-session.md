@@ -4,7 +4,7 @@
 **Category**: middleware, http
 **License**: MIT
 
-Server-side session management for Aria. Create sessions with unique IDs,
+Server-side session management for Nitpick. Create sessions with unique IDs,
 store key-value session variables, and generate Set-Cookie headers.
 
 ## API Reference
@@ -31,7 +31,7 @@ store key-value session variables, and generate Set-Cookie headers.
 ## Quick Start
 
 ```aria
-use "aria_session.aria".*;
+use "aria_session.npk".*;
 
 func:main = int32() {
     int64:sess = raw session_create("sid_abc123");

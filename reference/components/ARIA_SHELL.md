@@ -1,4 +1,4 @@
-# Aria Shell (aria_shell / AriaSH)
+# Nitpick Shell (aria_shell / AriaSH)
 
 **Component Type**: Interactive Shell / Command Interpreter  
 **Language**: C++20  
@@ -23,13 +23,13 @@
 
 ## Overview
 
-AriaSH (Aria Shell) is a modern interactive shell designed for the Aria ecosystem with native support for **6-stream I/O topology**. Unlike traditional shells (bash, zsh) that only manage 3 streams (stdin/stdout/stderr), AriaSH handles all 6 streams defined by the Aria runtime.
+AriaSH (Nitpick Shell) is a modern interactive shell designed for the Nitpick ecosystem with native support for **6-stream I/O topology**. Unlike traditional shells (bash, zsh) that only manage 3 streams (stdin/stdout/stderr), AriaSH handles all 6 streams defined by the Nitpick runtime.
 
 ### Design Goals
 
 1. **Native 6-stream support**: stdin/stdout/stderr + stddbg/stddati/stddato
 2. **Modern UX**: Multi-line input, Ctrl+Enter submission, intelligent editing
-3. **Type-aware**: Understands Aria types and result<T> error handling
+3. **Type-aware**: Understands Nitpick types and result<T> error handling
 4. **Cross-platform**: Linux, Windows, macOS
 5. **Async-ready**: Non-blocking I/O, concurrent process management
 6. **TBB integration**: First-class support for Type-Based Bounded integers
@@ -227,7 +227,7 @@ STARTUPINFOEX si = { ... };
 CreateProcess(..., env_vars, &si, ...);
 ```
 
-**Child Side** (Aria runtime on Windows):
+**Child Side** (Nitpick runtime on Windows):
 ```c
 void aria_runtime_init(void) {
     // Parse environment variables
@@ -439,19 +439,19 @@ aria_shell> ./data_source |& tee stddbg.log |> ./analyzer
 
 ## Integration Points
 
-### With Aria Compiler
+### With Nitpick Compiler
 
-- Executes compiled Aria programs
-- Handles 6-stream I/O from Aria processes
+- Executes compiled Nitpick programs
+- Handles 6-stream I/O from Nitpick processes
 - Type-aware (understands result<T>, TBB, etc.)
 
-### With Aria Runtime
+### With Nitpick Runtime
 
 - Relies on `libaria_runtime.a` for child processes
 - Expects runtime to handle FD 0-5 initialization
 - Drains streams produced by runtime I/O calls
 
-### With AriaBuild
+### With NpkBld
 
 - Can invoke `ariab build` to compile projects
 - Displays build output via stdout/stderr
@@ -460,16 +460,16 @@ aria_shell> ./data_source |& tee stddbg.log |> ./analyzer
 ### With AriaX
 
 - May be distributed as system package via AriaX
-- Depends on Aria runtime package
+- Depends on Nitpick runtime package
 - Integrates with system PATH and shell profiles
 
 ---
 
 ## Related Components
 
-- **[Aria Runtime](ARIA_RUNTIME.md)**: Provides 6-stream I/O for child processes
-- **[Aria Compiler](ARIA_COMPILER.md)**: Compiles Aria programs that shell executes
-- **[AriaBuild](ARIABUILD.md)**: Build system invoked by shell
+- **[Nitpick Runtime](ARIA_RUNTIME.md)**: Provides 6-stream I/O for child processes
+- **[Nitpick Compiler](ARIA_COMPILER.md)**: Compiles Nitpick programs that shell executes
+- **[NpkBld](ARIABUILD.md)**: Build system invoked by shell
 - **[AriaX](ARIAX.md)**: Package manager for distributing shell
 
 ---

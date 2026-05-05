@@ -1,4 +1,4 @@
-# Aria Function Specification
+# Nitpick Function Specification
 
 ## Declaration Syntax
 All function declarations require a trailing semicolon.
@@ -52,7 +52,7 @@ func:failsafe = int32(tbb32:err) {
     exit(1);
 };
 ```
-Note: `int8[]->` is Aria's equivalent to C's `char**` for argv compatibility.
+Note: `int8[]->` is Nitpick's equivalent to C's `char**` for argv compatibility.
 
 ## Exit Code Conventions
 - Traditional conventions apply: 0 = no error, > 0 = error
@@ -69,7 +69,7 @@ The failsafe parameter is tbb32, giving range [-2147483647, +2147483647] with ER
 
 ### System Error Codes (negative range: -1 to -2147483647)
 Reserved for runtime, OS, and hardware-level errors. These are set by the
-Aria runtime or OS signal handlers — user code should not emit these.
+Nitpick runtime or OS signal handlers — user code should not emit these.
 
 | Code | Name | Meaning |
 |------|------|---------|
@@ -89,7 +89,7 @@ Aria runtime or OS signal handlers — user code should not emit these.
 | -14  | SYS_DEADLOCK         | Deadlock detected |
 | -15  | SYS_THREAD_PANIC     | Thread panic / unrecoverable thread error |
 | -16  | SYS_RESOURCE_LIMIT   | System resource limit reached (file descriptors, etc.) |
-| -17 to -99   | (reserved)  | Reserved for future Aria runtime system codes |
+| -17 to -99   | (reserved)  | Reserved for future Nitpick runtime system codes |
 | -100 to -999 | (reserved)  | Reserved for OS/platform-specific system codes |
 | -1000 to -2147483647 | (unassigned) | Available for future system-level extensions |
 
@@ -108,7 +108,7 @@ For application-level errors triggered by `!!! code` (failsafe invocation).
 | 8    | USR_HARDWARE         | Hardware device error (sensor, GPU, etc.) |
 | 9    | USR_TIMEOUT          | Critical operation timed out |
 | 10   | USR_ASSERTION        | Assertion / invariant violation |
-| 11 to 49    | (reserved)  | Reserved for future Aria standard user codes |
+| 11 to 49    | (reserved)  | Reserved for future Nitpick standard user codes |
 | 50 to 99    | (reserved)  | Reserved for framework/library standard codes |
 | 100+        | (user-defined) | Application-specific error codes |
 

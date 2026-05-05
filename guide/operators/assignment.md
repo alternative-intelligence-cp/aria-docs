@@ -23,10 +23,10 @@ See [bitwise.md](bitwise.md) for `<<=`, `>>=`.
 ## Fixed Values
 
 ```aria
-fixed int32:MAX = 100;    // Aria's const (use 'fixed', not 'const')
+fixed int32:MAX = 100;    // Nitpick's const (use 'fixed', not 'const')
 ```
 
-`const` is reserved for extern blocks. Use `fixed` for Aria constants.
+`const` is reserved for extern blocks. Use `fixed` for Nitpick constants.
 
 **Note:** `fixed` is specified in the language but has limited compiler test coverage.
 Compute in a variable first, then assign to `fixed` if needed.

@@ -4,7 +4,7 @@
 **Category**: networking, http
 **License**: MIT
 
-HTTP client for Aria. Provides GET, POST, PUT, DELETE, PATCH, and HEAD methods
+HTTP client for Nitpick. Provides GET, POST, PUT, DELETE, PATCH, and HEAD methods
 with configurable headers, timeouts, redirects, and URL encoding.
 
 ## Features
@@ -42,7 +42,7 @@ with configurable headers, timeouts, redirects, and URL encoding.
 ## Quick Start
 
 ```aria
-use "aria_http.aria".*;
+use "aria_http.npk".*;
 
 func:main = int32() {
     int32:_i = raw http_init();

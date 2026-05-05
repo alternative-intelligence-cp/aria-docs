@@ -4,7 +4,7 @@
 **Category**: networking, sockets
 **License**: MIT
 
-Low-level TCP and UDP socket operations for Aria. Provides connect, listen,
+Low-level TCP and UDP socket operations for Nitpick. Provides connect, listen,
 accept, send, receive, and non-blocking I/O through a C shim.
 
 ## Features
@@ -40,7 +40,7 @@ accept, send, receive, and non-blocking I/O through a C shim.
 ## Quick Start
 
 ```aria
-use "aria_socket.aria".*;
+use "aria_socket.npk".*;
 
 func:main = int32() {
     int32:fd = raw socket_tcp_connect("example.com", 80i32);

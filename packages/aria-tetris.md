@@ -4,10 +4,10 @@
 **Category**: games, gamedev, examples
 **License**: Apache-2.0 WITH Runtime-Library-Exception
 
-A complete Tetris clone written entirely in Aria. Serves as a reference
-implementation demonstrating real-world use of the Aria language for game
+A complete Tetris clone written entirely in Nitpick. Serves as a reference
+implementation demonstrating real-world use of the Nitpick language for game
 development — game state, rendering, audio, input, persistence, and animation
-all implemented in pure Aria source.
+all implemented in pure Nitpick source.
 
 ## Features
 
@@ -50,7 +50,7 @@ cc -O2 -shared -fPIC -Wall -o libaria_raylib_shim.so \
    aria_raylib_shim.c $(pkg-config --cflags --libs raylib) -lm
 
 cd ../../aria-tetris
-/path/to/ariac src/aria_tetris.aria -o aria_tetris \
+/path/to/npkc src/aria_tetris.npk -o aria_tetris \
   -L ../aria-raylib/shim \
   -laria_raylib_shim -lraylib -lm
 ```
@@ -90,7 +90,7 @@ no audio files are bundled with the package.
 
 ## Architecture
 
-The entire game is a single Aria source file (`src/aria_tetris.aria`, ~930 lines).
+The entire game is a single Nitpick source file (`src/aria_tetris.npk`, ~930 lines).
 
 ### State machine
 
@@ -134,7 +134,7 @@ aria-tetris/
 ├── aria-package.toml       # Package manifest
 ├── aria_tetris             # Compiled binary (not committed)
 └── src/
-    └── aria_tetris.aria    # Complete game source (~930 lines)
+    └── aria_tetris.npk    # Complete game source (~930 lines)
 ```
 
 ## See Also

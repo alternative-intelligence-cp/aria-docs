@@ -69,7 +69,7 @@ For very large functions or very complex proofs, the solver may run out of time.
 
 **Check remaining budget:**
 ```bash
-ariac program.aria --verify --prove-report --smt-timeout=10000   # 10s per query
+npkc program.npk --verify --prove-report --smt-timeout=10000   # 10s per query
 ```
 
 **Fix — split large functions:**
@@ -92,7 +92,7 @@ Z3's bitvector theory handles linear arithmetic well but struggles with:
 The `--prove-report` flag shows every verification verdict:
 
 ```bash
-ariac program.aria --verify --prove-report
+npkc program.npk --verify --prove-report
 ```
 
 Output:
@@ -110,9 +110,9 @@ Z3: 14 proven, 1 disproven, 1 unknown
 Start with a low level to isolate which phase produces Unknown:
 
 ```bash
-ariac program.aria --verify --verify-level=1   # Rules/limits only
-ariac program.aria --verify --verify-level=2   # + contracts, overflow
-ariac program.aria --verify --verify-level=3   # Everything
+npkc program.npk --verify --verify-level=1   # Rules/limits only
+npkc program.npk --verify --verify-level=2   # + contracts, overflow
+npkc program.npk --verify --verify-level=3   # Everything
 ```
 
 If level 1 works but level 2 produces Unknown, the issue is in contract or overflow

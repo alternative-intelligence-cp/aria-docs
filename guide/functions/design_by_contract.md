@@ -2,7 +2,7 @@
 
 ## Overview
 
-Aria supports formal contracts on functions: `requires` (preconditions), `ensures`
+Nitpick supports formal contracts on functions: `requires` (preconditions), `ensures`
 (postconditions), and `invariant` (loop invariants). These are checked at compile time
 where possible and at runtime otherwise.
 

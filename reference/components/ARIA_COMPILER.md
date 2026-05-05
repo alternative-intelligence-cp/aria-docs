@@ -1,4 +1,4 @@
-# Aria Compiler (ariac)
+# Nitpick Compiler (npkc)
 
 **Component Type**: Compiler/Transpiler  
 **Language**: C++20  
@@ -24,9 +24,9 @@
 
 ## Overview
 
-The Aria Compiler (ariac) is the reference implementation compiler for the Aria programming language. It compiles `.aria` source files into native machine code by:
+The Nitpick Compiler (npkc) is the reference implementation compiler for the Nitpick programming language. It compiles `.npk` source files into native machine code by:
 
-1. **Parsing** Aria syntax into an Abstract Syntax Tree (AST)
+1. **Parsing** Nitpick syntax into an Abstract Syntax Tree (AST)
 2. **Type checking** with semantic analysis
 3. **Generating** LLVM Intermediate Representation (IR)
 4. **Optimizing** via LLVM optimization passes
@@ -216,7 +216,7 @@ tbb8:x = 200;  // ERROR: 200 out of range for tbb8 [-128, 127]
 **Key Transformations**:
 
 1. **Builtin Function Lowering**
-   - Aria builtins → Runtime function calls
+   - Nitpick builtins → Runtime function calls
    - Example: `io.stdout.write(...)` → `@aria_stdout_write(...)`
 
 2. **Memory Allocator Calls**
@@ -330,7 +330,7 @@ clang main.o /usr/local/lib/libaria_runtime.a -o my_app
 
 ### Primitive Types
 
-| Aria Type | LLVM Type | Size | Range | Description |
+| Nitpick Type | LLVM Type | Size | Range | Description |
 |-----------|-----------|------|-------|-------------|
 | `int8` | `i8` | 1 byte | -128 to 127 | Signed 8-bit |
 | `int16` | `i16` | 2 bytes | -32,768 to 32,767 | Signed 16-bit |
@@ -571,8 +571,8 @@ io.stdout.write(content.ok());  // BUG: No check, will crash if error
 
 ## Related Components
 
-- **[Aria Runtime](ARIA_RUNTIME.md)**: Runtime library linked with compiled code
-- **[AriaBuild](ARIABUILD.md)**: Build system that invokes compiler
+- **[Nitpick Runtime](ARIA_RUNTIME.md)**: Runtime library linked with compiled code
+- **[NpkBld](ARIABUILD.md)**: Build system that invokes compiler
 - **[aria-lsp](ARIA_LSP.md)**: Language server for IDE integration
 - **[aria-dap](ARIA_DAP.md)**: Debug adapter for debugger integration
 

@@ -5,7 +5,7 @@ The standard library contains **72 modules** in `REPOS/aria/stdlib/`.
 ## Import Pattern
 
 ```aria
-use "stdlib_file.aria".*;    // bare filename — compiler searches stdlib/
+use "stdlib_file.npk".*;    // bare filename — compiler searches stdlib/
 ```
 
 ## Available Modules
@@ -30,9 +30,9 @@ The standard library lives in `REPOS/aria/stdlib/` and provides:
 - Thread pool, channels, atomics, mutexes, condvars, rwlocks, barriers, actors (via stdlib wrappers on aria-libc)
 
 ### Concurrency Modules (v0.11.0)
-- `thread.aria`, `mutex.aria`, `condvar.aria`, `rwlock.aria` — via aria_libc_process
-- `channel.aria`, `actor.aria`, `thread_pool.aria` — built on above
-- `shm.aria` — POSIX shared memory via aria_libc_posix
+- `thread.npk`, `mutex.npk`, `condvar.npk`, `rwlock.npk` — via aria_libc_process
+- `channel.npk`, `actor.npk`, `thread_pool.npk` — built on above
+- `shm.npk` — POSIX shared memory via aria_libc_posix
 
 ## Related
 

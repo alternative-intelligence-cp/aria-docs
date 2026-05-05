@@ -1,4 +1,4 @@
-# SMT Solver Reference — Aria Compiler
+# SMT Solver Reference — Nitpick Compiler
 
 Internal architecture reference. Updated for v0.14.5.
 User-facing guide: `guide/verification/` (6 sections) and `guide/advanced_features/verification.md`.
@@ -7,7 +7,7 @@ User-facing guide: `guide/verification/` (6 sections) and `guide/advanced_featur
 
 ## Architecture Overview
 
-Z3 is statically linked into `ariac`. Users never interact with it directly.
+Z3 is statically linked into `npkc`. Users never interact with it directly.
 The compiler uses it in two modes:
 
 1. **Verification mode** (`--verify`) — prove constraints, contracts, overflow safety, data races
@@ -127,7 +127,7 @@ Parse → Type Check → Z3 Verification (Phase 3.25) → Dead Branch Elim (4.25
 ### Core Pattern (Negation-Based Proof)
 ```
 1. Create Z3 sort (bitvector for ints, real for floats)
-2. Translate Aria AST condition → Z3_ast
+2. Translate Nitpick AST condition → Z3_ast
 3. Assert NEGATION of the property
 4. solver.check()
 5. L_FALSE (UNSAT) → property PROVEN for all inputs
@@ -142,7 +142,7 @@ Parse → Type Check → Z3 Verification (Phase 3.25) → Dead Branch Elim (4.25
 - `Z3_solver_push()` before each query, `Z3_solver_pop()` after — reuses learned lemmas
 
 ### Type Mapping
-| Aria Type | Z3 Sort | Tag |
+| Nitpick Type | Z3 Sort | Tag |
 |-----------|---------|-----|
 | int8 | BitVec(8) | 0 |
 | int16 | BitVec(16) | 1 |

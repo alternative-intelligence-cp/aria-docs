@@ -1,4 +1,4 @@
-# Aria Type System Design
+# Nitpick Type System Design
 **Date**: 2025-02-07  
 **Status**: Design Phase - Ready for Implementation
 
@@ -18,7 +18,7 @@
 
 ## Core Principle: Zero Context Switching
 
-**Aria's Consistency Law**: `type:name = value;` for EVERYTHING
+**Nitpick's Consistency Law**: `type:name = value;` for EVERYTHING
 
 ```aria
 // Variables
@@ -34,7 +34,7 @@ int32(int32:x) { pass(x * 2); };  // Can execute immediately with ()
 struct:Point = { int32:x; int32:y; };
 
 // Types (new!)
-Type:Counter = { /* regular Aria syntax inside */ };
+Type:Counter = { /* regular Nitpick syntax inside */ };
 ```
 
 **No special cases. No syntax changes. Just organization.**
@@ -45,7 +45,7 @@ Type:Counter = { /* regular Aria syntax inside */ };
 
 ```aria
 Type:Counter = {
-    // Constructor - just a regular Aria function
+    // Constructor - just a regular Nitpick function
     func:create = Counter(int32:initial) {
         Counter:c = { 
             secret_ptr = allocate_storage(),
@@ -54,12 +54,12 @@ Type:Counter = {
         pass(c);
     };
     
-    // Destructor - just a regular Aria function  
+    // Destructor - just a regular Nitpick function  
     func:destroy = void(Counter:self) {
         free(self.secret_ptr);
     };
     
-    // Methods - just regular Aria functions with self parameter
+    // Methods - just regular Nitpick functions with self parameter
     func:increment = void(Counter:self) {
         self.count = self.count + 1;
     };
@@ -242,7 +242,7 @@ void TypeChecker::validateMemberAccess(MemberAccessExpr* expr) {
 
 ### Terminology Mapping
 
-| Traditional OOP | Aria Type System | Rationale |
+| Traditional OOP | Nitpick Type System | Rationale |
 |----------------|------------------|-----------|
 | `class` | `Type:` | Different word = different thing |
 | `constructor` | `func:create` | It's just a function you write |
@@ -258,7 +258,7 @@ void TypeChecker::validateMemberAccess(MemberAccessExpr* expr) {
 
 **Critic**: "This is just OOP with different names!"
 
-**Response**: "Not at all. Look at the generated code - it's structs and functions. No inheritance, no vtables, no dynamic dispatch. Just organized composition with zero overhead. If you want OOP, use C++ or Java. Aria gives you the ergonomics without the cost."
+**Response**: "Not at all. Look at the generated code - it's structs and functions. No inheritance, no vtables, no dynamic dispatch. Just organized composition with zero overhead. If you want OOP, use C++ or Java. Nitpick gives you the ergonomics without the cost."
 
 **Critic**: "Why not use `class` keyword?"
 
@@ -275,7 +275,7 @@ void TypeChecker::validateMemberAccess(MemberAccessExpr* expr) {
 ## Example: Type-Based Atomic Counter
 
 ```aria
-// stdlib/concurrent/atomic_counter.aria
+// stdlib/concurrent/atomic_counter.npk
 
 Type:AtomicCounter = {
     // Constructor
@@ -327,7 +327,7 @@ Type:AtomicCounter = {
 };
 
 // Usage
-use "stdlib/concurrent/atomic_counter.aria";
+use "stdlib/concurrent/atomic_counter.npk";
 
 func:main = int32() {
     AtomicCounter:counter = instance<AtomicCounter>(0);
@@ -390,7 +390,7 @@ func:main = void() {
 
 ### Zero-Cost Abstractions ✅
 ```c
-// Your Aria code:
+// Your Nitpick code:
 counter.increment();
 
 // Compiles to (LLVM IR):
@@ -416,7 +416,7 @@ Type:Point = {
 
 ### FFI Compatible ✅
 ```c
-// C code can use Aria Types directly
+// C code can use Nitpick Types directly
 struct Point {
     int32_t x;
     int32_t y;
