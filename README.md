@@ -11,7 +11,7 @@
 > examples, man pages, and history are being preserved; source and file-extension
 > renames will happen in later coordinated slices.
 
-Documentation, man pages, and examples for the [Aria programming language](https://github.com/alternative-intelligence-cp/aria) (v0.17.3).
+Documentation, man pages, and examples for the [Aria (Nitpick) programming language](https://github.com/alternative-intelligence-cp/nitpick) (v0.18.0).
 
 ## Contents
 
@@ -43,7 +43,7 @@ sudo make install  # Install to /usr/share/man/
 
 Each example can be compiled with:
 ```bash
-ariac examples/<name>.aria -o <name>
+npkc examples/<name>.npk -o <name>
 ./<name>
 ```
 
