@@ -12,7 +12,7 @@ npkpkg update
 ```
 
 Downloads the latest package registry from GitHub. Run this before searching
-or installing remote packages. The cache lives at `~/.aria/cache/aria-packages/`.
+or installing remote packages. The cache lives at `~/.npk/cache/npk-packages/`.
 
 ### Search packages
 
@@ -131,9 +131,9 @@ func:failsafe = int32(tbb32:err) { exit(1); };
 
 | Path | Purpose |
 |------|---------|
-| `~/.aria/packages/installed/` | Installed packages |
-| `~/.aria/packages/registry/` | Local registry index |
-| `~/.aria/cache/aria-packages/` | Cached remote registry |
+| `~/.npk/packages/installed/` | Installed packages |
+| `~/.npk/packages/registry/` | Local registry index |
+| `~/.npk/cache/npk-packages/` | Cached remote registry |
 
 ---
 
