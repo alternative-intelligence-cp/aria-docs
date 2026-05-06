@@ -34,7 +34,7 @@ Result: i32 = math.add(5, 3);
 ## External Module File
 
 ```aria
-// Reference external file math.aria
+// Reference external file math.npk
 mod math;
 
 // Use it
@@ -47,9 +47,9 @@ Result: i32 = math.add(5, 3);
 
 ```
 utils/
-├── mod.aria       # Module root
-├── string.aria
-└── array.aria
+├── mod.npk       # Module root
+├── string.npk
+└── array.npk
 ```
 
 ```aria
@@ -104,22 +104,22 @@ pub mod public_mod {  // Module is public
 ### ✅ DO: One Module Per File
 
 ```aria
-// math.aria
+// math.npk
 pub func:add = int32(int32:a, int32:b) {
     pass(a + b);
 }
 
-// main.aria
+// main.npk
 mod math;  // ✅ Clean
 ```
 
-### ✅ DO: Use `mod.aria` for Directories
+### ✅ DO: Use `mod.npk` for Directories
 
 ```
 database/
-  mod.aria        # Main module file
-  connection.aria
-  queries.aria
+  mod.npk        # Main module file
+  connection.npk
+  queries.npk
 ```
 
 ### ❌ DON'T: Nest Modules Too Deeply

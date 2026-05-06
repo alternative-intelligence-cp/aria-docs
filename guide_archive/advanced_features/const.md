@@ -128,12 +128,12 @@ pub const DEFAULT_PORT: i32 = 8080;
 ## Module-Level Constants
 
 ```aria
-// In config.aria
+// In config.npk
 pub const DATABASE_URL: string = "localhost:5432";
 pub const CACHE_SIZE: i32 = 1000;
 pub const TIMEOUT_MS: i32 = 5000;
 
-// In main.aria
+// In main.npk
 use config;
 
 db: Database = connect(config.DATABASE_URL);

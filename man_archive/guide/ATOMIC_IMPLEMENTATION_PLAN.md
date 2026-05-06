@@ -16,7 +16,7 @@ Runtime library already exists (runtime/atomic.h), need language integration.
 
 ### Completed (2026-02-07):
 
-1. **stdlib/atomic.aria** - Language interface
+1. **stdlib/atomic.npk** - Language interface
    - Generic atomic<T> class definition
    - MemoryOrder enumeration (relaxed, acquire, release, acq_rel, seq_cst)
    - Methods: new, load, store, exchange, compare_exchange_strong/weak, fetch_add, fetch_sub
@@ -24,8 +24,8 @@ Runtime library already exists (runtime/atomic.h), need language integration.
    - Comprehensive documentation
 
 2. **Test suite** - Feature validation
-   - tests/feature_validation/atomic_test.aria - Full test suite (9 tests)
-   - tests/feature_validation/atomic_minimal.aria - Minimal instantiation test
+   - tests/feature_validation/atomic_test.npk - Full test suite (9 tests)
+   - tests/feature_validation/atomic_minimal.npk - Minimal instantiation test
    - Tests: basic ops, exchange, CAS, fetch_add/sub, bool, multiple types, lock-free counter
 
 ### Next Steps:
@@ -142,8 +142,8 @@ Estimated time: 2 hours
 ## Phase 3: Testing & Validation
 
 ### 3.1: Unit Tests
-- [ ] Compile atomic_test.aria → verify C output
-- [ ] Run atomic_test.aria → verify all 9 tests pass
+- [ ] Compile atomic_test.npk → verify C output
+- [ ] Run atomic_test.npk → verify all 9 tests pass
 - [ ] Test invalid types (should fail compilation)
 - [ ] Test memory ordering violations (should warn/error)
 
@@ -192,11 +192,11 @@ Estimated time: 2 hours
 ## Success Criteria
 
 ✅ **Phase 1**: Language interface defined (COMPLETE)
-- [x] stdlib/atomic.aria created with full API
+- [x] stdlib/atomic.npk created with full API
 - [x] Test suite written
 
 ⏳ **Phase 2**: Compiler integration (NEXT)
-- [ ] atomic_test.aria compiles to C
+- [ ] atomic_test.npk compiles to C
 - [ ] Generated C calls runtime/atomic.h functions
 - [ ] Type constraints enforced at compile time
 
@@ -240,5 +240,5 @@ Estimated time: 2 hours
 
 - Design doc: `/home/randy/Workspace/REPOS/aria/docs/P0-2_MEMORY_MODEL_DESIGN.md`
 - Runtime lib: `/home/randy/Workspace/REPOS/aria/include/runtime/atomic.h`
-- Test suite: `/home/randy/Workspace/REPOS/aria/tests/feature_validation/atomic_test.aria`
-- Complex<T> precedent: `/home/randy/Workspace/REPOS/aria/stdlib/complex.aria`
+- Test suite: `/home/randy/Workspace/REPOS/aria/tests/feature_validation/atomic_test.npk`
+- Complex<T> precedent: `/home/randy/Workspace/REPOS/aria/stdlib/complex.npk`

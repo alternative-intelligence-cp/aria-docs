@@ -344,7 +344,7 @@ struct ASTNode {
 }
 
 // Enables better error messages:
-// "Error at main.aria:10:5: Type mismatch"
+// "Error at main.npk:10:5: Type mismatch"
 ```
 
 ### ✅ DO: Use Visitor Pattern

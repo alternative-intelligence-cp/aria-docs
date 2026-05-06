@@ -98,13 +98,13 @@ user: User = User.new();
 ```
 app/
 ├── models/
-│   └── user.aria
+│   └── user.npk
 └── services/
-    └── user_service.aria
+    └── user_service.npk
 ```
 
 ```aria
-// services/user_service.aria
+// services/user_service.npk
 use super.models.user.User;  // Go up to 'app', then to 'models.user'
 
 pub func:create_user = User(string:name) {
@@ -177,17 +177,17 @@ mod parent {
 
 ```
 myapp/
-├── lib.aria
+├── lib.npk
 ├── models/
-│   ├── mod.aria
-│   └── user.aria
+│   ├── mod.npk
+│   └── user.npk
 └── services/
-    ├── mod.aria
-    └── user_service.aria
+    ├── mod.npk
+    └── user_service.npk
 ```
 
 ```aria
-// From services/user_service.aria
+// From services/user_service.npk
 
 // Absolute from crate root
 use crate.models.user.User;
@@ -212,7 +212,7 @@ use crate.database.models.User;  // ✅ Clear
 ### ✅ DO: Use `super` for Sibling Modules
 
 ```aria
-// In auth/tokens.aria
+// In auth/tokens.npk
 use super.login.verify_credentials;  // ✅ Sibling module
 ```
 

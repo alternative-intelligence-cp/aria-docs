@@ -468,7 +468,7 @@ llvm::Value* CodegenExpr::inlineTritAndSafe(llvm::Value* a, llvm::Value* b) {
 
 ```bash
 cd /home/randy/Workspace/REPOS/aria
-mv tests/future/batch02_gemini_audit_fixes.aria tests/
+mv tests/future/batch02_gemini_audit_fixes.npk tests/
 ```
 
 #### 4.2: Validate Test Cases

@@ -290,7 +290,7 @@ int8_t trit_add(int8_t a, int8_t b) {
 
 ### 4.1 Unit Tests (move from tests/future/ when implemented)
 
-- `tests/future/batch02_gemini_audit_fixes.aria` - 31 test cases covering:
+- `tests/future/batch02_gemini_audit_fixes.npk` - 31 test cases covering:
   - Arithmetic with overflow detection
   - ERR sentinel propagation (sticky behavior)
   - Kleene logic operations (AND/OR)
@@ -346,7 +346,7 @@ nit:calculation = overflow * destructive;  // = ERR (sticky)
 
 ## 7. Success Criteria
 
-Move `tests/future/batch02_gemini_audit_fixes.aria` back to `tests/` when:
+Move `tests/future/batch02_gemini_audit_fixes.npk` back to `tests/` when:
 - ✅ All 31 test cases pass
 - ✅ ERR propagation verified
 - ✅ No implicit conversions (type safety)

@@ -16,7 +16,7 @@ Follow these best practices to write **clean**, **maintainable**, and **efficien
 ### File Structure
 
 ```aria
-// File: user_service.aria
+// File: user_service.npk
 
 // 1. Imports
 use std.io.{File, readFile, writeFile};
@@ -52,15 +52,15 @@ func:main = NIL() {
 // Good module structure:
 project/
   src/
-    main.aria
-    lib.aria
+    main.npk
+    lib.npk
     user/
-      mod.aria
-      service.aria
-      repository.aria
+      mod.npk
+      service.npk
+      repository.npk
     product/
-      mod.aria
-      catalog.aria
+      mod.npk
+      catalog.npk
 ```
 
 ---

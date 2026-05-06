@@ -562,7 +562,7 @@ trit:y = trit_from_int(2);  // Returns ERR at runtime
 - [ ] Link runtime library to compiler
 
 ### Phase 4: Testing (2 days)
-- [ ] Move `tests/future/batch02_gemini_audit_fixes.aria` to `tests/`
+- [ ] Move `tests/future/batch02_gemini_audit_fixes.npk` to `tests/`
 - [ ] Verify all 31 test cases pass
 - [ ] Add fuzzer corpus for trit/nit
 - [ ] Stress test overflow detection

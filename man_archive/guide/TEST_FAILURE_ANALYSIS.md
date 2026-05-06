@@ -14,7 +14,7 @@ Investigated 7 failing trit/nit/ternary tests. Results:
 
 ## Category A: FIXED - Type Mismatches (4 tests)
 
-### 1. ✅ tests/ternary_debug_value.aria
+### 1. ✅ tests/ternary_debug_value.npk
 **Issue**: Attempted implicit cast from `trit` (i8) to `int32`  
 **Error**: `Cannot initialize variable 'exit_code' of type 'int32' with value of type 'trit'`
 
@@ -34,7 +34,7 @@ if (t_sum == -128) {
 
 ---
 
-### 2. ✅ tests/feature_validation/check_ternary_support.aria
+### 2. ✅ tests/feature_validation/check_ternary_support.npk
 **Issue**: `main()` declared as `int64()` but compiler expects `int32()`  
 **Error**: `Function 'main' must return 'int32', but returns 'int64'`
 
@@ -50,7 +50,7 @@ func:main = int32() {
 
 ---
 
-### 3. ✅ tests/feature_validation/comprehensive_ternary.aria
+### 3. ✅ tests/feature_validation/comprehensive_ternary.npk
 **Issue**: All 9 functions declared as `int64()` but should be `int32()`  
 **Errors**:
 - `Function 'main' must return 'int32', but returns 'int64'`
@@ -66,7 +66,7 @@ func:main = int32() {
 
 ---
 
-### 4. ✅ tests/feature_validation/manual_ternary_pattern.aria
+### 4. ✅ tests/feature_validation/manual_ternary_pattern.npk
 **Issue**: Same as #2 - `main()` returns `int64` instead of `int32`  
 **Fix Applied**: Changed return type to `int32()`  
 **Status**: ✅ Now compiles and runs
@@ -75,7 +75,7 @@ func:main = int32() {
 
 ## Category B: BLOCKED - Missing Feature (3 tests)
 
-### 5. ⏸️ tests/ternary_comprehensive.aria
+### 5. ⏸️ tests/ternary_comprehensive.npk
 **Issue**: Requires balanced ternary literal syntax with `0t` prefix  
 **Examples from test**:
 ```aria
@@ -102,7 +102,7 @@ int64:six = 0t1T0;       // 1*9 + (-1)*3 + 0*1 = 6
 
 ---
 
-### 6. ⏸️ tests/ternary_literals.aria
+### 6. ⏸️ tests/ternary_literals.npk
 **Issue**: Same as #5 - requires `0t` prefix syntax  
 **Examples**:
 ```aria
@@ -117,7 +117,7 @@ int64:three = 0t10;      // 1*3 + 0*1 = 3
 
 ---
 
-### 7. ⏸️ tests/fuzz/corpus/seed_ternary.aria
+### 7. ⏸️ tests/fuzz/corpus/seed_ternary.npk
 **Issue**: Requires TBB literal suffix `t` (different from `0t` prefix!)  
 **Error**: `Invalid type suffix 't' for integer literal`
 
@@ -159,11 +159,11 @@ tbb32:b = 5t;     // 5 in balanced ternary representation
 
 ### Remaining Blocked Tests Breakdown
 1. **Balanced Ternary Literals (2 tests)**: `0t` prefix notation
-   - ternary_comprehensive.aria
-   - ternary_literals.aria
+   - ternary_comprehensive.npk
+   - ternary_literals.npk
 
 2. **TBB Suffix Notation (1 test)**: `t` suffix
-   - seed_ternary.aria
+   - seed_ternary.npk
 
 ---
 

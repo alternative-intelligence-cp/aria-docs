@@ -132,7 +132,7 @@ file2: File = openFile("b.txt")?;
 ## Re-export with `pub use`
 
 ```aria
-// In lib.aria
+// In lib.npk
 pub use internal.important_function;
 pub use internal.ImportantType;
 

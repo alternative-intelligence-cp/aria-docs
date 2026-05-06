@@ -16,7 +16,7 @@ Modules organize code into logical units, provide **namespacing**, and control *
 ### File as Module
 
 ```aria
-// math.aria - automatically becomes module 'math'
+// math.npk - automatically becomes module 'math'
 
 pub func:add = int32(int32:a, int32:b) {
     pass(a + b);
@@ -30,7 +30,7 @@ pub func:multiply = int32(int32:a, int32:b) {
 ### Using a Module
 
 ```aria
-// main.aria
+// main.npk
 use math.*;
 
 Result: i32 = add(5, 3);  // 8
@@ -57,10 +57,10 @@ Result: i32 = math.add(5, 3);
 
 ```aria
 // Reference external file
-mod math;  // Loads math.aria
+mod math;  // Loads math.npk
 
 // Or from directory
-mod utils;  // Loads utils/mod.aria
+mod utils;  // Loads utils/mod.npk
 ```
 
 ---
@@ -69,16 +69,16 @@ mod utils;  // Loads utils/mod.aria
 
 ```
 project/
-├── main.aria
-├── math.aria
+├── main.npk
+├── math.npk
 └── utils/
-    ├── mod.aria
-    ├── string.aria
-    └── array.aria
+    ├── mod.npk
+    ├── string.npk
+    └── array.npk
 ```
 
 ```aria
-// main.aria
+// main.npk
 use math.*;
 use utils.*;
 use utils.string.*;
@@ -94,7 +94,7 @@ reverse("hello");
 ### Private by Default
 
 ```aria
-// math.aria
+// math.npk
 func:helper = int32() {  // Private
     pass(42);
 }
@@ -117,7 +117,7 @@ pub const MAX: i32 = 100;   // Public constant
 ## Re-exports
 
 ```aria
-// lib.aria
+// lib.npk
 mod internal;
 
 // Re-export from internal module
@@ -150,18 +150,18 @@ Result: i32 = sqrt(16);
 
 ```
 mylib/
-├── lib.aria          # Main entry point
+├── lib.npk          # Main entry point
 ├── core/
-│   ├── mod.aria
-│   ├── types.aria
-│   └── traits.aria
+│   ├── mod.npk
+│   ├── types.npk
+│   └── traits.npk
 └── utils/
-    ├── mod.aria
-    └── helpers.aria
+    ├── mod.npk
+    └── helpers.npk
 ```
 
 ```aria
-// lib.aria
+// lib.npk
 pub mod core;
 pub mod utils;
 
@@ -198,15 +198,15 @@ mod auth {
 ```aria
 // Good structure
 auth/
-  login.aria
-  register.aria
-  tokens.aria
+  login.npk
+  register.npk
+  tokens.npk
 database/
-  connection.aria
-  queries.aria
+  connection.npk
+  queries.npk
 api/
-  routes.aria
-  handlers.aria
+  routes.npk
+  handlers.npk
 ```
 
 ### ✅ DO: Use Clear Names

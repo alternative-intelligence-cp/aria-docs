@@ -69,7 +69,7 @@ $ npkc hello.npk
 **Runtime Search Paths**:
 1. `$ARIA_RUNTIME_PATH` (environment variable)
 2. `/usr/local/lib/aria` (default install location)
-3. `~/.aria/runtime` (user-local install)
+3. `~/.npk/runtime` (user-local install)
 
 ---
 

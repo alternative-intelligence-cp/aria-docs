@@ -14,7 +14,7 @@ Thank you for helping improve Nitpick's documentation!
 
 - **guide/** — Programming guide (types, functions, control flow, memory model, etc.)
 - **reference/** — Compiler architecture and ecosystem reference
-- **examples/** — Example .aria programs
+- **examples/** — Example .npk programs
 - **man/** — Man page sources and build system
 - **specs/** — Language specification
 - **packages/** — Package-specific guides

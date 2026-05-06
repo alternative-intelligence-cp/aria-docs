@@ -36,7 +36,7 @@ comptime                ** compile-time evaluation. Usage: comptime(expr) or pub
 await                   ** suspend execution until async operation completes **
 catch                   ** error/exception handling keyword **
 in                      ** membership test in for loops and collections **
-as                      ** alias in imports: use "mod.aria".* as alias **
+as                      ** alias in imports: use "mod.npk".* as alias **
 cfg                     ** conditional compilation attribute **
 inline                  ** suggest function inlining to compiler **
 noinline                ** prevent function inlining **
@@ -197,7 +197,7 @@ stdin                   ** text input stream **
 stddati                 ** data input stream **
 stddato                 ** data output stream **
 
-### Compiler Flags (ariac) #############################################################################################
+### Compiler Flags (npkc) #############################################################################################
 
 ## Output
 -o <file>               ** write output to <file> **

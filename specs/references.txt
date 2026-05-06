@@ -1,9 +1,9 @@
 # Aria Project — Quick Reference Locations
 
 ## Compiler & Runtime
-- **ariac source**:        REPOS/aria/                         (dev branch, merge to main for releases)
-- **ariac binary**:        REPOS/aria/build/ariac
-- **ariac tests**:         REPOS/aria/tests/
+- **npkc source**:        REPOS/aria/                         (dev branch, merge to main for releases)
+- **npkc binary**:        REPOS/aria/build/npkc
+- **npkc tests**:         REPOS/aria/tests/
 - **bug regressions**:     REPOS/aria/tests/bug_regression/
 - **stdlib**:              REPOS/aria/stdlib/
 - **runtime threading**:   REPOS/aria/src/runtime/thread.cpp

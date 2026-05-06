@@ -198,7 +198,7 @@ llvm::Value* TernaryCodegen::generateNot(llvm::Value* operand, Type* type) {
 - [ ] **Test**: Compile aria, verify no build errors
 
 ### Step 5: Compilation Test (15 min)
-- [ ] Try compiling batch02_gemini_audit_fixes.aria
+- [ ] Try compiling batch02_gemini_audit_fixes.npk
 - [ ] Check for "undefined reference" errors
 - [ ] Verify IR contains calls to aria_trit_*, NOT CreateAdd/CreateAnd
 
@@ -229,7 +229,7 @@ grep -n "aria_trit_add\|aria_trit_and\|aria_nit_add\|aria_nit_and" src/backend/i
 # Expected: Multiple matches, all in CreateCall statements
 
 # 4. Build and test
-./build.sh && build/ariac tests/batch02_gemini_audit_fixes.aria 2>&1 | grep -i error
+./build.sh && build/npkc tests/batch02_gemini_audit_fixes.npk 2>&1 | grep -i error
 # Expected: No "undefined reference" or compilation errors
 ```
 

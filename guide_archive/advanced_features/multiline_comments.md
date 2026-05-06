@@ -119,7 +119,7 @@ func:refactored_function = NIL() {
 
 ```aria
 /*
- File: user_service.aria
+ File: user_service.npk
  Author: Development Team
  Created: 2025-01-01
  
@@ -128,9 +128,9 @@ func:refactored_function = NIL() {
    CRUD operations, authentication, and authorization.
  
  Dependencies:
-   - database.aria
-   - auth.aria
-   - validation.aria
+   - database.npk
+   - auth.npk
+   - validation.npk
 */
 
 mod user_service;

@@ -23,7 +23,7 @@ native machine code with no runtime overhead.
                 ───                               ────
            your GML script                   your Aria source
                 │                                   │
-         GameMaker runner                     ariac compiler
+         GameMaker runner                     npkc compiler
          (closed-source)                       (open source)
                 │                                   │
          hidden C++ code                     your C shim (.c)
@@ -55,7 +55,7 @@ draw_text(x, y - 20, "Hello!");
 ### Aria (using aria-gml for a familiar feel)
 
 ```aria
-use "../src/aria_gml.aria".*;
+use "../src/aria_gml.npk".*;
 
 func:step = void(flt64:dt) { };
 
@@ -103,19 +103,19 @@ Let's trace `draw_sprite(spr_player, 0, x, y)` in GML, and the equivalent in Ari
 GameMaker compiles your GML into its own bytecode format (YYC compiles to native C++
 instead, but that's still hidden). You can't inspect it.
 
-### Step 2: Aria source → machine code via ariac
+### Step 2: Aria source → machine code via npkc
 
 When you write:
 ```aria
 draw_sprite(player_sprite, 0.0f64, 128.0f64, 64.0f64);
 ```
 
-The `ariac` compiler:
-1. Parses `draw_sprite` as an `extern` function declared in `aria_gml.aria`
+The `npkc` compiler:
+1. Parses `draw_sprite` as an `extern` function declared in `aria_gml.npk`
 2. Emits an LLVM IR `call` instruction to the external symbol `aria_gml_draw_sprite`
 3. LLVM backend generates an x86-64 `call` instruction in the output binary
 
-You can see the IR that ariac generates — it's just function calls, no magic.
+You can see the IR that npkc generates — it's just function calls, no magic.
 
 ### Step 3: The C shim
 
@@ -163,7 +163,7 @@ fragment shader and writes each pixel to the framebuffer.
 **The full chain:**
 ```
 your Aria source
-     ↓  ariac compiles to x86-64 + links to .so
+     ↓  npkc compiles to x86-64 + links to .so
 aria_gml_draw_sprite() in your C shim
      ↓  C function call
 DrawTextureRec() in raylib
@@ -242,7 +242,7 @@ draw_text(8, 8, "Bouncing Ball");
 ### Aria (using aria-gml)
 
 ```aria
-use "../src/aria_gml.aria".*;
+use "../src/aria_gml.npk".*;
 
 flt64:bx  = 320.0f64;
 flt64:by  = 240.0f64;
@@ -384,7 +384,7 @@ make           # builds libaria_gml_shim.so
 ### 3. Write your game
 
 ```aria
-use "../aria-gml/src/aria_gml.aria".*;
+use "../aria-gml/src/aria_gml.npk".*;
 
 flt64:px = 300.0f64;
 flt64:py = 200.0f64;
@@ -413,7 +413,7 @@ func:main = int32() {
 ### 4. Compile
 
 ```bash
-ariac my_game.aria -o my_game \
+npkc my_game.npk -o my_game \
   -L path/to/aria-gml/shim \
   -laria_gml_shim -lraylib -lm
 

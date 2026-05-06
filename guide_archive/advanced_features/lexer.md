@@ -96,7 +96,7 @@ token: Token = Token {
     lexeme: "add",
     line: 1,
     column: 4,
-    file: "main.aria",
+    file: "main.npk",
 };
 ```
 

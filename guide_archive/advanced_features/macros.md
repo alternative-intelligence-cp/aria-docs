@@ -178,8 +178,8 @@ func:log = NIL(string:msg) {
 ## File Inclusion (`%include`)
 
 ```aria
-%include "common_macros.aria"
-%include "config.aria"
+%include "common_macros.npk"
+%include "config.npk"
 ```
 
 The included file's contents are inserted at the directive site, then preprocessed.
@@ -220,7 +220,7 @@ The preprocessor provides built-in constants:
 
 | Constant | Expansion | Type |
 |---|---|---|
-| `__FILE__` | Current source filename (quoted string) | `"filename.aria"` |
+| `__FILE__` | Current source filename (quoted string) | `"filename.npk"` |
 | `__LINE__` | Current source line number (integer) | `42` |
 | `__COUNTER__` | Auto-incrementing counter (starts at 0) | `0`, `1`, `2`, ... |
 

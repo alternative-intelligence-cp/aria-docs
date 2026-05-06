@@ -18,7 +18,7 @@ Documentation, man pages, and examples for the [Nitpick (Nitpick) programming la
 - **guide/** — Programming guide (362 files): types, functions, control flow, memory model, modules, advanced features, standard library
 - **guide/npkpkg.md** — Package manager usage guide
 - **man/** — Man page sources and build scripts (`man npkc`, `man npkpkg`, etc.)
-- **examples/** — Example programs demonstrating Nitpick features (69 .aria files)
+- **examples/** — Example programs demonstrating Nitpick features (69 .npk files)
 - **reference/** — Language reference and compiler architecture documentation
 - **specs/** — Language specification (`aria_specs.txt` — 7,200-line spec covering the 3-layer safety system)
 - **packages/** — Package-specific guides (raylib, GML, Tetris, OpenGL)

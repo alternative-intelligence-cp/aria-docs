@@ -27,10 +27,10 @@
 ## Setup
 
 ```aria
-use "sys.aria".*;  // Import all syscall constants (SYS_READ, SYS_WRITE, etc.)
+use "sys.npk".*;  // Import all syscall constants (SYS_READ, SYS_WRITE, etc.)
 ```
 
-The `sys.aria` stdlib module provides 373 named constants auto-generated from Linux kernel headers.
+The `sys.npk` stdlib module provides 373 named constants auto-generated from Linux kernel headers.
 
 ---
 
@@ -134,7 +134,7 @@ if (file < 0i64) {
 The real power of `sys()` is building pure-Aria system wrappers with no C dependency:
 
 ```aria
-use "sys.aria".*;
+use "sys.npk".*;
 
 // Pure-Aria write wrapper
 func:sys_write = Result<int64>(int64:fd, string:data, int64:len) {
@@ -201,5 +201,5 @@ The `rcx` and `r11` registers are clobbered by the kernel.
 - [process_management.md](process_management.md) — Higher-level process operations
 - [exec.md](exec.md) — `exec()` command execution
 - [fork.md](fork.md) — `fork()` process forking
-- `stdlib/sys.aria` — Syscall constant definitions
+- `stdlib/sys.npk` — Syscall constant definitions
 - `scripts/gen-sys-constants.sh` — Constant generator script

@@ -60,7 +60,7 @@ func:allocate_buffer = wild byte*(size: u64) {
 
 **Generated Code**:
 ```c
-// Aria compiler generates:
+// Nitpick compiler generates:
 extern void* malloc(size_t size);
 extern void free(void* ptr);
 extern size_t strlen(const char* s);
@@ -103,7 +103,7 @@ void* allocate_buffer(uint64_t size) {
 
 **Compiler Invocation**:
 ```bash
-ariac main.aria -l curl
+npkc main.npk -l curl
 ```
 
 ---
@@ -121,7 +121,7 @@ extern func:curl_easy_cleanup = void(handle: wild void*);
 
 **Automated Approach** (future: binding generator):
 ```bash
-$ aria-bindgen /usr/include/curl/curl.h -o curl_bindings.aria
+$ aria-bindgen /usr/include/curl/curl.h -o curl_bindings.npk
 ```
 
 **Generated**:
@@ -402,7 +402,7 @@ extern func:takes_ownership = void(ptr: wild byte*) [callee_owns_param];
 - First 4 float args in: `xmm0-xmm3`
 - Return value in: `rax` (integer), `xmm0` (float)
 
-**Aria Compiler**: Automatically uses platform default
+**Nitpick Compiler**: Automatically uses platform default
 
 ---
 
@@ -506,7 +506,7 @@ extern "C" {
 
 **Declare C API**:
 ```aria
-// nikola_ffi.aria
+// nikola_ffi.npk
 extern struct:nikola_field = opaque;
 
 extern func:nikola_create_field = wild nikola_field*(dimensions: u64);
@@ -528,7 +528,7 @@ extern func:nikola_extract_state = void(
 
 **Safe Aria Wrapper**:
 ```aria
-// nikola.aria
+// nikola.npk
 import:ffi = "nikola_ffi";
 
 struct:ConsciousnessField = {

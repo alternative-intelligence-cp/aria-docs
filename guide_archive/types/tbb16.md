@@ -976,7 +976,7 @@ const AUDIO_DROPOUT:tbb16 = ERR;  // -32,768 is distinct dropout marker
 | **Stdlib Traits** | ✅ Complete | `impl:Numeric:for:tbb16` |
 | **Error Formatting** | ✅ Complete | Debugger displays "ERR" for -32,768 |
 | **SIMD Vectorization** | ✅ Complete | Auto-vectorizes with overflow checks |
-| **Tests** | ✅ Extensive | `tests/test_tbb.c`, `tests/tbb_overflow.aria` |
+| **Tests** | ✅ Extensive | `tests/test_tbb.c`, `tests/tbb_overflow.npk` |
 
 **Production Ready**: tbb16 is fully implemented, tested, and in active use. Used in Nikola audio processing, sensor monitoring, and small-scale financial calculations.
 
@@ -1041,5 +1041,5 @@ All TBB types share:
 
 ---
 
-*Aria Language Project - Production Safety by Design*  
+*Nitpick Language Project - Production Safety by Design*  
 *February 12, 2026 - Establishing timestamped prior art on TBB error propagation*

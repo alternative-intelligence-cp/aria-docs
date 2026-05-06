@@ -968,7 +968,7 @@ tbb64:timestamp_64 = get_unix_timestamp_64();  // Good until year 292,277,026,59
 | **Error Formatting** | ✅ Complete | Debugger displays "ERR" for INT64_MIN |
 | **SIMD Vectorization** | ✅ Complete | Auto-vectorizes with overflow checks (AVX-512, 8× parallelism) |
 | **int128 Overflow** | ✅ Complete | Uses `__int128` or intrinsics for multiplication overflow detection |
-| **Tests** | ✅ Extensive | `tests/test_tbb.c`, `tests/tbb64_genomic.aria`, `tests/tbb64_finance.aria` |
+| **Tests** | ✅ Extensive | `tests/test_tbb.c`, `tests/tbb64_genomic.npk`, `tests/tbb64_finance.npk` |
 
 **Production Ready**: tbb64 is fully implemented, tested, and the **recommended type for extreme-scale applications** (global finance, genomics, astronomy, Nikola lifetime simulation).
 
@@ -1036,5 +1036,5 @@ All TBB types share:
 
 ---
 
-*Aria Language Project - Maximum-Scale Safety by Design*  
+*Nitpick Language Project - Maximum-Scale Safety by Design*  
 *February 12, 2026 - Establishing timestamped prior art on extreme-scale TBB error propagation*

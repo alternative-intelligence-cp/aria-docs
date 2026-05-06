@@ -22,9 +22,9 @@ Actors never share mutable state — all communication happens via `send()`.
 ## Spawning Actors
 
 ```aria
-use "actor.aria".*;
-use "channel.aria".*;
-use "thread.aria".*;
+use "actor.npk".*;
+use "channel.npk".*;
+use "thread.npk".*;
 
 // Define a behavior: receives int64 messages, processes each one
 (int64)(int64):my_handler = int64(int64:msg) {

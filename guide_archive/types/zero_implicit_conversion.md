@@ -184,7 +184,7 @@ func:bitwise_ops = uint32(uint32:n, uint32:pos) {
 
 **Before (causes pollution bug):**
 ```aria
-// lib/std/mixed_module.aria
+// lib/std/mixed_module.npk
 
 func:int_arithmetic = int32(int32:n) {
     int32:result = (n + 1);  // 1 inferred as int32
@@ -200,7 +200,7 @@ func:uint_bitwise = uint32(uint32:n) {
 
 **After (no pollution):**
 ```aria
-// lib/std/mixed_module.aria
+// lib/std/mixed_module.npk
 
 func:int_arithmetic = int32(int32:n) {
     int32:result = (n + 1i32);  // Explicit int32
@@ -222,7 +222,7 @@ When a developer forgets the type suffix:
 
 ```
 error: Numeric literal requires explicit type suffix
-  --> lib/std/bits.aria:42:24
+  --> lib/std/bits.npk:42:24
    |
 42 |     uint32:mask = 1;
    |                   ^ requires type suffix
@@ -236,7 +236,7 @@ When types don't match exactly:
 
 ```
 error: Type mismatch in operation. Got 'uint32' and 'int32'.
-  --> lib/std/convert.aria:56:26
+  --> lib/std/convert.npk:56:26
    |
 56 |     uint32:result = (mask + count);
    |                      ^^^^^^^^^^^^
@@ -337,18 +337,18 @@ while (count < 32u32) {
 
 ### Lexer-Level Validation (Implemented January 12, 2026)
 
-The Aria compiler enforces type suffix requirements at the **lexer level**, meaning invalid code is caught before parsing even begins. This provides immediate, clear feedback.
+The Nitpick compiler enforces type suffix requirements at the **lexer level**, meaning invalid code is caught before parsing even begins. This provides immediate, clear feedback.
 
 **What Happens When You Forget a Suffix:**
 
 ```bash
-$ cat example.aria
+$ cat example.npk
 func:main = int32() {
     int32:x = 42;  // ERROR: Missing type suffix
     pass(x);
 };
 
-$ ariac example.aria
+$ npkc example.npk
 error: Numeric literal missing required type suffix.
 All numeric literals in Aria must have explicit types.
   Examples: 42u32, 0i64, -10i32, 3.14f32

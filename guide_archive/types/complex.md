@@ -1,7 +1,7 @@
 # complex<T> - Generic Complex Numbers
 
 > **⚠️ DESIGN DOCUMENT — NOT YET IMPLEMENTED IN COMPILER**
-> The `complex` type is part of the Aria language specification but is not yet available as a built-in compiler type. Use the `aria-entangled` ecosystem package for complex number operations.
+> The `complex` type is part of the Nitpick language specification but is not yet available as a built-in compiler type. Use the `aria-entangled` ecosystem package for complex number operations.
 
 **Category**: Types → Advanced Mathematics  
 **Purpose**: Complex number arithmetic for physics, signal processing, wavefunctions  

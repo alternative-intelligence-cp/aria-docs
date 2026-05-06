@@ -204,7 +204,7 @@ use String as Str;   // ❌ String is clear
 ## Re-exports with Aliases
 
 ```aria
-// In lib.aria
+// In lib.npk
 mod internal {
     pub struct ComplexInternalName { }
 }

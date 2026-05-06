@@ -126,10 +126,10 @@ if (a < NIT_MIN || a > NIT_MAX) {
   - Error: If nit literal not in {-4..4}
 
 - [ ] **1.6**: Test type system integration
-  - Create: `tests/type_system_exotic.aria` (minimal test)
+  - Create: `tests/type_system_exotic.npk` (minimal test)
   - Test: Variable declarations (`var x: trit = 1T;`)
   - Test: Type checking catches invalid assignments
-  - Run: `./build.sh && ./aria_test tests/type_system_exotic.aria`
+  - Run: `./build.sh && ./aria_test tests/type_system_exotic.npk`
 
 **Completion Criteria**:
 - ✅ All exotic types compile without "unknown type" errors
@@ -330,7 +330,7 @@ if (a < NIT_MIN || a > NIT_MAX) {
 #### Tasks:
 
 - [ ] **4.1**: Move batch02 from tests/future/
-  - Command: `mv tests/future/batch02_gemini_audit_fixes.aria tests/`
+  - Command: `mv tests/future/batch02_gemini_audit_fixes.npk tests/`
   - Verify: File contains 31 test cases
   - Review: Test coverage (arithmetic, logic, boundaries, conversions)
 

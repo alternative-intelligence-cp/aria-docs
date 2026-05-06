@@ -871,7 +871,7 @@ const ERR_SENTINEL:tbb8 = ERR;  // -128 is error, not data
 | **Stdlib Traits** | ✅ Complete | `impl:Numeric:for:tbb8` |
 | **Error Formatting** | ✅ Complete | Debugger displays "ERR" for -128 |
 | **SIMD Vectorization** | ✅ Complete | Auto-vectorizes with overflow checks |
-| **Tests** | ✅ Extensive | `tests/test_tbb.c`, `tests/tbb_overflow.aria` |
+| **Tests** | ✅ Extensive | `tests/test_tbb.c`, `tests/tbb_overflow.npk` |
 
 **Production Ready**: tbb8 is fully implemented, tested, and in active use. The TBB system is **NON-NEGOTIABLE** and foundational to Aria's safety model.
 
@@ -931,5 +931,5 @@ All TBB types share:
 
 ---
 
-*Aria Language Project - Symmetric Safety by Design*  
+*Nitpick Language Project - Symmetric Safety by Design*  
 *February 12, 2026 - Establishing timestamped prior art on TBB error propagation*

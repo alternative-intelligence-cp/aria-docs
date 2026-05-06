@@ -217,14 +217,14 @@ if (pid == 0) {
 ```bash
 # NpkBld queries AriaX
 ariax install http_client@^2.1.0
-# Downloads to ~/.aria/packages/http_client/2.1.3/
+# Downloads to ~/.npk/packages/http_client/2.1.3/
 ```
 
 **Compiler Link**:
 ```bash
 npkc src/main.npk \
   --link-dependency http_client \
-  --package-path ~/.aria/packages/http_client/2.1.3/lib/libhttp_client.a
+  --package-path ~/.npk/packages/http_client/2.1.3/lib/libhttp_client.a
 ```
 
 ---

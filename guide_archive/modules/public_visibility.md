@@ -139,10 +139,10 @@ outer.inner.inner_private(); // ❌ Error
 ## Re-exporting
 
 ```aria
-// internal.aria
+// internal.npk
 pub func:helper = NIL() { }
 
-// lib.aria
+// lib.npk
 mod internal;
 
 // Re-export to public API
@@ -170,7 +170,7 @@ pub(crate) struct InternalType { }
 ### Public API, Private Implementation
 
 ```aria
-// lib.aria
+// lib.npk
 mod database {
     struct Connection { }  // Private
     
@@ -299,7 +299,7 @@ impl Server {
 ### ✅ DO: Use Re-exports for Clean API
 
 ```aria
-// lib.aria
+// lib.npk
 mod internal {
     pub func:important_function = NIL() { }
 }

@@ -1,7 +1,7 @@
 # frac32 - 32-bit Production Exact Rational Arithmetic
 
 > **⚠️ DESIGN DOCUMENT — NOT YET IMPLEMENTED IN COMPILER**
-> Fractional types are part of the Aria language specification but are not yet available in the compiler. The documentation below describes the planned design.
+> Fractional types are part of the Nitpick language specification but are not yet available in the compiler. The documentation below describes the planned design.
 
 ## Overview
 
@@ -754,12 +754,12 @@ frac32:height = width / phi_approx[9];
 | **To Integer** | ✅ Complete | Rounds toward zero |
 | **To Float** | ✅ Complete | Loses exactness |
 | **String Representation** | ✅ Complete | "whole num/denom" format |
-| **Trait: Numeric** | ✅ Complete | stdlib/traits/numeric_impls.aria |
+| **Trait: Numeric** | ✅ Complete | stdlib/traits/numeric_impls.npk |
 
 **Source Files**:
 - Implementation: `src/backend/runtime/frac_ops.cpp`
 - Header: `include/backend/runtime/frac_ops.h`
-- Tests: `tests/debug_fractions.aria`
+- Tests: `tests/debug_fractions.npk`
 - Specifications: `.internal/aria_specs.txt` (line 2216+)
 
 ---

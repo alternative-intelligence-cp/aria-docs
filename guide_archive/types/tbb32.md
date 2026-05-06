@@ -1052,7 +1052,7 @@ tbb64:timestamp_64 = get_unix_timestamp_64();  // Good until year 292,277,026,59
 | **Stdlib Traits** | ✅ Complete | `impl:Numeric:for:tbb32` |
 | **Error Formatting** | ✅ Complete | Debugger displays "ERR" for INT32_MIN |
 | **SIMD Vectorization** | ✅ Complete | Auto-vectorizes with overflow checks (AVX2/AVX-512) |
-| **Tests** | ✅ Extensive | `tests/test_tbb.c`, `tests/tbb_overflow.aria` |
+| **Tests** | ✅ Extensive | `tests/test_tbb.c`, `tests/tbb_overflow.npk` |
 
 **Production Ready**: tbb32 is fully implemented, tested, and the **recommended default integer type** for Aria applications. Used extensively in databases, financial systems, and Nikola consciousness simulations.
 
@@ -1119,5 +1119,5 @@ All TBB types share:
 
 ---
 
-*Aria Language Project - Production Safety by Design*  
+*Nitpick Language Project - Production Safety by Design*  
 *February 12, 2026 - Establishing timestamped prior art on TBB error propagation*

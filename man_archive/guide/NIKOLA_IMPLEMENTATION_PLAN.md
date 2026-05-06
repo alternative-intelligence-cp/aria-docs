@@ -408,7 +408,7 @@ Phase 6 (Safety Interface)
 ### Internal Documents
 - **900+ page Nikola spec** (nikola_full.txt)
 - **ATPM papers** (Zenodo DOIs)
-- **Aria compiler** (reference implementation for types)
+- **Nitpick compiler** (reference implementation for types)
 
 ### External References
 - **Brandenberger-Vafa Mechanism**: String gas cosmology

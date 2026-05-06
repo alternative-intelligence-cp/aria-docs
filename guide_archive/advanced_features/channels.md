@@ -16,7 +16,7 @@ Channels are the primary mechanism for **safe, lock-free communication** between
 ## Creating Channels
 
 ```aria
-use "channel.aria".*;
+use "channel.npk".*;
 
 // Buffered channel (capacity = 16 messages)
 int64:ch = raw(Channel.create(16i32));
@@ -51,8 +51,8 @@ int64:maybe = raw(Channel.try_recv(ch));
 ## Producer/Consumer Pattern
 
 ```aria
-use "channel.aria".*;
-use "thread.aria".*;
+use "channel.npk".*;
+use "thread.npk".*;
 
 (int64)(int64):producer = int64(int64:ch) {
     raw(Channel.send(ch, 1i64));
@@ -142,7 +142,7 @@ raw(Channel.destroy(ch));                 // Free resources
 The `aria-channel` package provides composable patterns:
 
 ```aria
-use "aria_channel.aria".*;
+use "aria_channel.npk".*;
 
 // Fan-out: distribute one channel to N workers
 int64:fanout = FanOut.create(input_ch, 4i32, 16i32);

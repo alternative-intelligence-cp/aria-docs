@@ -1,7 +1,7 @@
 # tfp32 - Twisted Floating Point 32-bit (Deterministic Float)
 
 > **⚠️ DESIGN DOCUMENT — NOT YET IMPLEMENTED IN COMPILER**
-> This type is part of the Aria language specification but is not yet available in the compiler. The documentation below describes the planned design.
+> This type is part of the Nitpick language specification but is not yet available in the compiler. The documentation below describes the planned design.
 
 **Category**: Types → Floating-Point / Deterministic  
 **Purpose**: Cross-platform bit-exact deterministic floating-point arithmetic  
@@ -680,4 +680,4 @@ tfp32:x = 0.1tf32 + 0.2tf32;  // EXACTLY 0.3tf32 (bit-exact) everywhere
 
 **Last Updated**: February 12, 2026  
 **Implementation**: src/backend/runtime/tfp_ops.cpp, include/backend/runtime/tfp_ops.h  
-**Tests**: stdlib/traits/numeric.aria (trait implementation)
+**Tests**: stdlib/traits/numeric.npk (trait implementation)

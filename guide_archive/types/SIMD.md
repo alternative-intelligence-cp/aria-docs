@@ -1232,7 +1232,7 @@ define %simd.i32x8 @aria.simd.broadcast.i32x8(i32 %value) {
 ### Auto-Vectorization (Compiler Optimization)
 
 ```aria
-// Aria compiler can auto-vectorize simple loops:
+// Nitpick compiler can auto-vectorize simple loops:
 fix256[100000]:inputs;
 fix256[100000]:outputs;
 

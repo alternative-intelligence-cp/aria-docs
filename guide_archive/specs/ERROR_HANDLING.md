@@ -218,7 +218,7 @@ io.stdout.write(r.ok());  // ERROR: Must check is_ok() first
 **Compiler Message**:
 ```
 error: Result<i32> must be checked before calling ok()
-  --> file.aria:3:18
+  --> file.npk:3:18
    |
 3  | io.stdout.write(r.ok());
    |                  ^^^^^^

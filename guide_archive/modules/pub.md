@@ -80,7 +80,7 @@ pub mod api {
 ## Public API Example
 
 ```aria
-// lib.aria
+// lib.npk
 mod internal {  // Private module
     pub func:helper = int32() {
         pass(42);

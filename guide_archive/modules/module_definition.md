@@ -16,7 +16,7 @@ Modules are defined either as **files** or **inline declarations**.
 ### Single File
 
 ```aria
-// math.aria
+// math.npk
 pub func:add = int32(int32:a, int32:b) {
     pass(a + b);
 }
@@ -26,7 +26,7 @@ pub func:subtract = int32(int32:a, int32:b) {
 }
 ```
 
-File `math.aria` automatically becomes module `math`.
+File `math.npk` automatically becomes module `math`.
 
 ---
 
@@ -34,13 +34,13 @@ File `math.aria` automatically becomes module `math`.
 
 ```
 utils/
-├── mod.aria       # Module entry point
-├── string.aria    # Submodule
-└── array.aria     # Submodule
+├── mod.npk       # Module entry point
+├── string.npk    # Submodule
+└── array.npk     # Submodule
 ```
 
 ```aria
-// utils/mod.aria
+// utils/mod.npk
 pub mod string;
 pub mod array;
 
@@ -50,7 +50,7 @@ pub func:common_util = NIL() {
 ```
 
 ```aria
-// utils/string.aria
+// utils/string.npk
 pub func:reverse = string(string:s) {
     // Implementation
 }
@@ -61,7 +61,7 @@ pub func:reverse = string(string:s) {
 ## Inline Modules
 
 ```aria
-// main.aria
+// main.npk
 mod helpers {
     pub func:format_output = string(int32:value) {
         pass(`Value: &{value}`);
@@ -81,7 +81,7 @@ func:main = NIL() {
 ### Typical Module
 
 ```aria
-// database.aria
+// database.npk
 
 // Private constants
 const CONNECTION_TIMEOUT: i32 = 30;
@@ -116,14 +116,14 @@ func:get_pool = ConnectionPool() {
 
 ```
 src/
-├── main.aria
-├── auth.aria
-├── database.aria
-└── api.aria
+├── main.npk
+├── auth.npk
+├── database.npk
+└── api.npk
 ```
 
 ```aria
-// main.aria
+// main.npk
 mod auth;
 mod database;
 mod api;
@@ -135,23 +135,23 @@ mod api;
 
 ```
 src/
-├── main.aria
+├── main.npk
 ├── auth/
-│   ├── mod.aria
-│   ├── login.aria
-│   └── tokens.aria
+│   ├── mod.npk
+│   ├── login.npk
+│   └── tokens.npk
 └── database/
-    ├── mod.aria
-    ├── connection.aria
-    └── queries.aria
+    ├── mod.npk
+    ├── connection.npk
+    └── queries.npk
 ```
 
 ```aria
-// main.aria
+// main.npk
 mod auth;
 mod database;
 
-// auth/mod.aria
+// auth/mod.npk
 pub mod login;
 pub mod tokens;
 ```
@@ -193,25 +193,25 @@ pub mod submodule {                    // Nested modules
 ### ✅ DO: Group Related Functionality
 
 ```aria
-// user.aria - everything user-related
+// user.npk - everything user-related
 pub struct User { }
 pub func:create_user = User() { }
 pub func:delete_user = NIL() { }
 pub func:find_user = ?User() { }
 ```
 
-### ✅ DO: Use mod.aria for Complex Modules
+### ✅ DO: Use mod.npk for Complex Modules
 
 ```
 database/
-  mod.aria          # Public API
-  connection.aria   # Private implementation
-  pool.aria         # Private implementation
-  queries.aria      # Private implementation
+  mod.npk          # Public API
+  connection.npk   # Private implementation
+  pool.npk         # Private implementation
+  queries.npk      # Private implementation
 ```
 
 ```aria
-// database/mod.aria
+// database/mod.npk
 mod connection;
 mod pool;
 mod queries;
@@ -224,7 +224,7 @@ pub use queries.query;
 ### ❌ DON'T: Mix Unrelated Code
 
 ```aria
-// bad_module.aria
+// bad_module.npk
 pub func:user_login = NIL() { }
 pub func:database_query = NIL() { }  // ❌ Different concerns
 pub func:send_email = NIL() { }      // ❌ Different concerns

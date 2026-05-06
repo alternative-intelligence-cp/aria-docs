@@ -61,7 +61,7 @@ map: Map<string, i32> = Map.new();
 ## Re-exporting
 
 ```aria
-// In lib.aria
+// In lib.npk
 pub use internal.module.PublicType;
 pub use internal.helpers.public_function;
 

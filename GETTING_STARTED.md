@@ -535,7 +535,7 @@ Reporter: [your name]
 [What actually happened — error message, wrong output, crash, etc.]
 
 --- ARIA SOURCE CODE ---
-[Paste the COMPLETE .aria file that triggers the bug. If it's multiple files,
+[Paste the COMPLETE .npk file that triggers the bug. If it's multiple files,
 include all of them.]
 
 --- COMPILER COMMAND ---

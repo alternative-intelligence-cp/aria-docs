@@ -39,18 +39,18 @@ outer.inner.inner_function();
 
 ```
 database/
-├── mod.aria          # database module root
-├── connection.aria   # database.connection
+├── mod.npk          # database module root
+├── connection.npk   # database.connection
 └── models/
-    ├── mod.aria      # database.models
-    ├── user.aria     # database.models.user
-    └── post.aria     # database.models.post
+    ├── mod.npk      # database.models
+    ├── user.npk     # database.models.user
+    └── post.npk     # database.models.post
 ```
 
 ### Module Declarations
 
 ```aria
-// database/mod.aria
+// database/mod.npk
 pub mod connection;
 pub mod models;
 
@@ -60,7 +60,7 @@ pub func:init = NIL() {
 ```
 
 ```aria
-// database/models/mod.aria
+// database/models/mod.npk
 pub mod user;
 pub mod post;
 ```
@@ -116,27 +116,27 @@ parent.child.private_child();     // ❌ Error
 ```
 app/
 ├── auth/
-│   ├── mod.aria
-│   ├── login.aria
-│   ├── register.aria
+│   ├── mod.npk
+│   ├── login.npk
+│   ├── register.npk
 │   └── tokens/
-│       ├── mod.aria
-│       ├── jwt.aria
-│       └── refresh.aria
+│       ├── mod.npk
+│       ├── jwt.npk
+│       └── refresh.npk
 ├── database/
-│   ├── mod.aria
-│   ├── connection.aria
+│   ├── mod.npk
+│   ├── connection.npk
 │   └── models/
-│       ├── mod.aria
-│       ├── user.aria
-│       └── post.aria
+│       ├── mod.npk
+│       ├── user.npk
+│       └── post.npk
 └── api/
-    ├── mod.aria
-    ├── routes.aria
+    ├── mod.npk
+    ├── routes.npk
     └── handlers/
-        ├── mod.aria
-        ├── users.aria
-        └── posts.aria
+        ├── mod.npk
+        ├── users.npk
+        └── posts.npk
 ```
 
 ---
@@ -144,7 +144,7 @@ app/
 ### Library Organization
 
 ```aria
-// lib.aria - Main entry point
+// lib.npk - Main entry point
 pub mod core {
     pub mod types;
     pub mod traits;
@@ -173,14 +173,14 @@ pub use utils.string.format;
 
 ```
 user_management/
-  mod.aria
-  create.aria       # Create user
-  update.aria       # Update user
-  delete.aria       # Delete user
+  mod.npk
+  create.npk       # Create user
+  update.npk       # Update user
+  delete.npk       # Delete user
   validation/       # Nested validation
-    mod.aria
-    email.aria
-    password.aria
+    mod.npk
+    email.npk
+    password.npk
 ```
 
 ### ✅ DO: Keep Hierarchy Shallow
@@ -193,10 +193,10 @@ app.database.models.user  // ✅
 app.modules.features.user.management.operations.create  // ❌
 ```
 
-### ✅ DO: Use mod.aria for Public API
+### ✅ DO: Use mod.npk for Public API
 
 ```aria
-// database/mod.aria
+// database/mod.npk
 mod connection;   // Private
 mod pool;         // Private
 
@@ -251,7 +251,7 @@ mod parent {
 ## Re-exporting from Nested Modules
 
 ```aria
-// lib.aria
+// lib.npk
 mod internal {
     pub mod deeply {
         pub mod nested {

@@ -119,7 +119,7 @@ end
 // On panic, runtime outputs to stderr
 panic("Critical error occurred");
 // stderr: PANIC: Critical error occurred
-//         at main() (file.aria:42)
+//         at main() (file.npk:42)
 //         at _start() (runtime:15)
 ```
 

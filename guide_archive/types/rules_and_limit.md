@@ -396,14 +396,14 @@ limit<r_safe_positive> int32:id = 42;   // OK — nonzero, positive, under 1000
 
 ## Z3 Static Verification (v0.2.45)
 
-The Aria compiler can use the **Z3 SMT solver** to mathematically *prove* that Rules constraints
+The Nitpick compiler can use the **Z3 SMT solver** to mathematically *prove* that Rules constraints
 are satisfied — moving beyond simple compile-time constant evaluation to formal verification.
 
 ### Enabling Verification
 
 ```bash
-ariac source.aria --verify              # Enable Z3 proof checking
-ariac source.aria --verify-report       # Detailed proof report (implies --verify)
+npkc source.npk --verify              # Enable Z3 proof checking
+npkc source.npk --verify-report       # Detailed proof report (implies --verify)
 ```
 
 ### What Gets Verified

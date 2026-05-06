@@ -350,7 +350,7 @@ int32:value = counter.load(seq_cst);
 **See Also**:
 - `docs/P0-2_MEMORY_MODEL_DESIGN.md` - Complete design
 - `docs/ATOMIC_IMPLEMENTATION_PLAN.md` - Implementation roadmap
-- `tests/feature_validation/atomic_test.aria` - Test examples
+- `tests/feature_validation/atomic_test.npk` - Test examples
 - `include/runtime/atomic.h` - Runtime library
 
 **Version**: Phase 1 (Language Interface)  

@@ -33,10 +33,10 @@ func:main = NIL() {
 /*
 Output:
 panic: Something went wrong!
-    at level3 (example.aria:2)
-    at level2 (example.aria:6)
-    at level1 (example.aria:10)
-    at main (example.aria:14)
+    at level3 (example.npk:2)
+    at level2 (example.npk:6)
+    at level1 (example.npk:10)
+    at main (example.npk:14)
 */
 ```
 

@@ -1,7 +1,7 @@
 # tfp64 - Twisted Floating Point 64-bit (High-Precision Deterministic Float)
 
 > **⚠️ DESIGN DOCUMENT — NOT YET IMPLEMENTED IN COMPILER**
-> This type is part of the Aria language specification but is not yet available in the compiler. The documentation below describes the planned design.
+> This type is part of the Nitpick language specification but is not yet available in the compiler. The documentation below describes the planned design.
 
 **Category**: Types → Floating-Point / Deterministic  
 **Purpose**: High-precision cross-platform bit-exact deterministic floating-point  
@@ -778,7 +778,7 @@ tfp64:y = sin(3.14159265358979tf);  // EXACTLY same bits on ALL platforms
 
 **Last Updated**: February 12, 2026  
 **Implementation**: src/backend/runtime/tfp_ops.cpp, include/backend/runtime/tfp_ops.h  
-**Tests**: stdlib/traits/numeric.aria (Numeric trait implementation)
+**Tests**: stdlib/traits/numeric.npk (Numeric trait implementation)
 
 ---
 

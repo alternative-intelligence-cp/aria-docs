@@ -277,7 +277,7 @@ extern "system" {  // ✅ Separate block
 ## Modular Organization
 
 ```aria
-// In ffi/libc.aria
+// In ffi/libc.npk
 pub mod libc {
     extern "C" {
         pub func:malloc = *void;(uint64:size)
@@ -285,7 +285,7 @@ pub mod libc {
     }
 }
 
-// In ffi/math.aria
+// In ffi/math.npk
 pub mod math {
     #[link(name = "m")]
     extern "C" {
