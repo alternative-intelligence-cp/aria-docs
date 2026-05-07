@@ -93,3 +93,25 @@ int32:sum = raw add_coords(origin);
 
 - [enum.md](enum.md) — enumeration types
 - [memory_model/handle.md](../memory_model/handle.md) — Handle<T> for arena structs
+
+## Struct Update Syntax (v0.19.1)
+
+Create a copy of a struct with selected fields overridden:
+
+```aria
+struct:Point2D = {
+    int32:x;
+    int32:y;
+};
+
+Point2D:origin = Point2D{ x: 0i32, y: 0i32 };
+Point2D:shifted = Point2D{ ...origin, x: 5i32 };
+// shifted.x = 5, shifted.y = 0 (copied from origin)
+```
+
+Rules:
+- The base variable (`...base`) must be the same struct type as the target.
+- All named field overrides are applied after copying the base.
+- The base is unchanged (value copy, not mutation).
+- The base must be a plain owned variable, not a `$$m` borrow alias.
+- Unknown field names in overrides are a compile-time error.

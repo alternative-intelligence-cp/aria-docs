@@ -50,7 +50,51 @@ pick (c) {
 }
 ```
 
+## Struct Field Patterns (v0.19.1)
+
+When the selector is a struct value, use a field destructuring pattern to bind
+struct fields as locals for the arm body:
+
+```aria
+struct:Point = {
+    int32:x;
+    int32:y;
+};
+
+Point:p = Point{ x: 10i32, y: 20i32 };
+
+pick (p) {
+    (Point{ x, y }) {
+        // x and y are local copies of p.x and p.y
+        println(`&{x + y}`);
+    }
+}
+```
+
+**Rules:**
+
+- The type name in the pattern must match the selector's exact struct type.
+- Only the fields you name are bound; use `_` for fields you want to ignore.
+- Bound fields are immutable copies; mutations do not affect the original struct.
+- A struct pattern always matches — no wildcard `(*)` is required for
+  exhaustiveness when a struct pattern is present.
+- An unknown field name in the pattern is a compile-time error.
+
+**Partial destructure with `_`:**
+
+```aria
+Color:c = Color{ r: 10i32, g: 20i32, b: 30i32 };
+
+pick (c) {
+    (Color{ r, _, _ }) {
+        // only r is bound; g and b are ignored
+        println(`&{r}`);
+    }
+}
+```
+
 ## Related
 
 - [if_else.md](if_else.md) — simple branching
 - [types/enum.md](../types/enum.md) — enums with exhaustiveness
+- [types/struct.md](../types/struct.md) — struct update syntax
