@@ -53,3 +53,50 @@ func:process = NIL(int64:val) { pass(NIL); };
 // WRONG: process(42);       // 42 is int32, function wants int64
 // RIGHT: process(42i64);    // explicit int64 suffix
 ```
+
+## Non-Pub Helper Functions (v0.19.3)
+
+Private helper functions (no `pub` keyword) are callable from any function in
+the same module, including `pub` functions. Convention: prefix helper names
+with `_` to distinguish them from public API.
+
+```aria
+func:_increment = int32(int32:n) {
+    pass (n + 1i32);
+};
+
+pub func:compute = int32(int32:base) {
+    pass raw _increment(base);
+};
+
+func:main = int32() {
+    int32:r = raw compute(9i32);   // r == 10
+    exit 0;
+};
+```
+
+Helpers that are only used internally do not need `pub` and will not be visible
+to callers importing the module.
+
+## `@func_name` as a First-Class Value (v0.19.3)
+
+A function can be referenced as a value using `@func_name` syntax and passed
+directly as a call argument:
+
+```aria
+func:apply = int32((int32)(int32):f, int32:x) {
+    int32:result = f(x) ? -1i32;
+    pass result;
+};
+
+func:double_val = int32(int32:x) {
+    pass (x + x);
+};
+
+func:main = int32() {
+    // Assign to lambda variable first, then pass
+    (int32)(int32):fn = @double_val;
+    int32:r = apply(fn, 21i32) ? -1i32;
+    exit r;
+};
+```

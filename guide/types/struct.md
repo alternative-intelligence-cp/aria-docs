@@ -93,6 +93,7 @@ int32:sum = raw add_coords(origin);
 
 - [enum.md](enum.md) — enumeration types
 - [memory_model/handle.md](../memory_model/handle.md) — Handle<T> for arena structs
+- [control_flow/pick.md](../control_flow/pick.md) — struct field pattern matching in pick
 
 ## Struct Update Syntax (v0.19.1)
 
@@ -115,3 +116,17 @@ Rules:
 - The base is unchanged (value copy, not mutation).
 - The base must be a plain owned variable, not a `$$m` borrow alias.
 - Unknown field names in overrides are a compile-time error.
+
+## Extern Functions Returning Structs (v0.19.1)
+
+Prior to v0.19.1, returning a struct value from an extern call required storing
+to a temporary variable first. This restriction is lifted:
+
+```aria
+// v0.19.1+: direct pass of extern-returned struct value works correctly
+extern func:get_point = Point();
+
+func:example = int32() {
+    pass raw get_point().x;   // direct field access on extern return
+};
+```
