@@ -46,6 +46,37 @@ int32:val = extern_func();
 pass val;
 ```
 
+## Stdio Buffering Mismatch (POLISH-013)
+
+Nitpick's `print()` and `println()` call the `write()` syscall directly — they
+are **unbuffered**. C's `printf`, `fputs`, and `puts` write to a **buffered**
+stream (`FILE*` stdout). When mixing both in the same program (e.g., a C shim
+alongside Nitpick I/O), the C output may be delayed or lost on program exit.
+
+**Symptom:** C shim output appears out of order or missing when interleaved with
+Nitpick `println()` calls.
+
+**Fix:** Call `fflush(stdout)` at the end of any C function that writes to
+`stdout`:
+
+```c
+// C shim
+void my_shim_print(const char* msg) {
+    puts(msg);
+    fflush(stdout);  // flush C buffer to fd 1 before Nitpick read/write
+}
+```
+
+Alternatively, use `write(1, buf, len)` in C shims for fully unbuffered output
+matching Nitpick's model:
+
+```c
+#include <unistd.h>
+void my_shim_print(const char* msg, int64_t len) {
+    write(1, msg, (size_t)len);
+}
+```
+
 ## Related
 
 - [functions/extern.md](../functions/extern.md) — basic extern usage
