@@ -11,7 +11,7 @@
 > examples, man pages, and history are being preserved; source and file-extension
 > renames will happen in later coordinated slices.
 
-Documentation, man pages, and examples for the [Nitpick (Nitpick) programming language](https://github.com/alternative-intelligence-cp/nitpick) (v0.18.0).
+Documentation, man pages, and examples for the [Nitpick (Nitpick) programming language](https://github.com/alternative-intelligence-cp/nitpick) (v0.22.7).
 
 ## Contents
 
