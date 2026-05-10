@@ -40,6 +40,30 @@ func:failsafe = int32(tbb32:err) { exit 1; };
 - Negative constants imported via `use` may be zeroed at runtime (known codegen issue)
   — compute inline as `0i64 - value` instead
 
+## File Extension Conventions
+
+Nitpick source files use two accepted extensions:
+
+| Extension | Status | When to use |
+|-----------|--------|-------------|
+| `.npk` | **Canonical** | All new Nitpick code |
+| `.aria` | Alias (backward-compatible) | Legacy code or ports from the pre-rename era |
+
+Both extensions are treated identically by the compiler and module resolver
+(as of v0.22.2, which fixed `.aria` acceptance — POLISH-002). There is no
+runtime or semantic difference.
+
+**Convention:** prefer `.npk` for new projects. The `.aria` extension is
+accepted to ease migration of older code and ports.
+
+**`use` path:** include the extension explicitly in the import path. The
+module resolver accepts both:
+
+```nitpick
+use "math_utils.npk".*;   // canonical
+use "math_utils.aria".*;  // also accepted
+```
+
 ## Related
 
 - [mod.md](mod.md) — defining modules
