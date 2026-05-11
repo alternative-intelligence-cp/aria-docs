@@ -128,7 +128,7 @@ for                     ** standard for for advanced uses **
 till(limit,step)        ** loop with automatic iteration tracking **
 loop(start,limit,step)  ** loop with automatic iteration tracking **
 when/then/end           ** better while with state tracking **
-pick                    ** Aria equivalent of switch/case constructs **
+pick                    ** Nitpick equivalent of switch/case constructs **
 
 ### Operators ########################################################################################################## 
 +                       ** add **
