@@ -127,7 +127,7 @@ Pinning is orthogonal to borrowing: a pinned value can still be borrowed with
 ## Status
 
 Traits are specified in the language design. Implementation status varies —
-see the RFC at `META/ARIA/TRAITS_AND_BORROW_SEMANTICS_RFC.md`.
+see the RFC at `META/NITPICK/TRAITS_AND_BORROW_SEMANTICS_RFC.md`.
 
 ## Related
 

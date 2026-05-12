@@ -17,7 +17,7 @@ println(`DEBUG: x = &{x}, y = &{y}`);
 
 ## Common Issues
 
-See `META/ARIA/KNOWN_ISSUES.md` for current known issues and workarounds.
+See `META/NITPICK/KNOWN_ISSUES.md` for current known issues and workarounds.
 
 ### Constant Arithmetic Bug
 `fixed` with arithmetic expressions evaluates to 0. Compute in a variable:

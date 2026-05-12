@@ -31,7 +31,7 @@
 | **specs/FFI_DESIGN.md** | 1 | ConsciousnessField simulation |
 | **integration/NIKOLA_ARIA.md** | 11 | Wave propagation, dataset generation, coupled fields |
 | **aria_utils/ARCHITECTURE.md** | 1 | File streaming (converted from Rust pseudo-code) |
-| **META/ARIA/PHASE3_COMPLETE.md** | 3 | Result propagation tests |
+| **META/NITPICK/PHASE3_COMPLETE.md** | 3 | Result propagation tests |
 
 **Total Session 35**: 232 (programming_guide) + 17 (ecosystem) = **249 loops fixed!**
 

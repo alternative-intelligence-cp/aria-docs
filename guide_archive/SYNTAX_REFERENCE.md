@@ -443,7 +443,7 @@ int32:x limit<r_lt_100> = 5;  // ❌ limit goes before the type
 - Update this file if new canonical patterns emerge
 
 **Related Documents**:
-- [SYNTAX_AUDIT_FEB14_2026.md](META/ARIA/SYNTAX_AUDIT_FEB14_2026.md) - Comprehensive issue list
-- [UPDATE_PROGRESS.md](META/ARIA/UPDATE_PROGRESS.md) - Overall progress tracking
+- [SYNTAX_AUDIT_FEB14_2026.md](META/NITPICK/SYNTAX_AUDIT_FEB14_2026.md) - Comprehensive issue list
+- [UPDATE_PROGRESS.md](META/NITPICK/UPDATE_PROGRESS.md) - Overall progress tracking
 - [error_handling.md](./META/advanced_features/error_handling.md) - Fixed error handling guide
 - [filter.md](./META/stdlib/filter.md) - Fixed stdlib example

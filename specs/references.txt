@@ -30,12 +30,12 @@
 - **failsafe**:            Required in every program — global error handler
 
 ## Bug Tracking & Roadmaps
-- **BUGS file**:           META/ARIA/BUGS                      (open bugs only)
-- **Known issues**:        META/ARIA/KNOWN_ISSUES.md
-- **Roadmaps**:            META/ARIA/ROADMAP/
-- **Patch series**:        META/ARIA/ROADMAP/0.2.46.md         (current patch series)
-- **Master roadmap**:      META/ARIA/MASTER_ROADMAP.md
-- **Handoffs**:            META/ARIA/handoffs/
+- **BUGS file**:           META/NITPICK/BUGS                      (open bugs only)
+- **Known issues**:        META/NITPICK/KNOWN_ISSUES.md
+- **Roadmaps**:            META/NITPICK/ROADMAP/
+- **Patch series**:        META/NITPICK/ROADMAP/0.2.46.md         (current patch series)
+- **Master roadmap**:      META/NITPICK/MASTER_ROADMAP.md
+- **Handoffs**:            META/NITPICK/handoffs/
 
 ## ABI Gotchas (see also /memories/repo/aria_language_gotchas.md)
 - String params = `const char *`, NOT AriaString struct

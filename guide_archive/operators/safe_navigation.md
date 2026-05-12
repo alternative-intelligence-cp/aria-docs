@@ -2,7 +2,7 @@
 
 > **⚠️ PLANNED FEATURE - NOT YET IMPLEMENTED**  
 > This operator is recognized by the lexer but codegen is pending.  
-> See [ARIA_SPECS_AUDIT_FEB11_2026.md](../../../META/ARIA/ARIA_SPECS_AUDIT_FEB11_2026.md) line 6521.  
+> See [ARIA_SPECS_AUDIT_FEB11_2026.md](../../../META/NITPICK/ARIA_SPECS_AUDIT_FEB11_2026.md) line 6521.  
 > Do not use this operator in production code yet.
 
 **Category**: Operators → Safety  

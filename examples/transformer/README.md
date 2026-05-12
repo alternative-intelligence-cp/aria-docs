@@ -75,7 +75,7 @@ preserves this. The result is deterministic across runs.
 
 ## What Is Blocked ❌ (Compiler Bugs / Missing Features)
 
-These are all tracked in `META/ARIA/0.1.0_FEATURE_FREEZE_CHECKLIST.md`.
+These are all tracked in `META/NITPICK/0.1.0_FEATURE_FREEZE_CHECKLIST.md`.
 
 ### P4 — Struct Fields Cannot Hold Fixed-Size Arrays
 

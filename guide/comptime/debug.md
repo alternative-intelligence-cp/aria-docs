@@ -65,4 +65,4 @@ If a comptime expression appears to fail incorrectly:
 
 1. Reduce the failing call to a `tests/bugs/bugNNN_*.npk` file.
 2. Run the compiler with `--dump-ir` and inspect the failed IR node.
-3. File against `META/ARIA/BUGS/` with the reduction.
+3. File against `META/NITPICK/BUGS/` with the reduction.
