@@ -144,8 +144,11 @@ move them.
 
 - **v0.26.1**: ✅ stack escape detection regression suite (`ARIA-017`
   already covers `stack`/chained/field-borrow paths; bug205–209).
-- **v0.26.2**: GC pressure tests, generational behavior,
-  `npk_gc_alloc` type_id passthrough.
+- **v0.26.2**: ✅ GC stress smoke (`bug210` 50k small allocs,
+  `bug211` 5k large allocs, `bug212` survivor holder + 30k churn) and
+  `npk_gc_alloc` IR ABI fix — codegen now declares/calls
+  `(i64 size, i16 type_id=0)` matching the runtime, eliminating a
+  latent garbage-`type_id` bug on x86-64 SysV.
 - **v0.26.3**: borrow + pin + GC safepoint interaction.
 - **v0.26.4**: tuning knobs (`NPK_GC_NURSERY_SIZE`, etc.).
 - **v0.26.5**: `wild` / `wildx` interop with GC tracing.
