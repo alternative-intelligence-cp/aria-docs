@@ -40,8 +40,19 @@ func:make_pair = int32(int32:a, int32:b) {
 ```
 
 **Lifetime:** the value is destroyed when the surrounding function
-returns. Returning a borrow into a `stack` local will be a hard error
-(`ARIA-028 STACK_ESCAPE`, planned for v0.26.1).
+returns. Returning or `pass`-ing a borrow into a `stack` local is a
+hard error (`ARIA-017`):
+
+```text
+error: [ARIA-017] Cannot return 'r' — it borrows from local variable 'x'
+       which will be destroyed when the function returns
+```
+
+This applies transitively: a borrow chained through another local
+(`$$m int32:r2 = r1;`) is rejected the same way. The diagnostic is
+deliberately conservative — even borrows into `gc` *bindings* are
+rejected, because the named handle goes out of scope. Path-sensitive
+relaxation is deferred to a later cycle.
 
 ## `gc` — explicit GC heap allocation
 
@@ -131,8 +142,8 @@ move them.
 
 ## What's coming
 
-- **v0.26.1**: `stack` escape detection (`ARIA-028 STACK_ESCAPE`),
-  bug regressions for return-of-stack-borrow.
+- **v0.26.1**: ✅ stack escape detection regression suite (`ARIA-017`
+  already covers `stack`/chained/field-borrow paths; bug205–209).
 - **v0.26.2**: GC pressure tests, generational behavior,
   `npk_gc_alloc` type_id passthrough.
 - **v0.26.3**: borrow + pin + GC safepoint interaction.
