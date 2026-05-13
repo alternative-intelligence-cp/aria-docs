@@ -149,7 +149,12 @@ move them.
   `npk_gc_alloc` IR ABI fix — codegen now declares/calls
   `(i64 size, i16 type_id=0)` matching the runtime, eliminating a
   latent garbage-`type_id` bug on x86-64 SysV.
-- **v0.26.3**: borrow + pin + GC safepoint interaction.
+- **v0.26.3**: ✅ borrow + GC safepoint interaction validated
+  (`bug213`/`bug214` `$m` borrow of `gc` survives explicit safepoint and
+  churn-driven implicit minor GC; `bug215` confirms `ARIA-023` still
+  rejects conflicting `$m` borrows of `gc` bindings). MEM-010 pin syntax
+  `#x` lowering deferred — runtime is in place but the compiler does
+  not yet emit `npk_gc_pin`/`npk_gc_unpin`.
 - **v0.26.4**: tuning knobs (`NPK_GC_NURSERY_SIZE`, etc.).
 - **v0.26.5**: `wild` / `wildx` interop with GC tracing.
 - **v0.26.6**: diagnostics polish.
