@@ -24,8 +24,8 @@ edge cases that were locked in across the BORROW-001 ... BORROW-014 work.
 7. [Async](async.md) — borrows that live inside `async` frames, what gets
    released on completion, and the safe shapes around `await`.
 8. [Diagnostics](diagnostics.md) — the borrow diagnostic codes
-   (`ARIA-023`, `ARIA-026`, ...), what they mean, and how to fix the most
-   common cases.
+   (`ARIA-022`, `ARIA-023`, `ARIA-026`, `ARIA-028`, ...), what they mean,
+   and how to fix the most common cases.
 
 Each chapter is short and self-contained — read whichever one matches the
 problem in front of you.

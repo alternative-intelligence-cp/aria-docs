@@ -64,20 +64,32 @@ $$i Pair:r = pair;           // ARIA-022
 **Fix:** clone the value before the move, or have the callee take a
 borrow instead of ownership.
 
-## `ARIA-027` — escape of local borrow
+## `ARIA-028` — stack escape (return/pass of borrow into a local)
 
-You tried to return or pass out a borrow whose host is a local — its
-lifetime ends with the function:
+You tried to return, `pass`, or `fail` a borrow whose host is a binding
+local to the current function (or to an inner block) — its stack frame
+is destroyed at the function (or block) boundary, so the reference would
+dangle:
 
 ```aria
-func:bad = $$i int32() {
-    int32:tmp = 7;
-    pass $$i tmp;            // ARIA-027 — tmp dies at function end
+func:bad = $$m int32() {
+    stack int32:tmp = 7i32;
+    $$m int32:r = tmp;
+    pass r;                  // ARIA-028 — tmp's stack frame ends here
 };
 ```
 
-**Fix:** return by value, or have the caller own the storage and pass a
-borrow in.
+The same diagnostic also fires when the host is a `gc` *binding*: even
+though the underlying object survives on the heap, the named binding is
+local to the function, so the borrow path goes out of scope.
+
+**Fix:** return by value, take ownership in the caller and pass a borrow
+in, or accept a borrow parameter and return that.
+
+> **Note (v0.26.6):** Earlier compiler versions emitted these errors as
+> `ARIA-017` and the docs cited `ARIA-027`; both are unified under
+> `ARIA-028 STACK_ESCAPE` from v0.26.6 on. The message text now mentions
+> the host's stack frame and includes a fix hint.
 
 ## Reading the messages
 
