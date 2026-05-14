@@ -152,9 +152,26 @@ move them.
 - **v0.26.3**: ✅ borrow + GC safepoint interaction validated
   (`bug213`/`bug214` `$m` borrow of `gc` survives explicit safepoint and
   churn-driven implicit minor GC; `bug215` confirms `ARIA-023` still
-  rejects conflicting `$m` borrows of `gc` bindings). MEM-010 pin syntax
-  `#x` lowering deferred — runtime is in place but the compiler does
-  not yet emit `npk_gc_pin`/`npk_gc_unpin`.
+  rejects conflicting `$m` borrows of `gc` bindings).
+- **v0.26.3.x**: ✅ MEM-010 pin × gc closeout. `gc` bindings are now
+  heap-allocated (`v0.26.3.1`), auto-pinned and shadow-stack rooted at
+  allocation (`v0.26.3.2`), and survive explicit `npk_gc_safepoint()`
+  loops both directly and through the `#x` pin alias (`v0.26.3.3`,
+  bug223–bug225). The K model picks up matching tests
+  `149_pin_gc_pass.aria` and `150_pin_gc_mut_borrow_failsafe.aria`
+  (`v0.26.3.4`). Example:
+
+  ```aria
+  gc Holder:h = Holder{value: 1234i32};
+  wild Holder->:p = #h;
+  // h is auto-pinned + rooted; p remains valid across safepoints.
+  ```
+
+  The `#` operator no longer needs to lower to an explicit
+  `npk_gc_pin` call — pinning happens once at allocation, so the
+  pointer carried through the alias is already stable. Runtime
+  contract: see `include/runtime/gc.h` and
+  `src/runtime/gc/allocator.cpp`.
 - **v0.26.4**: tuning knobs (`NPK_GC_NURSERY_SIZE`, etc.).
 - **v0.26.5**: `wild` / `wildx` interop with GC tracing.
 - **v0.26.6**: diagnostics polish.
