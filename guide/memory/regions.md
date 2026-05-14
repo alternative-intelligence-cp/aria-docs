@@ -179,6 +179,13 @@ move them.
   env-vars, which take priority over the compiled-in defaults.
   Documented in [`tuning.md`](tuning.md); regression fixtures
   `bug226`–`bug229` exercise each knob and the no-env-var defaults.
-- **v0.26.5**: `wild` / `wildx` interop with GC tracing.
+- **v0.26.5**: ✅ `wild` / `wildx` interop with GC tracing. The GC
+  marker never follows a `wild` pointer (verified by
+  `bug230_gc_wild_heap_partition.npk` against the new ABI-safe
+  `npk_gc_is_heap_pointer_i32` accessor); a `gc` binding survives
+  5 000 wild alloc/free cycles around `npk_gc_safepoint()` calls
+  (`bug231_gc_wild_coexist_under_churn.npk`). The narrow escape hatch
+  for the rare case where a `wild` slot must root a `gc` reference is
+  `npk_shadow_stack_add_root`. See [`interop.md`](interop.md).
 - **v0.26.6**: diagnostics polish.
 - **v0.26.7**: cycle close — full 9-chapter cookbook, audit.

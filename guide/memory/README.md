@@ -20,10 +20,11 @@ borrow checker, the `#` pin operator, and `wild`/`wildx` interop.
 1. [Regions](regions.md) — the five regions in detail, with examples.
 2. [Tuning](tuning.md) — runtime knobs (`NPK_GC_NURSERY_SIZE`,
    `NPK_GC_OLD_GEN_THRESHOLD`, `NPK_GC_MODE`).
+3. [Interop](interop.md) — GC ↔ `wild` / `wildx` invariants and
+   the `npk_shadow_stack_add_root` escape hatch (v0.26.5).
 
-> Subsequent chapters (`stack`, `gc`, `pinning`, `interop`,
-> `diagnostics`, `faq`) will land alongside the remaining v0.26.x
-> slices.
+> Subsequent chapters (`stack`, `gc`, `pinning`, `diagnostics`,
+> `faq`) will land alongside the remaining v0.26.x slices.
 
 ## Validation snapshot (v0.26.0)
 
