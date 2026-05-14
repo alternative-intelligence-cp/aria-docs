@@ -75,8 +75,9 @@ Use `gc` when:
 - You want the runtime to manage the memory rather than threading
   ownership manually.
 
-The runtime is generational mark-sweep; see the upcoming `tuning.md`
-chapter for knobs.
+The runtime is generational mark-sweep; see [`tuning.md`](tuning.md)
+for the runtime tuning knobs (`NPK_GC_NURSERY_SIZE`,
+`NPK_GC_OLD_GEN_THRESHOLD`, `NPK_GC_MODE`).
 
 ## `wild` — manual heap allocation
 
@@ -172,7 +173,12 @@ move them.
   pointer carried through the alias is already stable. Runtime
   contract: see `include/runtime/gc.h` and
   `src/runtime/gc/allocator.cpp`.
-- **v0.26.4**: tuning knobs (`NPK_GC_NURSERY_SIZE`, etc.).
+- **v0.26.4**: ✅ GC tuning knobs landed. Three env-vars, all read at
+  GC init time (`GCState::init` in `src/runtime/gc/gc.cpp`). Explicit
+  non-zero arguments to `npk_gc_init()` still take priority over
+  env-vars, which take priority over the compiled-in defaults.
+  Documented in [`tuning.md`](tuning.md); regression fixtures
+  `bug226`–`bug229` exercise each knob and the no-env-var defaults.
 - **v0.26.5**: `wild` / `wildx` interop with GC tracing.
 - **v0.26.6**: diagnostics polish.
 - **v0.26.7**: cycle close — full 9-chapter cookbook, audit.
