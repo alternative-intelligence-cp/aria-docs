@@ -19,21 +19,45 @@ what [`gc`](gc.md) is for.
 
 ## What "exempt from the borrow checker" means
 
-The checker still tracks the *allocation site* (for `ARIA-014` /
-`ARIA-015`), but does not enforce mutability-XOR-aliasing on the
-contents. Inside FFI you are running C-side rules; the language
-trusts you, and therefore so does the optimiser.
+The exemption is *narrower than it sounds*: it covers raw pointer
+arithmetic and FFI access, not in-Aria use of the binding. As of
+v0.27.6, taking an explicit `$$i` / `$$m` borrow of a wild binding
+goes through the same checker as a `stack` or `gc` binding, because
+v0.27.1's region propagation gives the wild slot a real region tag
+and v0.27.2's borrow inheritance threads it through `$$i` / `$$m`
+declarations:
 
-The exemption is wired in
-[`borrow_checker.cpp:1805`](https://github.com/alternative-intelligence-cp/nitpick/blob/main/src/frontend/sema/borrow_checker.cpp#L1805):
-
-```cpp
-bool is_wild_type = stmt->isWild || stmt->typeName.find("wild") == 0;
-if (is_wild_type && stmt->initializer && !stmt->is_pinned_shadow) {
-    stmt->requires_drop = true;
-    // ...track allocation, do not enforce borrow rules on contents...
-}
+```aria
+wild int8->:buf = alloc(64);
+{
+    $$i int8->:b = buf;        // OK — Aria-visible immutable borrow.
+}                              // borrow drops at end of inner scope.
+free(buf);                     // OK — no live borrow.
 ```
+
+The checker still rejects two overlapping mutable borrows on the
+same wild buffer (`ARIA-023`, `bug250`), and still rejects `free`
+while a borrow is alive (`ARIA-019`). FFI-style passthrough — handing
+the raw `int8@` to an Aria function that takes `$$i`/`$$m` and
+releasing after the call returns — works end-to-end (`bug251`):
+
+```aria
+func:fill = int32($$m int8->:p) { pass 0; };
+
+wild int8->:buf = alloc(128);
+fixed int32:rc = raw fill(buf);  // borrow lives only across the call.
+free(buf);                       // OK.
+```
+
+What `wild` *does* opt out of is checking on raw pointer reads /
+writes through the unmanaged pointer (`buf[i] = x;`,
+`<-some_ptr_field`). Inside FFI you are running C-side rules; the
+language trusts you, and therefore so does the optimiser.
+
+The allocation tracking lives in
+[`borrow_checker.cpp:1875`](https://github.com/alternative-intelligence-cp/nitpick/blob/main/src/frontend/sema/borrow_checker.cpp#L1875)
+and the borrow-region inheritance that makes the above work lives in
+[`borrow_checker.cpp:1671`](https://github.com/alternative-intelligence-cp/nitpick/blob/main/src/frontend/sema/borrow_checker.cpp#L1671).
 
 ## Diagnostics that still apply
 
