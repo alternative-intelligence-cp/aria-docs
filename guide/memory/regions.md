@@ -41,11 +41,11 @@ func:make_pair = int32(int32:a, int32:b) {
 
 **Lifetime:** the value is destroyed when the surrounding function
 returns. Returning or `pass`-ing a borrow into a `stack` local is a
-hard error (`ARIA-017`):
+hard error (`ARIA-028`):
 
 ```text
-error: [ARIA-017] Cannot return 'r' — it borrows from local variable 'x'
-       which will be destroyed when the function returns
+error: [ARIA-028] Cannot return borrow 'r' — it points into local binding 'x',
+       whose stack frame is destroyed when the function returns
 ```
 
 This applies transitively: a borrow chained through another local
@@ -53,6 +53,11 @@ This applies transitively: a borrow chained through another local
 deliberately conservative — even borrows into `gc` *bindings* are
 rejected, because the named handle goes out of scope. Path-sensitive
 relaxation is deferred to a later cycle.
+
+> **Note (v0.26.6):** This diagnostic is now `ARIA-028 STACK_ESCAPE`;
+> earlier compiler versions tagged it as `ARIA-017`. The wording has
+> been polished to mention the host's stack frame explicitly and to
+> include an inline fix hint.
 
 ## `gc` — explicit GC heap allocation
 
@@ -143,8 +148,9 @@ move them.
 
 ## What's coming
 
-- **v0.26.1**: ✅ stack escape detection regression suite (`ARIA-017`
-  already covers `stack`/chained/field-borrow paths; bug205–209).
+- **v0.26.1**: ✅ stack escape detection regression suite covers
+  `stack`/chained/field-borrow paths; bug205–209. (Diagnostic was
+  `ARIA-017` at the time; renamed to `ARIA-028` in v0.26.6.)
 - **v0.26.2**: ✅ GC stress smoke (`bug210` 50k small allocs,
   `bug211` 5k large allocs, `bug212` survivor holder + 30k churn) and
   `npk_gc_alloc` IR ABI fix — codegen now declares/calls
@@ -187,5 +193,13 @@ move them.
   (`bug231_gc_wild_coexist_under_churn.npk`). The narrow escape hatch
   for the rare case where a `wild` slot must root a `gc` reference is
   `npk_shadow_stack_add_root`. See [`interop.md`](interop.md).
-- **v0.26.6**: diagnostics polish.
-- **v0.26.7**: cycle close — full 9-chapter cookbook, audit.
+- **v0.26.6**: ✅ `ARIA-028 STACK_ESCAPE` polish — compiler retag
+  (`ARIA-017 → ARIA-028`), polished message mentioning the host's
+  stack frame, inline fix hint, four new fixtures (bug232–bug235).
+  Resolves the docs/code mismatch where `ARIA-027` had been promised
+  but never wired. Two related diagnostics — `ARIA-029 GC_REF_FROM_WILD`
+  and `ARIA-031 STACK_REF_INTO_GC_FIELD` — deferred to v0.27.x because
+  they need per-binding region tracking on `LifetimeContext`.
+- **v0.26.7**: ✅ cycle close — full 9-chapter cookbook, sub-series
+  audit, RELEASE_0.26.0.md moved to `done/0.26/`. Final validation:
+  CTest 108/108, K core 150/150, K proofs 10/10.

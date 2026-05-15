@@ -18,19 +18,29 @@ borrow checker, the `#` pin operator, and `wild`/`wildx` interop.
 ## Chapters
 
 1. [Regions](regions.md) — the five regions in detail, with examples.
-2. [Tuning](tuning.md) — runtime knobs (`NPK_GC_NURSERY_SIZE`,
+2. [Stack](stack.md) — the default region: when, why, and what escapes it.
+3. [GC](gc.md) — `gc` heap allocation, generational mark-sweep,
+   safepoints, auto-pinning, shadow-stack rooting.
+4. [Wild](wild.md) — `wild` / `wildx` manual heap, FFI, and the
+   leak/use-after-free diagnostics that catch the obvious mistakes.
+5. [Pinning](pinning.md) — `#x`, what it does per region, and the
+   pin-derived alias rules.
+6. [Tuning](tuning.md) — runtime knobs (`NPK_GC_NURSERY_SIZE`,
    `NPK_GC_OLD_GEN_THRESHOLD`, `NPK_GC_MODE`).
-3. [Interop](interop.md) — GC ↔ `wild` / `wildx` invariants and
-   the `npk_shadow_stack_add_root` escape hatch (v0.26.5).
+7. [Interop](interop.md) — GC ↔ `wild` / `wildx` invariants and
+   the `npk_shadow_stack_add_root` escape hatch.
+8. [Diagnostics](diagnostics.md) — the memory-region diagnostic codes
+   (`ARIA-014`, `ARIA-015`, `ARIA-028`, ...) — what they mean and how
+   to fix the most common cases.
+9. [FAQ](faq.md) — short answers to recurring questions about regions,
+   the borrow checker, the GC, and FFI.
 
-> Subsequent chapters (`stack`, `gc`, `pinning`, `diagnostics`,
-> `faq`) will land alongside the remaining v0.26.x slices.
+## Validation snapshot (v0.26.7 — cycle close)
 
-## Validation snapshot (v0.26.0)
-
-- K core tests cover all three runtime-allocated paths
-  (`146_alloc_gc_pass.aria`, `147_alloc_stack_pass.aria`,
-  `148_alloc_default_is_stack_pass.aria`).
+- **CTest:** 108/108 (was 53/53 at v0.25.7 close; +55 over the cycle).
+- **K core:** 150/150 (was 145; +5 across `146`–`150`).
+- **K proofs:** 10/10 (no proof modules added or removed).
+- **Bug regressions:** bug205–bug235 (+31 across MEM-004 through MEM-014).
 - Codegen audit recorded in
   [`META/NITPICK/ROADMAP/0.26/CODEGEN_AUDIT.md`](https://github.com/alternative-intelligence-cp/nitpick/blob/main/AUDIT_v0.25.7.md).
 - Borrow checker treatment of `stack` and `gc` is identical: the region
