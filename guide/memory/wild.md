@@ -55,13 +55,47 @@ exists to support runtime code generation: allocate, write machine
 bytes with the W mapping, `mprotect` to PROT_EXEC, then call as a
 function pointer.
 
+### Surface lifecycle (v0.27.5+)
+
+The W^X state machine is exposed through three pointer-keyed builtins:
+
 ```aria
-// Typical wildx usage: call npk_alloc_exec() directly, write machine
-// bytes, mprotect to PROT_EXEC, then call as a function pointer.
+wildx int8->:page = wildx_alloc(64);   // UNINITIALIZED -> WRITABLE
+// ... write machine bytes into `page` ...
+fixed int32:rc1 = wildx_seal(page);    // WRITABLE -> EXECUTABLE
+// ... call into the page (e.g. via an extern jit_call helper) ...
+fixed int32:rc2 = wildx_free(page);    // EXECUTABLE -> FREED (munmap)
 ```
 
-In practice you call `npk_alloc_exec()` directly from user code rather
-than declaring a `wildx` variable; the keyword is parsed for symmetry.
+Each pointer is registered in a process-wide
+`std::unordered_map<void*, WildXGuard>` keyed by the writable address.
+The guards own the FNV-1a code hash, ASLR jitter base, and quota
+accounting; surface code never sees the struct directly.
+
+The runtime enforces:
+
+- **One-way seal** — `wildx_seal` only accepts pages in the WRITABLE
+  state. Calling it twice returns `-1` (regression: `bug246`).
+- **Hardware W^X** — once sealed, the page is `PROT_EXEC` only;
+  writes trap with `SIGSEGV` from the MMU.
+- **Single free** — `wildx_free` removes the registry entry on the
+  first call. A second call (or a foreign `wild alloc()` pointer)
+  returns `-1` because the lookup misses.
+
+The borrow checker registers `wildx_free` as a deallocator, so the
+same wild-leak (`ARIA-014`) and double-free (`ARIA-022`) diagnostics
+that protect plain `wild` apply to the new builtins (regressions:
+`bug247` double-free, `bug248` leak). Compile-time rejection is
+preferred over runtime rejection; the runtime rc=-1 path exists as a
+defense-in-depth backstop for code that smuggles pointers through
+function boundaries the borrow checker cannot see across.
+
+### Legacy form
+
+The pre-v0.27.5 shape `wildx int8->:b = alloc(N); free(b);` still
+parses and compiles, but it routes through plain `npk_alloc` (no
+W^X mapping). New code should prefer the `wildx_alloc` / `wildx_seal` /
+`wildx_free` triple to actually reach `npk_alloc_exec`.
 
 ## Interop with `gc`
 
