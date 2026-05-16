@@ -71,6 +71,17 @@ bug224 / bug225.
 ## Validation
 
 - K core: `149_pin_gc_pass.aria`, `150_pin_gc_mut_borrow_failsafe.aria`.
+- K proofs: `pin-address-stable-proofs.k` (v0.27.4) — three claims
+  formalising that pin-derived pointer addresses are stable across
+  `npk_gc_safepoint` calls (PIN-DEC-004 part 1).
 - CTest: `bug_tests_v0263{0..3}` (pin baseline, allocation qualifiers,
   auto-pin + shadow-stack root, MEM-010 reinstatement).
 - Audit: `META/NITPICK/ROADMAP/done/0.26/0.26.3.x/PIN_LOWERING_AUDIT.md`.
+
+## Concurrency note (v0.27.4)
+
+The pin proof models a single mutator interleaved with the GC. A
+concurrent-collector stress test (originally `bug244`) was deferred
+out of v0.27.4 — the proof covers the algorithmic guarantee; the
+multi-thread stress harness would only exercise the runtime
+implementation and is tracked as a future cycle item.

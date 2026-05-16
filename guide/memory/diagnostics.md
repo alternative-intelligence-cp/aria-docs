@@ -80,21 +80,70 @@ borrow in, or accept a borrow parameter and return that.
 
 ## Reserved / deferred codes
 
-- **`ARIA-029 GC_REF_FROM_WILD`** — reserved. Will fire when a `gc`
-  binding (or field) is initialised from a borrow whose origin is in a
-  `wild` allocation. Deferred to v0.27.x because it requires
-  per-binding region tracking on `LifetimeContext` (currently only
-  `var_depths` is recorded).
-- **`ARIA-031 STACK_REF_INTO_GC_FIELD`** — reserved. Will fire when a
-  `gc`-region path field is assigned a borrow whose origin is a
-  `stack` binding. (Renumbered from the originally-planned `ARIA-030`,
-  which is already used for the borrow-across-`await` runtime
-  warning.) Deferred to v0.27.x for the same reason.
+`ARIA-029` and `ARIA-031` were reserved here through v0.26.x and
+landed in v0.27.2 / v0.27.3 respectively — see the dedicated sections
+above. `ARIA-032` (handle outlives arena) landed in v0.27.9.
 
-Until those land, both of the underlying *unsafe* shapes are blocked
-upstream by `ARIA-028` (binding-level escape) and `ARIA-014` /
-`ARIA-015` (wild lifetime), so there is no runtime regression — only a
-diagnostic-quality gap.
+No region codes are currently in the "reserved" state.
+
+---
+
+## `ARIA-029` — GC reference from `wild` (v0.27.2)
+
+A `gc` binding (or `gc` field) is being initialised from a borrow
+whose origin is a `wild` allocation. The type checker emits a hint
+suggesting the pin operator `#x`, since the underlying shape would
+otherwise leak a wild-region reference into a GC root.
+
+```aria
+wild int32:w = 5i32;
+gc int32@:p  = @w;            // [ARIA-029] consider `gc int32@:p = #w;`
+```
+
+**Fix:** pin the wild value (`#w`), or restructure so the GC binding
+owns its value rather than referencing through `wild` storage.
+
+The borrow-checker rejection in `checkVarDecl` is defense-in-depth;
+the type checker rejects this shape first in surface code.
+
+---
+
+## `ARIA-031` — stack reference into a GC field (v0.27.3)
+
+Assigning the address of a `stack` binding into a field reached
+through a `gc` path would let the GC observe a soon-to-be-dangling
+stack pointer.
+
+```aria
+gc Node:n        = Node{ next: @local_stack_node };   // [ARIA-031]
+```
+
+**Fix:** allocate the referenced node in the `gc` region, or pin it
+(`#local_stack_node`) so the borrow checker enforces address
+stability — and accept that the stack lifetime still bounds the
+reference's validity.
+
+---
+
+## `ARIA-032` — handle outlives its arena (v0.27.9)
+
+Within a function body, you destroyed an arena and then derefed (or
+freed) a `Handle<T>` bound to that arena.
+
+```aria
+int64:a            = raw HandleArena.create();
+Handle<int32>:h    = raw HandleArena.alloc(a, 4i64);
+raw HandleArena.destroy(a);
+int64:p = raw HandleArena.deref(h);     // [ARIA-032]
+```
+
+**Fix:** move the deref/free before the `HandleArena.destroy(a)`
+call, or drop it entirely (a bulk-destroy obviates per-slot frees).
+
+The rule is intra-function only — cross-function flow is caught at
+runtime (`deref` returns `0i64`). See [`handles/lifetimes.md`](../handles/lifetimes.md)
+for the full rule and [`handles/diagnostics.md`](../handles/diagnostics.md)
+for the canonical examples.
 
 ---
 
@@ -104,3 +153,5 @@ diagnostic-quality gap.
   borrow codes (`ARIA-022`, `ARIA-023`, `ARIA-026`, `ARIA-028`, ...).
 - [`stack.md`](stack.md), [`gc.md`](gc.md), [`wild.md`](wild.md) — the
   region chapters with longer-form examples.
+- [`../handles/README.md`](../handles/README.md) — the handle
+  cookbook (`ARIA-032`, runtime UAF behaviour).
