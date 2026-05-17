@@ -121,6 +121,16 @@ parses and compiles, but it routes through plain `npk_alloc` (no
 W^X mapping). New code should prefer the `wildx_alloc` / `wildx_seal` /
 `wildx_free` triple to actually reach `npk_alloc_exec`.
 
+### Going further: JIT cookbook
+
+For the full story on producing, sealing, calling, and tearing
+down executable pages — plus the `stdlib/jit.npk` helper
+(`Type:Jit.compile_add_i32` / `call_i32_i32` / `free`), the
+safety model around JIT'd bytes, and the FAQ on patch-in-place
+/ ARM64 / ASLR — see the [JIT cookbook](../jit/README.md). This
+page covers `wildx` as an allocator; the JIT cookbook covers
+`wildx` as a code-generation surface.
+
 ## Interop with `gc`
 
 The two heaps are **disjoint**: the GC marker never follows a `wild`
