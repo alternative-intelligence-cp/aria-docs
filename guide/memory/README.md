@@ -37,19 +37,25 @@ borrow checker, the `#` pin operator, and `wild`/`wildx` interop.
 
 For the **handle** subsystem (generation-checked arena allocation,
 `Handle<T>`, `ARIA-032`), see the separate
-[`guide/handles/`](../handles/README.md) cookbook.
+[`guide/handles/`](../handles/README.md) cookbook. For **runtime
+code generation** on top of `wildx`, see the
+[`guide/jit/`](../jit/README.md) cookbook.
 
-## Validation snapshot (v0.27.10 — cycle close)
+## Validation snapshot (v0.28.8 — cycle close)
 
-- **CTest:** 70/70 (was 53/53 at v0.25.7 close, 108/108 at v0.26.7
-  close; the count dropped from 108 because v0.26.x rolled many
-  per-slice bug runners into umbrella entries, then v0.27.x added
-  back per-slice entries with finer-grained labels).
-- **K core:** 151/151 (was 145 at v0.26.x start; +6 across
-  `146`–`151`).
-- **K proofs:** 11/11 (was 10; +1 `pin-address-stable-proofs.k`).
-- **Bug regressions:** bug205–bug263 (+59 across MEM and HANDLE
-  series).
+- **CTest:** 78/78 (70 at v0.27.10 close; +8 across v0.28.x:
+  `bug_tests_v0281`–`v0285`, `bug_tests_v02841`, and two runtime
+  stress entries `bug_tests_v0286` / `test_pin_gc_pressure_v02861`).
+- **K core:** 151/151 (unchanged across v0.28.x — no new K core
+  tests this cycle).
+- **K proofs:** 11/11 (unchanged — v0.28.6 is runtime stress, not
+  a new proof).
+- **Bug regressions:** bug205–bug278 (+15 across v0.28.x:
+  bug264–bug278 spanning JIT smoke, `jit.npk` helper, cross-
+  function `ARIA-032` Phases 1–2 + FFI passthrough).
+- **New surface (v0.28.x):** `stdlib/jit.npk` (`Type:Jit`), the
+  v0.28.1 runtime helpers (`npk_jit_install_add_i32`,
+  `npk_jit_call_i32_i32`), and the [JIT cookbook](../jit/README.md).
 - Codegen audit recorded in
   [`META/NITPICK/ROADMAP/0.26/CODEGEN_AUDIT.md`](https://github.com/alternative-intelligence-cp/nitpick/blob/main/AUDIT_v0.25.7.md).
 - Borrow checker treatment of `stack` and `gc` is identical: the region

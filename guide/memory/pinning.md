@@ -78,10 +78,33 @@ bug224 / bug225.
   auto-pin + shadow-stack root, MEM-010 reinstatement).
 - Audit: `META/NITPICK/ROADMAP/done/0.26/0.26.3.x/PIN_LOWERING_AUDIT.md`.
 
-## Concurrency note (v0.27.4)
+## Concurrency note (v0.27.4 → v0.28.6.1)
 
-The pin proof models a single mutator interleaved with the GC. A
-concurrent-collector stress test (originally `bug244`) was deferred
-out of v0.27.4 — the proof covers the algorithmic guarantee; the
-multi-thread stress harness would only exercise the runtime
-implementation and is tracked as a future cycle item.
+The pin proof models a single mutator interleaved with the GC. The
+concurrent-collector stress harness (originally tracked as
+`bug244`) was deferred out of v0.27.4 — the proof covers the
+algorithmic guarantee; the multi-thread harness is about exercising
+the runtime implementation.
+
+v0.28.6 lands that harness:
+`tests/runtime/test_pin_concurrent_v0286.cpp` — 4 mutator threads,
+5000 iterations each, of `alloc(64)` → write magic → `pin` →
+`npk_gc_safepoint` → verify address-stable and magic-roundtrip
+→ `unpin`. The pin protocol is exercised 20000 times under
+genuine multi-mutator `gc_mutex` contention; the assertion is
+that pin-derived addresses remain stable through every safepoint
+(PIN-DEC-004 part 2, the runtime confirmation of part 1's K proof).
+
+v0.28.6.1 fixes a latent deadlock the stress harness uncovered:
+`GCCoroAllocator::init_gc()` used to call `npk_gc_init()` from
+its constructor, and the allocator is lazy-constructed from inside
+`minor_gc()` / `major_gc()` while `gc_mutex` is already held —
+nested `npk_gc_init` then re-acquired the same non-recursive
+mutex and self-deadlocked on the first minor GC. The fix removes
+the nested init call; one-time init is the caller's responsibility
+(already the convention everywhere else).
+`tests/runtime/test_pin_gc_pressure_v02861.cpp` is the regression:
+4 threads × 2000 iters with a forced 64 KB nursery so a minor GC
+*must* fire under the pin protocol; it asserts
+`stats.num_minor_collections > 0` to keep the test from
+fast-pathing past the bug.

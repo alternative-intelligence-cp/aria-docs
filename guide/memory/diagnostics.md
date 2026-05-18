@@ -140,9 +140,30 @@ int64:p = raw HandleArena.deref(h);     // [ARIA-032]
 **Fix:** move the deref/free before the `HandleArena.destroy(a)`
 call, or drop it entirely (a bulk-destroy obviates per-slot frees).
 
-The rule is intra-function only — cross-function flow is caught at
-runtime (`deref` returns `0i64`). See [`handles/lifetimes.md`](../handles/lifetimes.md)
-for the full rule and [`handles/diagnostics.md`](../handles/diagnostics.md)
+The rule has grown across v0.28.x:
+
+- **v0.27.9** — intra-function only: destroy + later deref/free in
+  the same function body.
+- **v0.28.3** — cross-function Phase 1: a callee that calls
+  `HandleArena.destroy(p)` on a parameter `p` is auto-discovered;
+  the call site fires `ARIA-032` if the matching argument is
+  re-used after the call.
+- **v0.28.4 / v0.28.4.1** — cross-function Phase 2: returning a
+  handle bound to a local arena (bare or stashed in a struct
+  field) fires `ARIA-032` at the `pass` / `return` site.
+- **v0.28.5** — FFI passthrough: passing a `Handle<T>` directly
+  to an `extern` function emits a **warning** with the
+  `@cast<int64>(h)` fix suggestion. The cast is also the way to
+  silence the warning intentionally; once you cross the C
+  boundary the static rule cannot follow you and the runtime
+  generation check is your only safety net.
+
+For cases the static rule still does not catch (handles stashed
+in GC objects, handles round-tripped through opaque C state,
+indirect aliasing through arrays), the runtime generation check
+still applies: `deref` returns `0i64`. See
+[`handles/lifetimes.md`](../handles/lifetimes.md) for the full
+rule and [`handles/diagnostics.md`](../handles/diagnostics.md)
 for the canonical examples.
 
 ---

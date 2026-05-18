@@ -72,20 +72,47 @@ int64:p = raw HandleArena.deref(hb);           // OK — hb is bound to b, not a
 
 ## What the rule does **not** catch (intentional)
 
-- **Cross-function flow.** Passing a handle into a callee that
-  destroys its arena, or returning a handle whose arena went out of
-  scope in the caller. The intra-function rule is sound; the
-  cross-function extension is deferred.
-- **Indirect aliasing through structs / arrays.** If you stash a
-  handle in a struct field and then destroy its arena, the rule
-  does not currently trace that.
-- **FFI round-trips.** A handle that left for C and came back is
-  not tracked.
+The v0.28.x slices extended the rule across function boundaries
+for the common shapes:
 
-In all of those bypass cases the **runtime** generation check still
-catches the misuse: deref returns `0i64`. The static rule is a
-strict superset of safety — it never accepts code the runtime would
-reject; it just refuses some code earlier.
+- **Callee destroys a parameter** — v0.28.3 auto-discovers any
+  callee whose body calls `HandleArena.destroy(p)` on a parameter
+  `p`, and fires `ARIA-032` at the call site when the matching
+  argument is re-used after the call (regressions: `bug267`
+  compile-fail, `bug268` positive sibling-arena).
+- **Returning a handle bound to a local arena** — v0.28.4 catches
+  bare returns (`pass h` where `h` was allocated in an arena
+  created in this function); v0.28.4.1 extends this to struct
+  fields (`pass HBox{h:h}`). Both fire `ARIA-032` at the
+  `pass` / `return` site.
+- **`Handle<T>` directly into `extern`** — v0.28.5 emits a
+  **warning** with the suggested `@cast<int64>(h)` fix. Casting
+  silences the warning *and* documents the intent that the
+  runtime generation check is now the only safety net.
+
+What still bypasses the static rule (by design, for now):
+
+- **Transitive cross-function flow** — destroy-via-helper-via-helper
+  is Phase-1-only (single-hop, regression: `bug269` documents the
+  boundary).
+- **Handles stashed in GC objects** — if the handle is reachable
+  only through a `gc` reference and the destroying call is in
+  another function, the static rule loses the thread.
+- **Round-trips through opaque C state** — a handle that left
+  for C and came back is not tracked.
+- **Indirect aliasing through arrays** — a handle stored in an
+  array slot is not currently traced through.
+- **`Handle<T>` imported from another module** — the borrow
+  checker only walks the main `ProgramNode.declarations` when
+  collecting cross-function summaries, so `extern` handles
+  imported via `use "handle.npk".*` are not visible. Locally
+  re-declare the relevant extern (see `bug277`) to get the
+  warning; broader fix deferred.
+
+In all of those bypass cases the **runtime** generation check
+still catches the misuse: deref returns `0i64`. The static rule
+is a strict superset of safety — it never accepts code the
+runtime would reject; it just refuses some code earlier.
 
 ## Interaction with `raw` / `drop`
 
@@ -103,6 +130,17 @@ is recognised the same as `Handle<T>:h = HandleArena.alloc(...)`.
   → compiles and exits 0.
 - `bug263_handle_destroy_after_use_pass.npk` — correct teardown
   order → compiles and exits 0.
+- `bug267`–`bug269` (v0.28.3) — cross-function Phase 1: callee
+  destroys a parameter; sibling-arena handle still compiles; the
+  transitive-through-wrapper case is documented as the Phase 1
+  boundary.
+- `bug270`–`bug272` (v0.28.4) — cross-function Phase 2 part A:
+  returning a handle whose arena is local; positive arena-as-param
+  control; inline `pass raw HandleArena.alloc(localArena, ..)`.
+- `bug273`–`bug275` (v0.28.4.1) — Phase 2 part B: struct-binding
+  return / inline struct literal.
+- `bug276`–`bug278` (v0.28.5) — FFI passthrough warning, cast
+  silences, end-to-end round trip via `@cast<int64>`.
 
 ## See also
 

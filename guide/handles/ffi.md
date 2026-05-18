@@ -88,9 +88,39 @@ The static `ARIA-032` rule
 ([lifetimes](lifetimes.md)) does **not** follow handles through FFI
 or through struct storage. A handle that left for C is no longer
 tracked by the borrow checker; the runtime generation check is your
-only safety net there. That is by design — the static rule is for
-straight-line, single-function misuse; the runtime check is the
-universal backstop.
+only safety net there.
+
+### Explicit-cast rule (v0.28.5)
+
+As of v0.28.5 the checker *does* notice when you hand a typed
+`Handle<T>` straight to an `extern` function. It emits an
+`ARIA-032` **warning** (not an error — extern ergonomics matter)
+with the suggested fix:
+
+```aria
+extern func:c_remember_handle = void(int64:tok);
+
+Handle<int32>:h = raw HandleArena.alloc(a, 4i64);
+
+c_remember_handle(h);                  // [ARIA-032] warning
+c_remember_handle(@cast<int64>(h));    // OK — explicit FFI escape
+```
+
+The cast does two jobs:
+
+1. **Silences the warning** — the cast is documented as the
+   surface intent for "I know this handle is leaving the safety
+   net."
+2. **Type-checks bidirectionally** — `@cast<int64>` accepts a
+   `Handle<T>` source, and `@cast<Handle<T>>` accepts an `int64`
+   source, so the round-trip pattern from the top of this page
+   is fully expressible.
+
+`bug276` shows the cast silencing the warning, `bug277` shows
+the direct pass producing the warning (the program still compiles
+and runs), and `bug278` exercises the alloc → `@cast<int64>` →
+C → recover → `HandleArena.deref` round trip including the
+stale-token-returns-`0i64` runtime check.
 
 ## Validation
 
