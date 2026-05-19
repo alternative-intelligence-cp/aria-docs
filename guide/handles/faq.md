@@ -103,3 +103,5 @@ For now, either:
 
 - [README](README.md), [Arenas](arenas.md), [Handles](handles.md),
   [Lifetimes](lifetimes.md), [FFI](ffi.md), [Diagnostics](diagnostics.md).
+- [`guide/drop/`](../drop/README.md) — the v0.29.5 opt-in RAII
+  layer that auto-destroys arenas at scope end.

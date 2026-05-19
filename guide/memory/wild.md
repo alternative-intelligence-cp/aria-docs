@@ -72,6 +72,13 @@ remain:
 
 See [`diagnostics.md`](diagnostics.md) for examples and fix recipes.
 
+Since v0.29.3, importing [`stdlib/drop.npk`](https://github.com/alternative-intelligence-cp/nitpick/blob/dev-0.29.x/stdlib/drop.npk)
+opts the file into RAII: `wild T:x = T{ ... }` struct bindings
+auto-emit `npk_free(x)` at scope end, and `ARIA-014` no longer
+fires on them. The full opt-in surface and the per-region
+recognizer rules are in the [`guide/drop/`](../drop/README.md)
+cookbook.
+
 ## `wildx` — manual heap, executable (W^X)
 
 `wildx` is `wild` with `PROT_EXEC` (write-XOR-execute discipline). It

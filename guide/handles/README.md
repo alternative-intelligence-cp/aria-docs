@@ -45,6 +45,12 @@ own free list.
    warning, smallest reproducer, canonical fix.
 7. [FAQ](faq.md) — recurring questions about handles.
 
+## See also
+
+- [`guide/drop/`](../drop/README.md) — the v0.29.5 opt-in RAII
+  layer that auto-emits `npk_handle_arena_destroy(a)` for
+  `int64:a = HandleArena.create();` bindings at scope end.
+
 ## Validation
 
 - Runtime: `tests/runtime/test_handle_v0277.cpp` (CTest

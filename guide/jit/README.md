@@ -62,6 +62,9 @@ compiler is already doing it better.
   — the runtime W^X lifecycle in memory-model terms.
 - [`guide/handles/`](../handles/README.md) — for the *data*
   arena counterpart.
+- [`guide/drop/`](../drop/README.md) — the v0.29.6 opt-in RAII
+  layer that auto-frees `Jit.compile_*` pages at scope end
+  (independent flag from generic `wildx` RAII per DROP-DEC-007).
 
 ## Validation
 

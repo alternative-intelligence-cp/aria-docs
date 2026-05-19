@@ -39,7 +39,10 @@ For the **handle** subsystem (generation-checked arena allocation,
 `Handle<T>`, `ARIA-032`), see the separate
 [`guide/handles/`](../handles/README.md) cookbook. For **runtime
 code generation** on top of `wildx`, see the
-[`guide/jit/`](../jit/README.md) cookbook.
+[`guide/jit/`](../jit/README.md) cookbook. For the **opt-in RAII**
+layer that auto-frees `wild` / `wildx` / `HandleArena` / `JitFn`
+bindings at scope exit, see the [`guide/drop/`](../drop/README.md)
+cookbook (v0.29.x).
 
 ## Validation snapshot (v0.28.8 — cycle close)
 

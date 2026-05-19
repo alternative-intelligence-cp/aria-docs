@@ -120,6 +120,16 @@ The borrow checker peeks through `raw(...)` and `drop(...)` wrappers
 on the initializer expression — `Handle<T>:h = raw HandleArena.alloc(...)`
 is recognised the same as `Handle<T>:h = HandleArena.alloc(...)`.
 
+Since v0.29.5, importing `drop.npk` opts arena bindings into
+auto-destroy: `int64:a = HandleArena.create();` auto-emits
+`npk_handle_arena_destroy(a)` at scope end. The outlives rule
+still applies — bindings whose handles escape from a RAII-managed
+arena trigger `ARIA-032` the same way. See the
+[`guide/drop/`](../drop/README.md) cookbook (especially
+[`regions.md`](../drop/regions.md) for the recognizer rules and
+[`pitfalls.md`](../drop/pitfalls.md) for the manual + auto
+double-free trap).
+
 ## Validation
 
 - `bug260_handle_outlives_arena_deref.npk` — destroy then deref →

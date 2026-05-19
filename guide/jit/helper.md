@@ -98,8 +98,16 @@ no RAII, no failsafe path that frees it on unwind. You must
 
 This is the same ownership story as `wild` / `wildx`, and the
 same compile-time enforcement applies (`ARIA-014` for leaks,
-`ARIA-022` for double-free). RAII / destructors are wishlist for
-a later cycle.
+`ARIA-022` for double-free).
+
+Since v0.29.6, opt-in RAII is available: `use "drop.npk".*;`
+flips `jit_fn_raii_enabled` and the compiler auto-emits
+`npk_wildx_free(f)` at scope end for every
+`wildx int8->:f = Jit.compile_*();` binding. The opt-in is a
+separate flag from generic `wildx` RAII (DROP-DEC-007) and
+plays correctly with bare-identifier `pass f` move semantics
+(DROP-DEC-004) so factory functions still work. Full surface
+in the [`guide/drop/`](../drop/README.md) cookbook.
 
 ## Why one signature?
 

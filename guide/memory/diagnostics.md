@@ -31,6 +31,11 @@ func:good = int32() {
 };
 ```
 
+**Alternative (v0.29.3+):** import `drop.npk` and use a struct
+binding to opt the binding into RAII auto-free, which silences
+`ARIA-014` for that shape. See the [`guide/drop/`](../drop/README.md)
+cookbook.
+
 ---
 
 ## `ARIA-015` — use of released `wild` variable
